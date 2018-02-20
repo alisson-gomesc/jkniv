@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<repository-config 
+ xmlns="http://jkniv.sf.net/schema/sqlegance/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/config 
+  http://jkniv.sf.net/schema/sqlegance/sqlegance-config.xsd">
+
+  <repository name="whinstone-jdbc" transaction-type="LOCAL">
+    <description>My jdbc datasource config</description>
+    <jndi-data-source>jdbc/dssample</jndi-data-source>
+    <properties>
+      <property name="jkniv.repository.query_namestrategy" value="net.sf.jkniv.sqlegance.QueryNameStrategy" />
+      <property name="jkniv.repository.short_name_enable"   value="true"/>
+      <property name="user" value="admin" />
+    </properties>
+  </repository>
+
+  <repository name="custom-users" transaction-type="LOCAL">
+    <description>My jdbc datasource config</description>
+    <jndi-data-source>jdbc/dssample</jndi-data-source>
+    <properties>
+      <property name="jkniv.repository.query_namestrategy" value="net.sf.jkniv.sqlegance.QueryNameStrategy" />
+      <property name="jkniv.repository.ttl_sql" value="4" />
+      <property name="user" value="admin" />
+    </properties>
+  </repository>
+  
+  <repository name="default-values" transaction-type="LOCAL">
+    <description>My Repository config with default values</description>
+    <jndi-data-source>jdbc/default_values</jndi-data-source>
+  </repository>
+</repository-config>

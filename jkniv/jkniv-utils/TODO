@@ -1,0 +1,44 @@
+
+
+Comparables -  Conditionables - Criteria
+Shorthand       Criteria Class      Description
+and             And                 The Boolean AND logical operator
+between         Between             A comparison operator meaning between two values
+eq              EqualTo             A comparison operator meaning Java "equals to" condition
+gt              GreaterThan         A comparison operator meaning greater than
+ge              GreaterThanOrEqual  A comparison operator meaning greater than or equal to
+in              InCollection        A comparison operator meaning in the collection given as an argument
+lt              LessThan            A comparison operator meaning less than.
+le              LessThanOrEqual     A comparison operator meaning less than or equal to
+not             Not                 The Boolean NOT logical operator
+ne              NotEqualTo          A comparison operator meaning not the Java "equals to" condition
+or              Or                  The Boolean OR logical operator
+ilike           ILike               A regular expression matcher. '?' and "*" may be used. Note that placing a
+                                    wildcard in front of the expression will cause a table scan. ILike is always
+                                    case insensitive.
+
+Operationable
+
+mathematics
+    plus
+    minus
+    divide
+    multiply
+    max
+    min 
+    summatory
+    square-root
+    mod
+    quotient
+
+statistcs
+    mean
+    median
+    mode
+    range
+
+
+
+
+
+

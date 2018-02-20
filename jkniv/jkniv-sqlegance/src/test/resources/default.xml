@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+  <select
+    id="selectRoles"
+    type="NATIVE">
+    <![CDATA[
+    ]]>
+  </select>
+  <insert
+    id="insertRole"
+    type="NATIVE">
+    <![CDATA[
+    ]]>
+  </insert>
+  <update
+    id="updateRole"
+    type="NATIVE">
+    <![CDATA[
+    ]]>
+  </update>
+  <delete
+    id="deletetRole"
+    type="NATIVE">
+    <![CDATA[
+    ]]>
+  </delete>
+  <procedure
+    id="daInsertAutoItemUpc"
+    spname="daInsertAutoITEM_UPC">
+    <parameter
+      property="sku"
+      mode="IN" />
+    <parameter
+      property="upcAltKey"
+      mode="IN" />
+    <parameter
+      property="uom"
+      mode="IN" />
+    <parameter
+      property="addUpdateDate"
+      mode="IN" />
+    <parameter
+      property="curDayMove"
+      mode="IN" />
+    <parameter
+      property="prevDayMove"
+      mode="IN" />
+    <parameter
+      property="curWkMove"
+      mode="IN" />
+    <parameter
+      property="prevWkMove"
+      mode="IN" />
+    <parameter
+      property="dateLastMoved"
+      mode="IN" />
+    <parameter
+      property="dateLastRoll"
+      mode="IN" />
+    <parameter
+      property="prevCoupFamilyCode"
+      mode="IN" />
+    <parameter
+      property="curCoupFamilyCode"
+      mode="IN" />
+    <parameter
+      property="datecreated"
+      mode="IN"
+      sqlType="VARCHAR"
+      typeName="" />
+  </procedure>
+  
+</statements>

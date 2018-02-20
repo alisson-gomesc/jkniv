@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+  <select id="test-groupingby1-after-select" type="NATIVE" groupBy="name">
+    select name, code, priority from Color
+  </select>
+
+  <select id="test-groupingby2-after-select" type="NATIVE" groupBy="name,code">
+    select name, code, priority from Color
+  </select>
+ 
+</statements>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements context="derby" xmlns="http://jkniv.sf.net/schema/sqlegance/statements" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+
+
+   <update id="changeBookName" type="NATIVE" validation="UPDATE">
+    update author set name = :name where id = :id
+  </update>
+ 
+</statements>

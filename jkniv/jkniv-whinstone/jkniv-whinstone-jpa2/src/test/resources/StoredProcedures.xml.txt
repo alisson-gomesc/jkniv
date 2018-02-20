@@ -1,0 +1,27 @@
+
+https://programmaticponderings.com/2012/08/24/calling-sql-server-stored-procedures-with-java-using-jdbc/
+
+
+
+<!-- 
+CREATE OR REPLACE PROCEDURE spInOutParam(myparam IN OUT VARCHAR2)
+IS
+BEGIN
+  myparam := 'Hello World INOUT parameter ' || myparam;
+END;
+
+
+
+CREATE OR REPLACE PROCEDURE spOutParam(myparam OUT VARCHAR2)
+IS
+BEGIN
+  myparam := 'Hello World OUT parameter';
+END;
+
+
+CREATE OR REPLACE PROCEDURE spInParam(myparam IN VARCHAR2)
+IS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Hello World IN parameter ' || myparam);
+END;
+-->

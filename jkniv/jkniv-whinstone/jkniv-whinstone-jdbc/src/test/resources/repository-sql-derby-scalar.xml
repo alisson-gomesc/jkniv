@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+  
+
+  <select id="getSequenceAuthor" type="NATIVE">
+  SELECT NEXT VALUE FOR SEQ_AUTHOR_ID FROM sysibm.sysdummy1
+  </select>
+
+  <select id="getScalarSmallint" type="NATIVE">
+  SELECT MY_SMALLINT FROM MY_TYPES where ID = 1
+  </select>
+
+  <select id="getScalarInteger" type="NATIVE">
+  SELECT MY_INTEGER FROM MY_TYPES where ID = 1
+  </select>
+  <select id="getScalarBigInt" type="NATIVE">
+  SELECT MY_BIGINT FROM MY_TYPES where ID = 1
+  </select>
+  <select id="getScalarFloat" type="NATIVE">
+  SELECT MY_FLOAT FROM MY_TYPES where ID = 1
+  </select>
+  <select id="getScalarDecimal" type="NATIVE">
+  SELECT MY_DECIMAL FROM MY_TYPES where ID = 1
+  </select>
+  <select id="getScalarVarchar" type="NATIVE">
+  SELECT MY_VARCHAR FROM MY_TYPES where ID = 1
+  </select>
+  <select id="getScalarChar" type="NATIVE">
+  SELECT MY_CHAR FROM MY_TYPES where ID = 1
+  </select>
+  <select id="getScalarBlob" type="NATIVE">
+  SELECT MY_BLOB FROM MY_TYPES where ID = 1
+  </select>
+  <select id="getScalarClob" type="NATIVE">
+  SELECT MY_CLOB FROM MY_TYPES where ID = 1
+  </select>
+  <select id="getScalarDate" type="NATIVE">
+  SELECT MY_DATE FROM MY_TYPES where ID = 1
+  </select>
+  <select id="getScalarTime" type="NATIVE">
+  SELECT MY_TIME FROM MY_TYPES where ID = 1
+  </select>
+  <select id="getScalarTimestamp" type="NATIVE">
+  SELECT MY_TIMESTAMP FROM MY_TYPES where ID = 1
+  </select>
+
+</statements>

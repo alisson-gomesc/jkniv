@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  context="oracle"
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+  
+
+  <insert type="NATIVE" id="simpleInsert">
+    INSERT INTO dev_data_3t.TEST_DATA (my_key,evt_date,object_id,lat, lng, warn)
+    values (?,?,?,?,?,?);
+  </insert>
+
+  <select type="NATIVE" id="simpleSelect" returnType="java.util.HashMap">
+    select my_key,evt_date,object_id,lat, lng, warn from dev_data_3t.TEST_DATA
+  </select>
+
+</statements>

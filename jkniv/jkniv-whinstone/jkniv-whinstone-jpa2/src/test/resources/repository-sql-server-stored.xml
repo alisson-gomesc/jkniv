@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements context="whinstone" xmlns="http://jkniv.sf.net/schema/sqlegance/statements" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+<!-- 
+    ? = call [nielsen].[func_RetornaComunicacao] ?, ?
+ -->
+  <procedure id="comunicatePrice" spname="nielsen.func_RetornaComunicacao" >
+      <parameter
+      property="survey_sk"
+      mode="IN" />
+    <parameter
+      property="kbi_sk"
+      mode="IN" />
+    <parameter
+      property="?"
+      mode="OUT" />
+  
+  </procedure>  
+ 
+ 
+ <select id="configuracao">
+   select * from ine.configuracao
+ </select>
+  
+</statements>

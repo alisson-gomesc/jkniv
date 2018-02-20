@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<statements 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/stmt
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+  <select id="test-where-suprime-and1" type="NATIVE">
+    select id, name from Users
+    <where>
+      <if test="age != null">
+        AND( age = #{age} or age >=18)
+      </if>
+      <if test="name != null">
+        AND name = #{name}
+      </if>
+    </where>
+  </select>
+  <select id="test-where-suprime-and2" type="NATIVE">
+    select id, name from Users
+    <where>
+      <if test="age != null">
+        AND ( age = #{age} or age >=18)
+      </if>
+      <if test="name != null">
+        AND name = #{name}
+      </if>
+    </where>
+  </select>
+  <select id="test-where-suprime-and3" type="NATIVE">
+    select id, name from Users
+    <where>
+      <if test="age != null">
+        aNd age = #{age}
+      </if>
+      <if test="name != null">
+        AND name = #{name}
+      </if>
+    </where>
+  </select>
+
+</statements>

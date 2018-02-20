@@ -1,0 +1,371 @@
+/* 
+ * JKNIV, SQLegance keeping queries maintainable.
+ * 
+ * Copyright (C) 2017, the original author or authors.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software Foundation, Inc., 
+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+package net.sf.jkniv.sqlegance.builder;
+
+import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import net.sf.jkniv.asserts.Assertable;
+import net.sf.jkniv.asserts.AssertsFactory;
+import net.sf.jkniv.reflect.beans.ObjectProxy;
+import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.sqlegance.ConnectionFactory;
+import net.sf.jkniv.sqlegance.RepositoryProperty;
+import net.sf.jkniv.sqlegance.RepositoryType;
+import net.sf.jkniv.sqlegance.logger.DataMasking;
+import net.sf.jkniv.sqlegance.logger.LogLevel;
+import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
+import net.sf.jkniv.sqlegance.logger.SqlLogger;
+import net.sf.jkniv.sqlegance.transaction.TransactionType;
+
+/**
+ * 
+ * @author Alisson Gomes
+ *
+ */
+public class RepositoryConfig
+{
+    private static final Logger     LOG                    = LoggerFactory.getLogger(RepositoryConfig.class);
+    private static String           defaultFileConfig      = "/repository-config.xml";
+    private static final String     ATTR_NAME              = "name";
+    private static final String     ATTR_VALUE             = "value";
+    private static final String     ATTR_TX_TYPE           = "transaction-type";
+    private static final String     XPATH_REPO_NODE        = "/repository";
+    static final String             SCHEMA_XSD             = "/net/sf/jkniv/sqlegance/builder/xml/sqlegance-config.xsd";
+    static final String             XPATH_ROOT_NODE        = "repository-config";
+    private static final String     XPATH_PROPERTY_NODE    = XPATH_ROOT_NODE + XPATH_REPO_NODE
+            + "[@name='%s']/properties/property";
+    private static final String     XPATH_DESCRIPTION_NODE = XPATH_ROOT_NODE + XPATH_REPO_NODE
+            + "[@name='%s']/description[1]";
+    private static final String     XPATH_JNDI_DS_NODE     = XPATH_ROOT_NODE + XPATH_REPO_NODE
+            + "[@name='%s']/jndi-data-source[1]";
+    
+    private static final Assertable notNull                = AssertsFactory.getNotNull();
+    private String                  name;
+    private String                  description;
+    private String                  jndiDataSource;
+    private TransactionType         transactionType;
+    private Properties              properties;
+    private SqlLogger               sqlLogger;
+    private DataMasking             masking;
+    private RepositoryType repositoryType;
+    
+    public RepositoryConfig()
+    {
+        this(null, true);
+    }
+    
+    /**
+     * Build new configuration object that access to DataSource and your properties
+     * Default instance is created if parameter is a <code>null</code> name 
+     * @param name from repository configuration
+     * @throws IllegalArgumentException if the name is <code>null</code>
+     */
+    public RepositoryConfig(String name)
+    {
+        this(name, false);
+    }
+    
+    private RepositoryConfig(String name, boolean defaultRepo)
+    {
+        if (!defaultRepo)
+            notNull.verify(name);
+        this.name = name;
+        this.properties = new Properties();
+        this.load();
+        setDataMasking();
+        setSqlLogger();
+        //this.sqlDialectName = getProperty(RepositoryProperty.SQL_DIALECT);
+        if (this.transactionType == null)
+            this.transactionType = TransactionType.LOCAL;
+        if (isEmpty(this.jndiDataSource))
+            this.jndiDataSource = name;
+        
+    }
+    
+    private void load()
+    {
+        XmlReader xmlReader = new XmlReader(defaultFileConfig);
+        if (xmlReader.load())
+        {
+            NodeList nodes = xmlReader.evaluateXpath(XPATH_ROOT_NODE + XPATH_REPO_NODE);
+            if (nodes != null)
+            {
+                for (int i = 0; i < nodes.getLength(); i++)
+                {
+                    Node node = nodes.item(i);
+                    if (node.getNodeType() == Node.ELEMENT_NODE)
+                    {
+                        Element element = (Element) node;
+                        String name = element.getAttribute(ATTR_NAME);
+                        if (isEmpty(this.name) || this.name.equals(name))// first repository is default
+                        {
+                            if (LOG.isDebugEnabled())
+                                LOG.debug("Binding Sql Statements context [{}] with Repository config [{}]", this.name,
+                                        name);
+                            this.name = name;
+                            parseAttributes(element);// FIXME parser attributes
+                            parseDescription(xmlReader);
+                            parseJndiDataSource(xmlReader);
+                            parseProperties(xmlReader);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (!hasProperties())
+            {
+                LOG.info("repository-config.xml does not found. Using [{}] as jndi datasource.", this.name);
+                this.jndiDataSource = this.name;
+            }
+        }
+    }
+    
+    private void parseAttributes(Element element)
+    {
+        this.name = element.getAttribute(ATTR_NAME);
+        String txType = element.getAttribute(ATTR_TX_TYPE);
+        String type = element.getAttribute("type");
+        this.transactionType = TransactionType.get(txType);
+        this.repositoryType = RepositoryType.get(type);
+    }
+    
+    private void parseDescription(XmlReader xmlReader)
+    {
+        NodeList nodes = xmlReader.evaluateXpath(String.format(XPATH_DESCRIPTION_NODE, name));
+        for (int i = 0; i < nodes.getLength(); i++)
+        {
+            Node node = nodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE)
+            {
+                Element element = (Element) node;
+                this.description = xmlReader.getTextFromElement(element);
+            }
+        }
+    }
+    
+    private void parseJndiDataSource(XmlReader xmlReader)
+    {
+        NodeList nodes = xmlReader.evaluateXpath(String.format(XPATH_JNDI_DS_NODE, name));
+        if (nodes != null)
+        {
+            for (int i = 0; i < nodes.getLength(); i++)
+            {
+                Node node = nodes.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE)
+                {
+                    Element element = (Element) node;
+                    this.jndiDataSource = xmlReader.getTextFromElement(element);
+                }
+            }
+        }
+    }
+    
+    private void parseProperties(XmlReader xmlReader)
+    {
+        NodeList nodesProperties = xmlReader.evaluateXpath(String.format(XPATH_PROPERTY_NODE, name));
+        if (nodesProperties != null)
+        {
+            for (int i = 0; i < nodesProperties.getLength(); i++)
+            {
+                Node nodes = nodesProperties.item(i);
+                if (nodes.getNodeType() == Node.ELEMENT_NODE)
+                {
+                    Element element = (Element) nodes;
+                    String properName = element.getAttribute(ATTR_NAME);
+                    String properValue = element.getAttribute(ATTR_VALUE);
+                    this.properties.put(properName, properValue);
+                }
+            }
+        }
+    }
+    
+    private void setSqlLogger()
+    {
+        if (this.sqlLogger == null || this.sqlLogger.getLogLevel() == LogLevel.NONE)
+        {
+            LogLevel logLevel = LogLevel.get(getProperty(RepositoryProperty.DEBUG_SQL));
+            this.sqlLogger = new SqlLogger(logLevel, this.masking);
+        }
+    }
+    
+    private void setDataMasking()
+    {
+        if (masking == null)
+        {
+            masking = new SimpleDataMasking();
+            String className = getProperty(RepositoryProperty.DATA_MASKING);
+            if (className != null)
+            {
+                ObjectProxy<DataMasking> proxy = ObjectProxyFactory.newProxy(className);
+                masking = proxy.newInstance();
+            }
+        }
+    }
+    
+//    public String getPreparedStatementStrategy()
+//    {
+//        return getProperty(RepositoryProperty.PREPARED_STATEMENT_STRATEGY);
+//    }
+    
+    public String getQueryNameStrategy()
+    {
+        return getProperty(RepositoryProperty.QUERY_NAME_STRATEGY);
+    }
+    
+    public ConnectionFactory getJdbcAdapterFactory(Class<? extends ConnectionFactory> defaultClass, Object[] args,
+            Class<?>[] types)
+    {
+        String adpterClassName = getProperty(RepositoryProperty.JDBC_ADAPTER_FACTORY);
+        ObjectProxy<? extends ConnectionFactory> factory = null;
+        
+        if (adpterClassName == null)
+            factory = ObjectProxyFactory.newProxy(defaultClass);
+        else
+            factory = ObjectProxyFactory.newProxy(adpterClassName);
+        
+        if (args != null)
+        {
+            factory.setConstructorArgs(args);
+            if (types != null)
+                factory.setConstructorTypes(types);
+        }
+        return factory.newInstance();
+    }
+    
+    public String getSqlDialect()
+    {
+        return getProperty(RepositoryProperty.SQL_DIALECT);//this.sqlDialectName;
+    }
+    
+    public boolean isShotKeyEnable()
+    {
+        return Boolean.valueOf(getProperty(RepositoryProperty.SHORT_NAME_ENABLE));
+    }
+
+    public boolean isReloadableXmlEnable()
+    {
+        return Boolean.valueOf(getProperty(RepositoryProperty.RELOADABLE_XML_ENABLE));
+    }
+
+    /*
+    public boolean isProjectPackageEnable()
+    {
+        return Boolean.valueOf(getProperty(RepositoryProperty.PROJECT_PACKAGE_ENABLE));
+    }
+    */
+    
+    public void add(Properties props)
+    {
+        if (props != null)
+            this.properties.putAll(props);
+    }
+    
+    /*
+    public void add(DataSource ds)
+    {
+        if (ds != null)
+            this.ds = ds;
+    }
+    
+    public boolean hasDataSource()
+    {
+        return (this.ds != null);
+    }
+    */
+    public boolean hasProperties()
+    {
+        return (!this.properties.isEmpty());
+    }
+    /*    
+    public DataSource getDataSource()
+    {
+        return ds;
+    }
+    */
+    
+    public SqlLogger getSqlLogger()
+    {
+        return this.sqlLogger;
+    }
+    
+    public DataMasking getDataMasking()
+    {
+        return this.masking;
+    }
+    
+    public String getDescription()
+    {
+        return description;
+    }
+    
+    public String getName()
+    {
+        return name;
+    }
+    
+    public TransactionType getTransactionType()
+    {
+        return transactionType;
+    }
+    
+    public String getJndiDataSource()
+    {
+        return jndiDataSource;
+    }
+    
+    public Properties getProperties()
+    {
+        return properties;
+    }
+    
+    public String getProperty(RepositoryProperty proper)
+    {
+        return properties.getProperty(proper.key(), proper.defaultValue());
+    }
+    
+    public String getProperty(String proper)
+    {
+        return properties.getProperty(proper);
+    }
+    
+    private boolean isEmpty(String value)
+    {
+        return (value == null || "".equals(value));
+    }
+
+    public RepositoryType getRepositoryType()
+    {
+        return repositoryType;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return "RepositoryConfig [name=" + name + ", sqlDialectName=" + getSqlDialect() + ", transactionType="
+                + transactionType + "]";
+    }
+    
+}

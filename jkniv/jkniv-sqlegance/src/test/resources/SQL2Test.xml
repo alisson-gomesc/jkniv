@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+  <select
+    id="selectCompanies"
+    type="NATIVE">
+    select id, name from Companies
+  </select>
+
+
+  <insert
+    id="insertAuthor1"
+    type="NATIVE">
+    <![CDATA[
+      insert into Author (username,password,email,bio) values (#{username},#{password},#{email},#{bio})
+    ]]>
+  </insert>
+  <insert
+    id="insertAuthor2"
+    type="NATIVE">
+    insert into Author
+    <if test="username != null and password != null and email != null and bio != null">
+      (username,password,email,bio) values (#{id},#{username},#{password},#{email},#{bio})
+    </if>
+    <if test="username != null and password != null and email != null and bio == null">
+      (username,password,email) values (#{id},#{username},#{password},#{email})
+    </if>
+    <if test="username != null and password != null and email == null and bio == null">
+      (username,password) values (#{id},#{username})
+    </if>
+  </insert>
+
+
+  <update
+    id="updateAuthor1"
+    type="NATIVE">
+    update Author set username = #{username}, password = #{password}, email = #{email}, bio = #{bio} where id = #{id}
+  </update>
+  <update
+    id="updateAuthor2"
+    type="NATIVE">
+    update Author
+    <set>
+      <if test="username != null">username = #{username},</if>
+      <if test="password != null">password = #{password},</if>
+      <if test="email != null">email = #{email},</if>
+      <if test="bio != null">bio = #{bio},</if>
+    </set>
+        <![CDATA[
+        where id = #{id}
+         ]]>
+  </update>
+  <delete
+    id="deleteAuthor"
+    type="NATIVE">
+    delete from Author where id = #{id}
+  </delete>
+
+
+</statements>

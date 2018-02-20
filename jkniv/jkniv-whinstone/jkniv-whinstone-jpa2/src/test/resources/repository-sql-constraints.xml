@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+  <select id="oneToManyBooksFromAuthorsJPQL" type="JPQL" returnType="com.acme.domain.noorm.Author" groupBy="id">
+   <one-to-many property="books" typeOf="com.acme.domain.noorm.Book"/>
+    select a.id as id, a.name as name
+    ,b.ID as "books.id", b.NAME as "books.name", b.ISBN as "books.isbn"
+    from JPA_AUTHOR a 
+    inner join JPA_BOOK b on b.AUTHOR_ID = a.ID
+    order by a.name, b.name
+  </select>
+ 
+ <select id="constraintNoReturnType">
+ select id, name from JPA_AUTHOR
+ </select>
+</statements>

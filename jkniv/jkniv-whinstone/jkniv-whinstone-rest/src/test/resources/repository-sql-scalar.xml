@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+ xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+ <select id="BookByName" type="JPQL" returnType="com.acme.domain.orm.Book">
+  from Book b where b.name = ?
+ </select>
+ <select id="GetNameBookByName" type="JPQL" returnType="com.acme.domain.orm.Book">
+  select b.name from Book b where b.name = ?
+ </select>
+ <select id="GetNameBookByNameNative" type="NATIVE" returnType="com.acme.domain.orm.Book">
+  select b.NAME from JPA_BOOK b where b.NAME = ?
+ </select>
+
+ <select id="GetNameBookByName2" type="JPQL" returnType="com.acme.domain.orm.Book">
+  select b.name from Book b where b.name = :name
+ </select>
+  
+ </statements>

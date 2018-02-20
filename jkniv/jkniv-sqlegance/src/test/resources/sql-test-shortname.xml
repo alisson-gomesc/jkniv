@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+ 
+  <select  id="com.acme.sample.getUsers" type="NATIVE">
+    select id, name from users
+  </select>
+
+  <select  id="com.acme.sample.security.getUsers" type="NATIVE">
+    select id, name from users_sec
+  </select>
+  
+</statements>

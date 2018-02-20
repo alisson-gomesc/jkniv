@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>jkniv-test-jdk8</artifactId>
+  <name>jkniv-test-jdk8</name>
+
+  <parent>
+    <groupId>net.sf.jkniv</groupId>
+    <artifactId>jkniv</artifactId>
+    <version>0.6.0.M16</version>
+  </parent>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.6</version>
+        <configuration>
+          <siteDirectory>src/site/content</siteDirectory>
+          <outputDirectory>../target/generated-site/${project.artifactId}</outputDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <licenses>
+    <license>
+      <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1</name>
+      <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+    </license>
+  </licenses>
+
+</project>

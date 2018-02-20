@@ -1,0 +1,8 @@
+/target/
+/derby.log
+/eclipselink-tx-trace.txt
+/hibernate-trace.txt
+/ongl-invoke.txt
+/spring-tx-trace.txt
+/stmt-methods2.txt
+/TODO

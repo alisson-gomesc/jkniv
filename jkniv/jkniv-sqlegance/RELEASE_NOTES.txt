@@ -1,0 +1,79 @@
+
+
+============================BREAK backward compatibility ==============================
+
+! ConfigurationException was deprecated, must be removed at 1.0.0 version
+! Prefix I from interfaces were removed
+  # net.sf.jkniv.sqlegance.ISqlNameStrategy       -> net.sf.jkniv.sqlegance.QueryNameStrategy
+  # net.sf.jkniv.sqlegance.DefaultSqlNameStrategy -> net.sf.jkniv.sqlegance.DefaultXmlQueryNameStrategy
+  # net.sf.jkniv.sqlegance.IQuery                 -> net.sf.jkniv.sqlegance.Queryable
+  # net.sf.jkniv.sqlegance.builder.ConfigurationException -> DELETED (All exception it is generated as RepositoryException)
+
+  # net.sf.jkniv.sqlegance.builder.xml.ISql<T>        -> Remove <T>, no more generics
+  # net.sf.jkniv.sqlegance.builder.xml.ISql<T>        -> @deprecated, use net.sf.jkniv.sqlegance.Sql
+  # net.sf.jkniv.sqlegance.builder.xml.ISqlTag        -> @deprecated, use net.sf.jkniv.sqlegance.builder.xml.SqlTag
+  # net.sf.jkniv.sqlegance.builder.xml.SqlCommandType -> @deprecated, use net.sf.jkniv.sqlegance.SqlType
+  # net.sf.jkniv.sqlegance.builder.xml.LanguageType   -> move to net.sf.jkniv.sqlegance
+  # net.sf.jkniv.sqlegance.builder.xml.ParameterMode  -> move to net.sf.jkniv.sqlegance
+  
+  # Property from persistence.xml change from jkniv.repository.namestrategy to jkniv.repository.method_namestrategy
+
+  # Default xml file from queries named SqlConfig.xml was change to repository-sql.xml
+   
+  # Schema XSD change name from sqlegance-VERSION.xsd to sqlegance-stmt-VERSION.xsd
+   
+  # Add new schema XSD sqlegance-config-VERSION.xsd
+       
+  # Property jkniv.whinstone.jdbc.stmt_strategy change to jkniv.repository.jdbc.stmt_strategy
+  
+  # Query not found throw QueryNotFoundException instead of IllegalArgumentException
+  
+  # Change default behavior
+     get(T) use ".get" as query suffix for simple name from T class
+     add(T) use ".add" as query suffix for simple name from T class
+     remove(T) use ".remove" as query suffix for simple name from T class
+     update(T) use ".update" as query suffix for simple name from T class
+
+
+   # for hash separator
+     get(T) use "#get" as query suffix for simple name from T class 
+     add(T) use "#add" as query suffix for simple name from T class
+     remove(T) use "#remove" as query suffix for simple name from T class
+     update(T) use "#update" as query suffix for simple name from T class
+     
+   # using HashQueryNameStrategy instead of DotQueryNameStrategy.
+  
+   # LanguageType from queries change default value from JPQL to NATIVE (since version 0.6.0.M16)
+   
+============================BREAK backward compatibility ==============================
+
+==============================================
+
+Bug (0.6.0)
+  - nested parameters using hash or colon, example:
+     select * from Route(#{a.longitude.value},#{a.latitude.value},#{b.longitude.value},#{b.latitude.value})
+     select * from Route(:a.longitude.value,:a.latitude.value,:b.longitude.value,:b.latitude.value) 
+  
+  -  Fixed bug when use colon nested string, example:
+     select id, name from Roles where dt = to_date(:dt,'YYYY-MM-DD HH24:MI:SS') and name = :name and status = :status
+    
+  - Fixed bug when <include ..> as nested with <package ..> tag
+
+    
+Bug
+    [where-tag] - SQLException if clause start different from and/or, check was sensitive.
+
+    <where>
+      <if test="name != null">
+        AND name = #{name}
+      </if>
+      ...`
+
+
+Improvement
+
+New Feature
+
+    [choose-tag] - Add supports to <choose> <when/>  <otherwise/> </choose> tags
+
+    

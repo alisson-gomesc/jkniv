@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema targetNamespace="http://jkniv.sf.net/schema/sqlegance" xmlns="http://jkniv.sf.net/schema/sqlegance"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <xs:element name="statements">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element maxOccurs="unbounded" ref="package" />
+          <xs:element maxOccurs="unbounded" ref="include" />
+          <xs:element maxOccurs="unbounded" ref="select" />
+          <xs:element maxOccurs="unbounded" ref="insert" />
+          <xs:element maxOccurs="unbounded" ref="update" />
+          <xs:element maxOccurs="unbounded" ref="delete" />
+          <xs:element maxOccurs="unbounded" ref="procedure" />
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="package">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element maxOccurs="unbounded" ref="include" />
+        <xs:element maxOccurs="unbounded" ref="select" />
+        <xs:element maxOccurs="unbounded" ref="insert" />
+        <xs:element maxOccurs="unbounded" ref="update" />
+        <xs:element maxOccurs="unbounded" ref="delete" />
+        <xs:element maxOccurs="unbounded" ref="procedure" />
+      </xs:choice>
+      <xs:attribute name="name" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="include">
+    <xs:complexType>
+      <xs:attribute name="href" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="select">
+    <xs:complexType mixed="true">
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="if" />
+        <xs:element ref="where" />
+        <xs:element ref="choose" />
+      </xs:choice>
+      <xs:attribute name="id" use="required" type="xs:NCName" />
+      <xs:attribute name="type" use="required" type="languageType" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="where">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="if" />
+          <xs:element ref="choose" />
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="insert">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="if" />
+        <xs:element ref="choose" />
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:NCName" />
+      <xs:attribute name="type" use="required" type="languageType" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="update">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="set" />
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:NCName" />
+      <xs:attribute name="type" use="required" type="languageType" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="set">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="if" />
+        <xs:element ref="choose" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="delete">
+    <xs:complexType mixed="true">
+      <xs:attribute name="id" use="required" type="xs:NCName" />
+      <xs:attribute name="type" use="required" type="languageType" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="procedure">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="parameter" />
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:NCName" />
+      <xs:attribute name="spname" use="required" type="xs:NCName" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="parameter">
+    <xs:complexType>
+      <xs:attribute name="mode" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="IN"></xs:enumeration>
+            <xs:enumeration value="OUT"></xs:enumeration>
+            <xs:enumeration value="INOUT"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+
+      <xs:attribute name="property" use="required" type="xs:string" />
+      <xs:attribute name="sqlType">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="ARRAY"></xs:enumeration>
+            <xs:enumeration value="BIGINT"></xs:enumeration>
+            <xs:enumeration value="BINARY"></xs:enumeration>
+            <xs:enumeration value="BIT"></xs:enumeration>
+            <xs:enumeration value="BLOB"></xs:enumeration>
+            <xs:enumeration value="BOOLEAN"></xs:enumeration>
+            <xs:enumeration value="CHAR"></xs:enumeration>
+            <xs:enumeration value="CLOB"></xs:enumeration>
+            <xs:enumeration value="DATALINK"></xs:enumeration>
+            <xs:enumeration value="DATE"></xs:enumeration>
+            <xs:enumeration value="DECIMAL"></xs:enumeration>
+            <xs:enumeration value="DISTINCT"></xs:enumeration>
+            <xs:enumeration value="DOUBLE"></xs:enumeration>
+            <xs:enumeration value="FLOAT"></xs:enumeration>
+            <xs:enumeration value="INTEGER"></xs:enumeration>
+            <xs:enumeration value="JAVA_OBJECT"></xs:enumeration>
+            <xs:enumeration value="LONGNVARCHAR"></xs:enumeration>
+            <xs:enumeration value="LONGVARBINARY"></xs:enumeration>
+            <xs:enumeration value="LONGVARCHAR"></xs:enumeration>
+            <xs:enumeration value="NCHAR"></xs:enumeration>
+            <xs:enumeration value="NCLOB"></xs:enumeration>
+            <xs:enumeration value="NULL"></xs:enumeration>
+            <xs:enumeration value="NUMERIC"></xs:enumeration>
+            <xs:enumeration value="NVARCHAR"></xs:enumeration>
+            <xs:enumeration value="OTHER"></xs:enumeration>
+            <xs:enumeration value="REAL"></xs:enumeration>
+            <xs:enumeration value=" REF"></xs:enumeration>
+            <xs:enumeration value="ROWID"></xs:enumeration>
+            <xs:enumeration value="SMALLINT"></xs:enumeration>
+            <xs:enumeration value="SQLXML"></xs:enumeration>
+            <xs:enumeration value="STRUCT"></xs:enumeration>
+            <xs:enumeration value="TIMESTAMP"></xs:enumeration>
+            <xs:enumeration value="TINYINT "></xs:enumeration>
+            <xs:enumeration value="VARBINARY"></xs:enumeration>
+            <xs:enumeration value="VARCHAR"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="typeName" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="if">
+    <xs:complexType mixed="true">
+      <xs:attribute name="test" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="when">
+    <xs:complexType mixed="true">
+      <xs:attribute name="test" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="otherwise">
+  </xs:element>
+  <xs:element name="choose">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="when" />
+        <xs:element maxOccurs="1" ref="otherwise" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:simpleType name="languageType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="JPQL"></xs:enumeration>
+      <xs:enumeration value="HQL"></xs:enumeration>
+      <xs:enumeration value="NATIVE"></xs:enumeration>
+      <xs:enumeration value="CRITERIA"></xs:enumeration>
+      <xs:enumeration value="STORED"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

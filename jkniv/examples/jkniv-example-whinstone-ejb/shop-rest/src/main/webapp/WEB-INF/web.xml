@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+ xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+ id="WebApp_ID" version="3.1">
+
+ <display-name>shop-rest</display-name>
+ <welcome-file-list>
+  <welcome-file>index.html</welcome-file>
+ </welcome-file-list>
+
+ <persistence-context-ref>
+  <description>Persistence context for the inventory management application.</description>
+  <persistence-context-ref-name>persistence/shop-repo</persistence-context-ref-name>
+  <persistence-unit-name>shop-repo</persistence-unit-name>
+  <persistence-context-type>Transaction</persistence-context-type>
+ </persistence-context-ref>
+
+ <security-role>
+  <description>Any user authenticated</description>
+  <role-name>auth</role-name>
+ </security-role>
+
+ <security-constraint>
+  <web-resource-collection>
+   <web-resource-name>JS resources</web-resource-name>
+   <url-pattern>/index.html</url-pattern>
+   <http-method>GET</http-method>
+   <http-method>POST</http-method>
+   <http-method>PUT</http-method>
+   <http-method>DELETE</http-method>
+  </web-resource-collection>
+ </security-constraint>
+
+</web-app>

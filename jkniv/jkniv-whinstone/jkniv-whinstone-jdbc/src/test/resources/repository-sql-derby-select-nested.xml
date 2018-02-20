@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+  
+    
+  <select id="listNestedBooks" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.Book">
+    select b.ID as id, b.ISBN as isbn, b.NAME as name
+    ,a.id as "author.id"
+    ,a.name as "author.name"
+    from BOOK b
+    inner join AUTHOR a on a.ID = b.AUTHOR_ID
+    order by a.name 
+  </select>
+    
+
+</statements>

@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+ 
+  <select  id="sql1-attributes-all" type="NATIVE" batch="true" 
+           hint="/*+ index(usr idx_primary_key)*/" timeout="1500" isolation="NONE" 
+           resultSetType="TYPE_FORWARD_ONLY"
+           resultSetConcurrency="CONCUR_READ_ONLY"
+           resultSetHoldability="CLOSE_CURSORS_AT_COMMIT">
+    select id, name from users
+  </select>
+
+  <select  id="sql2-attributes-default">
+    select id, name from users
+  </select>
+
+  <select  id="sql-attributes-validate-get" type="NATIVE" validation="GET">
+    select name, username, password from author
+  </select>
+  
+  <insert id="sql3-in-attributes-all" type="HQL" batch="true" 
+           hint="/*+ index(usr idx_primary_key)*/" timeout="2500" isolation="READ_UNCOMMITTED">
+    INSERT INTO users VALUES (#{name})
+  </insert>
+  <insert id="sql4-in-attributes-default" type="HQL">
+    INSERT INTO users VALUES (#{name})
+  </insert>
+
+  <delete id="sql5-de-attributes-all" type="NATIVE" batch="true" 
+           hint="/*+ index(usr idx_primary_key)*/" timeout="3500" isolation="READ_COMMITTED">
+    delete from users where id = #{id}
+  </delete>
+  <delete id="sql6-de-attributes-default" type="NATIVE">
+    delete from users where id = #{id}
+  </delete>
+
+  <update id="sql7-up-attributes-all" type="NATIVE" batch="true" 
+           hint="/*+ index(usr idx_primary_key)*/" timeout="4500" isolation="REPEATABLE_READ">
+    update users set name = #{name} where id = #{id}
+  </update>
+  <update id="sql8-up-attributes-default" type="NATIVE" isolation="SERIALIZABLE">
+    update users set name = #{name} where id = #{id}    
+  </update>
+
+</statements>

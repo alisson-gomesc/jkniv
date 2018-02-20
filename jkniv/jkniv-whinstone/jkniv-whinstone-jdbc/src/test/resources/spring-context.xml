@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop.xsd
+    http://www.springframework.org/schema/jdbc 
+    http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+
+  <context:annotation-config />
+  <!--  
+  <tx:annotation-driven transaction-manager="transactionManager" />
+  -->
+  <context:component-scan base-package="net.sf.jkniv.whinstone.jdbc" />
+
+  <bean id="dataSourceDerby" class="org.apache.commons.dbcp.BasicDataSource"
+    destroy-method="close">
+    <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
+    <property name="url" value="jdbc:derby:memory:whinstone;create=true" />
+  </bean>
+  
+  <bean id="dataSourceOra" class="org.apache.commons.dbcp.BasicDataSource"
+    destroy-method="close">
+    <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+    <property name="url" value="jdbc:oracle:thin:@127.0.0.1:1521/XE" />
+    <property name="username" value="whinstone" />
+    <property name="password" value="whinstone" />
+  </bean>
+  
+  <bean id="dataSourcePostgres" class="org.apache.commons.dbcp.BasicDataSource"
+    destroy-method="close">
+    <property name="driverClassName" value="org.postgresql.xa.PGXADataSource" />
+    <property name="url" value="jdbc:postgresql://127.0.0.1:5432/whinstone" />
+    <property name="username" value="whinstone" />
+    <property name="password" value="whinstone" />
+  </bean>
+
+<!-- 
+  <bean id="dataSourceCas" class="org.apache.commons.dbcp.BasicDataSource"
+    destroy-method="close">
+    <property name="driverClassName" value="com.dbschema.CassandraJdbcDriver" />
+    <property name="url" value="jdbc:cassandra://127.0.0.1:9042/dev_data_3t" />
+    <property name="username" value="cassandra" />
+    <property name="password" value="" />
+  </bean>
+ -->
+  
+  <bean id="dataSourceProxy" class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
+    <constructor-arg ref="dataSourceOra"/>
+  </bean>
+
+  <jdbc:initialize-database data-source="dataSourceDerby" enabled="true"
+    ignore-failures="DROPS">
+    <jdbc:script location="classpath:database/db-drop.sql" execution="DESTROY" encoding="UTF-8"/>
+    <jdbc:script location="classpath:database/db-create.sql" execution="INIT" encoding="UTF-8"/>
+    <jdbc:script location="classpath:database/db-load.sql" execution="INIT" encoding="UTF-8"/>
+  </jdbc:initialize-database>
+  <jdbc:initialize-database data-source="dataSourceOra" enabled="true"
+    ignore-failures="DROPS">
+    <jdbc:script location="classpath:database/ora/db-drop.sql"  execution="DESTROY" encoding="UTF-8" />
+    <jdbc:script location="classpath:database/ora/db-create.sql" execution="INIT" encoding="UTF-8" />
+    <jdbc:script location="classpath:database/ora/db-load.sql" execution="INIT" encoding="UTF-8" />
+    <!--jdbc:script location="classpath:database/ora/db-create-stored-hello.sql" execution="INIT" encoding="UTF-8" /-->
+  </jdbc:initialize-database>
+  <jdbc:initialize-database data-source="dataSourcePostgres"
+    enabled="true" ignore-failures="DROPS">
+    <jdbc:script location="classpath:database/postgresql/db-drop.sql" execution="DESTROY" encoding="UTF-8" />
+    <jdbc:script location="classpath:database/postgresql/db-create.sql" execution="INIT" encoding="UTF-8" />
+    <jdbc:script location="classpath:database/postgresql/db-load.sql" execution="INIT" encoding="UTF-8" />
+  </jdbc:initialize-database>
+  <!-- 
+  <jdbc:initialize-database data-source="dataSourceCassandra"
+    enabled="true" ignore-failures="DROPS">
+    <jdbc:script location="classpath:database/cassandra/db-drop.sql" execution="DESTROY" encoding="UTF-8" />
+    <jdbc:script location="classpath:database/cassandra/db-create.sql" execution="INIT" encoding="UTF-8" />
+  </jdbc:initialize-database>
+   -->
+
+
+  <bean id="propertyDerby" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    <property name="properties">
+      <props>
+        <prop key="jkniv.repository.jdbc.stmt_strategy">net.sf.jkniv.whinstone.jdbc.DefaultPreparedStatementStrategy</prop>
+        <prop key="jkniv.repository.query_namestrategy">net.sf.jkniv.sqlegance.HashQueryNameStrategy</prop>
+        <prop key="jkniv.repository.jdbc.dialect">net.sf.jkniv.whinstone.jdbc.dialect.Derby10o7Dialect</prop>
+      </props>
+    </property>
+  </bean>
+  <bean id="propertyOra" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    <property name="properties">
+      <props>
+        <prop key="jkniv.repository.jdbc.stmt_strategy">net.sf.jkniv.whinstone.jdbc.DefaultPreparedStatementStrategy</prop>
+        <prop key="jkniv.repository.query_namestrategy">net.sf.jkniv.sqlegance.HashQueryNameStrategy</prop>
+        <prop key="jkniv.repository.jdbc.dialect">net.sf.jkniv.whinstone.jdbc.dialect.OracleDialect</prop>
+        <prop key="jkniv.repository.debug_sql">STMT</prop><!-- ALL, CONN, TX, STMT, RESULTSET -->
+      </props>
+    </property>
+  </bean>
+  <bean id="propertyPostgres" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    <property name="properties">
+      <props>
+        <prop key="jkniv.repository.jdbc.stmt_strategy">net.sf.jkniv.whinstone.jdbc.DefaultPreparedStatementStrategy</prop>
+        <prop key="jkniv.repository.query_namestrategy">net.sf.jkniv.sqlegance.HashQueryNameStrategy</prop>
+        <prop key="jkniv.repository.jdbc.dialect">net.sf.jkniv.whinstone.jdbc.dialect.PostgreSqlDialect</prop>
+        <prop key="jkniv.repository.debug_sql">STMT</prop><!-- ALL, CONN, TX, STMT, RESULTSET -->
+      </props>
+    </property>
+  </bean>
+  
+  <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dataSourceOra"/>
+  </bean>
+
+  <bean name="repositoryDerby" class="net.sf.jkniv.whinstone.jdbc.RepositoryJdbc"
+    autowire="byName">
+    <constructor-arg ref="dataSourceDerby" />
+    <constructor-arg type="java.lang.String" value="/repository-sql-derby.xml" />
+    <constructor-arg ref="propertyDerby" />
+  </bean>
+  <bean name="repositoryOra" class="net.sf.jkniv.whinstone.jdbc.RepositoryJdbc"
+    autowire="byName">
+    <constructor-arg ref="dataSourceOra" />
+    <constructor-arg type="java.lang.String" value="/repository-sql-ora.xml" />    
+    <constructor-arg ref="propertyOra" />
+  </bean>
+  <bean name="repositoryPostgreSql" class="net.sf.jkniv.whinstone.jdbc.RepositoryJdbc"
+    autowire="byName">
+    <constructor-arg ref="dataSourcePostgres" />
+    <constructor-arg type="java.lang.String" value="/repository-sql-postgres.xml" />
+    <constructor-arg ref="propertyPostgres" />
+  </bean>
+  <!-- 
+  <bean name="repositoryCas" class="net.sf.jkniv.whinstone.jdbc.RepositoryJdbc"
+    autowire="byName">
+    <constructor-arg ref="dataSourceCas" />
+    <constructor-arg type="java.lang.String" value="/repository-sql-cas.xml" />    
+  </bean>
+   -->
+  <bean name="repositorySpring" class="net.sf.jkniv.whinstone.jdbc.RepositoryJdbc"
+    autowire="byName">
+    <constructor-arg ref="dataSourceOra" />
+    <constructor-arg type="java.lang.String" value="/repository-sql-spring.xml" />
+  </bean>
+  <bean name="repositoryDriverMngr" class="net.sf.jkniv.whinstone.jdbc.RepositoryJdbc"
+    autowire="byName">
+    <constructor-arg type="java.lang.String" value="/repository-sql-drivermanager.xml" />
+  </bean>
+
+</beans>

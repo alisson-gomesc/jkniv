@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>net.sf.jkniv.examples</groupId>
+    <artifactId>jkniv-example-whinstone-ejb</artifactId>
+    <version>0.1.0</version>
+  </parent>
+  <artifactId>shop-ear</artifactId>
+  <packaging>ear</packaging>
+  <description>ear module</description>
+  <dependencies>
+    <dependency>
+      <groupId>net.sf.jkniv.examples</groupId>
+      <artifactId>shop-rest</artifactId>
+      <version>0.1.0</version>
+      <type>war</type>
+    </dependency>
+
+    <dependency>
+      <groupId>net.sf.jkniv.examples</groupId>
+      <artifactId>shop-ejb</artifactId>
+      <version>0.1.0</version>
+      <type>ejb</type>
+    </dependency>
+  </dependencies>
+  <build>
+    <finalName>shop-ear</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ear-plugin</artifactId>
+        <configuration>
+          <modules>
+            <webModule>
+              <groupId>net.sf.jkniv.examples</groupId>
+              <artifactId>shop-rest</artifactId>
+              <contextRoot>/shop-rest</contextRoot>
+              <bundleFileName>shop-rest.war</bundleFileName>
+            </webModule>
+            <ejbModule>
+              <bundleFileName>shop-ejb.jar</bundleFileName>
+              <groupId>net.sf.jkniv.examples</groupId>
+              <artifactId>shop-ejb</artifactId>
+            </ejbModule>
+          </modules>
+          <generateApplicationXml>true</generateApplicationXml>
+          <!-- configurações para o hibernate no glassfish -->
+          <defaultLibBundleDir>lib</defaultLibBundleDir>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

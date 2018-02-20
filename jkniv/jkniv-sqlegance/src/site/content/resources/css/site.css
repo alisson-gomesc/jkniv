@@ -1,0 +1,33 @@
+/*
+ * when new flags are needed, take them from
+ *
+ * http://www.printableworldflags.com/flag-icon
+ *
+ * that are free for any kind of usage
+ */
+body, td, select, input, li{
+  /*font-family: font-family: Georgia,'Times New Roman',serif;*/
+  font-family: "Trebuchet MS", "Geneva", "Arial", "Helvetica", "SunSans-Regular", sans-serif;
+  /*font-size: 13px;*/
+}
+
+th, td {
+   border: 1px solid gray;
+}
+
+pre.prettyprint {
+ border: 1px dashed #3c78b5
+}
+
+
+ul.i18n {list-style-type:none;line-height:2;}
+li.en {background: url('../images/en.png') left center no-repeat;padding-left: 32px;}
+li.es {background: url('../images/es.png') left center no-repeat;padding-left: 32px;}
+li.ja {background: url('../images/ja.png') left center no-repeat;padding-left: 32px;}
+li.zh {background: url('../images/zh.png') left center no-repeat;padding-left: 32px;}
+li.ko {background: url('../images/ko.png') left center no-repeat;padding-left: 32px;}
+
+a.externalLink[href^="https"] {
+    background: white;
+    padding-right: 18px;
+}

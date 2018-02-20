@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+  <select id="test-order1-select" type="JPQL">
+    select id, name from Users where id > 0
+    <if test="name != null">
+      AND name = #{name}
+    </if>
+    <if test="cel != null">
+      AND cel = #{cel}
+    </if>
+    <choose>
+      <when test="doc != null">
+        AND doc like #{doc}
+      </when>
+      <when test="phone != null">
+        AND phone like #{phone}
+      </when>
+      <otherwise>
+        AND status = 1
+      </otherwise>
+    </choose>
+    <if test="age != null">
+      AND age = #{age}
+    </if>
+  </select>
+
+  <select id="test-order2-where" type="JPQL">
+    select id, name from Users
+    <where>
+      <if test="name != null">
+        AND name = #{name}
+      </if>
+      <if test="cel != null">
+        AND cel = #{cel}
+      </if>
+      <choose>
+        <when test="doc != null">
+          AND doc like #{doc}
+        </when>
+        <when test="phone != null">
+          AND phone like #{phone}
+        </when>
+        <otherwise>
+          AND status = 1
+        </otherwise>
+      </choose>
+      <if test="age != null">
+        AND age = #{age}
+      </if>
+    </where>
+  </select>  
+</statements>

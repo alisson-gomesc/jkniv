@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+       
+  <select id="test-nopack-0" type="JPQL">
+    select id, name from Users where id = 0
+  </select>
+
+  <package name="com.acme.one">
+    
+    <select id="test-pack-1" type="JPQL">
+      select id, name from Users where id = 1
+    </select>
+    <select id="test-pack-2" type="JPQL">
+      select id, name from Users where id = 2
+    </select>
+    <select id="test-pack-3" type="JPQL">
+      select id, name from Users where id = 3
+    </select>
+  </package>
+
+  <package name="com.acme.two">
+    <select id="test-pack-4" type="JPQL">
+      select id, name from Users where id = 4
+    </select>
+    <select id="test-pack-5" type="JPQL">
+      select id, name from Users where id = 5
+    </select>
+    <select id="test-pack-6" type="JPQL">
+      select id, name from Users where id = 6
+    </select>
+  </package>
+  
+  <select id="test-nopack-7" type="JPQL">
+    select id, name from Users where id = 7
+  </select>
+  <select id="test-nopack-8" type="JPQL">
+    select id, name from Users where id = 8
+  </select>
+
+</statements>

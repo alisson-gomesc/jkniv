@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  context="whinstone-driver-mgr-adapter"
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+  
+  
+  <select id="getBookByISBN" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook">
+    select b.ID as id, b.ISBN as isbn, b.NAME as name, a.name as author, a.ID as author_id 
+    from 
+     BOOK b
+    inner join AUTHOR a on a.ID = b.AUTHOR_ID
+    <where>
+      <if test="[0] != null">
+       b.ISBN = ?
+      </if>
+    </where>
+  </select>
+  
+  <insert type="NATIVE" id="FlatBook#add">
+  INSERT INTO BOOK(ID, ISBN, NAME, AUTHOR_ID) VALUES (:id, :isbn, :name, :authorId)
+  </insert>
+</statements>

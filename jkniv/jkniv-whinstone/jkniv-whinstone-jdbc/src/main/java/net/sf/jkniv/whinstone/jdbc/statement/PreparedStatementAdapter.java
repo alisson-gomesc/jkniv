@@ -1,0 +1,426 @@
+package net.sf.jkniv.whinstone.jdbc.statement;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import net.sf.jkniv.exception.HandlerException;
+import net.sf.jkniv.experimental.converters.SqlDateConverter;
+import net.sf.jkniv.sqlegance.JdbcColumn;
+import net.sf.jkniv.sqlegance.KeyGeneratorType;
+import net.sf.jkniv.sqlegance.OneToMany;
+import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.sqlegance.ResultRow;
+import net.sf.jkniv.sqlegance.ResultSetParser;
+import net.sf.jkniv.sqlegance.classification.Groupable;
+import net.sf.jkniv.sqlegance.classification.GroupingBy;
+import net.sf.jkniv.sqlegance.classification.NoGroupingBy;
+import net.sf.jkniv.sqlegance.classification.Transformable;
+import net.sf.jkniv.sqlegance.logger.LogLevel;
+import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
+import net.sf.jkniv.sqlegance.logger.SqlLogger;
+import net.sf.jkniv.sqlegance.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.jdbc.DefaultJdbcColumn;
+import net.sf.jkniv.whinstone.jdbc.result.FlatObjectResultRow;
+import net.sf.jkniv.whinstone.jdbc.result.MapResultRow;
+import net.sf.jkniv.whinstone.jdbc.result.NumberResultRow;
+import net.sf.jkniv.whinstone.jdbc.result.ObjectResultSetParser;
+import net.sf.jkniv.whinstone.jdbc.result.PojoResultRow;
+import net.sf.jkniv.whinstone.jdbc.result.ScalarResultRow;
+import net.sf.jkniv.whinstone.jdbc.result.StringResultRow;
+
+public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
+{
+    private final PreparedStatement stmt;
+    private final HandlerException  handlerException;
+    private final SqlDateConverter  dtConverter;
+    private int                     index, indexIN;
+    private SqlLogger               sqlLogger;
+    private Class<T>                returnType;
+    private ResultRow<T, ResultSet> resultRow;
+    private boolean                 scalar;
+    private Set<OneToMany>       oneToManies;
+    private List<String>            groupingBy;
+    private KeyGeneratorType keyGeneratorType;
+    
+    
+    public PreparedStatementAdapter(PreparedStatement stmt)
+    {
+        this.stmt = stmt;
+        this.sqlLogger = new SqlLogger(LogLevel.ALL, new SimpleDataMasking());// FIXME design retrieve SqlLogger another way 
+        this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
+        this.dtConverter = new SqlDateConverter();
+        this.oneToManies = Collections.emptySet();
+        this.groupingBy = Collections.emptyList();
+        this.scalar = false;
+        this.reset();
+    }
+    
+    public StatementAdapter<T, ResultSet> returnType(Class<T> returnType)
+    {
+        this.returnType = returnType;
+        return this;
+    }
+    
+    public StatementAdapter<T, ResultSet> resultRow(ResultRow<T, ResultSet> resultRow)
+    {
+        this.resultRow = resultRow;
+        return this;
+    }
+    
+    public StatementAdapter<T, ResultSet> scalar()
+    {
+        this.scalar = true;
+        return this;
+    }
+    
+    public StatementAdapter<T, ResultSet> oneToManies(Set<OneToMany> oneToManies)
+    {
+        this.oneToManies = oneToManies;
+        return this;
+    }
+    
+    public StatementAdapter<T, ResultSet> groupingBy(List<String> groupingBy)
+    {
+        this.groupingBy = groupingBy;
+        return this;
+    }
+    
+    @Override
+    public StatementAdapter<T, ResultSet> keyGeneratorType(KeyGeneratorType keyGeneratorType)
+    {
+        this.keyGeneratorType = keyGeneratorType;
+        return this;
+    }
+
+    @Override
+    public KeyGeneratorType getKeyGeneratorType()
+    {
+        return this.keyGeneratorType;
+    }
+    
+    @Override
+    public StatementAdapter<T, ResultSet> bind(String name, Object value)
+    {
+        log(name, value);
+        try
+        {
+            if (name.toLowerCase().startsWith("in:"))
+            {
+                setValue((Object[]) value);
+            }
+            else if (value instanceof java.util.Date)
+            {
+                setValue((java.util.Date) value);
+            }
+            else if (Enum.class.isInstance(value))
+            {
+                setValue((Enum) value);
+            }
+            else if (value instanceof java.util.Calendar)
+            {
+                setValue((Calendar) value);
+            }
+            else
+            {
+                setValue(value);
+            }
+        }
+        catch (SQLException e)
+        {
+            this.handlerException.handle(e);// FIXME handler default message with custom params
+        }
+        return this;
+    }
+    
+    @Override
+    //public StatementAdapter<T, ResultSet> bind(int position, Object value)
+    public StatementAdapter<T, ResultSet> bind(Object value)
+    {
+        //this.index = position;
+        log(value);
+        try
+        {
+            if (value instanceof java.util.Date)
+            {
+                setValue((java.util.Date) value);
+            }
+            else if (Enum.class.isInstance(value))
+            {
+                setValue((Enum) value);
+            }
+            else if (value instanceof java.util.Calendar)
+            {
+                setValue((Calendar) value);
+            }
+            else
+            {
+                setValue(value);
+            }
+        }
+        catch (SQLException e)
+        {
+            this.handlerException.handle(e);// FIXME handler default message with custom params
+        }
+        return this;
+    }
+    
+    @Override
+    public StatementAdapter<T, ResultSet> bind(Object... values)
+    {
+        for (; index < values.length;)
+        {
+            Object v = values[index];
+            bind(v);
+        }
+        return this;
+    }
+    
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public List<T> rows()
+    {
+        ResultSet rs = null;
+        ResultSetParser<T, ResultSet> rsParser = null;
+        Groupable<T, ?> grouping = new NoGroupingBy<T, T>();
+        List<T> list = Collections.emptyList();
+        try
+        {
+            rs = stmt.executeQuery();
+            
+            JdbcColumn<ResultSet>[] columns = getJdbcColumns(rs.getMetaData());
+            setResultRow(columns);
+            
+            Transformable<T> transformable = resultRow.getTransformable();
+            if (!groupingBy.isEmpty())
+            {
+                grouping = new GroupingBy(groupingBy, returnType, transformable);
+            }
+            rsParser = new ObjectResultSetParser(resultRow, grouping);
+            list = rsParser.parser(rs);
+        }
+        catch (SQLException e)
+        {
+            handlerException.handle(e, e.getMessage());
+        }
+        return list;
+    }
+    
+    public ResultSetParser<T, ResultSet> generatedKeys()
+    {
+        throw new UnsupportedOperationException("Not implemented yet!");
+    }
+    
+    public int execute()
+    {
+        try
+        {
+            return stmt.executeUpdate();
+        }
+        catch (SQLException e)
+        {
+            handlerException.handle(e, e.getMessage());
+        }
+        return 0;
+    }
+    
+    @Override
+    public void batch()
+    {
+        try
+        {
+            stmt.addBatch();
+        }
+        catch (SQLException e)
+        {
+            handlerException.handle(e, e.getMessage());
+        }
+    }
+    
+    @Override
+    public int reset()
+    {
+        int before = (index+indexIN);
+        index = 1;
+        indexIN = 0;
+        return before;
+    }
+    /*
+    @SuppressWarnings(
+    { "unchecked", "rawtypes" })
+    private void setValue(String name, Object paramValue)
+    {
+        log(name, paramValue);
+        try
+        {
+            if (name.toLowerCase().startsWith("in:"))
+            {
+                int j = 0;
+                Object[] paramsIN = (Object[]) paramValue;
+                if (paramsIN == null)
+                    throw new ParameterException("Cannot set parameter [" + name + "] from IN clause with NULL");
+                
+                for (; j < paramsIN.length; j++)
+                    stmt.setObject(j + index, paramsIN[j]);
+                indexIN = indexIN + j;
+            }
+            else
+            {
+                if (paramValue == null)
+                {
+                    stmt.setObject(index + indexIN, paramValue);
+                }
+                else if (paramValue.getClass().isEnum())
+                {
+                    ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(paramValue);
+                    stmt.setObject(index + indexIN, proxy.invoke("name"));
+                }
+                else if (paramValue instanceof Date)
+                {
+                    SqlDateConverter converter = new SqlDateConverter();
+                    java.sql.Timestamp timestamp = converter.convert(java.sql.Timestamp.class, paramValue);
+                    stmt.setObject(index + indexIN, timestamp);
+                }
+                else
+                {
+                    stmt.setObject(index + indexIN, paramValue);
+                }
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RepositoryException(
+                    "Cannot set parameter [" + name + "] value [" + sqlLogger.mask(name, paramValue) + "]", e);
+        }
+    }
+    */
+    
+    private void setValue(Object value) throws SQLException
+    {
+        stmt.setObject(currentIndex(), value);
+    }
+    
+    private void setValue(Object[] paramsIN) throws SQLException
+    {
+        int j = 0;
+        for (; j < paramsIN.length; j++)
+            stmt.setObject(index+indexIN + j, paramsIN[j]);
+        indexIN = indexIN + j;
+    }
+    
+    private void setValue(Date value) throws SQLException
+    {
+        java.sql.Timestamp timestamp = dtConverter.convert(java.sql.Timestamp.class, value);
+        stmt.setObject(currentIndex(), timestamp);
+    }
+    
+    private void setValue(Calendar value) throws SQLException
+    {
+        java.sql.Timestamp timestamp = dtConverter.convert(java.sql.Timestamp.class, value.getTime());
+        stmt.setObject(currentIndex(), timestamp);
+    }
+    
+    private void setValue(Enum<?> value) throws SQLException
+    {
+        //ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(value);
+        //stmt.setObject(currentIndex(), proxy.invoke("name"));
+        stmt.setObject(currentIndex(), value.name());// FIXME design converter to allow save ordinal value or other value from enum
+    }
+    
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private void setResultRow(JdbcColumn<ResultSet>[] columns)
+    {
+        if (resultRow != null)
+            return;
+        
+        if (scalar)
+        {
+            resultRow = new ScalarResultRow(columns, sqlLogger);
+        }
+        else if (Map.class.isAssignableFrom(returnType))
+        {
+            resultRow = new MapResultRow(returnType, columns, sqlLogger);
+        }
+        else if (Number.class.isAssignableFrom(returnType)) // FIXME implements for date, calendar, boolean improve design
+        {
+            resultRow = new NumberResultRow(returnType, columns, sqlLogger);
+        }
+        else if (String.class.isAssignableFrom(returnType))
+        {
+            resultRow = new StringResultRow(columns, sqlLogger);
+        }
+        else if (oneToManies.isEmpty())
+        {
+            resultRow = new FlatObjectResultRow(returnType, columns, sqlLogger);
+        }
+        else
+        {
+            resultRow = new PojoResultRow(returnType, columns, oneToManies, sqlLogger);
+        }
+    }
+    
+    private int currentIndex()
+    {
+        return ( index++ +indexIN);
+    }
+    
+    private void log(String name, Object value)
+    {
+            if (sqlLogger.isEnabled(LogLevel.STMT))
+                sqlLogger.log(LogLevel.STMT,
+                        "Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index,
+                        name, sqlLogger.mask(name, value), (value == null ? "NULL" : value.getClass()));
+    }
+    
+    private void log(Object value)
+    {
+            String name = String.valueOf(index+indexIN);
+            if (sqlLogger.isEnabled(LogLevel.STMT))
+                sqlLogger.log(LogLevel.STMT,
+                        "Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index,
+                        name, sqlLogger.mask(name, value), (value == null ? "NULL" : value.getClass()));
+    }
+
+    /**
+     * Summarize the columns from SQL result in binary data or not.
+     * @param metadata  object that contains information about the types and properties of the columns in a <code>ResultSet</code> 
+     * @return Array of columns with name and index
+     * @throws SQLException Errors that occurs when access {@code ResultSetMetaData} methods.
+     */
+    private JdbcColumn[] getJdbcColumns(ResultSetMetaData metadata) throws SQLException
+    {
+        JdbcColumn[] columns = new JdbcColumn[metadata.getColumnCount()];
+        
+        for (int i = 0; i < columns.length; i++)
+        {
+            int columnNumber = i + 1;
+            String columnName = getColumnName(metadata, columnNumber);
+            int columnType = metadata.getColumnType(columnNumber);
+            //boolean binaryData = false;
+            //if (columnType == Types.CLOB || columnType == Types.BLOB)
+            //    binaryData = true;
+            columns[i] = new DefaultJdbcColumn(columnNumber, columnName, columnType);
+        }
+        return columns;
+    }
+    
+    private String getColumnName(ResultSetMetaData metaData, int columnIndex) throws SQLException
+    {
+        try
+        {
+            return metaData.getColumnLabel(columnIndex);
+        }
+        catch (SQLException e)
+        {
+            return metaData.getColumnName(columnIndex);
+        }
+    }
+    
+    
+}

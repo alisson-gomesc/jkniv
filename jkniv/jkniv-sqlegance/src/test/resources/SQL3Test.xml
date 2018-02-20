@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+  <select
+    id="selectRoles"
+    type="NATIVE">
+    select id, name from Roles
+  </select>
+
+  <procedure
+    id="daInsertAutoItemUpc"
+    spname="daInsertAutoITEM_UPC">
+    <parameter
+      property="sku"
+      mode="IN" />
+    <parameter
+      property="upcAltKey"
+      mode="IN" />
+    <parameter
+      property="uom"
+      mode="IN" />
+    <parameter
+      property="addUpdateDate"
+      mode="IN" />
+    <parameter
+      property="curDayMove"
+      mode="IN" />
+    <parameter
+      property="prevDayMove"
+      mode="OUT" />
+    <parameter
+      property="curWkMove"
+      mode="INOUT" />
+    <parameter
+      property="prevWkMove"
+      mode="IN" />
+    <parameter
+      property="dateLastMoved"
+      mode="IN" />
+    <parameter
+      property="dateLastRoll"
+      mode="IN" />
+    <parameter
+      property="prevCoupFamilyCode"
+      mode="IN" />
+    <parameter
+      property="curCoupFamilyCode"
+      mode="IN" />
+    <parameter
+      property="datecreated"
+      mode="OUT"
+      sqlType="CHAR"
+      typeName="com.acme.Model" />
+  </procedure>
+
+</statements>

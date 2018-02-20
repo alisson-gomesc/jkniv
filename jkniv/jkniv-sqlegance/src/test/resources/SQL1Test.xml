@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  context="xxx"
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements 
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+
+  <select
+    id="selectUsers"
+    type="JPQL">
+    <description>Description from the sql logic</description>
+    select id, name from Users
+    <if test="name != null">
+      where id = 1
+    </if>
+  </select>
+
+  <select
+    id="selectGroups"
+    type="JPQL">
+    select id, name from Groups
+    <where>
+      <if test="state != null">
+        and state = #{state}
+      </if>
+      <if test="title != null">
+        and title like #{title}
+      </if>
+      <if test="author != null and author.name != null">
+        or author_name like #{author.name}
+      </if>
+      <if test="age == 5">
+			 <![CDATA[
+				or (age >= 5 and age <= 15)
+				]]>
+      </if>
+    </where>
+  </select>
+
+  <select
+    id="selectUsersHaving"
+    type="NATIVE">
+    select id, name from Users
+    <where>
+      <if test="name != null">
+        name = 1
+      </if>
+    </where>
+    <if test="age > 5">
+          <![CDATA[
+            having age > 5
+          ]]>
+    </if>
+  </select>
+
+</statements>

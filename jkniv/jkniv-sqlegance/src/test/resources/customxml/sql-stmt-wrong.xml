@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<statements 
+  
+  name="THIS ATTRIBUTE NOT EXISTS"
+  
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements 
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+
+  <select
+    id="dummySqlForWrongStmt"
+    type="NATIVE">
+    select id, name from Users
+  </select>
+
+
+</statements>

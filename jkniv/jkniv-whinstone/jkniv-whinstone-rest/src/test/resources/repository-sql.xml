@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+ context="whinstone"
+ xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+
+
+ <include href="/repository-sql-insert.xml"/>
+ <include href="/repository-sql-delete.xml"/>
+ <include href="/repository-sql-scalar.xml"/>
+ <include href="/repository-sql-groupingby.xml"/>
+ <include href="/repository-sql-onetomany.xml"/>
+
+
+ <select id="Book#get" type="JPQL" returnType="com.acme.domain.orm.Book">
+  from Book b
+  <if test="id != null">
+   where b.id = :id
+  </if>
+ </select>
+
+ <select id="Book.list" type="JPQL" returnType="com.acme.domain.orm.Book">
+  from Book b
+ </select>
+
+ <select id="listLikeName" type="JPQL" returnType="com.acme.domain.orm.Book">
+  select b from Book b where b.name like :name
+ </select>
+
+ <select id="listBean" type="JPQL" returnType="com.acme.domain.flat.AuthorFlat">
+  select new com.acme.domain.flat.AuthorFlat(a.name, b.name) from Book b join b.author as a
+ </select>
+  
+ </statements>

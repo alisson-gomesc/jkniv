@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements context="derby" xmlns="http://jkniv.sf.net/schema/sqlegance/statements" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+  <include href="/repository-sql-derby-select-nested.xml" />
+  <include href="/repository-sql-derby-paging.xml" />
+  <include href="/repository-sql-derby-map-interface.xml" />
+  <include href="/repository-sql-derby-scalar.xml" />
+  <include href="/repository-sql-derby-autokey.xml" />
+  <include href="/repository-sql-derby-null-types.xml" />
+  <include href="/repository-sql-derby-groupingby.xml" />
+  <include href="/repository-sql-derby-onetomany.xml" />
+  <include href="/repository-sql-derby-onecolumn.xml"/>
+  <include href="/repository-sql-derby-validation.xml"/>
+
+  <select id="listBooksNoSpecificType" type="NATIVE">
+    select b.ID as id, b.ISBN as isbn, b.NAME as name
+    from BOOK
+    b
+  </select>
+
+  <select id="getBookToOverloadType" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook">
+    select b.ID as id, b.ISBN as isbn, b.NAME
+    as name
+    from
+    BOOK b
+  </select>
+
+
+  <select id="getBookByISBN" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook">
+    select b.ID as id, b.ISBN as isbn, b.NAME as name, a.name as author, a.ID as author_id
+    from
+    BOOK b
+    inner join
+    AUTHOR a on a.ID = b.AUTHOR_ID
+    <where>
+      <if test="[0] != null">
+        b.ISBN = ?
+      </if>
+    </where>
+  </select>
+  <select id="getBookByISBNWithMap" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook">
+    select b.ID as id, b.ISBN as isbn, b.NAME as name, a.name as author
+    from
+    BOOK b
+    inner join AUTHOR a on a.ID =
+    b.AUTHOR_ID
+    <where>
+      <if test="isbn != null">
+        b.ISBN = :isbn
+      </if>
+    </where>
+  </select>
+
+  <select id="getAuthorWithTwoDots" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatAuthor">
+    select
+    id, name
+    from author a where a.id =
+    :id
+  </select>
+  <select id="getAuthorWithHashParam" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatAuthor">
+    select
+    id, name
+    from author a where a.id =
+    #{id}
+  </select>
+  <select id="getAllBooks" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook">
+    select b.ID as id, b.ISBN as isbn, b.NAME as name,
+    a.name as author
+    from
+    BOOK b
+    inner join AUTHOR a on a.ID = b.AUTHOR_ID
+  </select>
+
+  <select id="getBooksFromAuthorUsingIN" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook">
+    select b.ID as id, b.ISBN as isbn,
+    b.NAME as name, a.name as author
+    from BOOK b inner join AUTHOR a on a.ID = b.AUTHOR_ID
+    where a.name in
+    (:in:authors)
+  </select>
+
+  <select id="FlatBook#get" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook">
+    select b.ID as id, b.ISBN as isbn, b.NAME as name, a.name as author
+    from
+    BOOK b
+    inner join AUTHOR a on a.ID =
+    b.AUTHOR_ID
+    <where>
+      <choose>
+        <when test="isbn != null">
+          b.ISBN = :isbn
+        </when>
+        <otherwise>
+          b.id = :id
+        </otherwise>
+      </choose>
+    </where>
+  </select>
+
+  <select type="NATIVE" id="myTypeByDate" returnType="java.util.HashMap">
+    select ID, MY_SMALLINT, MY_INTEGER, MY_BIGINT,
+    MY_FLOAT,
+    MY_DECIMAL, MY_VARCHAR, MY_CHAR, MY_BLOB, MY_CLOB, MY_DATE,
+    MY_TIME, MY_TIMESTAMP from MY_TYPES where MY_DATE = :date
+  </select>
+
+  <insert type="NATIVE" id="FlatBook#add">
+    INSERT INTO BOOK(ID, ISBN, NAME, AUTHOR_ID) VALUES (:id, :isbn, :name,
+    :authorId)
+  </insert>
+
+  <update type="NATIVE" id="FlatAuthor#update">
+    update author set name = :name where id = :id
+  </update>
+
+  <delete type="NATIVE" id="FlatBook#remove">
+    delete from BOOK where id = :id
+  </delete>
+
+  <update id="Book#update">
+    update book set name = :name, isbn = :isbn, visualization = :visualization where id = :id
+  </update>
+  <select id="Book#get" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.Book">
+    select b.ID as id, b.ISBN as isbn, b.NAME as name, b.visualization
+    from
+    BOOK b
+    inner join AUTHOR a on a.ID =
+    b.AUTHOR_ID
+    <where>
+      <choose>
+        <when test="isbn != null">
+          b.ISBN = :isbn
+        </when>
+        <otherwise>
+          b.id = :id
+        </otherwise>
+      </choose>
+    </where>
+  </select>
+  
+</statements>

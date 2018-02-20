@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+ context="whinstone"
+ xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+
+ <select id="authorByIdSqlOneStringColumn" type="NATIVE" returnType="java.lang.String">
+   select a.name
+   from AUTHOR a 
+   inner join BOOK b on b.AUTHOR_ID = a.ID 
+   where a.id = :id
+ </select>
+
+ <select id="authorByIdSqlOneNumberColumn" type="NATIVE" returnType="java.lang.Long">
+   select a.id
+   from AUTHOR a 
+   inner join BOOK b on b.AUTHOR_ID = a.ID 
+   where a.id = :id
+ </select>
+
+ <select id="authorNoExists" type="NATIVE">
+   select a.name
+   from AUTHOR a 
+   inner join BOOK b on b.AUTHOR_ID = a.ID 
+   where a.name = 'NO EXISTS'
+ </select>
+  
+ </statements>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+ <persistence-unit name="clsiv-dao" transaction-type="RESOURCE_LOCAL">
+  <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+  <class>br.com.rwit.clsiv.domain.entity.sharedclsi.Unidade</class>
+  <class>br.com.rwit.clsiv.domain.entity.sharedclsi.Colaborador</class>
+  <class>br.com.rwit.clsiv.domain.entity.sharedclsi.Pdv</class>
+  <class>br.com.rwit.clsiv.domain.entity.access.Funcionalidade</class>
+  <class>br.com.rwit.clsiv.domain.entity.access.Perfil</class>
+  <class>br.com.rwit.clsiv.domain.entity.access.Usuario</class>
+  <class>br.com.rwit.clsiv.domain.entity.CLSIConfig</class>
+  <class>br.com.rwit.clsiv.domain.entity.CustoDeslocamento</class>
+  <class>br.com.rwit.clsiv.domain.entity.DiaSemVisita</class>
+  <class>br.com.rwit.clsiv.domain.entity.indicadores.AnaliseRota</class>
+  <class>br.com.rwit.clsiv.domain.entity.indicadores.CustoMedio</class>
+  <class>br.com.rwit.clsiv.domain.entity.indicadores.RotaRealizada</class>
+  <class>br.com.rwit.clsiv.domain.entity.indicadores.RotaPlanejada</class>
+  <class>br.com.rwit.clsiv.domain.entity.indicadores.IndicadoresParada</class>
+  <class>br.com.rwit.clsiv.domain.entity.indicadores.ParadaRealizada</class>
+  <class>br.com.rwit.clsiv.domain.entity.indicadores.ParadaPlanejada</class>
+  <class>br.com.rwit.clsiv.domain.entity.indicadores.IndicadoresVisita</class>
+  <class>br.com.rwit.clsiv.domain.entity.indicadores.AtendimentoRota</class>
+  <class>br.com.rwit.clsiv.domain.entity.Rota</class>
+  <class>br.com.rwit.clsiv.domain.entity.GrupoRota</class>
+  <class>br.com.rwit.clsiv.domain.entity.PosicaoGpsOnline</class>
+  <class>br.com.rwit.clsiv.domain.entity.RotaVendedorOnline</class>
+  <class>br.com.rwit.clsiv.domain.entity.indicadores.Indicador</class>
+  <class>br.com.rwit.clsiv.domain.entity.indicadores.FiltroIndicador</class>
+  <class>br.com.rwit.clsiv.domain.entity.indicadores.FiltroIndicadorItem</class>
+  <class>br.com.rwit.clsiv.domain.entity.indicadores.TracadoReal</class>
+  <exclude-unlisted-classes>false</exclude-unlisted-classes>
+
+
+  <properties>
+   <property name="hibernate.archive.autodetection" value="class" />
+   <property name="hibernate.show_sql" value="true" />
+   <property name="hibernate.jdbc.batch_size" value="1000" />
+   <property name="hibernate.order_updates" value="true" />
+   <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect" />
+   
+   <property name="javax.persistence.jdbc.driver" value="oracle.jdbc.driver.OracleDriver" />
+   <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@golodaclu001.rebic.com.br:1521/odaprd" />
+   <property name="javax.persistence.jdbc.user" value="clsi" />
+   <property name="javax.persistence.jdbc.password" value="clsipr14" />
+   
+  </properties>
+ </persistence-unit>
+
+ <persistence-unit name="clsiv-tracker-dao" transaction-type="RESOURCE_LOCAL">
+  <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+  <class>br.com.rwit.clsiv.domain.entity.tracker.Dispositivo</class>
+  <class>br.com.rwit.clsiv.domain.entity.tracker.DispositivoRota</class>
+  <class>br.com.rwit.clsiv.domain.entity.tracker.Configuracao</class>
+  <class>br.com.rwit.clsiv.domain.entity.tracker.Posicao</class>
+  <class>br.com.rwit.clsiv.domain.entity.tracker.PosicaoGps</class>
+  <class>br.com.rwit.clsiv.domain.entity.tracker.DispositivoMemoria</class>
+
+  <exclude-unlisted-classes>false</exclude-unlisted-classes>
+
+  <properties>
+   <property name="hibernate.archive.autodetection" value="class" />
+   <property name="hibernate.show_sql" value="true" />
+   <property name="hibernate.jdbc.batch_size" value="1000" />
+   <property name="hibernate.order_updates" value="true" />
+   <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect" />
+
+   <property name="javax.persistence.jdbc.driver" value="oracle.jdbc.driver.OracleDriver" />
+   <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@golodaclu001.rebic.com.br:1521/odaprd" />
+   <property name="javax.persistence.jdbc.user" value="clsi" />
+   <property name="javax.persistence.jdbc.password" value="clsipr14" />
+
+  </properties>
+ </persistence-unit>
+</persistence>

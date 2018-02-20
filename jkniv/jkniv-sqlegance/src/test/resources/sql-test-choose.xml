@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements xmlns="http://jkniv.sf.net/schema/sqlegance/statements" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+
+  <select id="test-choose1" type="JPQL">
+    select id, name from Users where id > 0
+    <if test="name != null">
+      AND name = #{name}
+    </if>
+    <choose>
+      <when test="doc != null">
+        AND doc like #{doc}
+      </when>
+      <when test="phone != null">
+        AND phone like #{phone}
+      </when>
+      <otherwise>
+        AND status = 1
+      </otherwise>
+    </choose>
+  </select>
+
+
+  <select id="test-where-with-choose" type="NATIVE" returnType="java.util.HashMap">
+    select * from customers c
+    <where>
+      <choose>
+        <when test="code != null">
+          trim(c.code) = trim(:code)
+          and trim(c.codeShop) = :codeShop
+        </when>
+        <otherwise>
+          c.cgc = :cgc
+        </otherwise>
+      </choose>
+    </where>
+  </select>
+
+</statements>

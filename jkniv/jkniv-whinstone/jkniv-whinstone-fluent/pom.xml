@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>net.sf.jkniv</groupId>
+    <artifactId>jkniv-whinstone</artifactId>
+    <version>0.6.0.M16</version>
+  </parent>
+  <artifactId>jkniv-whinstone-fluent</artifactId>
+  <url>http://jkniv.sourceforge.net/Whinstone</url>
+  <name>jkniv-whinstone-fluent</name>
+  <dependencies>
+    <dependency>
+     <groupId>net.sf.jkniv</groupId>
+     <artifactId>jkniv-sqlegance</artifactId>
+    </dependency>
+  </dependencies>
+  <scm>
+    <connection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/trunk/SQLegance</connection>
+    <developerConnection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/trunk/SQLegance</developerConnection>
+    <url>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/trunk/SQLegance</url>
+  </scm>
+  <distributionManagement>
+    <site>
+      <id>sourceforge.net</id>
+      <url>scp://shell.sourceforge.net/home/project-web/jkniv/htdocs/SQLegance</url>
+    </site>
+  </distributionManagement>
+  <licenses>
+    <license>
+      <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1</name>
+      <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+    </license>
+  </licenses>
+
+</project>

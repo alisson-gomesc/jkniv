@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop.xsd
+    http://www.springframework.org/schema/jdbc 
+    http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+  <context:annotation-config />
+  <tx:annotation-driven transaction-manager="transactionManager" />
+  <context:component-scan base-package="net.sf.jkniv.whinstone.jpa2" />
+
+  <bean id="dataSourceOra" class="org.apache.commons.dbcp.BasicDataSource"
+    p:driverClassName="oracle.jdbc.driver.OracleDriver" p:url="jdbc:oracle:thin:@127.0.0.1:1521:XE"
+    p:username="whinstone" p:password="whinstone" p:initialSize="5" p:maxActive="10">
+  </bean>
+
+  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+    destroy-method="close">
+    <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
+    <property name="url" value="jdbc:derby:memory:WHINSTONEJPA;create=true;" />
+  </bean>
+
+  <jdbc:initialize-database data-source="dataSourceOra" enabled="true"
+    ignore-failures="DROPS">
+    <jdbc:script location="classpath:database/ora/db-drop.sql" execution="DESTROY" />
+    <jdbc:script location="classpath:database/ora/db-create.sql" execution="INIT"/>
+    <jdbc:script location="classpath:database/ora/db-load.sql" execution="INIT"/>
+  </jdbc:initialize-database>
+
+
+  <!-- bean post-processor for JPA annotations -->
+  <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+  <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+    <!--property name="dataSource" ref="dataSource" / -->
+    <property name="persistenceUnitName" value="whinstone" />
+  </bean>
+
+  <bean name="hibernateJpaDialect" class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+
+  <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+    <property name="entityManagerFactory" ref="entityManagerFactory" />
+    <property name="jpaDialect" ref="hibernateJpaDialect" />
+    <!--property name="persistenceUnitName" value="whinstone" / -->
+    <!--property name="dataSource" ref="dataSource" / -->
+  </bean>
+
+  <!--bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> 
+    <property name="dataSource" ref="dataSource"/> </bean -->
+
+  <!-- 
+  <bean id="bookRepository" class="net.sf.jkniv.whinstone.jpa2.old.repository.BookRepository">
+    <constructor-arg index="0" value="whinstone" />
+  </bean>
+  <bean id="authorRepository" class="net.sf.jkniv.whinstone.jpa2.old.repository.AuthorRepository">
+    <constructor-arg index="0" value="whinstone" />
+  </bean>
+  <bean id="repository" class="net.sf.jkniv.whinstone.jpa2.RepositoryJpa">
+    <constructor-arg index="0" value="whinstone" />
+  </bean>
+  -->
+
+  <!--jpa:repositories base-package="com.acme.whinstone.test" entity-manager-factory-ref="entityManagerFactory" 
+    transaction-manager-ref="transactionManager"/ -->
+</beans>

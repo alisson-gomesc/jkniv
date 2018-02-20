@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+  
+
+  <select id="getNulValues" type="NATIVE" returnType="java.util.Map">
+  SELECT 
+   MY_SMALLINT, MY_INTEGER, MY_BIGINT, MY_FLOAT,
+   MY_DECIMAL, MY_VARCHAR, MY_CHAR, MY_BLOB, MY_CLOB, MY_DATE, 
+   MY_TIME, MY_TIMESTAMP 
+   FROM MY_TYPES where ID = 2
+  </select>
+
+</statements>

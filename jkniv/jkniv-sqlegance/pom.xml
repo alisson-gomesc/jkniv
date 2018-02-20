@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>net.sf.jkniv</groupId>
+    <artifactId>jkniv</artifactId>
+    <version>0.6.0.M16</version>
+  </parent>
+
+  <artifactId>jkniv-sqlegance</artifactId>
+  <name>jkniv-sqlegance</name>
+  <url>http://jkniv.sourceforge.net/jkniv-sqlegance/</url>
+
+  <licenses>
+    <license>
+      <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1</name>
+      <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+    </license>
+  </licenses>
+  <dependencies>
+    <dependency>
+      <groupId>ognl</groupId>
+      <artifactId>ognl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.javassist</groupId>
+      <artifactId>javassist</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.jkniv</groupId>
+      <artifactId>jkniv-utils</artifactId>
+    </dependency>
+    <dependency>
+       <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+    </dependency>    
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.6</version>
+        <configuration>
+          <siteDirectory>src/site/content</siteDirectory>
+          <outputDirectory>../target/generated-site/${project.artifactId}</outputDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <scm>
+    <connection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/jkniv-sqlegance</connection>
+    <developerConnection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/jkniv-sqlegance</developerConnection>
+    <url>https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/jkniv-sqlegance</url>
+  </scm>
+
+  <description>Manage SQL code into XML files making for better maintenance.</description>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>https://jkniv-io.atlassian.net/projects/JKNIVSQL/</url>
+  </issueManagement>
+</project>
