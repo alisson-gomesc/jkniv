@@ -190,38 +190,32 @@ public abstract class AbstractTransaction implements Transactional
     //    @Override
     //    public final void setTransactionTimeout(int seconds) throws TransactionException
     //    {
-    //        // TODO Auto-generated method stub
     //    }
     
     /*
     public Transaction getTransaction() //throws SystemException
     {
         
-        // TODO Auto-generated method stub
         return null;
     }
     
     public void resume(Transaction transaction)//        throws InvalidTransactionException, IllegalStateException, SystemException
     {
-        // TODO Auto-generated method stub
         
     }
     
     public void setRollbackOnly() //throws IllegalStateException, SystemException
     {
-        // TODO Auto-generated method stub
         
     }
     
     public void setTransactionTimeout(int timeout) //throws SystemException
     {
-        // TODO Auto-generated method stub
         
     }
     
     public Transaction suspend() //throws SystemException
     {
-        // TODO Auto-generated method stub
         return null;
     }
     */

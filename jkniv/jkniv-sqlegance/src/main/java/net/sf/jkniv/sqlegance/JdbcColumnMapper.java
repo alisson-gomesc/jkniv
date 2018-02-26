@@ -22,5 +22,5 @@ package net.sf.jkniv.sqlegance;
 
 public interface JdbcColumnMapper
 {
-    String map(String row); // TODO unit test
+    String map(String row); // TODO test column mapper
 }

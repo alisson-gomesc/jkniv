@@ -454,7 +454,7 @@ class QueryName implements Queryable
         if (pagingSelect)
         {
             this.sqlTextToCount = this.sql.getSqlDialect().buildQueryCount(sqlText);
-            if (sql.getSqlDialect().supportsLimit() && this.sqlTextPaginated == null)// TODO test pagina
+            if (sql.getSqlDialect().supportsLimit() && this.sqlTextPaginated == null)// TODO test paginate
                 throw new IllegalStateException("SqlDialect ["+sql.getSqlDialect().name()+"] supports paging query but the query cannot be build");
         }
     }
