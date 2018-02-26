@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.dml;
+package net.sf.jkniv.whinstone.jdbc.params;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -53,14 +53,9 @@ public class SqlUpdateCollectionTest extends BaseJdbc
     Repository repositoryDerby;
 
     @Test
-    public void whenUpdateUsineCollectionOfMapWithEntity()
+    public void whenUpdateUsingCollectionOfEntity()
     {
-    }
-    
-    @Test
-    public void whenUpdateUsingCollectionOfMapWithQueryable()
-    {
-        Collection<Map<String, Object>> params = getValuesBook();
+        Collection<Book> params = getValuesBook();
         Queryable qUpdate = QueryFactory.newInstance("Book#update", params);
         Queryable qIsbn = QueryFactory.newInstance("Book#get", params.iterator().next());        
         int rowsAffected = repositoryDerby.update(qUpdate);
@@ -74,8 +69,58 @@ public class SqlUpdateCollectionTest extends BaseJdbc
         assertThat(book.getName(), is("Beyond Good and Evil"));
     }
     
+    @Test
+    public void whenUpdateUsingCollectionOfMapWith()
+    {
+        Collection<Map<String, Object>> params = getValuesBookAsMap();
+        Queryable qUpdate = QueryFactory.newInstance("Book#update", params);
+        Queryable qIsbn = QueryFactory.newInstance("Book#get", params.iterator().next());        
+        int rowsAffected = repositoryDerby.update(qUpdate);
+        assertThat(rowsAffected, is(10));
+        
+        Book book = repositoryDerby.get(qIsbn);
+        assertThat(book, notNullValue());
+        assertThat(book.getVisualization(), is(20));
+        assertThat(book.getIsbn(), is("978-1503250888"));
+        assertThat(book.getId(), is(1001L));
+        assertThat(book.getName(), is("Beyond Good and Evil"));
+    }
     
-    private Collection<Map<String, Object>> getValuesBook()
+    @Test
+    public void whenUpdateUsingCollectionOfArray()
+    {
+        Collection<Object[]> params = getValuesBookAsArray();
+        Book book = new Book();
+        book.setId(1001L);
+        Queryable qUpdate = QueryFactory.newInstance("Book#update2", params);
+        Queryable qIsbn = QueryFactory.newInstance("Book#get", book);        
+        int rowsAffected = repositoryDerby.update(qUpdate);
+        assertThat(rowsAffected, is(10));
+        
+        book = repositoryDerby.get(qIsbn);
+        assertThat(book, notNullValue());
+        assertThat(book.getVisualization(), is(30));
+        assertThat(book.getIsbn(), is("978-1503250888"));
+        assertThat(book.getId(), is(1001L));
+        assertThat(book.getName(), is("Beyond Good and Evil"));
+    }
+
+    private Collection<Book> getValuesBook()
+    {
+        List<Book> list = new ArrayList();
+        for (int i=0; i<10; i++)
+        {
+        	Book b = new  Book();
+            b.setId(1001L);
+            b.setIsbn("978-1503250888");
+            b.setName("Beyond Good and Evil");
+            b.setVisualization(i+1);
+            list.add(b);
+        }
+        return list;
+    }
+
+    private Collection<Map<String, Object>> getValuesBookAsMap()
     {
         List<Map<String, Object>> list = new ArrayList();
         for (int i=0; i<10; i++)
@@ -84,8 +129,24 @@ public class SqlUpdateCollectionTest extends BaseJdbc
             row.put("id", 1001);
             row.put("isbn", "978-1503250888");
             row.put("name", "Beyond Good and Evil");
-            row.put("visualization", i+1);
+            row.put("visualization", i+11);
             list.add(row);
+        }
+        return list;
+    }
+
+    //update book set name = ?, isbn = ?, visualization = ? where id = ?
+    private Collection<Object[]> getValuesBookAsArray()
+    {
+        List<Object[]> list = new ArrayList();
+        for (int i=0; i<10; i++)
+        {
+            Object[] param = new Object[4];
+            param[0] = "Beyond Good and Evil";
+            param[1] = "978-1503250888";
+            param[2] = i+21;
+            param[3] = 1001L;
+            list.add(param);
         }
         return list;
     }

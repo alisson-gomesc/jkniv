@@ -24,18 +24,24 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.sf.jkniv.reflect.beans.MethodName;
+import net.sf.jkniv.reflect.beans.MethodNameFactory;
+import net.sf.jkniv.reflect.beans.ObjectProxy;
+import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.statement.StatementAdapter;
 
 @SuppressWarnings("unchecked")
-class PositionalCollectionMapParams extends AbstractParam implements AutoBindParams
+class PositionalCollectionPojoParams extends AbstractParam implements AutoBindParams
 {
-    private StatementAdapter<?, ?> stmtAdapter;
+	private final static MethodName SETTER =  MethodNameFactory.getInstanceSetter();
+	private final static MethodName GETTER =  MethodNameFactory.getInstanceGetter();
+	private StatementAdapter<?, ?> stmtAdapter;
     private Iterator<Object>          it;
     private String                 queryName;
     private String[]               paramsNames;
     
-    public PositionalCollectionMapParams(StatementAdapter<?, ?> stmtAdapter, Queryable queryable)
+    public PositionalCollectionPojoParams(StatementAdapter<?, ?> stmtAdapter, Queryable queryable)
     {
         super();
         this.stmtAdapter = stmtAdapter;
@@ -64,10 +70,13 @@ class PositionalCollectionMapParams extends AbstractParam implements AutoBindPar
         int rowsAfftected = 0;
         while(it.hasNext())
         {
-            Map<String, Object> params = (Map<String, Object>) it.next();
+            Object pojo = it.next();
+            ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(pojo);
             for(String paramName : paramsNames)
             {
-                stmtAdapter.bind(paramName, params.get(paramName));
+            	String getterName = GETTER.capitalize(paramName);
+            	Object value = proxy.invoke(getterName, pojo);
+                stmtAdapter.bind(paramName, value);
             }
             //Statement.SUCCESS_NO_INFO;
             rowsAfftected += stmtAdapter.execute();
@@ -75,4 +84,11 @@ class PositionalCollectionMapParams extends AbstractParam implements AutoBindPar
         }
         return rowsAfftected;
     }
+
+	public static <T,R> AutoBindParams newPositionalCollectionMapParams(StatementAdapter<T,R> adapter, Queryable queryable)
+	{
+	    return new PositionalCollectionPojoParams(adapter, queryable);
+	}
+	
+
 }

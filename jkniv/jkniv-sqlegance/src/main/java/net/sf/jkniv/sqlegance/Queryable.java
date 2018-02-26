@@ -159,6 +159,8 @@ public interface Queryable
     
     boolean isTypeOfCollectionFromPojo();
 
+    boolean isTypeOfCollectionFromArray();
+    
     /**
      * verify if the parameter is an array
      * @return <code>true</code> when they are, <code>false</code> otherwise

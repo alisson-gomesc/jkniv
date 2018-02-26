@@ -16,6 +16,7 @@ import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.logger.SqlLogger;
 import net.sf.jkniv.sqlegance.params.AutoBindParams;
+import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.params.ParamParser;
 import net.sf.jkniv.sqlegance.params.ParamParserQuestionMark;
 import net.sf.jkniv.sqlegance.params.PrepareParamsFactory;
@@ -48,8 +49,17 @@ public class QueryJpaAdapter extends AbstractQueryJpaAdapter
             case NATIVE:
                 // EclipseLink doesn't support named params to native queries, adopting ?1 ?2 ?3 for every implementation
                 paramParser = new ParamParserQuestionMark();
-                String positionalSql = isql.getParamParser().replaceForQuestionMarkWithNumber(sql, queryable.getParams());
-                Object[] params = queryable.values(paramsNames);
+                String positionalSql = sql;
+                if (queryable.getSql().getParamParser().getType() != ParamMarkType.QUESTION)
+                    positionalSql = isql.getParamParser().replaceForQuestionMarkWithNumber(sql, queryable.getParams());
+                
+                Object[] params = null;
+                
+                if(queryable.isTypeOfArray())
+                    params = (Object[]) queryable.getParams();
+                else
+                    params = queryable.values(paramsNames);
+                
                 queryable2 = QueryFactory.newInstance(queryable.getName(), params, queryable.getOffset(), queryable.getMax());
                 if (overloadReturnType == null)
                     queryJpa = em.createNativeQuery(positionalSql);

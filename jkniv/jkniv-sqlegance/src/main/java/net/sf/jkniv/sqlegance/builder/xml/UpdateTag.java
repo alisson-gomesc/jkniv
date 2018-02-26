@@ -33,8 +33,6 @@ import net.sf.jkniv.sqlegance.validation.ValidateType;
  */
 public class UpdateTag extends AbstractSqlTag implements Updateable
 {
-    public static final String TAG_NAME = "update";
-    
     /**
      * Build a new <code>update</code> tag from XML file.
      * 

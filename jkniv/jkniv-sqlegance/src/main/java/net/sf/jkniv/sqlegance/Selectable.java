@@ -24,10 +24,13 @@ import java.util.Set;
 
 public interface Selectable extends Sql
 {
+    public static final String TAG_NAME = "select";
+
     String getGroupBy();
     
     List<String> getGroupByAsList();
     
     Set<OneToMany> getOneToMany();
-    
+
+    void addOneToMany(OneToMany oneToMany);
 }

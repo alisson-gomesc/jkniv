@@ -28,14 +28,14 @@ import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.statement.StatementAdapter;
 
 @SuppressWarnings("unchecked")
-class PositionalCollectionMapParams extends AbstractParam implements AutoBindParams
+class PositionalCollectionArrayParams extends AbstractParam implements AutoBindParams
 {
     private StatementAdapter<?, ?> stmtAdapter;
     private Iterator<Object>          it;
     private String                 queryName;
     private String[]               paramsNames;
     
-    public PositionalCollectionMapParams(StatementAdapter<?, ?> stmtAdapter, Queryable queryable)
+    public PositionalCollectionArrayParams(StatementAdapter<?, ?> stmtAdapter, Queryable queryable)
     {
         super();
         this.stmtAdapter = stmtAdapter;
@@ -64,10 +64,10 @@ class PositionalCollectionMapParams extends AbstractParam implements AutoBindPar
         int rowsAfftected = 0;
         while(it.hasNext())
         {
-            Map<String, Object> params = (Map<String, Object>) it.next();
-            for(String paramName : paramsNames)
+            Object[] params = (Object[]) it.next();
+            for(Object o : params)
             {
-                stmtAdapter.bind(paramName, params.get(paramName));
+                stmtAdapter.bind(o);
             }
             //Statement.SUCCESS_NO_INFO;
             rowsAfftected += stmtAdapter.execute();

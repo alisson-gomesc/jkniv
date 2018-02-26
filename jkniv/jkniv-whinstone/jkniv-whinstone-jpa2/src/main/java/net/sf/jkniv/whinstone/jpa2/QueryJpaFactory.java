@@ -14,9 +14,9 @@ import net.sf.jkniv.sqlegance.QueryFactory;
 import net.sf.jkniv.sqlegance.QueryNotFoundException;
 import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
-import net.sf.jkniv.sqlegance.builder.xml.SelectTag;
 import net.sf.jkniv.sqlegance.logger.SqlLogger;
 import net.sf.jkniv.sqlegance.params.AutoBindParams;
 import net.sf.jkniv.sqlegance.params.ParamParser;
@@ -40,16 +40,18 @@ public class QueryJpaFactory
         if (containQuery)
         {
             isql = sqlContext.getQuery(queryable.getName());
-            if (isql instanceof SelectTag)
-                checkSqlConstraints((SelectTag) isql);
+            if (isql.isSelectable())
+                checkSqlConstraints(isql.asSelectable());
             
             isql.getValidateType().assertValidate(queryable.getParams());
+            if (!queryable.isBoundSql())
+                queryable.bind(isql);
+
             if (overloadReturnedType != null)
                 mandatoryReturnType = overloadReturnedType;
             else if (isql.getReturnTypeAsClass() != null)
                 mandatoryReturnType = isql.getReturnTypeAsClass();
-            //Class<?> returnType = isql.getReturnTypeAsClass();
-            //mandatoryReturnType = (overloadReturnedType != null ? overloadReturnedType : returnType);
+
             adapter = new QueryJpaAdapter(em, queryable, isql, mandatoryReturnType, sqlLogger);
             if (queryable.isPaging())
                 adapter.setQueryJpaForPaging(getQueryForPaging(em, sqlContext, queryable, isql, sqlLogger));
@@ -157,7 +159,7 @@ public class QueryJpaFactory
         return query;
     }
     
-    private static void checkSqlConstraints(SelectTag tag)
+    private static void checkSqlConstraints(Selectable tag)
     {
         LanguageType type = tag.getLanguageType();
         if ((type == LanguageType.JPQL || type == LanguageType.HQL) && tag.getGroupBy().trim().length() > 0)

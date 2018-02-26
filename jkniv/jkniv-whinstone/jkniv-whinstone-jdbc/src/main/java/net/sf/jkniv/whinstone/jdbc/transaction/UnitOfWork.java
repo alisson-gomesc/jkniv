@@ -42,7 +42,6 @@ import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
-import net.sf.jkniv.sqlegance.builder.xml.SelectTag;
 import net.sf.jkniv.sqlegance.logger.SqlLogger;
 import net.sf.jkniv.sqlegance.statement.StatementAdapter;
 import net.sf.jkniv.sqlegance.transaction.Isolation;

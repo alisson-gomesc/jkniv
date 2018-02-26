@@ -7,8 +7,8 @@
   xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
        http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
   
-  <include href="/repository-sql-postgres-paging.xml"/>
-  <include href="/repository-sql-autokey-derby.xml"/>
+  <include href="/postgresql/repository-sql-postgres-paging.xml"/>
+  <include href="/derby/repository-sql-autokey-derby.xml"/>
     
 
 </statements>

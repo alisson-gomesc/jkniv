@@ -51,7 +51,6 @@ import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
-import net.sf.jkniv.sqlegance.builder.xml.SelectTag;
 import net.sf.jkniv.sqlegance.classification.Groupable;
 import net.sf.jkniv.sqlegance.classification.GroupingBy;
 import net.sf.jkniv.sqlegance.classification.NoGroupingBy;
@@ -237,7 +236,7 @@ public class RepositoryCassandra implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as list command", queryable);
         
-        SelectTag isql = (SelectTag) sqlContext.getQuery(queryable.getName());
+        Selectable isql = sqlContext.getQuery(queryable.getName()).asSelectable();
         checkSqlType(isql, SqlType.SELECT);
         
         isql.getValidateType().assertValidate(queryable.getParams());

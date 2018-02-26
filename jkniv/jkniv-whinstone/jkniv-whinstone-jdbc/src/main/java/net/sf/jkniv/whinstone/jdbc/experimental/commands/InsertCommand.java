@@ -19,21 +19,12 @@
  */
 package net.sf.jkniv.whinstone.jdbc.experimental.commands;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.sf.jkniv.sqlegance.ConnectionAdapter;
 import net.sf.jkniv.sqlegance.KeyGeneratorType;
-import net.sf.jkniv.sqlegance.builder.xml.InsertTag;
-import net.sf.jkniv.sqlegance.dialect.SqlDialect;
-import net.sf.jkniv.sqlegance.params.PrepareParamsFactory;
-import net.sf.jkniv.sqlegance.params.AutoBindParams;
-import net.sf.jkniv.sqlegance.params.StatementAdapterOld;
 import net.sf.jkniv.sqlegance.statement.StatementAdapter;
-import net.sf.jkniv.whinstone.jdbc.PreparedStatementStrategy;
-import net.sf.jkniv.whinstone.jdbc.params.PreparedStatementAdapterOld;
 
 /**
  * 

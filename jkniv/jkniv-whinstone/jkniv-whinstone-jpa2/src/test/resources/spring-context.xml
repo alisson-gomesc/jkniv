@@ -28,12 +28,12 @@
     <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
     <property name="url" value="jdbc:derby:memory:WHINSTONEJPA;create=true;" />
   </bean>
-
+<!-- 
   <bean id="dataSourceSql" class="org.apache.commons.dbcp.BasicDataSource"
     p:driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver" p:url="jdbc:sqlserver://10.1.200.13:1433;databaseName=clusterizacaoProducao"
     p:username="usrcluster" p:password="cluster@123" p:initialSize="5" p:maxActive="10">
   </bean>
-  
+-->
   <jdbc:initialize-database data-source="dataSourceOra" enabled="true"
     ignore-failures="DROPS">
     <jdbc:script location="classpath:database/ora/db-drop.sql" execution="DESTROY" encoding="UTF-8"/>
@@ -49,11 +49,11 @@
     <!--property name="dataSource" ref="dataSource" / -->
     <property name="persistenceUnitName" value="whinstone" />
   </bean>
-
+<!-- 
   <bean id="emSqlServer" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
-    <!--property name="dataSource" ref="dataSource" / -->
     <property name="persistenceUnitName" value="sqlserver" />
   </bean>
+ -->
 
   <bean name="hibernateJpaDialect" class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
 
@@ -63,12 +63,12 @@
     <!--property name="persistenceUnitName" value="whinstone" / -->
     <!--property name="dataSource" ref="dataSource" / -->
   </bean>
-
+<!-- 
   <bean id="tmSqlServer" class="org.springframework.orm.jpa.JpaTransactionManager">
     <property name="entityManagerFactory" ref="emSqlServer" />
     <property name="jpaDialect" ref="hibernateJpaDialect" />
   </bean>
-
+-->
   <!--bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> 
     <property name="dataSource" ref="dataSource"/> </bean -->
 

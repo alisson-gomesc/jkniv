@@ -41,10 +41,8 @@ import net.sf.jkniv.sqlegance.validation.ValidateType;
  * @author Alisson Gomes
  * @since 0.0.2
  */
-public class SelectTag extends AbstractSqlTag implements Selectable
+class SelectTag extends AbstractSqlTag implements Selectable
 {
-    public static final String TAG_NAME = "select";
-    
     private String             groupBy;
     private Set<OneToMany>  oneToMany;
     

@@ -14,6 +14,7 @@ import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.Repository;
 import net.sf.jkniv.whinstone.jpa2.BaseTest;
 
+@Ignore("no installed in local machine")
 public class StoredProcedureTest extends BaseTest
 {
     @Test @Ignore("TODO implements stored with JPA")

@@ -21,18 +21,13 @@ package net.sf.jkniv.sqlegance.dialect;
 
 import java.util.Collections;
 
-import net.sf.jkniv.sqlegance.Sql;
-import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.QueryFactory;
 import net.sf.jkniv.sqlegance.Queryable;
-import net.sf.jkniv.sqlegance.builder.xml.DeleteTag;
-import net.sf.jkniv.sqlegance.builder.xml.ISqlTag;
-import net.sf.jkniv.sqlegance.builder.xml.InsertTag;
-import net.sf.jkniv.sqlegance.builder.xml.SelectTag;
-import net.sf.jkniv.sqlegance.builder.xml.SqlCommandType;
+import net.sf.jkniv.sqlegance.Sql;
+import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.xml.SqlTag;
-import net.sf.jkniv.sqlegance.builder.xml.UpdateTag;
+import net.sf.jkniv.sqlegance.builder.xml.TagFactory;
 
 public abstract class SqlDialectAbstractTest
 {
@@ -62,13 +57,13 @@ public abstract class SqlDialectAbstractTest
     {
         SqlTag tag = null;
         if (type == SqlType.SELECT)
-            tag = new SelectTag("id", LanguageType.NATIVE);
+            tag =  (SqlTag) TagFactory.newSelect("id", LanguageType.NATIVE);
         else if (type == SqlType.INSERT)
-            tag = new InsertTag("id", LanguageType.NATIVE);
+            tag = (SqlTag) TagFactory.newInsert("id", LanguageType.NATIVE);
         else if (type == SqlType.DELETE)
-            tag = new DeleteTag("id", LanguageType.NATIVE);
+            tag = (SqlTag) TagFactory.newDelete("id", LanguageType.NATIVE);
         else if (type == SqlType.UPDATE)
-            tag = new UpdateTag("id", LanguageType.NATIVE);
+            tag = (SqlTag) TagFactory.newUpdate("id", LanguageType.NATIVE);
         
         tag.addTag(query);
         return tag;

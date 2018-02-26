@@ -44,7 +44,7 @@ public class BaseTest
     @PersistenceContext(unitName="whinstone")
     protected EntityManager   em;
 
-    @PersistenceContext(unitName="sqlserver")
+    //@PersistenceContext(unitName="sqlserver")
     protected EntityManager   emSqlServer;
 
     private static boolean    createdTx   = false;
@@ -70,7 +70,7 @@ public class BaseTest
         {
             System.out.println("@Before");
             JndiJpaCreator.bind("java:comp/env/persistence/whinstone",em);
-            JndiJpaCreator.bind("java:comp/env/persistence/sqlserver",emSqlServer);
+            //JndiJpaCreator.bind("java:comp/env/persistence/sqlserver",emSqlServer);
             JndiJpaCreator.activate();
             sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
             sqlContextSqlServer = SqlContextFactory.newInstance("/repository-sql-server.xml");

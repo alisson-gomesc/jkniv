@@ -88,7 +88,22 @@ public class PrepareParamsFactory
     {
         return new PositionalCollectionParams(adapter, queryable);
     }
-    
+
+    public static <T,R> AutoBindParams newPositionalCollectionMapParams(StatementAdapter<T,R> adapter, Queryable queryable)
+    {
+        return new PositionalCollectionMapParams(adapter, queryable);
+    }
+
+    public static <T,R> AutoBindParams newPositionalCollectionPojoParams(StatementAdapter<T,R> adapter, Queryable queryable)
+    {
+        return new PositionalCollectionPojoParams(adapter, queryable);
+    }
+
+    public static <T,R> AutoBindParams newPositionalCollectionArrayParams(StatementAdapter<T,R> adapter, Queryable queryable)
+    {
+        return new PositionalCollectionArrayParams(adapter, queryable);
+    }
+
     public static <T,R> AutoBindParams newPositionalParams(StatementAdapter<T,R> adapter, Queryable queryable)
     {
         return new PositionalParams(adapter, queryable);
@@ -99,9 +114,5 @@ public class PrepareParamsFactory
         return new NamedParams(adapter, queryable);
     }
 
-    public static <T,R> AutoBindParams newPositionalCollectionMapParams(StatementAdapter<T,R> adapter, Queryable queryable)
-    {
-        return new PositionalCollectionMapParams(adapter, queryable);
-    }
 
 }

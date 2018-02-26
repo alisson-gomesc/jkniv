@@ -23,11 +23,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.Queryable;
-import net.sf.jkniv.sqlegance.builder.xml.InsertTag;
-import net.sf.jkniv.sqlegance.dialect.SqlDialect;
-import net.sf.jkniv.sqlegance.params.PrepareParamsFactory;
 import net.sf.jkniv.sqlegance.params.AutoBindParams;
+import net.sf.jkniv.sqlegance.params.PrepareParamsFactory;
 import net.sf.jkniv.sqlegance.params.StatementAdapterOld;
 import net.sf.jkniv.whinstone.jdbc.PreparedStatementStrategy;
 import net.sf.jkniv.whinstone.jdbc.params.PreparedStatementAdapterOld;
@@ -39,12 +38,12 @@ import net.sf.jkniv.whinstone.jdbc.params.PreparedStatementAdapterOld;
  */
 class InsertCommand2 extends AbstractCommand
 {
-    private final InsertTag isql;
+    private final Insertable isql;
     
     public InsertCommand2(Queryable queryable, PreparedStatementStrategy stmtStrategy, Connection conn)
     {
         super(queryable, stmtStrategy, conn);
-        this.isql = (InsertTag) queryable.getSql();
+        this.isql = queryable.getSql().asInsertable();
     }
     
     public <T> T execute()

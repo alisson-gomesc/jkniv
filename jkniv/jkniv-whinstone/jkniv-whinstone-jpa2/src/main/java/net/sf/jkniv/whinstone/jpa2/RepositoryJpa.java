@@ -37,16 +37,15 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
-import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.QueryFactory;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
 import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.ResultRow;
+import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
-import net.sf.jkniv.sqlegance.builder.xml.SqlCommandType;
 import net.sf.jkniv.sqlegance.logger.SqlLogger;
 import net.sf.jkniv.sqlegance.transaction.Transactional;
 
@@ -206,6 +205,9 @@ public class RepositoryJpa implements RepositoryJpaExtend
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.INSERT);
         isql.getValidateType().assertValidate(queryable.getParams());
+        if (!queryable.isBoundSql())
+            queryable.bind(isql);
+
         int rowsAffected = executeUpdate(queryable, isql);
         return rowsAffected;
     }
@@ -244,6 +246,8 @@ public class RepositoryJpa implements RepositoryJpaExtend
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.DELETE);
         isql.getValidateType().assertValidate(queryable.getParams());
+        if (!queryable.isBoundSql())
+            queryable.bind(isql);
         int rowsAffected = executeUpdate(queryable, isql);
         return rowsAffected;
     }
@@ -277,6 +281,9 @@ public class RepositoryJpa implements RepositoryJpaExtend
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.UPDATE);
         isql.getValidateType().assertValidate(queryable.getParams());
+        if (!queryable.isBoundSql())
+            queryable.bind(isql);
+
         //Query queryJpa = QueryFactory.newQuery(isql, getEntityManager(), queryable);
         //int rowsAffected = queryJpa.executeUpdate();
         int rowsAffected = executeUpdate(queryable, isql);
@@ -619,23 +626,23 @@ public class RepositoryJpa implements RepositoryJpaExtend
     private int executeUpdate(Queryable queryable, Sql isql) 
     {
         int rowsAffected = 0;
-        //QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable, null, sqlLogger);
         EntityManager em = getEntityManager();
-        if (queryable.isTypeOfCollectionFromPojo() || queryable.isTypeOfArrayFromPojo())
+        if (queryable.isTypeOfCollectionFromPojo() || 
+        	queryable.isTypeOfCollectionFromMap() ||
+        	queryable.isTypeOfCollectionFromArray() ||
+        	queryable.isTypeOfArrayFromPojo())
         {
             Iterator<Object> it = queryable.iterator();
             while(it.hasNext())
             {
                 Queryable queryableIt = QueryFactory.newInstance(queryable.getName(), it.next(), queryable.getOffset(), queryable.getMax());
                 QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(em, sqlContext, queryableIt, null, sqlLogger);
-                //Query queryJpa = QueryFactory.newQuery(isql, em, queryableIt, sqlLogger);
                 rowsAffected += queryableJpaAdapter.executeUpdate();
             }
         }
         else
         {
             QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(em, sqlContext, queryable, null, sqlLogger);
-            //Query queryJpa = QueryFactory.newQuery(isql, em, queryable, sqlLogger);
             rowsAffected = queryableJpaAdapter.executeUpdate();
         }
         return rowsAffected;

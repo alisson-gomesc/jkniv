@@ -54,7 +54,7 @@ class QueryName implements Queryable
     
     private enum TYPEOF_PARAM
     {
-        NULL, BASIC, ARRAY_BASIC, ARRAY_POJO, COLLECTION_BASIC, COLLECTION_POJO, COLLECTION_MAP, MAP, POJO
+        NULL, BASIC, ARRAY_BASIC, ARRAY_POJO, COLLECTION_BASIC, COLLECTION_POJO, COLLECTION_MAP, COLLECTION_ARRAY, MAP, POJO
     };
     
     private String       name;
@@ -274,6 +274,12 @@ class QueryName implements Queryable
     }
 
     @Override
+    public boolean isTypeOfCollectionFromArray()
+    {
+        return (this.paramType == TYPEOF_PARAM.COLLECTION_ARRAY);
+    }
+
+    @Override
     public boolean isTypeOfArray()
     {
         return (this.paramType == TYPEOF_PARAM.ARRAY_BASIC || this.paramType == TYPEOF_PARAM.ARRAY_POJO);
@@ -284,7 +290,8 @@ class QueryName implements Queryable
     {
         return (this.paramType == TYPEOF_PARAM.COLLECTION_BASIC || 
                 this.paramType == TYPEOF_PARAM.COLLECTION_POJO ||
-                this.paramType == TYPEOF_PARAM.COLLECTION_MAP);
+                this.paramType == TYPEOF_PARAM.COLLECTION_MAP ||
+                this.paramType == TYPEOF_PARAM.COLLECTION_ARRAY);
     }
     
     @Override
@@ -358,6 +365,8 @@ class QueryName implements Queryable
                     this.paramType = TYPEOF_PARAM.COLLECTION_BASIC;
                 else if (param instanceof Map)
                     this.paramType = TYPEOF_PARAM.COLLECTION_MAP;
+                else if (param.getClass().isArray())
+                    this.paramType = TYPEOF_PARAM.COLLECTION_ARRAY;
             }
         } while (param == null && it.hasNext());
     }
@@ -464,6 +473,10 @@ class QueryName implements Queryable
             prepareParams = PrepareParamsFactory.newPositionalCollectionParams(adapter, this);
         else if (isTypeOfCollectionFromMap())
             prepareParams = PrepareParamsFactory.newPositionalCollectionMapParams(adapter, this);
+        else if (isTypeOfCollectionFromPojo())
+            prepareParams = PrepareParamsFactory.newPositionalCollectionPojoParams(adapter, this);
+        else if (isTypeOfCollectionFromArray())
+            prepareParams = PrepareParamsFactory.newPositionalCollectionArrayParams(adapter, this);
         else if (sql.getParamParser().getType() == ParamMarkType.QUESTION)
             prepareParams = PrepareParamsFactory.newPositionalParams(adapter, this);
         else

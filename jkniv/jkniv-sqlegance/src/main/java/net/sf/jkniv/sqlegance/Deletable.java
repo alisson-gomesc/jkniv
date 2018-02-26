@@ -21,5 +21,6 @@ package net.sf.jkniv.sqlegance;
 
 public interface Deletable extends Sql
 {
+    public static final String TAG_NAME = "delete";
     
 }

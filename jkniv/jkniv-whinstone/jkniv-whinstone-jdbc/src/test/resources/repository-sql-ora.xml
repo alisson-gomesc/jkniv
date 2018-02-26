@@ -7,10 +7,10 @@
   xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
        http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
   
-  <include href="/repository-sql-ora-paging.xml"/>
-  <include href="/repository-sql-ora-autokey.xml"/>
-  <include href="/repository-sql-derby-groupingby.xml"/>
-  <include href="/repository-sql-ora-stored.xml"/>
+  <include href="/ora/repository-sql-ora-paging.xml"/>
+  <include href="/ora/repository-sql-ora-autokey.xml"/>
+  <include href="/ora/repository-sql-derby-groupingby.xml"/>
+  <include href="/ora/repository-sql-ora-stored.xml"/>
 
   <select type="NATIVE" id="myTypeByDate" returnType="java.util.HashMap">
     select ID, MY_SMALLINT, MY_INTEGER, MY_BIGINT,

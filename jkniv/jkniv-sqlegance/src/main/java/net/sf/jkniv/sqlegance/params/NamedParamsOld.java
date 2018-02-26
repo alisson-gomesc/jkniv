@@ -21,10 +21,15 @@ package net.sf.jkniv.sqlegance.params;
 
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.jkniv.sqlegance.Queryable;
+import net.sf.jkniv.sqlegance.logger.LogLevel;
 
 class NamedParamsOld extends AbstractParam implements AutoBindParams
 {
+    private static final Logger LOG = LoggerFactory.getLogger(NamedParamsOld.class);
     private StatementAdapterOld stmtAdapter;
     private Queryable queryable;
     
@@ -38,6 +43,7 @@ class NamedParamsOld extends AbstractParam implements AutoBindParams
     @Override
     public StatementAdapterOld parameterized(String[] paramsNames)
     {
+        int i =0;
         for (String s : paramsNames) 
         {
             Object o = null;
@@ -52,6 +58,11 @@ class NamedParamsOld extends AbstractParam implements AutoBindParams
             }
             else
                 o = queryable.getProperty(s);
+
+            // FIXME log sql parameters
+            LOG.error("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", i,
+                    s, o, (o == null ? "NULL" : o.getClass()));
+            
             stmtAdapter.setParameter(s, o);            
         }
         return stmtAdapter;

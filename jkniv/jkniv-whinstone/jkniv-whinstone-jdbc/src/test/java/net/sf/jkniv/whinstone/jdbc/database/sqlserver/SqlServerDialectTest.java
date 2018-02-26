@@ -24,6 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import net.sf.jkniv.sqlegance.Queryable;
@@ -33,6 +34,7 @@ import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.whinstone.jdbc.dialect.SqlDialectAbstractTest;
 import net.sf.jkniv.whinstone.jdbc.dialect.SqlServerDialect;
 
+@Ignore("no installed in local machine")
 public class SqlServerDialectTest extends SqlDialectAbstractTest
 {
     /** select name from author LIMIT 50 OFFSET 10 */
@@ -62,6 +64,7 @@ public class SqlServerDialectTest extends SqlDialectAbstractTest
         assertThat(sqlResult, equalToIgnoringCase(enclosePagingQuery(SQL_SELECT)));
     }
     
+    
     @Test
     @Override
     public void whenPagingSqlStartWithSelectSensitive()
@@ -71,6 +74,7 @@ public class SqlServerDialectTest extends SqlDialectAbstractTest
         assertThat(sqlResult, equalToIgnoringCase(enclosePagingQuery(SQL_SELECT_SENSITIVE)));
     }
     
+    
     @Test
     @Override
     public void whenPagingSqlStartWithSelectDistinct()
@@ -79,6 +83,7 @@ public class SqlServerDialectTest extends SqlDialectAbstractTest
         String sqlResult = q.query();
         assertThat(sqlResult, equalToIgnoringCase(enclosePagingQuery(SQL_SELECT_DISTINCT)));
     }
+    
     
     @Test
     @Override
@@ -97,6 +102,7 @@ public class SqlServerDialectTest extends SqlDialectAbstractTest
         assertThat(q.query(), is(SQL_DELETE));
     }   
     
+    
     @Test
     @Override
     public void whenPagingSqlStartWithUpdate()
@@ -105,6 +111,7 @@ public class SqlServerDialectTest extends SqlDialectAbstractTest
         assertThat(q.query(), is(SQL_UPDATE));
     }
     
+    
     @Test
     @Override
     public void whenPagingSqlStartWithInsert()
@@ -112,6 +119,7 @@ public class SqlServerDialectTest extends SqlDialectAbstractTest
         Queryable q = newQueryable(getQueryName(),getSql(SQL_INSERT, SqlType.INSERT));
         assertThat(q.query(), is(SQL_INSERT));
     }
+    
     
     @Test
     @Override

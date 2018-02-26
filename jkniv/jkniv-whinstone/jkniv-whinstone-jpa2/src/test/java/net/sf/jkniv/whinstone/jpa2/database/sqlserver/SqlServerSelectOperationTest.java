@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.greaterThan;
 
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import net.sf.jkniv.sqlegance.QueryFactory;
@@ -33,6 +34,7 @@ import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.Repository;
 import net.sf.jkniv.whinstone.jpa2.BaseTest;
 
+@Ignore("no installed in local machine")
 public class SqlServerSelectOperationTest extends BaseTest
 {
     @Test

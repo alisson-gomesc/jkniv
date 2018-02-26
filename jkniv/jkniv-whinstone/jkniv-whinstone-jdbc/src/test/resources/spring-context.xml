@@ -137,13 +137,6 @@
     <constructor-arg type="java.lang.String" value="/repository-sql-postgres.xml" />
     <constructor-arg ref="propertyPostgres" />
   </bean>
-  <!-- 
-  <bean name="repositoryCas" class="net.sf.jkniv.whinstone.jdbc.RepositoryJdbc"
-    autowire="byName">
-    <constructor-arg ref="dataSourceCas" />
-    <constructor-arg type="java.lang.String" value="/repository-sql-cas.xml" />    
-  </bean>
-   -->
   <bean name="repositorySpring" class="net.sf.jkniv.whinstone.jdbc.RepositoryJdbc"
     autowire="byName">
     <constructor-arg ref="dataSourceOra" />

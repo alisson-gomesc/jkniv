@@ -33,8 +33,6 @@ import net.sf.jkniv.sqlegance.validation.ValidateType;
  */
 public class DeleteTag extends AbstractSqlTag implements Deletable 
 {
-    public static final String TAG_NAME = "delete";
-    
     /**
      * Build a new <code>delete</code> tag from XML file.
      * 

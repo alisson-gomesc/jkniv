@@ -19,17 +19,12 @@
  */
 package net.sf.jkniv.sqlegance;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.*;
-
-import org.hamcrest.Matchers;
-
-
 
 import org.junit.Test;
 
 import net.sf.jkniv.sqlegance.builder.XmlBuilderSql;
-import net.sf.jkniv.sqlegance.builder.xml.SelectTag;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
 import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
@@ -142,8 +137,8 @@ public class AttributesTest
     @Test
     public void whenReadXmlWithGroupByAttributesElementMustMatch() 
     { 
-        SelectTag sql1 = (SelectTag) XmlBuilderSql.getQuery("test-groupingby1-after-select");
-        SelectTag sql2 = (SelectTag) XmlBuilderSql.getQuery("test-groupingby2-after-select");
+        Selectable sql1 = XmlBuilderSql.getQuery("test-groupingby1-after-select").asSelectable();
+        Selectable sql2 = XmlBuilderSql.getQuery("test-groupingby2-after-select").asSelectable();
         
         assertThat(sql1.getSql().toLowerCase(), is("select name, code, priority from color"));        
         assertThat(sql1.getLanguageType(), is(LanguageType.NATIVE));

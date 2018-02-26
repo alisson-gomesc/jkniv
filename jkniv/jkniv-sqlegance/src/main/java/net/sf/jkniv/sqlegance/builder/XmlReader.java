@@ -95,7 +95,10 @@ class XmlReader
             LOG.info("Loading XML resource [{}] from class path", resourceName);
             URL url = DefaultClassLoader.getResource(resourceName);
             if (url == null)
-                return false;
+            {
+            	LOG.error("Cannot load XML resource [{}] from class path", resourceName);
+            	return false;            	
+            }
             
                 try
                 {
