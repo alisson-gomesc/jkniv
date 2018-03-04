@@ -37,7 +37,7 @@ class UpdateCommand extends AbstractCommand
     public <T> T execute()
     {
         Integer rowsAffected  = 0;
-        if (queryable.getSql().isBatch() || queryable.isTypeOfCollection())
+        if (queryable.getSql().isBatch() || queryable.isTypeOfBulk())
         {
             rowsAffected = batchExecute();
         }
@@ -49,16 +49,16 @@ class UpdateCommand extends AbstractCommand
         return (T)rowsAffected;
     }
     
-    private int batchExecute()
-    {
-        StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
-        return queryable.bind(adapterStmt).onBatch();
-    }
-    
     private int simpleExecute()
     {
         StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
         queryable.bind(adapterStmt).on();
         return adapterStmt.execute();
+    }    
+
+    private int batchExecute()
+    {
+        StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
+        return queryable.bind(adapterStmt).onBatch();
     }    
 }

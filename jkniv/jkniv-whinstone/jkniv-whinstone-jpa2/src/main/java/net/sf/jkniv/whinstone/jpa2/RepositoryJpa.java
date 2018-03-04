@@ -209,6 +209,8 @@ public class RepositoryJpa implements RepositoryJpaExtend
             queryable.bind(isql);
 
         int rowsAffected = executeUpdate(queryable, isql);
+        if (isDebugEnabled)
+            LOG.debug("{} records was affected by add [{}] command", rowsAffected, queryable.getName());
         return rowsAffected;
     }
     
@@ -249,6 +251,8 @@ public class RepositoryJpa implements RepositoryJpaExtend
         if (!queryable.isBoundSql())
             queryable.bind(isql);
         int rowsAffected = executeUpdate(queryable, isql);
+        if (isDebugEnabled)
+            LOG.debug("{} records was affected by remove [{}] command", rowsAffected, queryable.getName());        
         return rowsAffected;
     }
     
@@ -284,9 +288,10 @@ public class RepositoryJpa implements RepositoryJpaExtend
         if (!queryable.isBoundSql())
             queryable.bind(isql);
 
-        //Query queryJpa = QueryFactory.newQuery(isql, getEntityManager(), queryable);
-        //int rowsAffected = queryJpa.executeUpdate();
         int rowsAffected = executeUpdate(queryable, isql);
+        if (isDebugEnabled)
+            LOG.debug("{} records was affected by update [{}] command", rowsAffected, queryable.getName());
+        
         return rowsAffected;
     }
     
@@ -536,61 +541,13 @@ public class RepositoryJpa implements RepositoryJpaExtend
         T ret = null;
         
         QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable, null, sqlLogger);
-        //Query queryJpa = getQueryJpa(queryable);
-            ret = (T) queryableJpaAdapter.getSingleResult();
+        ret = (T) queryableJpaAdapter.getSingleResult();
+            
+        if (isDebugEnabled)
+            LOG.debug("Executed scalar query [{}] retrieving [{}] type of [{}]", queryable.getName(), ret, (ret !=null ? ret.getClass().getName() : "NULL"));
+
         return ret;
-        //throw new UnsupportedOperationException("Not implemented yet. T scalar(Queryable)");
     }
-    
-    /*
-     * Get a set of objects 'G' from repository using a query.
-     * 
-     * @param query
-     *            Query with parameters
-     * @param clazz
-     *            Type of object from list of object
-     * @return Return a set of object that matches with query. A empty list is
-     *         returned if the query no match anyone object.
-     *
-    public <T> List<T> list(IQuery query, Class<G> clazz)
-    {
-        LOG.trace("executing list method with query [" + query.getName() + "]");
-        List<G> ret = null;
-        ISql isql = null;
-        Query queryJpa = null;
-        boolean containQuery = XmlBuilderSql.containsQuery(query.getName());
-        if (containQuery)
-        {
-            isql = XmlBuilderSql.getQuery(query.getName());
-            queryJpa = QueryFactory.newQuery(isql, getEntityManager(), query);
-        }
-        else
-        {
-            queryJpa = QueryFactory.newQuery(getEntityManager(), query);
-        }
-        ret = queryJpa.getResultList();
-        if (containQuery && isCountObjects(query))
-        {
-            setTotalObjectsOfQuery(query, isql);
-            if (query.getTotal() == -1)
-                ((net.sf.jkniv.sqlegance.Query) query).setTotal(Long.valueOf(ret.size()));
-        }
-        else if (ret != null)
-        {
-            Long total = new Long(ret.size());
-            ((net.sf.jkniv.sqlegance.Query) query).setTotal(total);
-        }
-        if (ret == null)
-            ret = new ArrayList<G>(1);
-        else if (!ret.isEmpty())
-        {
-            G o = ret.get(0);
-            if (!o.getClass().getName().equals(clazz.getName()))
-                throw new IllegalArgumentException("The result of search don't match with [" + clazz.getName() + "]");
-        }
-        LOG.trace("The query [" + query.getName() + "] found " + ret.size() + " objects");
-        return ret;
-    }*/
     
     public Transactional getTransaction()
     {

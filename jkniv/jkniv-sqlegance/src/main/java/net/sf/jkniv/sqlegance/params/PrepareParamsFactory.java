@@ -27,6 +27,7 @@ import net.sf.jkniv.sqlegance.statement.StatementAdapter;
 
 public class PrepareParamsFactory
 {
+    @Deprecated
     public static AutoBindParams newPrepareParams(StatementAdapterOld stmtAdapter, ParamParser paramParser, Queryable queryable)
     {
 //        return null;
@@ -93,6 +94,11 @@ public class PrepareParamsFactory
     {
         return new PositionalCollectionMapParams(adapter, queryable);
     }
+
+//    public static <T,R> AutoBindParams newPositionalArrayMapParams(StatementAdapter<T,R> adapter, Queryable queryable)
+//    {
+//        return new PositionalarCollectionMapParams(adapter, queryable);
+//    }
 
     public static <T,R> AutoBindParams newPositionalCollectionPojoParams(StatementAdapter<T,R> adapter, Queryable queryable)
     {

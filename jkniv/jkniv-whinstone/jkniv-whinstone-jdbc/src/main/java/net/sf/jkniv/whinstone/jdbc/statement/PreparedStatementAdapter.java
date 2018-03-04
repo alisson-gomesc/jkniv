@@ -212,7 +212,7 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
         return list;
     }
     
-    public ResultSetParser<T, ResultSet> generatedKeys()
+    public ResultSetParser<T, ResultSet> generatedKeys()// FIXME implements
     {
         throw new UnsupportedOperationException("Not implemented yet!");
     }

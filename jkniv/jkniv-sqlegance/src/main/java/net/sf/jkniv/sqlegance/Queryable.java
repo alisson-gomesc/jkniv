@@ -155,6 +155,8 @@ public interface Queryable
 
     boolean isTypeOfArrayFromPojo();
 
+    boolean isTypeOfArrayFromMap();
+
     boolean isTypeOfCollectionFromMap();
     
     boolean isTypeOfCollectionFromPojo();
@@ -172,6 +174,8 @@ public interface Queryable
      * @return <code>true</code> when they are, <code>false</code> otherwise
      */
     boolean isTypeOfCollection();
+    
+    boolean isTypeOfBulk();
     
     /**
      * verify if the parameter is a map

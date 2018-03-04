@@ -1,4 +1,4 @@
-Title: Parameters
+Title: Query Parameters
 
 # Query Parameters
 

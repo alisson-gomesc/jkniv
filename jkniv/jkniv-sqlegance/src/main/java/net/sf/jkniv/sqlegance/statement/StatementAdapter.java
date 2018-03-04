@@ -41,7 +41,6 @@ import net.sf.jkniv.sqlegance.ResultSetParser;
  */
 public interface StatementAdapter<T, R>
 {
-    
     /**
      * Bind an argument to a named parameter.
      * @param name of parameter

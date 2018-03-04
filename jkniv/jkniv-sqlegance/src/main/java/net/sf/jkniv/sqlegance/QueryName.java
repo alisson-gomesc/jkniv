@@ -49,12 +49,12 @@ import net.sf.jkniv.sqlegance.transaction.Isolation;
  */
 class QueryName implements Queryable
 {
-    private static final Assertable notNull = AssertsFactory.getNotNull();
-    private static final BasicType BASIC_TYPE = BasicType.getInstance();
+    private static final Assertable notNull    = AssertsFactory.getNotNull();
+    private static final BasicType  BASIC_TYPE = BasicType.getInstance();
     
     private enum TYPEOF_PARAM
     {
-        NULL, BASIC, ARRAY_BASIC, ARRAY_POJO, COLLECTION_BASIC, COLLECTION_POJO, COLLECTION_MAP, COLLECTION_ARRAY, MAP, POJO
+        NULL, BASIC, ARRAY_BASIC, ARRAY_POJO, ARRAY_MAP, COLLECTION_BASIC, COLLECTION_POJO, COLLECTION_MAP, COLLECTION_ARRAY, MAP, POJO
     };
     
     private String       name;
@@ -69,15 +69,15 @@ class QueryName implements Queryable
     private boolean      scalar;
     private int          size;
     private TYPEOF_PARAM paramType;
-    private Sql sql;
+    private Sql          sql;
     
-    protected String             sqlText;
-    protected String             sqlTextPaginated;
-    protected String             sqlTextToCount;
-    protected String[]           paramsNames;             
-    protected int countParams;
-    private boolean boundSql;
-    private boolean boundParams;
+    protected String     sqlText;
+    protected String     sqlTextPaginated;
+    protected String     sqlTextToCount;
+    protected String[]   paramsNames;
+    protected int        countParams;
+    private boolean      boundSql;
+    private boolean      boundParams;
     
     /**
      * Creates a Query object parameterized starting at first row and retrieve all rows, isolation default, no timeout and online (no batch).
@@ -99,7 +99,7 @@ class QueryName implements Queryable
     {
         this(name, null, 0, Integer.MAX_VALUE);
     }
-
+    
     /**
      * Creates a Query object parameterized with: isolation default, no timeout and online (no batch).
      * 
@@ -230,7 +230,6 @@ class QueryName implements Queryable
         return this.boundParams;
     }
     
-    
     @Override
     public boolean isTypeOfNull()
     {
@@ -256,6 +255,12 @@ class QueryName implements Queryable
     }
     
     @Override
+    public boolean isTypeOfArrayFromMap()
+    {
+        return (this.paramType == TYPEOF_PARAM.ARRAY_MAP);
+    }
+    
+    @Override
     public boolean isTypeOfCollectionFromBasicTypes()
     {
         return (this.paramType == TYPEOF_PARAM.COLLECTION_BASIC);
@@ -266,32 +271,40 @@ class QueryName implements Queryable
     {
         return (this.paramType == TYPEOF_PARAM.COLLECTION_POJO);
     }
-
+    
     @Override
     public boolean isTypeOfCollectionFromMap()
     {
         return (this.paramType == TYPEOF_PARAM.COLLECTION_MAP);
     }
-
+    
     @Override
     public boolean isTypeOfCollectionFromArray()
     {
         return (this.paramType == TYPEOF_PARAM.COLLECTION_ARRAY);
     }
-
+    
     @Override
     public boolean isTypeOfArray()
     {
-        return (this.paramType == TYPEOF_PARAM.ARRAY_BASIC || this.paramType == TYPEOF_PARAM.ARRAY_POJO);
+        return (this.paramType == TYPEOF_PARAM.ARRAY_BASIC || this.paramType == TYPEOF_PARAM.ARRAY_POJO
+                || this.paramType == TYPEOF_PARAM.ARRAY_MAP);
     }
     
     @Override
     public boolean isTypeOfCollection()
     {
-        return (this.paramType == TYPEOF_PARAM.COLLECTION_BASIC || 
-                this.paramType == TYPEOF_PARAM.COLLECTION_POJO ||
-                this.paramType == TYPEOF_PARAM.COLLECTION_MAP ||
-                this.paramType == TYPEOF_PARAM.COLLECTION_ARRAY);
+        return (this.paramType == TYPEOF_PARAM.COLLECTION_BASIC || this.paramType == TYPEOF_PARAM.COLLECTION_POJO
+                || this.paramType == TYPEOF_PARAM.COLLECTION_MAP || this.paramType == TYPEOF_PARAM.COLLECTION_ARRAY);
+    }
+    
+    @Override
+    public boolean isTypeOfBulk()
+    {
+        return (this.paramType == TYPEOF_PARAM.COLLECTION_POJO || this.paramType == TYPEOF_PARAM.COLLECTION_MAP
+                || this.paramType == TYPEOF_PARAM.COLLECTION_ARRAY || this.paramType == TYPEOF_PARAM.ARRAY_MAP
+                || this.paramType == TYPEOF_PARAM.ARRAY_POJO);
+        
     }
     
     @Override
@@ -347,6 +360,8 @@ class QueryName implements Queryable
         {
             if (BASIC_TYPE.isBasicType(param.getClass()))
                 this.paramType = TYPEOF_PARAM.ARRAY_BASIC;
+            else if (param instanceof Map)
+                this.paramType = TYPEOF_PARAM.ARRAY_MAP;
         }
     }
     
@@ -389,12 +404,11 @@ class QueryName implements Queryable
         return it;
     }
     
-
     @Override
     public Object[] values(String[] paramsNames)
     {
         List<Object> params = new ArrayList<Object>();
-        int i=0;
+        int i = 0;
         if (isTypeOfBasic())
         {
             params.add(getParams());
@@ -402,10 +416,10 @@ class QueryName implements Queryable
         else
         {
             //int k = 0; // index params for clause IN
-            for(String name : paramsNames)
+            for (String name : paramsNames)
             {
                 Object paramValue = null;
-                if(paramsNames[i].toLowerCase().startsWith("in:"))
+                if (paramsNames[i].toLowerCase().startsWith("in:"))
                 {
                     String paramName = paramsNames[i].substring(3, paramsNames[i].length());// :in:myValueArray -> myValueArray 
                     if (paramValue == null)
@@ -413,17 +427,17 @@ class QueryName implements Queryable
                         paramValue = getProperty(paramName);
                     }
                     Object[] paramsIN = null;
-                    int j=0;
+                    int j = 0;
                     if (paramValue != null && paramValue.getClass().isArray())
-                        paramsIN = (Object[])paramValue;
+                        paramsIN = (Object[]) paramValue;
                     else if (paramValue instanceof Collection)
                         paramsIN = ((Collection) paramValue).toArray();
-
+                    
                     if (paramsIN == null)
                         throw new ParameterException(
                                 "Cannot set parameter [" + paramsNames[i] + "] from IN clause with NULL");
-                        
-                    for(; j<paramsIN.length; j++)
+                    
+                    for (; j < paramsIN.length; j++)
                         params.add(paramsIN[j]);//params[j + i + 1] = paramsIN[j];
                 }
                 else
@@ -455,7 +469,8 @@ class QueryName implements Queryable
         {
             this.sqlTextToCount = this.sql.getSqlDialect().buildQueryCount(sqlText);
             if (sql.getSqlDialect().supportsLimit() && this.sqlTextPaginated == null)// TODO test paginate
-                throw new IllegalStateException("SqlDialect ["+sql.getSqlDialect().name()+"] supports paging query but the query cannot be build");
+                throw new IllegalStateException("SqlDialect [" + sql.getSqlDialect().name()
+                        + "] supports paging query but the query cannot be build");
         }
     }
     
@@ -469,6 +484,8 @@ class QueryName implements Queryable
             prepareParams = PrepareParamsFactory.newBasicParam(adapter, this);
         else if (isTypeOfArrayFromBasicTypes())
             prepareParams = PrepareParamsFactory.newPositionalArrayParams(adapter, this);
+        else if (isTypeOfArrayFromMap())
+            prepareParams = PrepareParamsFactory.newPositionalCollectionMapParams(adapter, this);
         else if (isTypeOfCollectionFromBasicTypes())
             prepareParams = PrepareParamsFactory.newPositionalCollectionParams(adapter, this);
         else if (isTypeOfCollectionFromMap())
@@ -484,7 +501,7 @@ class QueryName implements Queryable
         
         this.boundParams = true;
         return prepareParams;
-
+        
     }
     
     @Override
@@ -492,7 +509,7 @@ class QueryName implements Queryable
     {
         if (!boundSql)//TODO test Queryable.query method
             throw new IllegalStateException("Needs to bind Sql before to call Queryable.getSqlText");
-        return (this.sqlTextPaginated == null? this.sqlText : this.sqlTextPaginated);
+        return (this.sqlTextPaginated == null ? this.sqlText : this.sqlTextPaginated);
     }
     
     @Override
@@ -502,7 +519,7 @@ class QueryName implements Queryable
             throw new IllegalStateException("Needs to bind Sql before to call Queryable.getSqlTextForCount");
         return this.sqlTextToCount;
     }
-
+    
     @Override
     public String[] getParamsNames()
     {
@@ -510,13 +527,14 @@ class QueryName implements Queryable
             throw new IllegalStateException("Needs to bind Sql before to call Queryable.getParamsName");
         return this.paramsNames;
     }
+    
     private void replaceForQuestionMark()
     {
         ParamParser paramParser = sql.getParamParser();
         this.paramsNames = paramParser.find(sqlText);
-        if(this.sqlTextPaginated != null)
+        if (this.sqlTextPaginated != null)
             this.sqlTextPaginated = paramParser.replaceForQuestionMark(this.sqlTextPaginated, params);
-
+        
         this.sqlText = paramParser.replaceForQuestionMark(this.sqlText, params);
         this.countParams = countOccurrencesOf(this.sqlText, "?");
     }
@@ -527,14 +545,17 @@ class QueryName implements Queryable
      * @param sub string to search for. Return 0 if this is null.
      * @return number of occurrences from {@code str}
      */
-    private int countOccurrencesOf(String str, String sub) {
-        if (str == null || sub == null || str.length() == 0 || sub.length() == 0) {
+    private int countOccurrencesOf(String str, String sub)
+    {
+        if (str == null || sub == null || str.length() == 0 || sub.length() == 0)
+        {
             return 0;
         }
         int count = 0;
         int pos = 0;
         int idx;
-        while ((idx = str.indexOf(sub, pos)) != -1) {
+        while ((idx = str.indexOf(sub, pos)) != -1)
+        {
             ++count;
             pos = idx + sub.length();
         }

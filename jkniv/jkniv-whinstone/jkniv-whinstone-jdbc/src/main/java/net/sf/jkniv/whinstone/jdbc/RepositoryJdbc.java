@@ -59,7 +59,7 @@ import net.sf.jkniv.sqlegance.transaction.Transactional;
 import net.sf.jkniv.whinstone.jdbc.transaction.Work;
 
 /**
- * TODO javadoc
+ * Repository pattern implementation for JDBC API.
  * 
  * @author Alisson Gomes
  *
@@ -386,10 +386,10 @@ public class RepositoryJdbc implements Repository
         if (list.size() == 1)
             result = list.get(0);
         else if (list.size() > 1)// TODO test NonUniqueResultException for scalar method 
-            throw new NonUniqueResultException("Not a single result was generated, scalar function must return unique row!");
+            throw new NonUniqueResultException("Not a single result was generated, scalar function must return unique row and column!");
         
         if (isDebugEnabled)
-            LOG.debug("Executed [{}] query as scalar, where [{}] obtained", queryable.getName(), result);
+            LOG.debug("Executed scalar query [{}] retrieving [{}] type of [{}]", queryable.getName(), result, (result !=null ? result.getClass().getName() : "NULL"));
         return result;
     }
     

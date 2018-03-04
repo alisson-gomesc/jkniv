@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sf.jkniv</groupId>
     <artifactId>jkniv</artifactId>
-    <version>0.6.0.M16</version>
+    <version>0.6.0.M17</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>jkniv-whinstone</artifactId>
@@ -14,7 +14,9 @@
   <modules>
     <module>jkniv-whinstone-jdbc</module>
     <module>jkniv-whinstone-jpa2</module>
+    <!-- 
     <module>jkniv-whinstone-cassandra</module>
+     -->
     <module>jkniv-whinstone-fluent</module>
     <module>jkniv-whinstone-rest</module>
   </modules>

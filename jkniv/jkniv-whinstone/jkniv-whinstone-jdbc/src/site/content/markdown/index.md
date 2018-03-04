@@ -33,6 +33,6 @@ A documentation will be prepared to 0.6.0 release.
 | -------------- | -------- |--------|
 |One-to-One      |   yes    | 0.6.0  |
 |One-to-Many     |   yes    | 0.6.0  |
-|Many-to-One     |   not    |        |
+|Many-to-One     |   not    |   -    |
 
 

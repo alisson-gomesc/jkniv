@@ -105,6 +105,23 @@ public class SqlUpdateCollectionTest extends BaseJdbc
         assertThat(book.getName(), is("Beyond Good and Evil"));
     }
 
+    @Test
+    public void whenUpdateUsingArrayOfMapWith()
+    {
+        Object[] params = getValuesBookAsArrayOfMap();
+        Queryable qUpdate = QueryFactory.newInstance("Book#update", params);
+        Queryable qIsbn = QueryFactory.newInstance("Book#get", params[0]);        
+        int rowsAffected = repositoryDerby.update(qUpdate);
+        assertThat(rowsAffected, is(10));
+        
+        Book book = repositoryDerby.get(qIsbn);
+        assertThat(book, notNullValue());
+        assertThat(book.getVisualization(), is(40));
+        assertThat(book.getIsbn(), is("978-1503250888"));
+        assertThat(book.getId(), is(1001L));
+        assertThat(book.getName(), is("Beyond Good and Evil"));
+    }
+
     private Collection<Book> getValuesBook()
     {
         List<Book> list = new ArrayList();
@@ -149,6 +166,21 @@ public class SqlUpdateCollectionTest extends BaseJdbc
             list.add(param);
         }
         return list;
+    }
+
+    private Object[] getValuesBookAsArrayOfMap()
+    {
+        List<Map<String, Object>> list = new ArrayList();
+        for (int i=0; i<10; i++)
+        {
+            Map<String, Object> row = new HashMap<String, Object>();
+            row.put("id", 1001);
+            row.put("isbn", "978-1503250888");
+            row.put("name", "Beyond Good and Evil");
+            row.put("visualization", i+31);
+            list.add(row);
+        }
+        return list.toArray(new Object[0]);
     }
 
 }
