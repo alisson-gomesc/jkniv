@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop.xsd
+    http://www.springframework.org/schema/jdbc 
+    http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+
+  <context:annotation-config />
+  <!--  
+  <tx:annotation-driven transaction-manager="transactionManager" />
+  -->
+  <context:component-scan base-package="net.sf.jkniv.whinstone.jdbc" />
+
+
+  <bean id="dataSourceCas" class="org.apache.commons.dbcp.BasicDataSource"
+    destroy-method="close">
+    <property name="driverClassName" value="com.dbschema.CassandraJdbcDriver" />
+    <property name="url" value="jdbc:cassandra://127.0.0.1:9042/dev_data_3t" />
+    <property name="username" value="cassandra" />
+    <property name="password" value="" />
+  </bean>
+  
+    <jdbc:initialize-database data-source="dataSourceCassandra"
+    enabled="true" ignore-failures="DROPS">
+    <jdbc:script location="classpath:database/cassandra/db-drop.sql" execution="DESTROY" encoding="UTF-8" />
+    <jdbc:script location="classpath:database/cassandra/db-create.sql" execution="INIT" encoding="UTF-8" />
+  </jdbc:initialize-database>
+  
+    <bean name="repositoryCas" class="net.sf.jkniv.whinstone.jdbc.RepositoryJdbc"
+    autowire="byName">
+    <constructor-arg ref="dataSourceCas" />
+    <constructor-arg type="java.lang.String" value="/repository-sql.xml" />    
+  </bean>
+  
+</beans>

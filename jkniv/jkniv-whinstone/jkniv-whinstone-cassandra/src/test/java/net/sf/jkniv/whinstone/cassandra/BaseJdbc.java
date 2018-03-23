@@ -28,15 +28,17 @@ import net.sf.jkniv.sqlegance.RepositoryProperty;
 
 public class BaseJdbc //extends BaseSpringJUnit4
 {
-    protected static final String url = "jdbc:derby:memory:whinstone;create=true;user=admin;password=secret";
+    protected static final String url = "127.0.0.1";
+    protected static final String schema = "dev_data_3t";
     protected static final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
-    protected static final String user = "sa";
-    protected static final String pass = "";
+    protected static final String user = "cassandra";
+    protected static final String pass = "cassandra";
     protected static final Properties config;
     static
     {
         config = new Properties();
         config.put(RepositoryProperty.JDBC_URL.key(), url);
+        config.put(RepositoryProperty.JDBC_SCHEMA.key(), schema);
         config.put(RepositoryProperty.JDBC_USER.key(), user);
         config.put(RepositoryProperty.JDBC_PASSWORD.key(), pass);
         config.put(RepositoryProperty.JDBC_DRIVER.key(), driver);
@@ -44,7 +46,7 @@ public class BaseJdbc //extends BaseSpringJUnit4
     
     protected Repository getRepository()
     {
-        return new RepositoryCassandra();
+        return new RepositoryCassandra(config);
     }
 
     protected Queryable getQuery(String name)

@@ -25,6 +25,7 @@ import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.QueryFactory;
 import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.Repository;
+import net.sf.jkniv.sqlegance.RepositoryService;
 import net.sf.jkniv.sqlegance.RepositoryType;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
@@ -52,6 +53,7 @@ public class BaseResource
     
     public BaseResource()
     {
+        RepositoryService service = RepositoryService.getInstance();
         if (sqlContextName == null)
             sqlContextName = "/repository-sql.xml";
         
@@ -62,9 +64,10 @@ public class BaseResource
             LOG.debug("Sql Context ["+sqlContextName+"] was created");
         }
         if (sqlContext.getRepositoryConfig().getRepositoryType() == RepositoryType.JDBC)
-            this.repository = new RepositoryJdbc(sqlContext);
+            this.repository = service.lookup(RepositoryType.JDBC).newInstance(sqlContext);
         else if (sqlContext.getRepositoryConfig().getRepositoryType() == RepositoryType.JPA)
-            this.repository = new RepositoryJpa(sqlContext.getRepositoryConfig().getName(), sqlContext);
+            this.repository = service.lookup(RepositoryType.JPA).newInstance(sqlContext);
+        /*this.repository = service.lookup(RepositoryType.JPA).newInstance(sqlContext.getRepositoryConfig().getName(), sqlContext);*/
         else
             LOG.error("Repository type no identified, must be JDBC or JPA");
     }

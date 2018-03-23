@@ -76,7 +76,7 @@ public class RepositoryJdbc implements Repository
     private boolean isTraceEnabled;
     private boolean isDebugEnabled;
     
-    public RepositoryJdbc()// TODO test constructor
+    RepositoryJdbc()// TODO test constructor
     {
         this(null, SqlContextFactory.newInstance("/repository-sql.xml"), new Properties());
     }
@@ -89,12 +89,12 @@ public class RepositoryJdbc implements Repository
      *            arguments; normally at least a "user", "password", "url" and
      *            "driver" property should be included
      */
-    public RepositoryJdbc(Properties props)
+    RepositoryJdbc(Properties props)
     {
         this(null, SqlContextFactory.newInstance("/repository-sql.xml"), props);
     }
 
-    public RepositoryJdbc(Properties props, SqlContext sqlContext)
+    RepositoryJdbc(Properties props, SqlContext sqlContext)
     {
         this(null, sqlContext, props);
     }
@@ -105,7 +105,7 @@ public class RepositoryJdbc implements Repository
      * @see javax.sql.DataSource
      * @throws RepositoryException TODO javadoc
      */
-    public RepositoryJdbc(String sqlContext)// TODO test constructor
+    RepositoryJdbc(String sqlContext)// TODO test constructor
     {
         this(null, SqlContextFactory.newInstance(sqlContext), new Properties());
     }
@@ -116,27 +116,27 @@ public class RepositoryJdbc implements Repository
      * @see javax.sql.DataSource
      * @throws RepositoryException TODO javadoc
      */
-    public RepositoryJdbc(SqlContext sqlContext)
+    RepositoryJdbc(SqlContext sqlContext)
     {
         this(null, sqlContext, new Properties());
     }
     
-    public RepositoryJdbc(DataSource datasource)
+    RepositoryJdbc(DataSource datasource)
     {
         this(datasource, SqlContextFactory.newInstance("/repository-sql.xml"), new Properties());
     }
 
-    public RepositoryJdbc(DataSource datasource, String sqlContext)// TODO test constructor
+    RepositoryJdbc(DataSource datasource, String sqlContext)// TODO test constructor
     {
         this(datasource, SqlContextFactory.newInstance(sqlContext), new Properties());
     }
     
-    public RepositoryJdbc(DataSource datasource, Properties props)// TODO test constructor
+    RepositoryJdbc(DataSource datasource, Properties props)// TODO test constructor
     {
         this(datasource, SqlContextFactory.newInstance("/repository-sql.xml"), props);
     }
 
-    public RepositoryJdbc(DataSource datasource, String sqlContext, Properties props)// TODO test constructor
+    RepositoryJdbc(DataSource datasource, String sqlContext, Properties props)// TODO test constructor
     {
         this(datasource, SqlContextFactory.newInstance(sqlContext, props), props);
     }

@@ -59,7 +59,14 @@ public enum RepositoryProperty
         
         public String defaultValue() { return null; }
     },
-    
+
+    /** property: <code>schema</code>, default value is: <code>null</code> */
+    JDBC_SCHEMA { 
+        public String key() { return "schema"; }
+        
+        public String defaultValue() { return null; }
+    },
+
     /*
     /** property: <code>jkniv.repository.jdbc.stmt_strategy</code>, default value is: <code>null</code>, must be implemented by whinstone-*technology* *
     PREPARED_STATEMENT_STRATEGY {

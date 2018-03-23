@@ -31,10 +31,16 @@ public class CassandraSessionFactory implements ConnectionFactory
     
     public CassandraSessionFactory(Properties props)
     {
-        String server_ip = props.getProperty(RepositoryProperty.JDBC_URL.key(),"127.0.0.1");
-        String keyspace =  props.getProperty(RepositoryProperty.JDBC_USER.key(),"dev_data_3t");
-        cluster = Cluster.builder().addContactPoints(server_ip).build();
+        String[] urls = props.getProperty(RepositoryProperty.JDBC_URL.key(),"127.0.0.1").split(",");
+        String keyspace =  props.getProperty(RepositoryProperty.JDBC_SCHEMA.key());
+        String username =  props.getProperty(RepositoryProperty.JDBC_USER.key());
+        String password =  props.getProperty(RepositoryProperty.JDBC_PASSWORD.key());
         
+        if (username != null)
+            cluster = Cluster.builder().addContactPoints(urls).withCredentials(username, password).build();
+        else
+            cluster = Cluster.builder().addContactPoints(urls).build();
+            
         final Metadata metadata = cluster.getMetadata();
         String msg = String.format("Connected to cluster: %s", metadata.getClusterName());
         System.out.println(msg);
@@ -43,7 +49,7 @@ public class CassandraSessionFactory implements ConnectionFactory
         {
             msg = String.format("Datacenter: %s; Host: %s; Rack: %s", host.getDatacenter(), host.getAddress(),
                     host.getRack());
-            System.out.println(msg);
+            LOG.info(msg);
         }
         Session session = cluster.connect(keyspace);    
         this.conn = new CassandraConnectionAdapter(cluster, session);

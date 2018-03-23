@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
@@ -88,7 +89,7 @@ public class RepositoryJpa implements RepositoryJpaExtend
      *            Name of persistence unit name at from persistence.xml.
      *            <code>&lt;persistence-unit name="...</code>
      */
-    public RepositoryJpa(String unitName)
+    RepositoryJpa(String unitName)
     {
         notNull.verify(unitName);
         this.persistenceInfo = getPersitenceInfo(unitName);
@@ -100,8 +101,51 @@ public class RepositoryJpa implements RepositoryJpaExtend
         
         this.init();
     }
+    
+    RepositoryJpa(Properties props)
+    {
+        notNull.verify(props);
+        this.persistenceInfo = getPersitenceInfo("");
+        this.sqlContext = SqlContextFactory.newInstance("/repository-sql.xml", this.persistenceInfo.getProperties());
+        this.sqlContext.getRepositoryConfig().add(props);
+        this.xmlQueryName = null;
+        this.emFactory = new JpaEmFactoryJndi(persistenceInfo.getUnitName());
+        if (!emFactory.isActive())
+            this.emFactory = new JpaEmFactorySEenv(persistenceInfo.getUnitName());
+        
+        this.init();
+    }
 
-    public RepositoryJpa(String unitName, SqlContext sqlContext)
+    RepositoryJpa(Properties props, SqlContext sqlContext)
+    {
+        notNull.verify(props, sqlContext);
+        this.persistenceInfo = getPersitenceInfo("");
+        this.sqlContext = sqlContext;
+        this.sqlContext.getRepositoryConfig().add(props);
+        this.sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
+        this.xmlQueryName = null;
+        this.emFactory = new JpaEmFactoryJndi(persistenceInfo.getUnitName());
+        if (!emFactory.isActive())
+            this.emFactory = new JpaEmFactorySEenv(persistenceInfo.getUnitName());
+        
+        this.init();
+    }
+
+    RepositoryJpa(SqlContext sqlContext)
+    {
+        notNull.verify(sqlContext);
+        this.persistenceInfo = getPersitenceInfo("");
+        this.sqlContext = sqlContext;
+        this.sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
+        this.xmlQueryName = null;
+        this.emFactory = new JpaEmFactoryJndi(persistenceInfo.getUnitName());
+        if (!emFactory.isActive())
+            this.emFactory = new JpaEmFactorySEenv(persistenceInfo.getUnitName());
+        
+        this.init();
+    }
+
+    RepositoryJpa(String unitName, SqlContext sqlContext)
     {
         notNull.verify(unitName, sqlContext);
         this.persistenceInfo = getPersitenceInfo(unitName);
@@ -126,7 +170,7 @@ public class RepositoryJpa implements RepositoryJpaExtend
      * @param em container-managed entity managers
      * @param sqlContext sql context loaded from {@code SqlContextFactory.newInstance(String)}
      */
-    public RepositoryJpa(EntityManager em, SqlContext sqlContext)
+    RepositoryJpa(EntityManager em, SqlContext sqlContext)
     {
         notNull.verify(em, sqlContext);
         this.persistenceInfo = PersistenceReader.getPersistenceInfo(sqlContext.getName());

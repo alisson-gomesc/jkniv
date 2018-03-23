@@ -91,13 +91,29 @@ public class RepositoryCassandra implements Repository
     private boolean             isTraceEnabled;
     private boolean             isDebugEnabled;
     
-    public RepositoryCassandra()
+    RepositoryCassandra()
     {
         //openConnection();
         this.sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
         this.adapterConn = new CassandraSessionFactory(new Properties()).open();
+    }
+
+    RepositoryCassandra(Properties props)
+    {
+        this.sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
+        this.isDebugEnabled = LOG.isDebugEnabled();
+        this.isTraceEnabled = LOG.isTraceEnabled();
+        this.adapterConn = new CassandraSessionFactory(props).open();
+    }
+
+    RepositoryCassandra(Properties props, SqlContext sqlContext)
+    {
+        this.sqlContext = sqlContext;
+        this.isDebugEnabled = LOG.isDebugEnabled();
+        this.isTraceEnabled = LOG.isTraceEnabled();
+        this.adapterConn = new CassandraSessionFactory(props).open();
     }
     
 //    private void openConnection()

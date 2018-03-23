@@ -26,6 +26,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.Test;
 
 import net.sf.jkniv.sqlegance.Repository;
+import net.sf.jkniv.sqlegance.RepositoryService;
+import net.sf.jkniv.sqlegance.RepositoryType;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.whinstone.jdbc.RepositoryJdbc;
@@ -37,7 +39,7 @@ public class SupportedTransactionTest
     public void whenRepositoryJdbcUnsupportedGlobalTransaction()
     {
         SqlContext sqlContext = SqlContextFactory.newInstance("/repository-sql-drivermanager.xml", "whinstone-global-tx-unsupported");
-        new RepositoryJdbc(sqlContext);
+        RepositoryService.getInstance().lookup(RepositoryType.JDBC).newInstance(sqlContext);
         assertThat("RepositoryJdbc cannot supports Global transaction", true, is(false));
     }
     
@@ -45,7 +47,7 @@ public class SupportedTransactionTest
     public void whenRepositoryJdbcUnsupportedEjbTransaction()
     {
         SqlContext sqlContext = SqlContextFactory.newInstance("/repository-sql-drivermanager.xml", "whinstone-ejb-tx-unsupported");
-        new RepositoryJdbc(sqlContext);
+        RepositoryService.getInstance().lookup(RepositoryType.JDBC).newInstance(sqlContext);
         assertThat("RepositoryJdbc cannot supports Ejb transaction", true, is(false));
     }
     
@@ -53,7 +55,7 @@ public class SupportedTransactionTest
     public void whenRepositoryJdbcSupportsLocalTransaction()
     {
         SqlContext sqlContext = SqlContextFactory.newInstance("/repository-sql-drivermanager.xml", "whinstone-ejb-local-supported");
-        Repository repo = new RepositoryJdbc(sqlContext);
+        Repository repo = RepositoryService.getInstance().lookup(RepositoryType.JDBC).newInstance(sqlContext);
         assertThat("Repository Loaded", repo, is(notNullValue()));
     }
 }
