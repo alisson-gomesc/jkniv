@@ -34,7 +34,7 @@ import net.sf.jkniv.sqlegance.logger.LogLevel;
 import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
 import net.sf.jkniv.sqlegance.logger.SqlLogger;
 import net.sf.jkniv.sqlegance.statement.StatementAdapter;
-import net.sf.jkniv.whinstone.couchdb.CassandraColumn;
+import net.sf.jkniv.whinstone.couchdb.CouchDbColumn;
 import net.sf.jkniv.whinstone.couchdb.result.FlatObjectResultRow;
 import net.sf.jkniv.whinstone.couchdb.result.MapResultRow;
 import net.sf.jkniv.whinstone.couchdb.result.NumberResultRow;
@@ -568,7 +568,7 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Row>
             //boolean binaryData = false;
             //if (columnType == Types.CLOB || columnType == Types.BLOB)
             //    binaryData = true;
-            columns[i] = new CassandraColumn(i, columnName, columnType);
+            columns[i] = new CouchDbColumn(i, columnName, columnType);
         }
         return columns;
     }

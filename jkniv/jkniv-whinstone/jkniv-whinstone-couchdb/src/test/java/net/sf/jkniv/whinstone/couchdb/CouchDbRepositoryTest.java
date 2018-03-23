@@ -39,7 +39,7 @@ import net.sf.jkniv.sqlegance.Repository;
 import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
 
 //@Ignore("RepositoryJdbc doesn't supports Cassandra driver")
-public class CassandraRepositoryTest extends BaseJdbc
+public class CouchDbRepositoryTest extends BaseJdbc
 {
     @Autowired
     Repository repository;
@@ -50,10 +50,10 @@ public class CassandraRepositoryTest extends BaseJdbc
     @Test
     public void whenCassandraListDefault()
     {
-        Repository repositoryCas = getRepository();
+        Repository repositoryDb = getRepository();
         Queryable q = getQuery("simpleSelect");
         
-        List<Map<String,Object>> list = repositoryCas.list(q);
+        List<Map<String,Object>> list = repositoryDb.list(q);
         assertThat(list.size(), greaterThan(0));
         assertThat(list.get(0), instanceOf(Map.class));
         assertThat(list.get(0), instanceOf(HashMap.class));

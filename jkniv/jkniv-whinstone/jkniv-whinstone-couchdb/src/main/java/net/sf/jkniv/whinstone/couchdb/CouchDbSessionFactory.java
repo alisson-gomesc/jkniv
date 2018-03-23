@@ -1,3 +1,22 @@
+/* 
+ * JKNIV, whinstone one contract to access your database.
+ * 
+ * Copyright (C) 2017, the original author or authors.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software Foundation, Inc., 
+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package net.sf.jkniv.whinstone.couchdb;
 
 import java.sql.CallableStatement;
@@ -21,32 +40,26 @@ import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.sqlegance.transaction.Transactional;
 
-public class CassandraSessionFactory implements ConnectionFactory
+public class CouchDbSessionFactory implements ConnectionFactory
 {
-    private static final Logger LOG = LoggerFactory.getLogger(CassandraSessionFactory.class);
-    private String contextName;
-    // Application connection objects
-    private Cluster             cluster;
-    private CassandraConnectionAdapter conn;
+    private static final Logger      LOG = LoggerFactory.getLogger(CouchDbSessionFactory.class);
+    private String                   contextName;
+    private Cluster                  cluster;
+    private CouchDbConnectionAdapter conn;
     
-    public CassandraSessionFactory(Properties props)
+    private String                   host;
+    private String                   schema;
+    private String                   username;
+    private String                   password;
+    
+    public CouchDbSessionFactory(Properties props)
     {
-        String server_ip = props.getProperty(RepositoryProperty.JDBC_URL.key(),"127.0.0.1");
-        String keyspace =  props.getProperty(RepositoryProperty.JDBC_USER.key(),"dev_data_3t");
-        cluster = Cluster.builder().addContactPoints(server_ip).build();
+        this.host = props.getProperty(RepositoryProperty.JDBC_URL.key(), "http://127.0.0.1:5984/");
+        this.schema = props.getProperty(RepositoryProperty.JDBC_SCHEMA.key());
+        this.username = props.getProperty(RepositoryProperty.JDBC_USER.key());
+        this.password = props.getProperty(RepositoryProperty.JDBC_PASSWORD.key());
         
-        final Metadata metadata = cluster.getMetadata();
-        String msg = String.format("Connected to cluster: %s", metadata.getClusterName());
-        System.out.println(msg);
-        System.out.println("List of hosts");
-        for (final Host host : metadata.getAllHosts())
-        {
-            msg = String.format("Datacenter: %s; Host: %s; Rack: %s", host.getDatacenter(), host.getAddress(),
-                    host.getRack());
-            System.out.println(msg);
-        }
-        Session session = cluster.connect(keyspace);    
-        this.conn = new CassandraConnectionAdapter(cluster, session);
+        //this.conn = new CouchDbConnectionAdapter(cluster, session);
     }
     
     @Override

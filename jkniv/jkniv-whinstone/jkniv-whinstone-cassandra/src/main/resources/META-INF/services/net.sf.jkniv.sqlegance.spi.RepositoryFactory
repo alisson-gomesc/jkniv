@@ -1,1 +1,1 @@
-net.sf.jkniv.whinstone.jdbc.RepositoryFactoryCassandra
+net.sf.jkniv.whinstone.cassandra.RepositoryFactoryCassandra

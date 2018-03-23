@@ -25,12 +25,12 @@ import net.sf.jkniv.sqlegance.QueryFactory;
 import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.Repository;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
-import net.sf.jkniv.whinstone.couchdb.RepositoryCassandra;
+import net.sf.jkniv.sqlegance.RepositoryService;
+import net.sf.jkniv.sqlegance.RepositoryType;
 
 public class BaseJdbc //extends BaseSpringJUnit4
 {
-    protected static final String url = "jdbc:derby:memory:whinstone;create=true;user=admin;password=secret";
-    protected static final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
+    protected static final String url = "http://127.0.0.1:5984";
     protected static final String user = "sa";
     protected static final String pass = "";
     protected static final Properties config;
@@ -40,12 +40,11 @@ public class BaseJdbc //extends BaseSpringJUnit4
         config.put(RepositoryProperty.JDBC_URL.key(), url);
         config.put(RepositoryProperty.JDBC_USER.key(), user);
         config.put(RepositoryProperty.JDBC_PASSWORD.key(), pass);
-        config.put(RepositoryProperty.JDBC_DRIVER.key(), driver);
     }
     
     protected Repository getRepository()
     {
-        return new RepositoryCassandra();
+        return  RepositoryService.getInstance().lookup(RepositoryType.COUCHDB).newInstance();
     }
 
     protected Queryable getQuery(String name)

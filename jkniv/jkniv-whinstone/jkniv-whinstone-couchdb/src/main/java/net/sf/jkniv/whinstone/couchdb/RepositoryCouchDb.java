@@ -74,30 +74,43 @@ import net.sf.jkniv.whinstone.couchdb.result.StringResultRow;
  * @author Alisson Gomes
  *
  */
-public class RepositoryCassandra implements Repository
+public class RepositoryCouchDb implements Repository
 {
-    private static final Logger LOG       = LoggerFactory.getLogger(RepositoryCassandra.class);
+    private static final Logger LOG       = LoggerFactory.getLogger(RepositoryCouchDb.class);
     private static final Assertable                         notNull = AssertsFactory.getNotNull();
     private QueryNameStrategy   strategyQueryName;
     private HandleableException handlerException;
     private RepositoryConfig    repositoryConfig;
     private SqlContext          sqlContext;
     private ConnectionAdapter   adapterConn;
-    // configuration Application settings
-    //private static String       server_ip = "127.0.0.1";
-    //private static String       keyspace  = "dev_data_3t";
     
     
     private boolean             isTraceEnabled;
     private boolean             isDebugEnabled;
     
-    public RepositoryCassandra()
+    RepositoryCouchDb()
     {
         //openConnection();
         this.sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
-        this.adapterConn = new CassandraSessionFactory(new Properties()).open();
+        this.adapterConn = new CouchDbSessionFactory(new Properties()).open();
+    }
+    
+    RepositoryCouchDb(Properties props)
+    {
+        this.sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
+        this.isDebugEnabled = LOG.isDebugEnabled();
+        this.isTraceEnabled = LOG.isTraceEnabled();
+        this.adapterConn = new CouchDbSessionFactory(props).open();
+    }
+
+    RepositoryCouchDb(Properties props, SqlContext sqlContext)
+    {
+        this.sqlContext = sqlContext;
+        this.isDebugEnabled = LOG.isDebugEnabled();
+        this.isTraceEnabled = LOG.isTraceEnabled();
+        this.adapterConn = new CouchDbSessionFactory(props).open();
     }
     
 //    private void openConnection()
@@ -437,7 +450,7 @@ public class RepositoryCassandra implements Repository
             //boolean binaryData = false;
             //if (columnType == Types.CLOB || columnType == Types.BLOB)
             //    binaryData = true;
-            columns[i] = new CassandraColumn(i, columnName, columnType);
+            columns[i] = new CouchDbColumn(i, columnName, columnType);
         }
         return columns;
     }

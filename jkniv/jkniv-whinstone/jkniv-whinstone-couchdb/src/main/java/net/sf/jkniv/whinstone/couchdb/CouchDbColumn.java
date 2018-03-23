@@ -31,7 +31,7 @@ import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.JdbcColumnMapper;
 import net.sf.jkniv.sqlegance.UnderscoreToCamelCaseMapper;
 
-public class CassandraColumn implements JdbcColumn<Row>
+public class CouchDbColumn implements JdbcColumn<Row>
 {
     private final int                     columnIndex;
     private final String                  columnName;
@@ -41,7 +41,7 @@ public class CassandraColumn implements JdbcColumn<Row>
     private boolean nestedAttribute;
     private final static JdbcColumnMapper jdbcColumnMapper = new UnderscoreToCamelCaseMapper();// TODO design property to config;
     
-    public CassandraColumn(int columnIndex, String columnName, int jdbcType)
+    public CouchDbColumn(int columnIndex, String columnName, int jdbcType)
     {
         super();
         this.columnIndex = columnIndex;

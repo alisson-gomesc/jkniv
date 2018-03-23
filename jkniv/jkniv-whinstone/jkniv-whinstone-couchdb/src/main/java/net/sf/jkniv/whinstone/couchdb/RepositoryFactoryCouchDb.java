@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.cassandra;
+package net.sf.jkniv.whinstone.couchdb;
 
 import java.util.Properties;
 
@@ -26,25 +26,25 @@ import net.sf.jkniv.sqlegance.RepositoryType;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.spi.RepositoryFactory;
 
-public class RepositoryFactoryCassandra implements RepositoryFactory
+public class RepositoryFactoryCouchDb implements RepositoryFactory
 {
     
     @Override
     public Repository newInstance()
     {
-        return new RepositoryCassandra();
+        return new RepositoryCouchDb();
     }
     
     @Override
     public Repository newInstance(Properties props)
     {
-        return new RepositoryCassandra(props);
+        return new RepositoryCouchDb(props);
     }
     
     @Override
     public Repository newInstance(Properties props, SqlContext sqlContext)
     {
-        return new RepositoryCassandra(props, sqlContext);
+        return new RepositoryCouchDb(props, sqlContext);
     }
     
     @Override
@@ -64,7 +64,7 @@ public class RepositoryFactoryCassandra implements RepositoryFactory
     @Override
     public RepositoryType getType()
     {
-        return RepositoryType.CASSANDRA;
+        return RepositoryType.COUCHDB;
     }
     
 }
