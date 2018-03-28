@@ -54,11 +54,22 @@ public class HandlerException implements HandleableException
         this(RuntimeException.class, "%s", mute);
     }
     
+    /**
+     * Build a new handler exception where default Runtime exception is {@code RuntimeException}.
+     * and your default message is {@code message}
+     * @param message default message
+     */
     public HandlerException(String message)
     {
         this(RuntimeException.class, message, false);
     }
     
+    /**
+     * Build a new handler exception where default Runtime exception is {@code defaultException}.
+     * and your default message is {@code message}
+     * @param defaultException default runtime exception when exception is catch for {@code try / catch} block.
+     * @param message default message
+     */
     public HandlerException(Class<? extends RuntimeException> defaultException, String message)
     {
         this(defaultException, message, false);
@@ -71,6 +82,7 @@ public class HandlerException implements HandleableException
         this.defaultException = defaultException;
         this.defaultMessage = message;
         this.mute = mute;
+        //config(defaultException, defaultException, message);
     }
     
     public HandleableException config(Class<? extends Exception> caught, Class<? extends RuntimeException> translateTo,
@@ -122,19 +134,27 @@ public class HandlerException implements HandleableException
         RuntimeException theException = (RuntimeException) prepareToThrowException(customMessage, caught);
         if (theException != null) throw theException;
     }
-*/
+    */
     public void handle(Exception caught)
     {
+        if (caught.getClass().isAssignableFrom(this.defaultException))
+            throw (RuntimeException) caught;
+        
         RuntimeException theException = prepareToThrowException(null, caught);
-        if (theException != null) throw theException;
+        if (theException != null)
+            throw theException;
     }
     
     public void handle(Exception caught, String customMessage)
     {
-        RuntimeException theException = prepareToThrowException(customMessage, caught);
-        if (theException != null) throw theException;
-    }
+        if (caught.getClass().isAssignableFrom(this.defaultException))
+            throw (RuntimeException) caught;
 
+        RuntimeException theException = prepareToThrowException(customMessage, caught);
+        if (theException != null)
+            throw theException;
+    }
+    
     public void throwMessage(String message, Object... args)
     {
         String msg = String.format(message, args);
@@ -148,7 +168,8 @@ public class HandlerException implements HandleableException
         if (!isMute() && !isMute(caught))
         {
             MapException theMappedException = getMappedException(customMessage, caught);
-            if (theMappedException != null) // FIXME whats happen when MapException is NULL
+            // FIXME whats happen when MapException is NULL
+            if (theMappedException != null)
             {
                 /*
                  * TODO test me when caught instance of the mapped exception
@@ -157,8 +178,8 @@ public class HandlerException implements HandleableException
                 {
                     Constructor<? extends RuntimeException> constructor = theMappedException.getTranslate()
                             .getConstructor(String.class, Throwable.class);
-                    theException = constructor.newInstance(buildMessage(theMappedException.getMessage(), customMessage, caught),
-                            caught);
+                    theException = constructor
+                            .newInstance(buildMessage(theMappedException.getMessage(), customMessage, caught), caught);
                     if (caught != null)//  TODO alternative method when caught is null
                         theException.setStackTrace(caught.getStackTrace());
                 }
@@ -168,10 +189,12 @@ public class HandlerException implements HandleableException
                     if (caught != null)//  TODO alternative method when caught is null
                         theException.setStackTrace(caught.getStackTrace());
                 }
+                
             }
         }
         else
-            LOG.info("Be careful the Handler exception is mute for configured exceptions [{}]", caught.getClass().getName());
+            LOG.info("Be careful the Handler exception is mute for configured exceptions [{}]",
+                    caught.getClass().getName());
         return theException;
     }
     
@@ -224,7 +247,7 @@ public class HandlerException implements HandleableException
     {
         return this.mute;
     }
-
+    
     public boolean isMute(Exception ex)
     {
         boolean answer = false;
@@ -236,7 +259,7 @@ public class HandlerException implements HandleableException
             answer = mapException.isMute();
         return answer;
     }
-
+    
     public boolean isMute(Class<? extends Exception> clazz)
     {
         boolean answer = false;
@@ -256,7 +279,7 @@ public class HandlerException implements HandleableException
     {
         String newMessage = "";
         if (hasParameterAtMessage(message))
-            newMessage = String.format(message, customMessage + " " + caught.getMessage());            //newMessage = String.format(message, customMessage);
+            newMessage = String.format(message, customMessage + " " + caught.getMessage()); //newMessage = String.format(message, customMessage);
         else
             newMessage = message;
         return newMessage;

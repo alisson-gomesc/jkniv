@@ -22,6 +22,7 @@ package net.sf.jkniv.sqlegance.builder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -55,7 +56,7 @@ import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 class ClassPathSqlContext implements SqlContext
 {
     private static final Logger                   LOG = LoggerFactory.getLogger(ClassPathSqlContext.class);
-    private final Map<String, Sql>               statements;
+    private final Map<String, Sql>                statements;
     private final Map<String, SelectColumnsTag>   selectColumns;// TODO implements select-columns    
     private final String                          mainResourceName;
     private final RepositoryConfig                repositoryConfig;
@@ -124,11 +125,44 @@ class ClassPathSqlContext implements SqlContext
         if (sql instanceof Duplicate)
             throw new QueryNotFoundException(
                     "There are duplicate short name [" + name + "] for this statement, use fully name to recover it");
-        
-        
-        
         return sql;
     }
+
+
+    @Override
+    public List<Sql> getPackage(String packageName)
+    {
+        List<Sql> queries = new ArrayList<Sql>();
+        for(Sql sql : statements.values())
+        {
+            if (packageName.equals(sql.getPackage()))
+            {
+                queries.add(sql);
+            }
+        }
+        return Collections.unmodifiableList(queries);
+    }
+
+    @Override
+    public Map<String, List<Sql>> getPackageStartWith(String packageName)
+    {
+        Map<String, List<Sql>> queries = new LinkedHashMap<String, List<Sql>>();
+        for(Sql sql : statements.values())
+        {
+            if (sql.getPackage() != null && sql.getPackage().startsWith(packageName))
+            {
+                List<Sql> packet = queries.get(sql.getPackage());
+                if (packet == null)
+                {
+                    packet = new ArrayList<Sql>();
+                    queries.put(sql.getPackage(), packet);
+                }
+                packet.add(sql);
+            }
+        }
+        return Collections.unmodifiableMap(queries);
+    }
+
     
     public String getContextName()
     {
@@ -325,6 +359,13 @@ class ClassPathSqlContext implements SqlContext
         
         @Override
         public boolean isDeletable() { return false; }
+        
+        @Override
+        public String getPackage() { return ""; }
+
+        @Override
+        public void setPackage(String name) {}
+        ;
     }
-    
+
 }

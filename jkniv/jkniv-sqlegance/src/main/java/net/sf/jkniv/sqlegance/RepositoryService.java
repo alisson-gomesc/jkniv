@@ -19,9 +19,7 @@ public class RepositoryService
     public static synchronized RepositoryService getInstance()
     {
         if (service == null)
-        {
             service = new RepositoryService();
-        }
         return service;
     }
 
@@ -32,7 +30,7 @@ public class RepositoryService
     
     public RepositoryFactory lookup(String type)
     {
-        RepositoryType typed = RepositoryType.get(type);
+        //RepositoryType typed = RepositoryType.get(type);
         RepositoryFactory factory = null;
         
         try
@@ -41,7 +39,7 @@ public class RepositoryService
             while (factory == null && factories.hasNext())
             {
                 RepositoryFactory f = factories.next();
-                if (f != null && f.getType() == typed)
+                if (f != null && type.equals(f.getType().name()))
                     factory = f;
             }
         }

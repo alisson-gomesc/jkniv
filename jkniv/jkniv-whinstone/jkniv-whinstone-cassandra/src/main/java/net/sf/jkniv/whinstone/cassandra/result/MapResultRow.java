@@ -83,7 +83,8 @@ public class MapResultRow<T> implements ResultRow<T, Row>
             jdbcObject = column.getBytes(row);
         else
             jdbcObject = column.getValue(row);
-        sqlLogger.log(LogLevel.RESULTSET, "Using sensitive key [{}] for type [{}] with value [{}]", column.getAttributeName());
+        sqlLogger.log(LogLevel.RESULTSET, "Using sensitive key [{}] for type [{}] with value [{}]", column.getAttributeName(), (jdbcObject == null ? "null" : jdbcObject.getClass()), jdbcObject);
+        //sqlLogger.log(LogLevel.RESULTSET, "Using sensitive key [{}] for type [{}] with value [{}]", column.getAttributeName());
         map.put(column.getAttributeName(), jdbcObject);
     }
     

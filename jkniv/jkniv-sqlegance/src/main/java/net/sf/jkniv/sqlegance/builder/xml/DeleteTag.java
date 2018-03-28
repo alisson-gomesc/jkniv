@@ -22,6 +22,7 @@ package net.sf.jkniv.sqlegance.builder.xml;
 import net.sf.jkniv.sqlegance.Deletable;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.SqlType;
+import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
 
@@ -31,7 +32,7 @@ import net.sf.jkniv.sqlegance.validation.ValidateType;
  * @author Alisson Gomes
  * @since 0.0.2
  */
-public class DeleteTag extends AbstractSqlTag implements Deletable 
+class DeleteTag extends AbstractSqlTag implements Deletable 
 {
     /**
      * Build a new <code>delete</code> tag from XML file.
@@ -43,7 +44,19 @@ public class DeleteTag extends AbstractSqlTag implements Deletable
     {
         super(id, languageType);
     }
-    
+
+    /**
+     * Build a new <code>delete</code> tag from XML file.
+     * 
+     * @param id Name/Identify from tag
+     * @param languageType type of language from tag
+     * @param sqlDialect dialect from database
+     */
+    public DeleteTag(String id, LanguageType languageType, SqlDialect sqlDialect)
+    {
+        super(id, languageType, sqlDialect);
+    }
+
     /**
      * Build a new <code>delete</code> tag from XML file.
      * 

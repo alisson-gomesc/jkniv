@@ -66,15 +66,15 @@ import net.sf.jkniv.whinstone.jdbc.transaction.Work;
  */
 public class RepositoryJdbc implements Repository
 {
-    private static final Logger                             LOG     = LoggerFactory.getLogger(RepositoryJdbc.class);
-    private static final Assertable                         notNull = AssertsFactory.getNotNull();
-    private QueryNameStrategy                               strategyQueryName;
-    private HandleableException                             handlerException;
-    private RepositoryConfig                                repositoryConfig;
-    private ConnectionFactory                              connectionFactory;
-    private SqlContext                                      sqlContext;
-    private boolean isTraceEnabled;
-    private boolean isDebugEnabled;
+    private static final Logger     LOG     = LoggerFactory.getLogger(RepositoryJdbc.class);
+    private static final Assertable notNull = AssertsFactory.getNotNull();
+    private QueryNameStrategy       strategyQueryName;
+    private HandleableException     handlerException;
+    private RepositoryConfig        repositoryConfig;
+    private ConnectionFactory       connectionFactory;
+    private SqlContext              sqlContext;
+    private boolean                 isTraceEnabled;
+    private boolean                 isDebugEnabled;
     
     RepositoryJdbc()// TODO test constructor
     {
@@ -295,7 +295,7 @@ public class RepositoryJdbc implements Repository
         return get(null, entity);
     }
     
-    public <T> T get(Class<T> returnType, T entity)
+    public <T> T get(Class<T> returnType, Object entity)
     {
         notNull.verify(entity);
         String queryName = this.strategyQueryName.toGetName(entity);

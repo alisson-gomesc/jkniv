@@ -107,12 +107,14 @@
   <xsd:simpleType name="repositoryType">
     <xsd:annotation>
       <xsd:documentation>
-        public enum RepositoryType {JDBC, JPA};
+        public enum RepositoryType {JDBC, JPA, CASSANDRA, COUCHDB};
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:token">
       <xsd:enumeration value="JDBC" />
       <xsd:enumeration value="JPA" />
+      <xsd:enumeration value="CASSANDRA" />
+      <xsd:enumeration value="COUCHDB" />
     </xsd:restriction>
   </xsd:simpleType>
 

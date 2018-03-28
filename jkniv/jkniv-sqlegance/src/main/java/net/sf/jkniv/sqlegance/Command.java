@@ -1,5 +1,5 @@
 /* 
- * JKNIV, whinstone one contract to access your database.
+ * JKNIV, SQLegance keeping queries maintainable.
  * 
  * Copyright (C) 2017, the original author or authors.
  *
@@ -20,6 +20,7 @@
 package net.sf.jkniv.sqlegance;
 
 /**
+ * Command to be executed at database like {@code Select}, {@code Update}, {@code Delete}, {@code Insert}, {@code Stored Procedure}...
  * 
  * @author Alisson Gomes
  * @since 0.6.0
@@ -28,4 +29,6 @@ package net.sf.jkniv.sqlegance;
 public interface Command
 {
     <T> T execute();
+    
+    String getBody();
 }

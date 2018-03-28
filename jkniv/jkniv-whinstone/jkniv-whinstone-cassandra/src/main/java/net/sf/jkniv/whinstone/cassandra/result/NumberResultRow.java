@@ -21,7 +21,7 @@ package net.sf.jkniv.whinstone.cassandra.result;
 
 import java.sql.SQLException;
 
-import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
 
 import net.sf.jkniv.reflect.NumberFactory;
 import net.sf.jkniv.reflect.Numerical;
@@ -39,10 +39,10 @@ import net.sf.jkniv.sqlegance.logger.SqlLogger;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class NumberResultRow<T> implements ResultRow<T, ResultSet>
+public class NumberResultRow<T> implements ResultRow<T, Row>
 {
     private final SqlLogger  sqlLogger;
-    private JdbcColumn<ResultSet>[] columns;
+    private JdbcColumn<Row>[] columns;
     private final Numerical numerical;
 
     public NumberResultRow(Class<T> returnType, SqlLogger log)
@@ -50,7 +50,7 @@ public class NumberResultRow<T> implements ResultRow<T, ResultSet>
         this(returnType, null, log);
     }
 
-    public NumberResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns, SqlLogger log)
+    public NumberResultRow(Class<T> returnType, JdbcColumn<Row>[] columns, SqlLogger log)
     {
         this.columns = columns;
         this.sqlLogger = log;
@@ -58,7 +58,7 @@ public class NumberResultRow<T> implements ResultRow<T, ResultSet>
     }
     
     @SuppressWarnings("unchecked")
-    public T row(ResultSet rs, int rownum) throws SQLException
+    public T row(Row rs, int rownum) throws SQLException
     {
         Object jdbcObject = null;
         if (columns[0].isBinary())
@@ -77,7 +77,7 @@ public class NumberResultRow<T> implements ResultRow<T, ResultSet>
     }    
 
     @Override
-    public void setColumns(JdbcColumn<ResultSet>[] columns)
+    public void setColumns(JdbcColumn<Row>[] columns)
     {
         this.columns = columns;
     }

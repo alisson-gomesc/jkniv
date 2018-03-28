@@ -109,11 +109,11 @@ public class UnitOfWork implements Work
         try
         {
             //SqlDialect sqlDialect = newDialect(queryable);
-            adapterConn = getConnection(queryable.getSql().getIsolation());
+            adapterConn = getConnection(queryable.getDynamicSql().getIsolation());
             conn = (Connection)adapterConn.unwrap();
             PreparedStatementStrategy stmtStrategy = new DefaultPreparedStatementStrategy(queryable, sqlLogger);//getPreparedStatementStrategy(sqlDialect);
             
-            if (queryable.getSql().isInsertable())
+            if (queryable.getDynamicSql().isInsertable())
             {
                 DbCommand command = DbCommandFactory.newInstance(queryable, conn, stmtStrategy);
                 affected = command.execute();
@@ -157,7 +157,7 @@ public class UnitOfWork implements Work
         PreparedStatement stmt = null;
         ResultSet rs = null;
         List<T> list = null;
-        Selectable select = queryable.getSql().asSelectable();
+        Selectable select = queryable.getDynamicSql().asSelectable();
         Class<T> returnType = (Class<T>) Map.class;
         try
         {

@@ -43,6 +43,8 @@ import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
 import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.Repository;
+import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.ResultSetParser;
 import net.sf.jkniv.sqlegance.Selectable;
@@ -74,7 +76,7 @@ import net.sf.jkniv.whinstone.cassandra.result.StringResultRow;
  * @author Alisson Gomes
  *
  */
-public class RepositoryCassandra implements Repository
+class RepositoryCassandra implements Repository
 {
     private static final Logger LOG       = LoggerFactory.getLogger(RepositoryCassandra.class);
     private static final Assertable                         notNull = AssertsFactory.getNotNull();
@@ -93,27 +95,43 @@ public class RepositoryCassandra implements Repository
     
     RepositoryCassandra()
     {
-        //openConnection();
-        this.sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
-        this.isDebugEnabled = LOG.isDebugEnabled();
-        this.isTraceEnabled = LOG.isTraceEnabled();
-        this.adapterConn = new CassandraSessionFactory(new Properties()).open();
+        this(new Properties(), SqlContextFactory.newInstance("/repository-sql.xml"));
     }
 
     RepositoryCassandra(Properties props)
     {
-        this.sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
-        this.isDebugEnabled = LOG.isDebugEnabled();
-        this.isTraceEnabled = LOG.isTraceEnabled();
-        this.adapterConn = new CassandraSessionFactory(props).open();
+        this(props, SqlContextFactory.newInstance("/repository-sql.xml"));
+    }
+    
+    RepositoryCassandra(String sqlContext)
+    {
+        this(new Properties(), SqlContextFactory.newInstance("/repository-sql.xml"));
     }
 
+    RepositoryCassandra(SqlContext sqlContext)
+    {
+        this(new Properties(), sqlContext);
+    }
+    
     RepositoryCassandra(Properties props, SqlContext sqlContext)
     {
+        notNull.verify(props, sqlContext);
+        if (props.isEmpty() || !props.containsKey(RepositoryProperty.JDBC_URL.key()))
+        {
+            String jndiName = sqlContext.getRepositoryConfig().getJndiDataSource();
+            if (jndiName != null && !"".equals(jndiName))
+            {
+                Properties propsJndi = lookup(jndiName);
+                sqlContext.getRepositoryConfig().add(propsJndi);
+            }
+        }
+        else
+            sqlContext.getRepositoryConfig().add(props);
+
         this.sqlContext = sqlContext;
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
-        this.adapterConn = new CassandraSessionFactory(props).open();
+        this.adapterConn = new CassandraSessionFactory(sqlContext.getRepositoryConfig().getProperties()).open();
     }
     
 //    private void openConnection()
@@ -166,7 +184,7 @@ public class RepositoryCassandra implements Repository
     }
     
     @Override
-    public <T> T get(Class<T> returnType, T object)
+    public <T> T get(Class<T> returnType, Object object)
     {
         throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
     }
@@ -458,4 +476,19 @@ public class RepositoryCassandra implements Repository
         return columns;
     }
 
+    private Properties lookup(String remaining)
+    {
+        Properties prop = null;
+        Object resource = JndiResources.lookup(remaining);
+        if (resource != null)
+        {
+            if (resource instanceof Properties)
+                prop = (Properties) resource;
+            else
+                throw new RepositoryException("Resource with name [" + remaining
+                        + "] must be an instance of java.util.Properties to connect with CouchDb");
+          //TODO exception design, must have ConfigurationException?
+        }
+        return prop;
+    }
 }

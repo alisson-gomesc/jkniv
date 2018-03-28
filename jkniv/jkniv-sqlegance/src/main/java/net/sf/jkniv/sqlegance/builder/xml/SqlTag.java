@@ -76,6 +76,11 @@ public interface SqlTag extends Sql
      */
     void setResourceName(String resourceName);
     
+    /**
+     * name of package this sql belong
+     * @param name of package
+     */
+    void setPackage(String name);
     
 //    /**
 //     * Set the time to keep the query in memory, after that a new parser must be

@@ -234,6 +234,12 @@ public interface Sql
      SqlDialect getSqlDialect();
      
      /**
+      * name of package that this SQL belongs
+      * @return name of package
+      */
+     String getPackage();
+     
+     /*
       * Use validator (JSR 303) to perform validation against params
       * @param params parameters of query
       * @throws ConstraintException when some constraint is violated

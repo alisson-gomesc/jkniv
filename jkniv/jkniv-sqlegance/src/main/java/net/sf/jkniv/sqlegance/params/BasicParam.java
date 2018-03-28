@@ -48,12 +48,17 @@ class BasicParam implements AutoBindParams
     @Override
     public void on() 
     {
-        if ("?".equals(paramsNames[0]))
-            stmtAdapter.bind(params);
-        else 
+        if (paramsNames.length == 1)
         {
-            stmtAdapter.bind(paramsNames[0], params);
+            if ("?".equals(paramsNames[0]))
+                stmtAdapter.bind(params);
+            else 
+            {
+                stmtAdapter.bind(paramsNames[0], params);
+            }
         }
+        else
+            stmtAdapter.bind(params);
     }
 
     @Override

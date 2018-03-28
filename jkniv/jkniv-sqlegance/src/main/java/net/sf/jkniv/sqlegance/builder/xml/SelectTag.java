@@ -29,6 +29,7 @@ import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.SqlType;
+import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
 import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
 import net.sf.jkniv.sqlegance.statement.ResultSetType;
@@ -43,7 +44,7 @@ import net.sf.jkniv.sqlegance.validation.ValidateType;
  */
 class SelectTag extends AbstractSqlTag implements Selectable
 {
-    private String             groupBy;
+    private String          groupBy;
     private Set<OneToMany>  oneToMany;
     
     /**
@@ -56,7 +57,22 @@ class SelectTag extends AbstractSqlTag implements Selectable
     public SelectTag(String id, LanguageType languageType)
     {
         super(id, languageType);
+        this.oneToMany = new HashSet<OneToMany>();
+        this.groupBy = "";
     }
+    
+    /**
+     * Build a new <code>select</code> tag from XML file.
+     * 
+     * @param id Name/Identify from tag
+     * @param languageType type of language from tag
+     * @param sqlDialect dialect from database
+     */
+    public SelectTag(String id, LanguageType languageType, SqlDialect sqlDialect)
+    {
+        super(id, languageType, sqlDialect);
+    }
+    
     
     /**
      * Build a new <code>select</code> tag from XML file.
@@ -130,7 +146,7 @@ class SelectTag extends AbstractSqlTag implements Selectable
     @Override
     public List<String> getGroupByAsList()
     {
-        if ("".equals(groupBy))
+        if (groupBy == null || "".equals(groupBy))
             return Collections.emptyList();
         
         return Arrays.asList(groupBy.split(","));

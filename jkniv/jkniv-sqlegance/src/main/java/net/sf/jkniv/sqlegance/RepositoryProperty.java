@@ -26,7 +26,7 @@ package net.sf.jkniv.sqlegance;
  *  add property to limit parameter at clause IN, default is 1000 
  *  
  *  
- * @author alisson
+ * @author Alisson Gomes
  * @since 0.6.0
  */
 public enum RepositoryProperty

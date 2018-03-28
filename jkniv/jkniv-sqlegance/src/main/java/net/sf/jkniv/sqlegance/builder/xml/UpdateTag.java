@@ -22,6 +22,7 @@ package net.sf.jkniv.sqlegance.builder.xml;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.Updateable;
+import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
 
@@ -31,7 +32,7 @@ import net.sf.jkniv.sqlegance.validation.ValidateType;
  * @author Alisson Gomes
  * @since 0.0.2
  */
-public class UpdateTag extends AbstractSqlTag implements Updateable
+class UpdateTag extends AbstractSqlTag implements Updateable
 {
     /**
      * Build a new <code>update</code> tag from XML file.
@@ -44,6 +45,18 @@ public class UpdateTag extends AbstractSqlTag implements Updateable
     public UpdateTag(String id, LanguageType languageType)
     {
         super(id, languageType);
+    }
+    
+    /**
+     * Build a new <code>update</code> tag from XML file.
+     * 
+     * @param id Name/Identify from tag
+     * @param languageType type of language from tag
+     * @param sqlDialect dialect from database
+     */
+    public UpdateTag(String id, LanguageType languageType, SqlDialect sqlDialect)
+    {
+        super(id, languageType, sqlDialect);
     }
     
     /**

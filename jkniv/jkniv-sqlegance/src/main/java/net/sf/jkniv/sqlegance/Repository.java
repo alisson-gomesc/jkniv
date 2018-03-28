@@ -100,7 +100,7 @@ public interface Repository
      * @throws QueryNotFoundException when not found the query name
      * @throws NonUniqueResultException when select or select with group by recovery more one objects
      */
-    <T> T get(Class<T> returnType, T object);
+    <T> T get(Class<T> returnType, Object object);
     
     /**
      * Retrieve a number, numerical quantity, string, date, boolean, some primitive value (wrapped), 

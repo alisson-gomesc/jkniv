@@ -2,7 +2,7 @@ package net.sf.jkniv.sqlegance;
 
 public class QueryFactory
 {
-    QueryFactory() { /* no instance for this*/    }
+    QueryFactory() { /* no instance for this */    }
     
     
     /**

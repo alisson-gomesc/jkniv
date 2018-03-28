@@ -19,6 +19,7 @@
  */
 package net.sf.jkniv.sqlegance.builder;
 
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -280,7 +281,14 @@ public class RepositoryConfig
     public void add(Properties props)
     {
         if (props != null)
-            this.properties.putAll(props);
+        {
+            for(Entry<Object, Object> entry : props.entrySet())
+            {
+                Object old = this.properties.put(entry.getKey().toString(), entry.getValue());
+                if (old != null)
+                    LOG.info("The value of key [{}] with original value [{}] was replacement to [{}]", entry.getKey(), old, entry.getValue());
+            }
+        }
     }
     
     /*

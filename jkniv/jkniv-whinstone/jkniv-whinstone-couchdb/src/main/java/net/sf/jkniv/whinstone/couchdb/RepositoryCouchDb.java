@@ -21,6 +21,7 @@ package net.sf.jkniv.whinstone.couchdb;
 
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -28,45 +29,24 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.ColumnDefinitions;
-import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
-
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.exception.HandleableException;
-import net.sf.jkniv.sqlegance.ConnectionAdapter;
-import net.sf.jkniv.sqlegance.JdbcColumn;
+import net.sf.jkniv.sqlegance.Command;
+import net.sf.jkniv.sqlegance.QueryFactory;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
 import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.Repository;
+import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.ResultRow;
-import net.sf.jkniv.sqlegance.ResultSetParser;
-import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
-import net.sf.jkniv.sqlegance.classification.Groupable;
-import net.sf.jkniv.sqlegance.classification.GroupingBy;
-import net.sf.jkniv.sqlegance.classification.NoGroupingBy;
-import net.sf.jkniv.sqlegance.classification.Transformable;
-import net.sf.jkniv.sqlegance.logger.LogLevel;
-import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
-import net.sf.jkniv.sqlegance.statement.StatementAdapter;
 import net.sf.jkniv.sqlegance.transaction.Transactional;
-import net.sf.jkniv.whinstone.couchdb.result.FlatObjectResultRow;
-import net.sf.jkniv.whinstone.couchdb.result.MapResultRow;
-import net.sf.jkniv.whinstone.couchdb.result.NumberResultRow;
-import net.sf.jkniv.whinstone.couchdb.result.ObjectResultSetParser;
-import net.sf.jkniv.whinstone.couchdb.result.PojoResultRow;
-import net.sf.jkniv.whinstone.couchdb.result.ScalarResultRow;
-import net.sf.jkniv.whinstone.couchdb.result.StringResultRow;
+import net.sf.jkniv.whinstone.couchdb.commands.CouchDbSynchViewDesign;
 
 /**
  * Encapsulate the data access for Cassandra
@@ -76,108 +56,173 @@ import net.sf.jkniv.whinstone.couchdb.result.StringResultRow;
  */
 public class RepositoryCouchDb implements Repository
 {
-    private static final Logger LOG       = LoggerFactory.getLogger(RepositoryCouchDb.class);
-    private static final Assertable                         notNull = AssertsFactory.getNotNull();
-    private QueryNameStrategy   strategyQueryName;
-    private HandleableException handlerException;
-    private RepositoryConfig    repositoryConfig;
-    private SqlContext          sqlContext;
-    private ConnectionAdapter   adapterConn;
-    
-    
-    private boolean             isTraceEnabled;
-    private boolean             isDebugEnabled;
+    private static final Logger     LOG     = LoggerFactory.getLogger(RepositoryCouchDb.class);
+    private static final Assertable notNull = AssertsFactory.getNotNull();
+    private QueryNameStrategy       strategyQueryName;
+    private HandleableException     handlerException;
+    private RepositoryConfig        repositoryConfig;
+    private CouchDbSqlContext       sqlContext;
+    private HttpCookieConnectionAdapter factoryConnection;
+    private final static Map<String, Boolean> DOC_SCHEMA_UPDATED = new HashMap<String, Boolean>();
+    private boolean                 isTraceEnabled;
+    private boolean                 isDebugEnabled;
     
     RepositoryCouchDb()
     {
-        //openConnection();
-        this.sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
-        this.isDebugEnabled = LOG.isDebugEnabled();
-        this.isTraceEnabled = LOG.isTraceEnabled();
-        this.adapterConn = new CouchDbSessionFactory(new Properties()).open();
+        this(new Properties(), SqlContextFactory.newInstance("/repository-sql.xml"));
     }
     
     RepositoryCouchDb(Properties props)
     {
-        this.sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
-        this.isDebugEnabled = LOG.isDebugEnabled();
-        this.isTraceEnabled = LOG.isTraceEnabled();
-        this.adapterConn = new CouchDbSessionFactory(props).open();
+        this(props, SqlContextFactory.newInstance("/repository-sql.xml"));
+    }
+
+    RepositoryCouchDb(String sqlContext)
+    {
+        this(new Properties(), SqlContextFactory.newInstance(sqlContext));
+    }
+
+    RepositoryCouchDb(SqlContext sqlContext)
+    {
+        this(new Properties(), sqlContext);
     }
 
     RepositoryCouchDb(Properties props, SqlContext sqlContext)
     {
-        this.sqlContext = sqlContext;
+        notNull.verify(props, sqlContext);
+        if (props.isEmpty() || !props.containsKey(RepositoryProperty.JDBC_URL.key()))
+        {
+            String jndiName = sqlContext.getRepositoryConfig().getJndiDataSource();
+            if (jndiName != null && !"".equals(jndiName))
+            {
+                Properties propsJndi = lookup(jndiName);
+                sqlContext.getRepositoryConfig().add(propsJndi);
+            }
+        }
+        else
+            sqlContext.getRepositoryConfig().add(props);
+        
+        this.sqlContext = new CouchDbSqlContext(sqlContext);
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
-        this.adapterConn = new CouchDbSessionFactory(props).open();
+        this.factoryConnection = (HttpCookieConnectionAdapter) new HttpConnectionFactory(sqlContext.getRepositoryConfig().getProperties()).open();
+        this.init();
     }
     
-//    private void openConnection()
-//    {
-//        if (cluster != null)
-//            return;
-//        
-//        cluster = Cluster.builder().addContactPoints(server_ip).build();
-//        
-//        final Metadata metadata = cluster.getMetadata();
-//        String msg = String.format("Connected to cluster: %s", metadata.getClusterName());
-//        System.out.println(msg);
-//        System.out.println("List of hosts");
-//        for (final Host host : metadata.getAllHosts())
-//        {
-//            msg = String.format("Datacenter: %s; Host: %s; Rack: %s", host.getDatacenter(), host.getAddress(),
-//                    host.getRack());
-//            System.out.println(msg);
-//        }
-//        session = cluster.connect(keyspace);
-//    }
-    
-//    private PreparedStatement getPreparedStatement(String statement)
-//    {
-//        return session.prepare(statement);
-//    }
+    private void init()
+    {
+        String hostContext = factoryConnection.getHttpBuilder().getHostContext();
+        if (!DOC_SCHEMA_UPDATED.containsKey(hostContext))
+        {
+            // TODO property to config behavior like auto ddl from hibernate
+            CouchDbSynchViewDesign _design = new CouchDbSynchViewDesign(this.factoryConnection.getHttpBuilder(), sqlContext);
+            _design.update();
+            DOC_SCHEMA_UPDATED.put(hostContext, Boolean.TRUE);
+        }
+    }
     
     @Override
     public <T> T get(Queryable queryable)
     {
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(queryable);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as get command", queryable);
+        
+        T ret = get(queryable, null, null);
+        
+        if (isDebugEnabled)
+            LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
+        
+        return ret;
     }
     
     @Override
     public <T> T get(Queryable queryable, Class<T> returnType)
     {
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(queryable, returnType);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as get command with [{}] as return type", queryable, returnType);
+
+        T ret = get(queryable, returnType, null);
+        if (isDebugEnabled)
+            LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
+        
+        return ret;
     }
     
     @Override
     public <T, R> T get(Queryable queryable, ResultRow<T, R> resultRow)
     {
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        throw new UnsupportedOperationException("CouchDb Repository doesn't implement this method yet!");
+//        notNull.verify(queryable, resultRow);
+//        if (isTraceEnabled)
+//            LOG.trace("Executing [{}] as get command", queryable);
+//        
+//        T ret = get(queryable, null, resultRow);
+//        
+//        if (isDebugEnabled)
+//            LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
+//        
+//        return ret;
+//        
     }
     
     @Override
     public <T> T get(T object)
     {
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(object);
+        if (isTraceEnabled)
+            LOG.trace("Executing as get command with object [{}]", object);
+        
+        Queryable queryable = QueryFactory.newInstance("get", object);
+        T ret = (T) get(queryable, object.getClass(), null);
+        
+        if (isDebugEnabled)
+            LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
+        
+        return ret;
     }
     
     @Override
-    public <T> T get(Class<T> returnType, T object)
+    public <T> T get(Class<T> returnType, Object object)
     {
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(object);
+        if (isTraceEnabled)
+            LOG.trace("Executing as get command with object [{}]", object);
+        
+        Queryable queryable = QueryFactory.newInstance("get", object);
+        T ret = (T) get(queryable, returnType, null);
+        
+        if (isDebugEnabled)
+            LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
+        
+        return ret;    }
+
+    private <T, R> T get(Queryable queryable, Class<T> returnType, ResultRow<T, R> resultRow)
+    {
+        Sql isql = sqlContext.getQuery(queryable.getName());
+        checkSqlType(isql, SqlType.SELECT);
+        isql.getValidateType().assertValidate(queryable.getParams());
+        queryable.setReturnType(returnType);        
+        
+        if (!queryable.isBoundSql())
+            queryable.bind(isql);
+        
+        Command command = factoryConnection.asSelectCommand(queryable, null);
+        T ret = command.execute();
+        return ret;    
     }
-    
+
     @Override
     public <T> T scalar(Queryable queryable)
     {
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        throw new UnsupportedOperationException("CouchDb Repository doesn't implement this method yet!");
     }
-    
+
     @Override
     public boolean enrich(Queryable queryable)
     {
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        throw new UnsupportedOperationException("CouchDb Repository doesn't implement this method yet!");
     }
     
     @Override
@@ -196,7 +241,8 @@ public class RepositoryCouchDb implements Repository
     @SuppressWarnings("unchecked")
     public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
-        return list(queryable, null, overloadResultRow);
+        throw new UnsupportedOperationException("CouchDb Repository doesn't implement this method yet!");
+        //return list(queryable, null, overloadResultRow);
     }
     
     @SuppressWarnings("unchecked")
@@ -206,139 +252,32 @@ public class RepositoryCouchDb implements Repository
             LOG.trace("Executing [{}] as list command", queryable);
         
         List<T> list = Collections.emptyList();
-        Class<T> returnType = (Class<T>) Map.class;
         
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.SELECT);
-        Selectable select = isql.asSelectable();
-        
         isql.getValidateType().assertValidate(queryable.getParams());
+        queryable.setReturnType(overloadReturnType);
         
         if (!queryable.isBoundSql())
             queryable.bind(isql);
-
-        if (overloadReturnType != null)
-            returnType = overloadReturnType;
-        else if (isql.getReturnTypeAsClass() != null)
-            returnType = (Class<T>) isql.getReturnTypeAsClass();
-
-        StatementAdapter<T, R> stmt = adapterConn.newStatement(queryable);
-        queryable.bind(stmt).on();
         
-        stmt
-        .returnType(returnType)
-        .resultRow(overloadResultRow)
-        .oneToManies(select.getOneToMany())
-        .groupingBy(select.getGroupByAsList());
-    
-        if(queryable.isScalar())
-            stmt.scalar();
+        Command command = factoryConnection.asSelectCommand(queryable, overloadResultRow);
         
-        list = stmt.rows();
-
+        list = command.execute();
+        
         if (isDebugEnabled)
             LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
         
         return list;
         
     }
-    //@Override
-    //@SuppressWarnings("unchecked")
-    public <T, R> List<T> __list__(Queryable queryable, ResultRow<T, R> overloadResultRow)
-    {
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as list command", queryable);
-        
-        Selectable isql = sqlContext.getQuery(queryable.getName()).asSelectable();
-        checkSqlType(isql, SqlType.SELECT);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        String sql = isql.getSql(queryable.getParams());
-        String[] paramsNames = isql.getParamParser().find(sql);
-        String positionalSql = isql.getParamParser().replaceForQuestionMark(sql, queryable.getParams());
-        Object[] params = queryable.values(paramsNames);
-        Session session = null;
-        PreparedStatement stmt = session .prepare(positionalSql);
-        BoundStatement bound = stmt.bind(params);
-        ResultSetParser<T, R> rsParser = null;
-        ResultRow<T, R> rsRowParser = null;
-        Groupable<T, ?> grouping = new NoGroupingBy<T, T>();
-        Transformable<?> transformable = null;
-        SqlLogger sqlLogger = new SqlLogger(LogLevel.ALL, new SimpleDataMasking());
-        ResultSet rs = session.execute(bound);
-        JdbcColumn<Row>[] columns = getJdbcColumns(rs.getColumnDefinitions());
-        Class<T> returnType = (Class<T>) Map.class;
-        
-        if (isql.getReturnTypeAsClass() != null)
-            returnType = (Class<T>)isql.getReturnTypeAsClass();
 
-        List<T> list = Collections.emptyList();
-        if (overloadResultRow != null)
-        {
-            overloadResultRow.setColumns((JdbcColumn<R>[]) columns);
-            rsRowParser = overloadResultRow;
-        }
-        else
-        {
-            if (queryable.isScalar())
-            {
-                rsRowParser = new ScalarResultRow(columns, sqlLogger);
-            }
-            else if (Map.class.isAssignableFrom(returnType))
-            {
-                rsRowParser = new MapResultRow(returnType, columns, sqlLogger);
-                //transformable = new MapTransform();
-            }
-            else if (Number.class.isAssignableFrom(returnType)) // FIXME implements for date, calendar, boolean improve design
-            {
-                rsRowParser = new NumberResultRow(returnType, columns, sqlLogger);
-            }
-            else if (String.class.isAssignableFrom(returnType))
-            {
-                rsRowParser = new StringResultRow(columns, sqlLogger);
-            }
-            else if (isql.getOneToMany().isEmpty())
-            {
-                rsRowParser = new FlatObjectResultRow(returnType, columns, sqlLogger);
-            }
-            else
-            {
-                rsRowParser = new PojoResultRow(returnType, columns, isql.getOneToMany(), sqlLogger);
-            }
-        }
-        
-        transformable = rsRowParser.getTransformable();
-        List<String> groupingBy = isql.getGroupByAsList();
-        if (!groupingBy.isEmpty())
-        {
-            grouping = new GroupingBy(groupingBy, returnType, transformable);
-        }
-        rsParser = new ObjectResultSetParser(rsRowParser, grouping);
-        try
-        {
-            list = rsParser.parser((R) rs);
-        }
-        catch (SQLException e)
-        {
-            handlerException.handle(e);
-        }
-        
-        //  List<T> list = currentWork().select(queryable, isql, returnType, resultRow);
-        
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(),
-                    queryable.getTotal());
-        
-        return list;
-        
-    }
-    
     @Override
     public int add(Queryable queryable)
     {
         notNull.verify(queryable);
-        //if (isTraceEnabled)
-        //    LOG.trace("Executing [{}] as add command with dialect [{}]", queryable, this.repositoryConfig.getSqlDialect());
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as add command with dialect [{}]", queryable, CouchDbDialect.class);
         
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.INSERT);
@@ -347,68 +286,141 @@ public class RepositoryCouchDb implements Repository
         
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
-        queryable.bind(adapterStmt).on();
-        int affected = adapterStmt.execute();
-
+        Command command = factoryConnection.asAddCommand(queryable, null);
+        //StatementAdapter<Number, String> adapterStmt = factoryConnection.newStatement(queryable);
+        //queryable.bind(adapterStmt).on();
+        int affected = command.execute();
+        
         if (isDebugEnabled)
-            LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
+            LOG.debug("{} records was affected by add [{}] query", affected, queryable.getName());
         return affected;
     }
     
     @Override
     public <T> T add(T entity)
     {
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(entity);
+        Queryable queryable = QueryFactory.newInstance("add", entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as add command", queryable);
+        
+        Sql isql = sqlContext.getQuery(queryable.getName());
+        checkSqlType(isql, SqlType.INSERT);
+        if (!queryable.isBoundSql())
+            queryable.bind(isql);
+        
+        isql.getValidateType().assertValidate(queryable.getParams());
+        
+        Command command = factoryConnection.asAddCommand(queryable, null);
+        //StatementAdapter<Number, String> adapterStmt = factoryConnection.newStatement(queryable);
+        //queryable.bind(adapterStmt).on();
+        int affected = command.execute();
+        
+        if (isDebugEnabled)
+            LOG.debug("{} records was affected by add [{}] query", affected, queryable.getName());
+        return entity;
     }
     
     @Override
     public int update(Queryable queryable)
     {
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(queryable);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as update query", queryable);
+        
+        Sql isql = sqlContext.getQuery(queryable.getName());
+        checkSqlType(isql, SqlType.UPDATE);
+        if (!queryable.isBoundSql())
+            queryable.bind(isql);
+        
+        isql.getValidateType().assertValidate(queryable.getParams());
+        
+        Command command = factoryConnection.asUpdateCommand(queryable, null);
+        int affected = command.execute();
+        
+        if (isDebugEnabled)
+            LOG.debug("{} records was affected by update [{}] query", affected, queryable.getName());
+        return affected;
     }
     
     @Override
     public <T> T update(T entity)
     {
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(entity);
+        Queryable queryable = QueryFactory.newInstance("update", entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as update query", queryable);
+        
+        Sql isql = sqlContext.getQuery(queryable.getName());
+        checkSqlType(isql, SqlType.UPDATE);
+        if (!queryable.isBoundSql())
+            queryable.bind(isql);
+        
+        isql.getValidateType().assertValidate(queryable.getParams());
+        
+        Command command = factoryConnection.asUpdateCommand(queryable, null);
+        int affected = command.execute();
+        
+        if (isDebugEnabled)
+            LOG.debug("{} records was affected by update [{}] query", affected, queryable.getName());
+        return entity;
     }
     
     @Override
     public int remove(Queryable queryable)
     {
+        notNull.verify(queryable);
         if (isTraceEnabled)
-            LOG.trace("Executing [{}] as remove command", queryable);
-
+            LOG.trace("Executing [{}] as remove query", queryable);
+        
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.DELETE);
+        if (!queryable.isBoundSql())
+            queryable.bind(isql);
         
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        int affected = 0;//currentWork().execute(queryable, isql);
+        Command command = factoryConnection.asDeleteCommand(queryable, null);
+        int affected = command.execute();
+        
         if (isDebugEnabled)
-            LOG.debug("{} records was affected by remove [{}] command", affected, queryable.getName());
+            LOG.debug("{} records was affected by remove [{}] query", affected, queryable.getName());
         return affected;
-
-        //throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
     }
     
     @Override
     public <T> int remove(T entity)
     {
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(entity);
+        Queryable queryable = QueryFactory.newInstance("remove", entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as remove query", queryable);
+        
+        Sql isql = sqlContext.getQuery(queryable.getName());
+        checkSqlType(isql, SqlType.DELETE);
+        if (!queryable.isBoundSql())
+            queryable.bind(isql);
+        
+        isql.getValidateType().assertValidate(queryable.getParams());
+        
+        Command command = factoryConnection.asDeleteCommand(queryable, null);
+        int affected = command.execute();
+        
+        if (isDebugEnabled)
+            LOG.debug("{} records was affected by remove [{}] query", affected, queryable.getName());
+        return affected;    
     }
     
     @Override
     public void flush()
     {
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        throw new UnsupportedOperationException("CouchDb Repository doesn't implement this method yet!");
     }
     
     @Override
     public Transactional getTransaction()
     {
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        throw new UnsupportedOperationException("CouchDb Repository doesn't implement this method yet!");
     }
     
     @Override
@@ -416,43 +428,60 @@ public class RepositoryCouchDb implements Repository
     {
         try
         {
-            adapterConn.close();
+            factoryConnection.close();
         }
         catch (SQLException e)
         {
-            LOG.warn("Error to try close Cassandra session/cluster [{}]", adapterConn, e);
+            LOG.warn("Error to try close Cassandra session/cluster [{}]", factoryConnection, e);
         }
     }
     
     private void checkSqlType(Sql isql, SqlType expected)
     {
         if (isql.getSqlType() != expected)
-            throw new IllegalArgumentException("Cannot execute sql [" + isql.getName() + "] as ["
-                    + isql.getSqlType() + "], exptected is " + expected);
+            throw new IllegalArgumentException("Cannot execute sql [" + isql.getName() + "] as [" + isql.getSqlType()
+                    + "], exptected is " + expected);
     }
 
-    /**
-     * Summarize the columns from SQL result in binary data or not.
-     * @param metadata  object that contains information about the types and properties of the columns in a <code>ResultSet</code> 
-     * @return Array of columns with name and index
-     */
-    @SuppressWarnings("unchecked")
-    private JdbcColumn<Row>[] getJdbcColumns(ColumnDefinitions metadata)
+    private Properties lookup(String remaining)
     {
-        JdbcColumn<Row>[] columns = new JdbcColumn[metadata.size()];
-        
-        for (int i = 0; i < columns.length; i++)
+        Properties prop = null;
+        Object resource = JndiResources.lookup(remaining);
+        if (resource != null)
         {
-            //int columnNumber = i + 1;
-            
-            String columnName = metadata.getName(i);//getColumnName(metadata, columnNumber);
-            int columnType = metadata.getType(i).getName().ordinal(); //metadata.getColumnType(columnNumber);
-            //boolean binaryData = false;
-            //if (columnType == Types.CLOB || columnType == Types.BLOB)
-            //    binaryData = true;
-            columns[i] = new CouchDbColumn(i, columnName, columnType);
+            if (resource instanceof Properties)
+                prop = (Properties) resource;
+            else
+                throw new RepositoryException("Resource with name [" + remaining
+                        + "] must be an instance of java.util.Properties to connect with CouchDb");
+          //TODO exception design, must have ConfigurationException?
         }
-        return columns;
+        return prop;
     }
 
+    
+    //    /**
+    //     * Summarize the columns from SQL result in binary data or not.
+    //     * @param metadata  object that contains information about the types and properties of the columns in a <code>ResultSet</code> 
+    //     * @return Array of columns with name and index
+    //     */
+    //    @SuppressWarnings("unchecked")
+    //    private JdbcColumn<Row>[] getJdbcColumns(ColumnDefinitions metadata)
+    //    {
+    //        JdbcColumn<Row>[] columns = new JdbcColumn[metadata.size()];
+    //        
+    //        for (int i = 0; i < columns.length; i++)
+    //        {
+    //            //int columnNumber = i + 1;
+    //            
+    //            String columnName = metadata.getName(i);//getColumnName(metadata, columnNumber);
+    //            int columnType = metadata.getType(i).getName().ordinal(); //metadata.getColumnType(columnNumber);
+    //            //boolean binaryData = false;
+    //            //if (columnType == Types.CLOB || columnType == Types.BLOB)
+    //            //    binaryData = true;
+    //            columns[i] = new CouchDbColumn(i, columnName, columnType);
+    //        }
+    //        return columns;
+    //    }
+    
 }

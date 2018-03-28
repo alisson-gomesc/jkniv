@@ -19,7 +19,6 @@
  */
 package net.sf.jkniv.whinstone.cassandra.result;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -29,6 +28,8 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.datastax.driver.core.Row;
 
 import net.sf.jkniv.reflect.Injectable;
 import net.sf.jkniv.reflect.InjectableFactory;
@@ -53,7 +54,7 @@ import net.sf.jkniv.sqlegance.logger.SqlLogger;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class PojoResultRow<T> implements ResultRow<T, ResultSet>
+public class PojoResultRow<T> implements ResultRow<T, Row>
 {
     private final static Logger     LOG    = LoggerFactory.getLogger(PojoResultRow.class);
     private final static MethodName SETTER = MethodNameFactory.getInstanceSetter();
@@ -62,7 +63,7 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
     private final Class<T>          returnType;
     private final Set<OneToMany> oneToManies;
     private final Transformable<T>  transformable;
-    private JdbcColumn<ResultSet>[] columns;
+    private JdbcColumn<Row>[] columns;
     
     public PojoResultRow(Class<T> returnType, Set<OneToMany> oneToManies, SqlLogger log)
     {
@@ -70,7 +71,7 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
     }
     
     @SuppressWarnings("unchecked")
-    public PojoResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns, Set<OneToMany> oneToManies,
+    public PojoResultRow(Class<T> returnType, JdbcColumn<Row>[] columns, Set<OneToMany> oneToManies,
             SqlLogger log)
     {
         this.returnType = returnType;
@@ -80,12 +81,12 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
         this.transformable = (Transformable<T>) new ObjectTransform();
     }
     
-    public T row(ResultSet rs, int rownum) throws SQLException
+    public T row(Row rs, int rownum) throws SQLException
     {
         final Map<OneToMany, Object> otmValues;
         otmValues = new HashMap<OneToMany, Object>();
         ObjectProxy<T> proxyRow = ObjectProxyFactory.newProxy(returnType);
-        for (JdbcColumn<ResultSet> column : columns)
+        for (JdbcColumn<Row> column : columns)
         {
             OneToMany otm = getOneToMany(column, otmValues);
             if (otm == null)
@@ -115,7 +116,7 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
         return proxyRow.getInstance();
     }
     
-    private void setValueOf(JdbcColumn<ResultSet> column, ResultSet rs, ObjectProxy<T> proxy) throws SQLException
+    private void setValueOf(JdbcColumn<Row> column, Row rs, ObjectProxy<T> proxy) throws SQLException
     {
         Injectable<T> reflect = InjectableFactory.newMethodInjection(proxy);
         Object jdbcObject = null;
@@ -137,7 +138,7 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
         }
     }
     
-    private OneToMany getOneToMany(JdbcColumn<ResultSet> jdbcColumn, final Map<OneToMany, Object> otmValues)
+    private OneToMany getOneToMany(JdbcColumn<Row> jdbcColumn, final Map<OneToMany, Object> otmValues)
     {
         OneToMany otm = null;
         for (OneToMany m : oneToManies)
@@ -156,7 +157,7 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
         return otm;
     }
     
-    private void prepareOneToManyValue(OneToMany otm, JdbcColumn column, ResultSet rs,
+    private void prepareOneToManyValue(OneToMany otm, JdbcColumn column, Row rs,
             final Map<OneToMany, Object> otmValues) throws SQLException
     {
         ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(otmValues.get(otm));
@@ -171,7 +172,7 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
         reflect.inject(method, jdbcObject);
     }
     /*
-    private void __prepareOneToManyValue__(OneToMany otm, JdbcColumn column, ResultSet rs) throws SQLException
+    private void __prepareOneToManyValue__(OneToMany otm, JdbcColumn column, Row rs) throws SQLException
     {
         ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(otmValues.get(otm));
         Injectable<?> reflect = InjectableFactory.newMethodInjection(proxy);
@@ -222,7 +223,7 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
     }
     
     @Override
-    public void setColumns(JdbcColumn<ResultSet>[] columns)
+    public void setColumns(JdbcColumn<Row>[] columns)
     {
         this.columns = columns;
     }

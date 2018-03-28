@@ -36,31 +36,32 @@ import net.sf.jkniv.sqlegance.logger.SqlLogger;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class StringResultRow<T> implements ResultRow<T, ResultSet>
+public class StringResultRow<T> implements ResultRow<T, String>
 {
     private final SqlLogger  sqlLogger;
-    private JdbcColumn<ResultSet>[] columns;
+    private JdbcColumn<String>[] columns;
 
     public StringResultRow(SqlLogger log)
     {
         this(null, log);
     }
 
-    public StringResultRow(JdbcColumn<ResultSet>[] columns, SqlLogger log)
+    public StringResultRow(JdbcColumn<String>[] columns, SqlLogger log)
     {
         this.columns = columns;
         this.sqlLogger = log;
     }
     
     @SuppressWarnings("unchecked")
-    public T row(ResultSet rs, int rownum) throws SQLException
+    public T row(String  json, int rownum) throws SQLException
     {
         Object jdbcObject = null;
-        if (columns[0].isBinary())
-            jdbcObject = columns[0].getBytes(rs);
-        else
-            jdbcObject = columns[0].getValue(rs);
-        
+//        if (columns[0].isBinary())
+//            jdbcObject = columns[0].getBytes(rs);
+//        else
+//            jdbcObject = columns[0].getValue(rs);
+
+        // FIXME couchdb logger ResultSet
         sqlLogger.log(LogLevel.RESULTSET, "Column index [0] named [{}] to set String", columns[0].getAttributeName());
         return (T)(jdbcObject != null ? jdbcObject.toString() : null);
     }
@@ -72,7 +73,7 @@ public class StringResultRow<T> implements ResultRow<T, ResultSet>
     }    
     
     @Override
-    public void setColumns(JdbcColumn<ResultSet>[] columns)
+    public void setColumns(JdbcColumn<String>[] columns)
     {
         this.columns = columns;
     }

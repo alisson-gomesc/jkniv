@@ -1,8 +1,0 @@
-net.sf.jkniv.whinstone.jdbc
-net.sf.jkniv.whinstone.jdbc.dialect
-net.sf.jkniv.whinstone.jdbc.experimental
-net.sf.jkniv.whinstone.jdbc.experimental.commands
-net.sf.jkniv.whinstone.jdbc.params
-net.sf.jkniv.whinstone.jdbc.result
-net.sf.jkniv.whinstone.jdbc.statement
-net.sf.jkniv.whinstone.jdbc.transaction

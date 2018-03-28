@@ -53,6 +53,17 @@ public interface ConnectionAdapter
     PreparedStatement stmt, Class<T> returnType, ResultRow<T, ResultSet> rsRowParser,
     SqlDialect sqlDialect, SqlLogger sqlLogger)
 */
+
+    //Command newCommand(Sql sql);
+
+    <T,R> Command asSelectCommand(Queryable queryable, ResultRow<T, R> overloadResultRow);
+
+    <T, R> Command asUpdateCommand(Queryable queryable, ResultRow<T, R> overloadResultRow);
+
+    <T, R> Command asDeleteCommand(Queryable queryable, ResultRow<T, R> overloadResultRow);
+
+    <T, R> Command asAddCommand(Queryable queryable, ResultRow<T, R> overloadResultRow);
+
     <T,R> StatementAdapter<T,R> newStatement(Queryable queryable);
     
     <T, R> StatementAdapter<T, R> newStatement(String sql);

@@ -3,6 +3,7 @@ package net.sf.jkniv.whinstone.cassandra.statement;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -22,7 +23,6 @@ import net.sf.jkniv.experimental.converters.SqlDateConverter;
 import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.KeyGeneratorType;
 import net.sf.jkniv.sqlegance.OneToMany;
-import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.ResultSetParser;
@@ -277,7 +277,7 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Row>
         session.execute(bound);
         
         
-        return 0;
+        return Statement.SUCCESS_NO_INFO; // FIXME design Statement.SUCCESS_NO_INFO
         //return stmt.executeUpdate();
         //        }
         //        catch (SQLException e)

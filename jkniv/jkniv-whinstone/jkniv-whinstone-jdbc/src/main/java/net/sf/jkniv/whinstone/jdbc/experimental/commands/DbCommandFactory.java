@@ -33,7 +33,7 @@ public class DbCommandFactory
             Connection conn,
             PreparedStatementStrategy stmtStrategy)
     {
-        if(queryable.getSql().isInsertable())
+        if(queryable.getDynamicSql().isInsertable())
             return new InsertCommand2(queryable, stmtStrategy, conn);
 //        else if (queryable.getSql().isUpdateable())
 //            return new UpdateCommand(queryable, stmtStrategy, conn);
@@ -50,9 +50,9 @@ public class DbCommandFactory
         //if(queryable.getSql().isInsertable())
         //    return new InsertCommand2(queryable, stmtStrategy, conn);
         //else 
-        if (queryable.getSql().isUpdateable())
+        if (queryable.getDynamicSql().isUpdateable())
             return new UpdateCommand(queryable, stmtStrategy, conn);
-        else if (queryable.getSql().isDeletable())
+        else if (queryable.getDynamicSql().isDeletable())
             return new DeleteCommand(queryable, stmtStrategy, conn);
         else
             throw new UnsupportedOperationException("Cannot execute a command different of INSERT|UPDATE|DELETE");

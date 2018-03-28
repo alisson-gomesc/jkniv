@@ -1,0 +1,14 @@
+{
+  "name": "Karl Marx",
+  "nationality": "DE",
+  "born": 1818,
+  "books": [
+    {
+     "isbn": "978-8520004678",
+     "name": "Das Kapital",
+     "published": 1867,
+     "lastView": "2012-04-23T18:25:43.511-0300",
+     "visualization": 0
+    }
+  ]
+}

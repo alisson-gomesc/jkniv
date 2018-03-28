@@ -12,7 +12,7 @@
     <level value="trace" />
     <appender-ref ref="console" />
   </logger>
-  <logger name="net.sf.jkniv.whinstone.cassandra" additivity="false">
+  <logger name="net.sf.jkniv.whinstone.couchdb" additivity="false">
     <level value="trace" />
     <appender-ref ref="console" />
   </logger>

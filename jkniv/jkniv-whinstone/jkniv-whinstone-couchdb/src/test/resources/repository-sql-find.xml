@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+  
+
+  <select id="authorsBR">
+    {
+     "selector": {"nationality": "BR" }
+    }
+  </select>
+
+  <select id="authorsNat">
+    {
+     "selector": {"nationality": #{nat} },
+     "fields": ["_id", "_rev", "name","nationality"],
+     "limit": 2,
+     "skip": 0
+    }
+  </select>
+  
+
+</statements>

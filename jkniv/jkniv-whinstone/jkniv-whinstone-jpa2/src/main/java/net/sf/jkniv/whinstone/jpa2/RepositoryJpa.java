@@ -392,7 +392,8 @@ public class RepositoryJpa implements RepositoryJpaExtend
         return ret;
     }
     
-    public <T> T get(Class<T> returnType, T object)
+    @Override
+    public <T> T get(Class<T> returnType, Object object)
     {
         notNull.verify(object, returnType);
         T ret = null;

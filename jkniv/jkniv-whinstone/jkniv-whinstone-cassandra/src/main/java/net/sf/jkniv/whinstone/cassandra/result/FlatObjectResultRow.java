@@ -24,7 +24,7 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
 
 import net.sf.jkniv.reflect.Injectable;
 import net.sf.jkniv.reflect.InjectableFactory;
@@ -46,13 +46,13 @@ import net.sf.jkniv.sqlegance.logger.SqlLogger;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class FlatObjectResultRow<T> implements ResultRow<T, ResultSet>
+public class FlatObjectResultRow<T> implements ResultRow<T, Row>
 {
     private final static Logger LOG = LoggerFactory.getLogger(FlatObjectResultRow.class);
     //private final SqlLogger    sqlLogger;
     private final Class<T>     returnType;
     private final Transformable<T> transformable;
-    private JdbcColumn<ResultSet>[] columns;
+    private JdbcColumn<Row>[] columns;
 
     public FlatObjectResultRow(Class<T> returnType, SqlLogger log)
     {
@@ -60,7 +60,7 @@ public class FlatObjectResultRow<T> implements ResultRow<T, ResultSet>
     }
 
     @SuppressWarnings("unchecked")
-    public FlatObjectResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns, SqlLogger log)
+    public FlatObjectResultRow(Class<T> returnType, JdbcColumn<Row>[] columns, SqlLogger log)
     {
         this.returnType = returnType;
         this.columns = columns;
@@ -68,16 +68,16 @@ public class FlatObjectResultRow<T> implements ResultRow<T, ResultSet>
         //this.sqlLogger = log;
     }
     
-    public T row(ResultSet rs, int rownum) throws SQLException
+    public T row(Row rs, int rownum) throws SQLException
     {
         ObjectProxy<T> proxy = ObjectProxyFactory.newProxy(returnType);
-        for (JdbcColumn<ResultSet> column : columns)
+        for (JdbcColumn<Row> column : columns)
             setValueOf(column, rs, proxy);
         
         return proxy.getInstance();
     }
     
-    private void setValueOf(JdbcColumn<ResultSet> column, ResultSet rs, ObjectProxy<T> proxy) throws SQLException
+    private void setValueOf(JdbcColumn<Row> column, Row rs, ObjectProxy<T> proxy) throws SQLException
     {
         Injectable<T> reflect = InjectableFactory.newMethodInjection(proxy);
         Object jdbcObject = null;
@@ -105,7 +105,7 @@ public class FlatObjectResultRow<T> implements ResultRow<T, ResultSet>
     }
     
     @Override
-    public void setColumns(JdbcColumn<ResultSet>[] columns)
+    public void setColumns(JdbcColumn<Row>[] columns)
     {
         this.columns = columns;
     }

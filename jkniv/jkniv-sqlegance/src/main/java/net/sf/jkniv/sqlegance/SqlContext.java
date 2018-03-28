@@ -19,6 +19,9 @@
  */
 package net.sf.jkniv.sqlegance;
 
+import java.util.List;
+import java.util.Map;
+
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 
@@ -46,6 +49,21 @@ public interface SqlContext
      *            configured this exception is thrower.
      */
     Sql getQuery(String name);
+    
+    /**
+     * Retrieve all queries from package
+     * @param packageName name of package
+     * @return the list of queries that belong this package, if any one query ins't find
+     * a empty list is returned.
+     */
+    List<Sql> getPackage(String packageName);
+    
+    /**
+     * Retrieve all packages starting with {@code packagetName}.
+     * @param packageName name of package
+     * @return Map with found packages, where each key it is a package
+     */
+    Map<String, List<Sql>> getPackageStartWith(String packageName);
     
     boolean containsQuery(String name);
     

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<repository-config xmlns="http://jkniv.sf.net/schema/sqlegance/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/config http://jkniv.sf.net/schema/sqlegance/sqlegance-config-0.6.xsd">
+
+  <repository name="couchdb-authors-nonjndi">
+    <description>Jndi for properties file</description>
+  </repository>
+
+  <repository name="couchdb-authors">
+    <description>Jndi for properties file</description>
+    <jndi-data-source>java:comp/env/props/couchdb</jndi-data-source>
+  </repository>
+</repository-config>

@@ -15,9 +15,7 @@
     <module>jkniv-whinstone-jdbc</module>
     <module>jkniv-whinstone-jpa2</module>
     <module>jkniv-whinstone-cassandra</module>
-    <!-- 
     <module>jkniv-whinstone-couchdb</module>
-     -->
     <module>jkniv-whinstone-fluent</module>
     <module>jkniv-whinstone-rest</module>
   </modules>

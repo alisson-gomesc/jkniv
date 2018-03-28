@@ -19,8 +19,9 @@
  */
 package net.sf.jkniv.whinstone.cassandra.result;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import com.datastax.driver.core.Row;
 
 import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.ResultRow;
@@ -36,24 +37,24 @@ import net.sf.jkniv.sqlegance.logger.SqlLogger;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class StringResultRow<T> implements ResultRow<T, ResultSet>
+public class StringResultRow<T> implements ResultRow<T, Row>
 {
     private final SqlLogger  sqlLogger;
-    private JdbcColumn<ResultSet>[] columns;
+    private JdbcColumn<Row>[] columns;
 
     public StringResultRow(SqlLogger log)
     {
         this(null, log);
     }
 
-    public StringResultRow(JdbcColumn<ResultSet>[] columns, SqlLogger log)
+    public StringResultRow(JdbcColumn<Row>[] columns, SqlLogger log)
     {
         this.columns = columns;
         this.sqlLogger = log;
     }
     
     @SuppressWarnings("unchecked")
-    public T row(ResultSet rs, int rownum) throws SQLException
+    public T row(Row rs, int rownum) throws SQLException
     {
         Object jdbcObject = null;
         if (columns[0].isBinary())
@@ -72,7 +73,7 @@ public class StringResultRow<T> implements ResultRow<T, ResultSet>
     }    
     
     @Override
-    public void setColumns(JdbcColumn<ResultSet>[] columns)
+    public void setColumns(JdbcColumn<Row>[] columns)
     {
         this.columns = columns;
     }

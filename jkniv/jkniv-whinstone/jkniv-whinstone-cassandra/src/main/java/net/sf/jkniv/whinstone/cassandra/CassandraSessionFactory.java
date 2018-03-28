@@ -61,14 +61,12 @@ public class CassandraSessionFactory implements ConnectionFactory
             cluster = Cluster.builder().addContactPoints(urls).build();
             
         final Metadata metadata = cluster.getMetadata();
-        String msg = String.format("Connected to cluster: %s", metadata.getClusterName());
-        System.out.println(msg);
-        System.out.println("List of hosts");
-        for (final Host host : metadata.getAllHosts())
+        if (LOG.isInfoEnabled())
         {
-            msg = String.format("Datacenter: %s; Host: %s; Rack: %s", host.getDatacenter(), host.getAddress(),
-                    host.getRack());
-            LOG.info(msg);
+            LOG.info("Connected to cluster: {}", metadata.getClusterName());
+            LOG.info("List of hosts");
+            for (final Host host : metadata.getAllHosts())
+                LOG.info("Datacenter: {}; Host: {}; Rack: {}", host.getDatacenter(), host.getAddress(), host.getRack());
         }
         Session session = cluster.connect(keyspace);    
         this.conn = new CassandraConnectionAdapter(cluster, session);

@@ -96,25 +96,25 @@ class XmlReader
             URL url = DefaultClassLoader.getResource(resourceName);
             if (url == null)
             {
-            	LOG.error("Cannot load XML resource [{}] from class path", resourceName);
-            	return false;            	
+                LOG.warn("Cannot load XML resource [{}] from class path", resourceName);
+                return false;
             }
             
-                try
-                {
-                    is = url.openStream();
-                }
-                catch (IOException e)
-                {
-                    LOG.error("Cannot open xml file [{}]", resourceName, e);
-                }
-                if (is != null)
-                {
-                    doc = loadXML(is);
-                    doc.getDocumentElement().normalize();
-                    loaded = true;
-                    setVersion();
-                }
+            try
+            {
+                is = url.openStream();
+            }
+            catch (IOException e)
+            {
+                LOG.error("Cannot open xml file [{}]", resourceName, e);
+            }
+            if (is != null)
+            {
+                doc = loadXML(is);
+                doc.getDocumentElement().normalize();
+                loaded = true;
+                setVersion();
+            }
         }
         finally
         {

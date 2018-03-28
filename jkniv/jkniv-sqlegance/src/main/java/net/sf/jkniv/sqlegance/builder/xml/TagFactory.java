@@ -1,3 +1,22 @@
+/* 
+ * JKNIV, SQLegance keeping queries maintainable.
+ * 
+ * Copyright (C) 2017, the original author or authors.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software Foundation, Inc., 
+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package net.sf.jkniv.sqlegance.builder.xml;
 
 import net.sf.jkniv.sqlegance.Deletable;
@@ -5,6 +24,7 @@ import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Updateable;
+import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
 import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
 import net.sf.jkniv.sqlegance.statement.ResultSetType;
@@ -22,6 +42,11 @@ public class TagFactory
     public static Selectable newSelect(String id, LanguageType languageType)
     {
         return new SelectTag(id, languageType);
+    }
+
+    public static Selectable newSelect(String id, LanguageType languageType, SqlDialect sqlDialect)
+    {
+        return new SelectTag(id, languageType, sqlDialect);
     }
     
     /**
@@ -59,6 +84,12 @@ public class TagFactory
         return new InsertTag(id, languageType);
     }
     
+    public static Insertable newInsert(String id, LanguageType languageType, SqlDialect sqlDialect)
+    {
+        return new InsertTag(id, languageType, sqlDialect);
+    }
+    
+    
     public static Insertable newInsert(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch, String hint,
             ValidateType validateType)
     {
@@ -81,10 +112,33 @@ public class TagFactory
     {
         return new UpdateTag(id, languageType);
     }
+
+    public static Updateable newUpdate(String id, LanguageType languageType, SqlDialect sqlDialect)
+    {
+        return new UpdateTag(id, languageType, sqlDialect);
+    }
+    
+    public static Updateable newUpdate(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch, String hint, ValidateType validateType)
+    {
+        return new UpdateTag(id, languageType, isolation, timeout, batch, hint, validateType);
+    }
+
     
     public static Deletable newDelete(String id, LanguageType languageType)
     {
         return new DeleteTag(id, languageType);
+    }
+
+    public static Deletable newDelete(String id, LanguageType languageType, SqlDialect sqlDialect)
+    {
+        return new DeleteTag(id, languageType, sqlDialect);
+    }
+
+    public static Deletable newDelete(
+            String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch, String hint,
+            ValidateType validateType)
+    {
+        return new DeleteTag(id, languageType, isolation, timeout, batch, hint, validateType);
     }
     
 }

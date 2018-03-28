@@ -26,8 +26,11 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 
+import net.sf.jkniv.sqlegance.Command;
 import net.sf.jkniv.sqlegance.ConnectionAdapter;
 import net.sf.jkniv.sqlegance.Queryable;
+import net.sf.jkniv.sqlegance.ResultRow;
+import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.statement.StatementAdapter;
 import net.sf.jkniv.whinstone.cassandra.statement.PreparedStatementAdapter;
 
@@ -43,15 +46,16 @@ public class CassandraConnectionAdapter implements ConnectionAdapter
     @Override
     public void commit() throws SQLException
     {
-        // TODO Auto-generated method stub
+        // FIXME UnsupportedOperationException
+        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
         
     }
     
     @Override
     public void rollback() throws SQLException
     {
-        // TODO Auto-generated method stub
-        
+        // FIXME UnsupportedOperationException
+        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");        
     }
     
     @Override
@@ -73,43 +77,43 @@ public class CassandraConnectionAdapter implements ConnectionAdapter
     @Override
     public boolean isClosed() throws SQLException
     {
-        // TODO Auto-generated method stub
-        return false;
+        // FIXME UnsupportedOperationException
+        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");        
     }
     
     @Override
     public boolean isAutoCommit() throws SQLException
     {
-        // TODO Auto-generated method stub
-        return false;
+        // FIXME UnsupportedOperationException
+        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");        
     }
     
     @Override
     public void autoCommitOn() throws SQLException
     {
-        // TODO Auto-generated method stub
-        
+        // FIXME UnsupportedOperationException
+        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");        
     }
     
     @Override
     public void autoCommitOff() throws SQLException
     {
-        // TODO Auto-generated method stub
-        
+        // FIXME UnsupportedOperationException
+        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");        
     }
     
     @Override
     public Object getMetaData()
     {
-        // TODO Auto-generated method stub
-        return null;
+        // FIXME UnsupportedOperationException
+        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");        
     }
     
     @Override
     public <T, R> StatementAdapter<T, R> newStatement(Queryable queryable)
     {
-        String sql = queryable.getSql().getSql(queryable.getParams());
-        String positionalSql = queryable.getSql().getParamParser().replaceForQuestionMark(sql, queryable.getParams());
+        String sql = queryable.getDynamicSql().getSql(queryable.getParams());
+        String positionalSql = queryable.getDynamicSql().getParamParser().replaceForQuestionMark(sql, queryable.getParams());
         PreparedStatement stmt = session.prepare(positionalSql);
         StatementAdapter<T, R> adapter = new PreparedStatementAdapter(session, stmt);
         return adapter;
@@ -118,8 +122,8 @@ public class CassandraConnectionAdapter implements ConnectionAdapter
     @Override
     public <T, R> StatementAdapter<T, R> newStatement(String sql)
     {
-        // TODO Auto-generated method stub
-        return null;
+        // FIXME UnsupportedOperationException
+        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");        
     }
     
     @Override
@@ -132,6 +136,34 @@ public class CassandraConnectionAdapter implements ConnectionAdapter
     {
         return "CassandraConnectionAdapter [session=" + session + ", cluster=" + cluster + "]";
     }
+    @Override
+    public <T, R> Command asSelectCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    {
+        // FIXME UnsupportedOperationException
+        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");        
+    }
+    
+    @Override
+    public <T, R> Command asUpdateCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    {
+        // FIXME UnsupportedOperationException
+        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");        
+    }
+
+    @Override
+    public <T, R> Command asDeleteCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    {
+        // FIXME UnsupportedOperationException
+        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");        
+    }
+    
+    @Override
+    public <T, R> Command asAddCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    {
+        // FIXME UnsupportedOperationException
+        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");        
+    }
+
 
     
 }

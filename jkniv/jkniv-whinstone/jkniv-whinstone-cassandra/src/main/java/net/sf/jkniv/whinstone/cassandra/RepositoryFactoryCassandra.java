@@ -50,15 +50,13 @@ public class RepositoryFactoryCassandra implements RepositoryFactory
     @Override
     public Repository newInstance(String sqlContext)
     {
-        throw new UnsupportedOperationException("Cassandra Repository doens't supports (String) constructor yet!");
-        //return new RepositoryCassandra(sqlContext);
+        return new RepositoryCassandra(sqlContext);
     }
     
     @Override
     public Repository newInstance(SqlContext sqlContext)
     {
-        throw new UnsupportedOperationException("Cassandra Repository doens't supports (SqlContext) constructor yet!");
-        //return new RepositoryCassandra(sqlContext);
+        return new RepositoryCassandra(sqlContext);
     }
     
     @Override

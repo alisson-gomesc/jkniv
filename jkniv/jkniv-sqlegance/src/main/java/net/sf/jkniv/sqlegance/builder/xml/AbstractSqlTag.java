@@ -115,6 +115,7 @@ public abstract class AbstractSqlTag implements SqlTag
     private String               resourceName;
     private Date                 timestamp;
     private ParamParser          paramParser;
+    private String               paket;
     //private long                 timeToLive;
     
     private ResultRow<?, ?> parserRow;
@@ -131,6 +132,12 @@ public abstract class AbstractSqlTag implements SqlTag
     public AbstractSqlTag(String id, LanguageType languageType)
     {
         this(id, languageType, Isolation.DEFAULT, -1, false, false, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", ValidateType.NONE);
+    }
+    
+    public AbstractSqlTag(String id, LanguageType languageType, SqlDialect sqlDialect)
+    {
+        this(id, languageType, Isolation.DEFAULT, -1, false, false, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", ValidateType.NONE);
+        this.sqlDialect = sqlDialect;
     }
 
     /**
@@ -580,6 +587,18 @@ public abstract class AbstractSqlTag implements SqlTag
     public SqlDialect getSqlDialect()
     {
         return this.sqlDialect;
+    }
+    
+    @Override
+    public String getPackage()
+    {
+        return this.paket;
+    }
+    
+    @Override
+    public void setPackage(String name)
+    {
+        this.paket = name;
     }
     
     private void setParamParser(String text)
