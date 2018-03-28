@@ -54,11 +54,22 @@ public class HandlerException implements HandleableException
         this(RuntimeException.class, "%s", mute);
     }
     
+    /**
+     * Build a new handler exception where default Runtime exception is {@code RuntimeException}.
+     * and your default message is {@code message}
+     * @param message default message
+     */
     public HandlerException(String message)
     {
         this(RuntimeException.class, message, false);
     }
     
+    /**
+     * Build a new handler exception where default Runtime exception is {@code defaultException}.
+     * and your default message is {@code message}
+     * @param defaultException default runtime exception when exception is catch for {@code try / catch} block.
+     * @param message default message
+     */
     public HandlerException(Class<? extends RuntimeException> defaultException, String message)
     {
         this(defaultException, message, false);

@@ -37,7 +37,7 @@ class DeleteCommand extends AbstractCommand
     public <T> T execute()
     {
         Integer rowsAffected  = 0;
-        if (queryable.getSql().isBatch() || queryable.isTypeOfBulk())
+        if (queryable.getDynamicSql().isBatch() || queryable.isTypeOfBulk())
         {
             rowsAffected = batchExecute();
         }

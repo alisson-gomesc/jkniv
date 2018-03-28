@@ -7,17 +7,19 @@
        http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
   
 
-  <insert type="NATIVE" id="removeAll">
-    delete from dev_data_3t.TEST_DATA
-  </insert>
+  <select id="adminRoles" returnType="">
+    {
+     "selector": {"nationality": "BR" }
+    }
+  </select>
 
-  <insert type="NATIVE" id="simpleInsert">
-    INSERT INTO dev_data_3t.TEST_DATA (my_key,evt_date,object_id, lat, lng, warn)
-    values (?,?,?,?,?,?)
-  </insert>
-
-  <select type="NATIVE" id="simpleSelect" returnType="java.util.HashMap">
-    select my_key,evt_date,object_id,lat, lng, warn from dev_data_3t.TEST_DATA
+  <select id="role">
+    {
+     "selector": {"nationality": #{nat} },
+     "fields": ["_id", "_rev", "sourceId", "name","email","role"],
+     "limit": 2,
+     "skip": 0
+    }
   </select>
 
 </statements>

@@ -108,8 +108,8 @@ public class CassandraConnectionAdapter implements ConnectionAdapter
     @Override
     public <T, R> StatementAdapter<T, R> newStatement(Queryable queryable)
     {
-        String sql = queryable.getSql().getSql(queryable.getParams());
-        String positionalSql = queryable.getSql().getParamParser().replaceForQuestionMark(sql, queryable.getParams());
+        String sql = queryable.getDynamicSql().getSql(queryable.getParams());
+        String positionalSql = queryable.getDynamicSql().getParamParser().replaceForQuestionMark(sql, queryable.getParams());
         PreparedStatement stmt = session.prepare(positionalSql);
         StatementAdapter<T, R> adapter = new PreparedStatementAdapter(session, stmt);
         return adapter;

@@ -21,17 +21,13 @@ package net.sf.jkniv.whinstone.couchdb;
 
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Date;
 import java.util.Locale;
-
-import com.datastax.driver.core.DataType;
-import com.datastax.driver.core.Row;
 
 import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.JdbcColumnMapper;
 import net.sf.jkniv.sqlegance.UnderscoreToCamelCaseMapper;
 
-public class CouchDbColumn implements JdbcColumn<Row>
+public class CouchDbColumn implements JdbcColumn<String>
 {
     private final int                     columnIndex;
     private final String                  columnName;
@@ -89,30 +85,35 @@ public class CouchDbColumn implements JdbcColumn<Row>
     
     public boolean isClob()
     {
+        throw new UnsupportedOperationException("CouchDb Repository doesn't implement Column data type parse!");
         // FIXME implements read CLOB as string, 
         // FIXME implements write CLOB to database
-        return (this.jdbcType == Types.CLOB);
+        //return (this.jdbcType == Types.CLOB);
     }
     
     public boolean isBlob()
     {
+        throw new UnsupportedOperationException("CouchDb Repository doesn't implement Column data type parse!");
         // FIXME implements write BLOB to database
-        return (this.jdbcType == DataType.Name.BLOB.ordinal());
+        //return (this.jdbcType == DataType.Name.BLOB.ordinal());
     }
     
     public boolean isDate()
     {
-        return (this.jdbcType == DataType.Name.DATE.ordinal());
+        throw new UnsupportedOperationException("CouchDb Repository doesn't implement Column data type parse!");
+        //return (this.jdbcType == DataType.Name.DATE.ordinal());
     }
     
     public boolean isTimestamp()
     {
-        return (this.jdbcType == DataType.Name.TIMESTAMP.ordinal());
+        throw new UnsupportedOperationException("CouchDb Repository doesn't implement Column data type parse!");
+        //return (this.jdbcType == DataType.Name.TIMESTAMP.ordinal());
     }
     
     public boolean isTime()
     {
-        return (this.jdbcType == DataType.Name.TIME.ordinal());
+        throw new UnsupportedOperationException("CouchDb Repository doesn't implement Column data type parse!");
+        //return (this.jdbcType == DataType.Name.TIME.ordinal());
     }
     
     public boolean isNestedAttribute()
@@ -121,25 +122,28 @@ public class CouchDbColumn implements JdbcColumn<Row>
     }
     
     @Override
-    public Object getValue(Row row) throws SQLException
+    public Object getValue(String row) throws SQLException
     {
-        Object value = row.getObject(columnIndex);
-        if (value != null)
-        {
-            if (isDate())
-                value = new Date(row.getDate(columnIndex).getMillisSinceEpoch());
-            else if (isTimestamp())
-                value = new Date(row.getTimestamp(columnIndex).getTime());
-            else if (isTime())
-                value = new Date(row.getTime(columnIndex));
-        }
-        return value;
+        return row;
+//        
+//        Object value = row.getObject(columnIndex);
+//        if (value != null)
+//        {
+//            if (isDate())
+//                value = new Date(row.getDate(columnIndex).getMillisSinceEpoch());
+//            else if (isTimestamp())
+//                value = new Date(row.getTimestamp(columnIndex).getTime());
+//            else if (isTime())
+//                value = new Date(row.getTime(columnIndex));
+//        }
+//        return value;
     }
     
     @Override
-    public Object getBytes(Row row) throws SQLException
+    public Object getBytes(String row) throws SQLException
     {
-        return row.getBytes(columnIndex);
+        return row;
+        //return row.getBytes(columnIndex);
     }
     
     /**

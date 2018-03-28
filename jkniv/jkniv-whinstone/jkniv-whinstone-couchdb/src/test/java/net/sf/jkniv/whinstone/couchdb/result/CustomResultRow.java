@@ -23,32 +23,30 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.datastax.driver.core.Row;
-
 import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.classification.ObjectTransform;
 import net.sf.jkniv.sqlegance.classification.Transformable;
 
-public class CustomResultRow<T> implements ResultRow<T, Row>
+public class CustomResultRow<T> implements ResultRow<T, String>
 {
     private Transformable<T> transformable;
-    private JdbcColumn<Row>[] columns;
+    private JdbcColumn<String>[] columns;
     
     public CustomResultRow()
     {
         this.transformable = (Transformable<T>) new ObjectTransform();
     }
     
-    public T row(Row rs, int rownum) throws SQLException
+    public T row(String json, int rownum) throws SQLException
     {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("JUNIT", Boolean.TRUE);
-        map.put(String.valueOf(rownum), rs.getObject(0));
+        map.put(String.valueOf(rownum), json);
         return (T) map;
     }
     
-    private void next(JdbcColumn<Row> column, Row rs, Map<String, Object> map) throws SQLException
+    private void next(JdbcColumn<String> column, String rs, Map<String, Object> map) throws SQLException
     {
         Object jdbcObject = null;
         if (column.isBinary())
@@ -66,7 +64,7 @@ public class CustomResultRow<T> implements ResultRow<T, Row>
     }
     
     @Override
-    public void setColumns(JdbcColumn<Row>[] columns)
+    public void setColumns(JdbcColumn<String>[] columns)
     {
         this.columns = columns;
     }

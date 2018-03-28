@@ -50,7 +50,7 @@ public class QueryJpaAdapter extends AbstractQueryJpaAdapter
                 // EclipseLink doesn't support named params to native queries, adopting ?1 ?2 ?3 for every implementation
                 paramParser = new ParamParserQuestionMark();
                 String positionalSql = sql;
-                if (queryable.getSql().getParamParser().getType() != ParamMarkType.QUESTION)
+                if (queryable.getDynamicSql().getParamParser().getType() != ParamMarkType.QUESTION)
                     positionalSql = isql.getParamParser().replaceForQuestionMarkWithNumber(sql, queryable.getParams());
                 
                 Object[] params = null;

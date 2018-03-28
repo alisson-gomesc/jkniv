@@ -28,45 +28,22 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.ColumnDefinitions;
-import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
-
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.ConnectionAdapter;
-import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
 import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.Repository;
 import net.sf.jkniv.sqlegance.ResultRow;
-import net.sf.jkniv.sqlegance.ResultSetParser;
 import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
-import net.sf.jkniv.sqlegance.classification.Groupable;
-import net.sf.jkniv.sqlegance.classification.GroupingBy;
-import net.sf.jkniv.sqlegance.classification.NoGroupingBy;
-import net.sf.jkniv.sqlegance.classification.Transformable;
-import net.sf.jkniv.sqlegance.logger.LogLevel;
-import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
 import net.sf.jkniv.sqlegance.statement.StatementAdapter;
 import net.sf.jkniv.sqlegance.transaction.Transactional;
-import net.sf.jkniv.whinstone.couchdb.result.FlatObjectResultRow;
-import net.sf.jkniv.whinstone.couchdb.result.MapResultRow;
-import net.sf.jkniv.whinstone.couchdb.result.NumberResultRow;
-import net.sf.jkniv.whinstone.couchdb.result.ObjectResultSetParser;
-import net.sf.jkniv.whinstone.couchdb.result.PojoResultRow;
-import net.sf.jkniv.whinstone.couchdb.result.ScalarResultRow;
-import net.sf.jkniv.whinstone.couchdb.result.StringResultRow;
 
 /**
  * Encapsulate the data access for Cassandra
@@ -82,7 +59,7 @@ public class RepositoryCouchDb implements Repository
     private HandleableException handlerException;
     private RepositoryConfig    repositoryConfig;
     private SqlContext          sqlContext;
-    private ConnectionAdapter   adapterConn;
+    private ConnectionAdapter   factoryConnection;
     
     
     private boolean             isTraceEnabled;
@@ -94,7 +71,7 @@ public class RepositoryCouchDb implements Repository
         this.sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
-        this.adapterConn = new CouchDbSessionFactory(new Properties()).open();
+        this.factoryConnection = new HttpConnectionFactory(new Properties()).open();
     }
     
     RepositoryCouchDb(Properties props)
@@ -102,7 +79,7 @@ public class RepositoryCouchDb implements Repository
         this.sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
-        this.adapterConn = new CouchDbSessionFactory(props).open();
+        this.factoryConnection = new HttpConnectionFactory(props).open();
     }
 
     RepositoryCouchDb(Properties props, SqlContext sqlContext)
@@ -110,7 +87,7 @@ public class RepositoryCouchDb implements Repository
         this.sqlContext = sqlContext;
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
-        this.adapterConn = new CouchDbSessionFactory(props).open();
+        this.factoryConnection = new HttpConnectionFactory(props).open();
     }
     
 //    private void openConnection()
@@ -222,7 +199,7 @@ public class RepositoryCouchDb implements Repository
         else if (isql.getReturnTypeAsClass() != null)
             returnType = (Class<T>) isql.getReturnTypeAsClass();
 
-        StatementAdapter<T, R> stmt = adapterConn.newStatement(queryable);
+        StatementAdapter<T, R> stmt = factoryConnection.newStatement(queryable);
         queryable.bind(stmt).on();
         
         stmt
@@ -242,96 +219,6 @@ public class RepositoryCouchDb implements Repository
         return list;
         
     }
-    //@Override
-    //@SuppressWarnings("unchecked")
-    public <T, R> List<T> __list__(Queryable queryable, ResultRow<T, R> overloadResultRow)
-    {
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as list command", queryable);
-        
-        Selectable isql = sqlContext.getQuery(queryable.getName()).asSelectable();
-        checkSqlType(isql, SqlType.SELECT);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        String sql = isql.getSql(queryable.getParams());
-        String[] paramsNames = isql.getParamParser().find(sql);
-        String positionalSql = isql.getParamParser().replaceForQuestionMark(sql, queryable.getParams());
-        Object[] params = queryable.values(paramsNames);
-        Session session = null;
-        PreparedStatement stmt = session .prepare(positionalSql);
-        BoundStatement bound = stmt.bind(params);
-        ResultSetParser<T, R> rsParser = null;
-        ResultRow<T, R> rsRowParser = null;
-        Groupable<T, ?> grouping = new NoGroupingBy<T, T>();
-        Transformable<?> transformable = null;
-        SqlLogger sqlLogger = new SqlLogger(LogLevel.ALL, new SimpleDataMasking());
-        ResultSet rs = session.execute(bound);
-        JdbcColumn<Row>[] columns = getJdbcColumns(rs.getColumnDefinitions());
-        Class<T> returnType = (Class<T>) Map.class;
-        
-        if (isql.getReturnTypeAsClass() != null)
-            returnType = (Class<T>)isql.getReturnTypeAsClass();
-
-        List<T> list = Collections.emptyList();
-        if (overloadResultRow != null)
-        {
-            overloadResultRow.setColumns((JdbcColumn<R>[]) columns);
-            rsRowParser = overloadResultRow;
-        }
-        else
-        {
-            if (queryable.isScalar())
-            {
-                rsRowParser = new ScalarResultRow(columns, sqlLogger);
-            }
-            else if (Map.class.isAssignableFrom(returnType))
-            {
-                rsRowParser = new MapResultRow(returnType, columns, sqlLogger);
-                //transformable = new MapTransform();
-            }
-            else if (Number.class.isAssignableFrom(returnType)) // FIXME implements for date, calendar, boolean improve design
-            {
-                rsRowParser = new NumberResultRow(returnType, columns, sqlLogger);
-            }
-            else if (String.class.isAssignableFrom(returnType))
-            {
-                rsRowParser = new StringResultRow(columns, sqlLogger);
-            }
-            else if (isql.getOneToMany().isEmpty())
-            {
-                rsRowParser = new FlatObjectResultRow(returnType, columns, sqlLogger);
-            }
-            else
-            {
-                rsRowParser = new PojoResultRow(returnType, columns, isql.getOneToMany(), sqlLogger);
-            }
-        }
-        
-        transformable = rsRowParser.getTransformable();
-        List<String> groupingBy = isql.getGroupByAsList();
-        if (!groupingBy.isEmpty())
-        {
-            grouping = new GroupingBy(groupingBy, returnType, transformable);
-        }
-        rsParser = new ObjectResultSetParser(rsRowParser, grouping);
-        try
-        {
-            list = rsParser.parser((R) rs);
-        }
-        catch (SQLException e)
-        {
-            handlerException.handle(e);
-        }
-        
-        //  List<T> list = currentWork().select(queryable, isql, returnType, resultRow);
-        
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(),
-                    queryable.getTotal());
-        
-        return list;
-        
-    }
     
     @Override
     public int add(Queryable queryable)
@@ -347,7 +234,7 @@ public class RepositoryCouchDb implements Repository
         
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
+        StatementAdapter<Number, String> adapterStmt = factoryConnection.newStatement(queryable);
         queryable.bind(adapterStmt).on();
         int affected = adapterStmt.execute();
 
@@ -416,11 +303,11 @@ public class RepositoryCouchDb implements Repository
     {
         try
         {
-            adapterConn.close();
+            factoryConnection.close();
         }
         catch (SQLException e)
         {
-            LOG.warn("Error to try close Cassandra session/cluster [{}]", adapterConn, e);
+            LOG.warn("Error to try close Cassandra session/cluster [{}]", factoryConnection, e);
         }
     }
     
@@ -431,28 +318,28 @@ public class RepositoryCouchDb implements Repository
                     + isql.getSqlType() + "], exptected is " + expected);
     }
 
-    /**
-     * Summarize the columns from SQL result in binary data or not.
-     * @param metadata  object that contains information about the types and properties of the columns in a <code>ResultSet</code> 
-     * @return Array of columns with name and index
-     */
-    @SuppressWarnings("unchecked")
-    private JdbcColumn<Row>[] getJdbcColumns(ColumnDefinitions metadata)
-    {
-        JdbcColumn<Row>[] columns = new JdbcColumn[metadata.size()];
-        
-        for (int i = 0; i < columns.length; i++)
-        {
-            //int columnNumber = i + 1;
-            
-            String columnName = metadata.getName(i);//getColumnName(metadata, columnNumber);
-            int columnType = metadata.getType(i).getName().ordinal(); //metadata.getColumnType(columnNumber);
-            //boolean binaryData = false;
-            //if (columnType == Types.CLOB || columnType == Types.BLOB)
-            //    binaryData = true;
-            columns[i] = new CouchDbColumn(i, columnName, columnType);
-        }
-        return columns;
-    }
+//    /**
+//     * Summarize the columns from SQL result in binary data or not.
+//     * @param metadata  object that contains information about the types and properties of the columns in a <code>ResultSet</code> 
+//     * @return Array of columns with name and index
+//     */
+//    @SuppressWarnings("unchecked")
+//    private JdbcColumn<Row>[] getJdbcColumns(ColumnDefinitions metadata)
+//    {
+//        JdbcColumn<Row>[] columns = new JdbcColumn[metadata.size()];
+//        
+//        for (int i = 0; i < columns.length; i++)
+//        {
+//            //int columnNumber = i + 1;
+//            
+//            String columnName = metadata.getName(i);//getColumnName(metadata, columnNumber);
+//            int columnType = metadata.getType(i).getName().ordinal(); //metadata.getColumnType(columnNumber);
+//            //boolean binaryData = false;
+//            //if (columnType == Types.CLOB || columnType == Types.BLOB)
+//            //    binaryData = true;
+//            columns[i] = new CouchDbColumn(i, columnName, columnType);
+//        }
+//        return columns;
+//    }
 
 }

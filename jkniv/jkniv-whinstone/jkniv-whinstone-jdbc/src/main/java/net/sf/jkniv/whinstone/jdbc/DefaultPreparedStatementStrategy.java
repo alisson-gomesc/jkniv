@@ -86,7 +86,7 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
         int rsType = ResultSet.TYPE_FORWARD_ONLY;
         int rsConcurrency = ResultSet.CONCUR_READ_ONLY;
         int rsHoldability = ResultSet.CLOSE_CURSORS_AT_COMMIT;
-        Sql isql = queryable.getSql();
+        Sql isql = queryable.getDynamicSql();
         if (isql.getResultSetType() == ResultSetType.TYPE_SCROLL_INSENSITIVE)
             rsType = ResultSet.TYPE_SCROLL_INSENSITIVE;
         else if (isql.getResultSetType() == ResultSetType.TYPE_SCROLL_SENSITIVE)
@@ -102,7 +102,7 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
             if(LOG.isTraceEnabled())
                 LOG.trace("Preparing SQL statement type [{}], concurrency [{}], holdability [{}] with [{}] parameters", isql.getResultSetType(), isql.getResultSetConcurrency(), isql.getResultSetHoldability(), paramsNames.length);
 
-            if (queryable.getSql().getSqlDialect().supportsStmtHoldability())
+            if (queryable.getDynamicSql().getSqlDialect().supportsStmtHoldability())
                 stmt = conn.prepareStatement(sql, rsType, rsConcurrency, rsHoldability);
             else 
             {
@@ -137,7 +137,7 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
     public PreparedStatement prepareStatement(Connection conn, String[] columnNames)
     {
         PreparedStatement stmt = null;
-        Sql isql = queryable.getSql();
+        Sql isql = queryable.getDynamicSql();
         try
         {
             if(LOG.isTraceEnabled())

@@ -62,7 +62,7 @@ public class PrepareParamsFactory
             prepareParams = new PositionalArrayParams(adapter, queryable);
         else if (queryable.isTypeOfCollectionFromBasicTypes())
             prepareParams = new PositionalCollectionParams(adapter, queryable);
-        else if (queryable.getSql().getParamParser().getType() == ParamMarkType.QUESTION)
+        else if (queryable.getDynamicSql().getParamParser().getType() == ParamMarkType.QUESTION)
             prepareParams = new PositionalParams(adapter, queryable);
         else
             prepareParams = new NamedParams(adapter, queryable);

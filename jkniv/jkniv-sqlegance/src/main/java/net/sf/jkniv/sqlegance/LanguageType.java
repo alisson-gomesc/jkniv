@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  */
 public enum LanguageType
 {
-    JPQL, HQL, NATIVE, STORED;
+    JPQL, HQL, NATIVE, CRITERIA, STORED;
     
     private static final Logger LOG = LoggerFactory.getLogger(LanguageType.class);
     

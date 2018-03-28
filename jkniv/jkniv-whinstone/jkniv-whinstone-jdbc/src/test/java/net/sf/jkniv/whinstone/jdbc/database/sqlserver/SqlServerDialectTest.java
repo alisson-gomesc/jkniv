@@ -126,7 +126,7 @@ public class SqlServerDialectTest extends SqlDialectAbstractTest
     public void whenDatabaseSupportLimit()
     {
         Queryable q = newQueryable(getQueryName(),getSql(SQL_SELECT, SqlType.SELECT));
-        assertThat(q.getSql().getSqlDialect().supportsLimit(), is(true));
+        assertThat(q.getDynamicSql().getSqlDialect().supportsLimit(), is(true));
     }
     
     @Test
@@ -144,7 +144,7 @@ public class SqlServerDialectTest extends SqlDialectAbstractTest
     public void whenDatabaseSupportOffset()
     {
         Queryable q = newQueryable(getQueryName(),getSql(SQL_SELECT, SqlType.SELECT));
-        assertThat(q.getSql().getSqlDialect().supportsLimitOffset(), is(true));
+        assertThat(q.getDynamicSql().getSqlDialect().supportsLimitOffset(), is(true));
     }
     
     @Test
@@ -152,7 +152,7 @@ public class SqlServerDialectTest extends SqlDialectAbstractTest
     public void whenDatabaseSupportRownum()
     {
         Queryable q = newQueryable(getQueryName(),getSql(SQL_SELECT, SqlType.SELECT));
-        assertThat(q.getSql().getSqlDialect().supportsRownum(), is(false));
+        assertThat(q.getDynamicSql().getSqlDialect().supportsRownum(), is(false));
     }
     
     @Test

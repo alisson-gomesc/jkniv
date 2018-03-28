@@ -19,6 +19,10 @@
  */
 package net.sf.jkniv.whinstone.couchdb;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,53 +30,63 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+import org.apache.http.Header;
+import org.apache.http.HeaderIterator;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Host;
-import com.datastax.driver.core.Metadata;
-import com.datastax.driver.core.Session;
-
 import net.sf.jkniv.sqlegance.ConnectionAdapter;
 import net.sf.jkniv.sqlegance.ConnectionFactory;
+import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.sqlegance.transaction.Transactional;
 
-public class CouchDbSessionFactory implements ConnectionFactory
+public class HttpConnectionFactory implements ConnectionFactory
 {
-    private static final Logger      LOG = LoggerFactory.getLogger(CouchDbSessionFactory.class);
-    private String                   contextName;
-    private Cluster                  cluster;
-    private CouchDbConnectionAdapter conn;
-    
-    private String                   host;
-    private String                   schema;
-    private String                   username;
-    private String                   password;
-    
-    public CouchDbSessionFactory(Properties props)
+    private static final Logger   LOG         = LoggerFactory.getLogger(HttpConnectionFactory.class);
+    private static final String   AUTH_COOKIE = "Set-Cookie";
+    private String                contextName;
+    //private HttpConnectionAdapter conn;
+    //private URIBuilder            uriBuilder;
+    private String                url;
+    private String                schema;
+    private String                username;
+    private String                password;
+    private CouchDbAuthenticate auth;
+    public HttpConnectionFactory(Properties props)
     {
-        this.host = props.getProperty(RepositoryProperty.JDBC_URL.key(), "http://127.0.0.1:5984/");
+        this.auth = new CouchDbAuthenticate();
+        this.url = props.getProperty(RepositoryProperty.JDBC_URL.key(), "http://127.0.0.1:5984");
         this.schema = props.getProperty(RepositoryProperty.JDBC_SCHEMA.key());
         this.username = props.getProperty(RepositoryProperty.JDBC_USER.key());
         this.password = props.getProperty(RepositoryProperty.JDBC_PASSWORD.key());
-        
-        //this.conn = new CouchDbConnectionAdapter(cluster, session);
     }
     
     @Override
     public ConnectionAdapter open()
     {
-        return conn;
+        String token = authenticate();
+        HttpBuilder httpBuilder = new HttpBuilder(this.url, this.schema, new RequestParams(token, this.schema));
+        return new HttpCookieConnectionAdapter(httpBuilder);
+    }
+    
+    private String authenticate()
+    {
+        return auth.authenticate(url, username, password);
     }
     
     @Override
     public ConnectionAdapter open(Isolation isolation)
     {
         LOG.warn("whinstone-cassandra doesn't support isolation attribute [{}]", isolation);
-        return conn;
+        return open();
     }
     
     @Override
@@ -112,7 +126,6 @@ public class CouchDbSessionFactory implements ConnectionFactory
     public void close(Statement stmt)
     {
         // TODO Auto-generated method stub
-        
     }
     
     @Override

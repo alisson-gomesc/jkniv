@@ -233,7 +233,7 @@ public interface Sql
      
      SqlDialect getSqlDialect();
      
-     /**
+     /*
       * Use validator (JSR 303) to perform validation against params
       * @param params parameters of query
       * @throws ConstraintException when some constraint is violated

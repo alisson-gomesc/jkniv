@@ -53,6 +53,5 @@ public interface ParamParser
      */
     String replaceForQuestionMark(final String query);
 
-    
     ParamMarkType getType();
 }

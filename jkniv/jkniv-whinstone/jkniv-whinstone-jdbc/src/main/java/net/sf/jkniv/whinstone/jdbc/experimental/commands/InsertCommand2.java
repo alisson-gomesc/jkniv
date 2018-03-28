@@ -43,7 +43,7 @@ class InsertCommand2 extends AbstractCommand
     public InsertCommand2(Queryable queryable, PreparedStatementStrategy stmtStrategy, Connection conn)
     {
         super(queryable, stmtStrategy, conn);
-        this.isql = queryable.getSql().asInsertable();
+        this.isql = queryable.getDynamicSql().asInsertable();
     }
     
     public <T> T execute()

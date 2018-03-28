@@ -1,0 +1,16 @@
+{
+  "name": "Franz Kafka",
+  "nationality": "CZ",
+  "books": [
+    {
+     "isbn": "978-1557427663",
+     "name": "The Metamorphosis",
+     "VISUALIZATION": 0
+    },
+    {
+     "isbn": "978-1612931036",
+     "name": "The Trial",
+     "VISUALIZATION": 0
+    }
+  ]
+}  

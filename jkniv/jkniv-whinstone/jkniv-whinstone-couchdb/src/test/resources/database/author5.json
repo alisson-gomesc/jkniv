@@ -1,0 +1,16 @@
+{
+  "name": "Albert Camus",
+  "nationality": "DZ", 
+  "books": [
+    {
+     "isbn": "978-0679720201",
+     "name": "The Stranger",
+     "VISUALIZATION": 0
+    },
+    {
+     "isbn": "978-0679733843",
+     "name": "The Rebel: An Essay on Man in Revolt",
+     "VISUALIZATION": 0
+    }
+  ]
+}  

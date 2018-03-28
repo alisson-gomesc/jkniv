@@ -21,42 +21,42 @@ package net.sf.jkniv.whinstone.couchdb;
 
 import java.sql.SQLException;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Session;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 
 import net.sf.jkniv.sqlegance.ConnectionAdapter;
+import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.couchdb.commands.DbCommand;
+import net.sf.jkniv.whinstone.couchdb.commands.PostCommand;
 import net.sf.jkniv.whinstone.couchdb.statement.PreparedStatementAdapter;
 
-public class CouchDbConnectionAdapter implements ConnectionAdapter
+public class HttpCookieConnectionAdapter implements ConnectionAdapter
 {
-    private Session session;
-    private Cluster             cluster;
-    public CouchDbConnectionAdapter(Cluster cluster, Session session)
+    private HttpBuilder httpBuilder;
+    
+    public HttpCookieConnectionAdapter(HttpBuilder httpBuilder)
     {
-        this.cluster = cluster;
-        this.session = session;
+        this.httpBuilder = httpBuilder;
     }
+    
     @Override
     public void commit() throws SQLException
     {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("CouchDb doesn't support commit operation");
     }
     
     @Override
     public void rollback() throws SQLException
     {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("CouchDb doesn't support rollback operation");
     }
     
     @Override
     public void close() throws SQLException
     {
+        /*
         if (session != null && !session.isClosed())
         {
             session.close();
@@ -64,10 +64,11 @@ public class CouchDbConnectionAdapter implements ConnectionAdapter
         }
         if (cluster != null && !cluster.isClosed())
         {
-                cluster.close();
+            cluster.close();
         }
         cluster = null;
         session = null;
+        */
     }
     
     @Override
@@ -108,10 +109,20 @@ public class CouchDbConnectionAdapter implements ConnectionAdapter
     @Override
     public <T, R> StatementAdapter<T, R> newStatement(Queryable queryable)
     {
-        String sql = queryable.getSql().getSql(queryable.getParams());
-        String positionalSql = queryable.getSql().getParamParser().replaceForQuestionMark(sql, queryable.getParams());
-        PreparedStatement stmt = session.prepare(positionalSql);
-        StatementAdapter<T, R> adapter = new PreparedStatementAdapter(session, stmt);
+        String sql = queryable.query(); //queryable.getDynamicSql().getSql(queryable.getParams());
+        //String positionalSql = queryable.getDynamicSql().getParamParser().replaceForQuestionMark(sql, queryable.getParams());
+        //HttpRequestBase httpRequest = null;
+        DbCommand command = null;
+        if (queryable.getDynamicSql().getLanguageType() == LanguageType.STORED)
+        {
+            
+        }
+        else
+        {
+            //command = new PostCommand(httpBuilder, sql);
+            //httpRequest = httpBuilder.newFind(sql);
+        }
+        StatementAdapter<T, R> adapter = new PreparedStatementAdapter(this.httpBuilder, sql, queryable.getDynamicSql().getParamParser());
         return adapter;
     }
     
@@ -125,13 +136,15 @@ public class CouchDbConnectionAdapter implements ConnectionAdapter
     @Override
     public Object unwrap()
     {
-        return session;
+        return null;//session;
     }
+    
+    
+    
     @Override
     public String toString()
     {
-        return "CassandraConnectionAdapter [session=" + session + ", cluster=" + cluster + "]";
+        return "HttpConnectionAdapter [httpBuilder=" + httpBuilder + "]";
     }
-
     
 }

@@ -23,7 +23,6 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.instanceOf;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -38,102 +37,34 @@ import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.Repository;
 import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
 
-//@Ignore("RepositoryJdbc doesn't supports Cassandra driver")
 public class CouchDbRepositoryTest extends BaseJdbc
 {
-    @Autowired
-    Repository repository;
-    Object[]   params =
-    { "k001", new Date(), "CAR001", 20.000001F, -88.000001F, 2 };
-    // (my_key,evt_date,object_id, lat, lng, warn)
     
     @Test
-    public void whenCassandraListDefault()
+    public void whenCouchDbListWithFixedFind()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = getQuery("simpleSelect");
+        Queryable q = getQuery("adminRoles");
         
-        List<Map<String,Object>> list = repositoryDb.list(q);
+        List<Map> list = repositoryDb.list(q);
         assertThat(list.size(), greaterThan(0));
         assertThat(list.get(0), instanceOf(Map.class));
-        assertThat(list.get(0), instanceOf(HashMap.class));
+        System.out.println(list.get(0));
     }
     
     @Test
-    public void whenCassandraListSpecificReturnType()
+    public void whenCouchDbListWithFindParametrized()
     {
-        Repository repositoryCas = getRepository();
-        Queryable q = getQuery("simpleSelect");
+        Repository repositoryDb = getRepository();
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("nat", "DE");
+        Queryable q = getQuery("role", params);
         
-        List<TreeMap> list = repositoryCas.list(q, TreeMap.class);
+        List<Map> list = repositoryDb.list(q);
         assertThat(list.size(), greaterThan(0));
         assertThat(list.get(0), instanceOf(Map.class));
-        assertThat(list.get(0), instanceOf(TreeMap.class));
+        System.out.println(list.get(0));
     }
     
-    @Test
-    public void whenCassandraListSpecificResultRow()
-    {
-        Repository repositoryCas = getRepository();
-        Queryable q = getQuery("simpleSelect");
-        
-        List<Map> list = repositoryCas.list(q, new CustomResultRow<Map>());
-        assertThat(list.size(), greaterThan(0));
-        assertThat(list.get(0), instanceOf(Map.class));
-        assertThat(list.get(0), instanceOf(HashMap.class));
-        assertThat((Boolean)list.get(0).get("JUNIT"), is(Boolean.TRUE));
-        assertThat(list.get(0).get("0"), instanceOf(String.class));
-    }
-    
-    
-    
-    @Test
-    public void whenCassandraRepositoryExecuteRemoveListAddCommands()
-    {
- 
-        //remove();
-        //assertThat(add(), is(true));
-        //assertThat(select(), is(true));
-        //assertThat(remove(), is(true));
-        
-        //assertThat(list.size(), greaterThan(0));
-    }
-
-    @Test
-    public void whenCassandraAdd()
-    {
-        int initialSize = select();
-        
-        params[3] = new Float( ((Float)params[3]).floatValue()+0.000001F);  
-        params[4] = new Float( ((Float)params[4]).floatValue()+0.000001F); 
-        Repository repositoryCas = getRepository();
-        Queryable q = getQuery("simpleInsert",params);
-        repositoryCas.add(q);
-        int newSize = select();
-
-        assertThat(initialSize+1, is(newSize));
-    }
-    
-    private boolean remove()
-    {
-        Queryable q = getQuery("removeAll");
-        repository = getRepository();
-        int rows = repository.remove(q);
-        return (rows > 0 ? true : false);
-    }
-    
-    private boolean add()
-    {
-        Queryable q = getQuery("simpleInsert", params);
-        int rows = repository.add(q);
-        return (rows > 0 ? true : false);
-    }
-    
-    private int select()
-    {
-        Queryable q = getQuery("simpleSelect");
-        List<Map> list = getRepository().list(q);
-        return list.size();
-    }
     
 }

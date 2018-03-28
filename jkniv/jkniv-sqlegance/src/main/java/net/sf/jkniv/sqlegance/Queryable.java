@@ -88,11 +88,17 @@ public interface Queryable
      */
     void setMax(int value);
     
-    /**
+    /** FIXME design rules and make unit test
      * Get total of rows that query can retrieve, filled after query is
      * executed. Useful to make pagination.
      * 
      * @return return the number of rows from query result.
+     * <ul>
+     *  <li>{@code n} - the real rows total</li> 
+     *  <li>{@code -1} - the query isn't executed yet</li> 
+     *  <li>{@code -2} - the query was executed successfully but the number of rows is unavailable</li> 
+     *  <li>{@code -3} - the query was executed with error and the number of rows is unavailable</li> 
+     * </ul>
      */
     long getTotal();
     
@@ -218,7 +224,7 @@ public interface Queryable
      * 
      * @return SQL statement.
      */
-    Sql getSql();
+    Sql getDynamicSql();
     
     /**
      * Final SQL statement ready to prepared statement.

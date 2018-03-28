@@ -1,0 +1,11 @@
+{
+  "name": "Friedrich Nietzsche",
+  "nationality": "DE",
+  "books": [
+    {
+     "isbn": "978-1503250888",
+     "name": "Beyond Good and Evil",
+     "VISUALIZATION": 0
+    }
+  ]
+}

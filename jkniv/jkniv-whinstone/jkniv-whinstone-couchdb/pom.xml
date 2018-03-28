@@ -24,17 +24,11 @@
       <artifactId>fluent-hc</artifactId>
       <version>4.5.5</version>
     </dependency>
-    
     <dependency>
-      <groupId>com.datastax.cassandra</groupId>
-      <artifactId>cassandra-driver-core</artifactId>
-      <version>3.4.0</version>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.6.7</version>
     </dependency>
-      <dependency>
-        <groupId>com.datastax.cassandra</groupId>
-        <artifactId>cassandra-driver-mapping</artifactId>
-        <version>3.4.0</version>
-    </dependency>        
   </dependencies>
   <scm>
     <connection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/jkniv-whinstone/jkniv-whinstone-cassandra</connection>

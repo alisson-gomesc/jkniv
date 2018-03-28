@@ -94,7 +94,7 @@ public abstract class AbstractParamParser implements ParamParser
             {
                 String paramName = match.substring(4, match.length());
                 Object[] paramsAsArray = getParamsClauseIN(params, paramName);
-                if (paramsAsArray!=null && paramsAsArray.length > 0)
+                if (paramsAsArray != null && paramsAsArray.length > 0)
                 {
                     StringBuilder tmp = new StringBuilder();
                     for(int i=0; i<paramsAsArray.length; i++)

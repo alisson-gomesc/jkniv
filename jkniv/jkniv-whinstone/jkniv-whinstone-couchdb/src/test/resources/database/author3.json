@@ -1,0 +1,31 @@
+{
+  "name": "Carlos Drummond de Andrade",
+  "nationality": "BR",
+  "books": [
+    {
+     "isbn": "9788535920598",
+     "name": "Claro Enigma",
+     "VISUALIZATION": 0
+    },
+        {
+     "isbn": "9788535921182",
+     "name": "Sentimento do Mundo",
+     "VISUALIZATION": 0
+    },
+        {
+     "isbn": "9788535926019",
+     "name": "A Lição do Amigo",
+     "VISUALIZATION": 0
+    },
+    {
+     "isbn": "9788535922837",
+     "name": "Alguma Poesia",
+     "VISUALIZATION": 0
+    },
+    {
+     "isbn": "9788535921205",
+     "name": "José",
+     "VISUALIZATION": 0
+    }
+  ]
+}

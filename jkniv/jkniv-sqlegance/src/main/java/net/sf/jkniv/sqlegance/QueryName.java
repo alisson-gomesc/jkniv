@@ -456,7 +456,6 @@ class QueryName implements Queryable
             throw new IllegalStateException("Cannot re-assign new Sql to queryable object");
         
         this.sql = sql;
-        this.boundSql = true;
         this.sqlText = sql.getSql(this.params);
         boolean pagingSelect = false;
         if (sql.isSelectable() && isPaging())
@@ -472,6 +471,7 @@ class QueryName implements Queryable
                 throw new IllegalStateException("SqlDialect [" + sql.getSqlDialect().name()
                         + "] supports paging query but the query cannot be build");
         }
+        this.boundSql = true;
     }
     
     @Override
@@ -501,14 +501,13 @@ class QueryName implements Queryable
         
         this.boundParams = true;
         return prepareParams;
-        
     }
     
     @Override
     public String query()
     {
         if (!boundSql)//TODO test Queryable.query method
-            throw new IllegalStateException("Needs to bind Sql before to call Queryable.getSqlText");
+            throw new IllegalStateException("Needs to bind Sql before to call Queryable.query");
         return (this.sqlTextPaginated == null ? this.sqlText : this.sqlTextPaginated);
     }
     
@@ -516,7 +515,7 @@ class QueryName implements Queryable
     public String queryCount()
     {
         if (!boundSql) //TODO test Queryable.queryCount method
-            throw new IllegalStateException("Needs to bind Sql before to call Queryable.getSqlTextForCount");
+            throw new IllegalStateException("Needs to bind Sql before to call Queryable.queryCount");
         return this.sqlTextToCount;
     }
     
@@ -563,7 +562,7 @@ class QueryName implements Queryable
     }
     
     @Override
-    public Sql getSql()
+    public Sql getDynamicSql()
     {
         return this.sql;
     }
