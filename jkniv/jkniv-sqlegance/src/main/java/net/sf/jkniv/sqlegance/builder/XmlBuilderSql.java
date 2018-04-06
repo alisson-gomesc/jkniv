@@ -48,6 +48,7 @@ import net.sf.jkniv.sqlegance.Sql;
  * 
  * @author Alisson Gomes
  * @since 0.0.2
+ * @deprecated use SqlContextFactory
  */
 public final class XmlBuilderSql
 {

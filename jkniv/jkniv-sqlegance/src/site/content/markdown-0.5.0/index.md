@@ -3,14 +3,14 @@ Title: jkniv sqlegance
 What is SQLegance?
 --------------------
 
-SQLegance is a SQL sentence framework with support for dynamically append SQL. SQLegance put all SQL sentences at XML file, just it. Making the SQL sentence more readable, an better maintenance, like iBatis framework, where the SQL sentence can be dynamics. 
+SQLegance is a sql sentence framework with support for dynamically generating SQL. SQLegance put all sql sentences at xml file, just it. Making the sql sentence more readable, an better maintenance, like iBatis framework, where the sql sentence can be dynamics. 
 
 Maven users will need to add the following dependency to their pom.xml for this component:
 
     <dependency>
       <groupId>net.sf.jkniv</groupId>
       <artifactId>sqlegance</artifactId>
-      <version>0.6.0</version>
+      <version>0.5.0</version>
     </dependency>
 
 
@@ -19,7 +19,7 @@ Why SQLegance
 
 For a long time I have developed systems and often had to maintain code developed by other programmers, only who confronted that knows how arduous the task of keeping it clean. This framework helps us to keep the code clean kick the SQL code to XML files and java keep business logic, facilitating its maintenance.
 
-The advantage to use SQLegance it's that can be adopted to your current project or a new project with another frameworks like Hibernate, EclipseLink, Spring or JDBC easily. Because SQLegance don't use `java.sql.Connection` or mapping java objects to SQL. SQLegance just keep your queries (native SQL, JPQL, HQL etc) in XML files, independently from framework.
+The advantage to use SQLegance it's that can be use with other frameworks like Hibernate, EclipseLink, Spring, JDBC, etc. because SQLegance don't use `java.sql.Connection` or mapping java objects to SQL. SQLegance just keep your queries (native SQL, JPQL, HQL etc) in XML files, independently framework.
 
 Simple XML files
 --------------------

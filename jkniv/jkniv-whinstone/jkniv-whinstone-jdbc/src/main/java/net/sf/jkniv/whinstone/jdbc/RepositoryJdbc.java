@@ -64,7 +64,7 @@ import net.sf.jkniv.whinstone.jdbc.transaction.Work;
  * @author Alisson Gomes
  *
  */
-public class RepositoryJdbc implements Repository
+class RepositoryJdbc implements Repository
 {
     private static final Logger     LOG     = LoggerFactory.getLogger(RepositoryJdbc.class);
     private static final Assertable notNull = AssertsFactory.getNotNull();

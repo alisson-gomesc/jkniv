@@ -5,7 +5,7 @@
   <parent>
     <groupId>net.sf.jkniv</groupId>
     <artifactId>jkniv-whinstone</artifactId>
-    <version>0.6.0.M17</version>
+    <version>0.6.0.M18</version>
   </parent>
 
   <name>jkniv-whinstone-cassandra</name>
