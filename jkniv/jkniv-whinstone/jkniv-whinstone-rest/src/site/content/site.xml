@@ -14,7 +14,7 @@
   <skin>
     <groupId>org.apache.maven.skins</groupId>
     <artifactId>maven-fluido-skin</artifactId>
-    <version>1.6.0</version>
+    <version>1.6</version>
   </skin>
   <bannerLeft>
     <name>whinstone-rest</name>
@@ -22,10 +22,10 @@
     <alt>whinstone-rest</alt>
     <href>whinstone-rest/index.html</href>
   </bannerLeft>
-
   <body>
-    <head>
-     <meta name="keywords" content="SQLegance, JPA, Hibernate, ibatis, SQL, Java, framework"/>
+    <head><![CDATA[
+     <meta name="keywords" content="SQLegance, whinstone, rest, jpa, Hibernate, ibatis, mybatis, sql, jdbc"/>
+    ]]>
     </head>
     <menu name="Whinstone-rest" inherit="top">
       <item

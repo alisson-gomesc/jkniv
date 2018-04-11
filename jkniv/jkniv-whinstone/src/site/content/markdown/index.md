@@ -10,14 +10,17 @@ It's implementation from Repository pattern:
 
 >Mediates between the domain and data mapping layers using a collection-like interface for accessing domain objects.
 
-The project `jkniv-sqlegance` keeps the interface `net.sf.jkniv.sqlegance.Repository` and the whinstone umbrella project implements that at two flavors: 
+The project `jkniv-sqlegance` keeps the interface `net.sf.jkniv.sqlegance.Repository` and the whinstone umbrella project implements that at four flavors: 
 
-+ `jkniv-whinstone-jdbc` repository contract using directly jdbc access.
-+ `jkniv-whinstone-jpa2` encapsulate JPA access with a simple repository contract.
+- `jkniv-whinstone-jdbc` repository contract using directly jdbc access.
+- `jkniv-whinstone-jpa2` encapsulate JPA access with a simple repository contract.
+- `jkniv-whinstone-cassandra` encapsulate cassandra access with a simple repository contract.
+- `jkniv-whinstone-couchdb` encapsulate http api to access with a simple repository contract.
 
 The High-level design:
 
 ![whinstone design](images/whinstone-architecture.png)
+
 
 
 ## Oh nooo more one database framework!
@@ -30,11 +33,11 @@ The steps to start are:
 2. write your SQL queries
 3. run forest run...
 
-No annotations, no mapping (except if you want to use JPA), easily to test. The power of the database query language is yours and whinstone give to you yours plain java objects.
+No annotations, no mapping (except if you want to use JPA), easily to test. The power of the database query language is yours and whinstone give to you **yours plain java objects with automatic bind to input parameters and result set output**.
 
 ### Requirements
 
-`jkniv-whinstone-jdbc` and `jkniv-whinstone-jpa2` binaries requires JDK level 6.0 and above.
+`jkniv-whinstone-jdbc`, `jkniv-whinstone-jpa2`, `jkniv-whinstone-cassandra` and `jkniv-whinstone-couchdb` binaries requires JDK level 6.0 or above.
 
 
 ## The collection-like interface
@@ -49,18 +52,18 @@ The `Repository` interface have a simple set of methods to manipulate the data f
 - `enrich`: use the queryable object to retrieve data from data source and append the query result to object param from queryable. 
 - `scalar`: retrieve a scalar value
 
-The library is 100% protected against [SQL injection](https://www.owasp.org/index.php/SQL_Injection "OWASP SQL injection") because all statements are [PreparedStatement](https://docs.oracle.com/javase/6/docs/api/java/sql/PreparedStatement.html "PreparedStatement").
+The library is 100% protected against [SQL injection](https://www.owasp.org/index.php/SQL_Injection "OWASP SQL injection") because all statements are [PreparedStatement](https://docs.oracle.com/javase/6/docs/api/java/sql/PreparedStatement.html "PreparedStatement"), except to couchdb that access it's over HTTP protocol.
 
 
 
 ### Transaction supports
 
-| Transaction API    | whinstone-jpa2 | whinstone-jdbc | whinstone-cassandra |
-| ------------------ | -------------- | -------------- |---------------------|
-| JTA                |   yes (0.6.0)  | no             | no                  |
-| JPA                |   yes (0.6.0)  | no             | no                  |
-| JDBC               |   yes (0.6.0)  | yes  (0.6.0)   | no                  |
-| Spring transaction |   yes (0.6.0)  | yes  (0.6.0)   | no                  |
+| Transaction API    | whinstone-jpa2 | whinstone-jdbc | whinstone-cassandra | whinstone-couchdb |
+| ------------------ | -------------- | -------------- |---------------------|-------------------|
+| JTA                |   yes (0.6.0)  | no             | no                  | no                |
+| JPA                |   yes (0.6.0)  | no             | no                  | no                |
+| JDBC               |   yes (0.6.0)  | yes  (0.6.0)   | no                  | no                |
+| Spring transaction |   yes (0.6.0)  | yes  (0.6.0)   | no                  | no                |
 
 
 

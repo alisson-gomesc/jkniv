@@ -17,7 +17,7 @@ Maven users will need to add the following dependency to their pom.xml for this 
 Why SQLegance
 --------------------
 
-For a long time I have developed systems and often had to maintain code developed by other programmers, only who confronted that knows how arduous the task of keeping it clean. This framework helps us to keep the code clean kick the SQL code to XML files and java keep business logic, facilitating its maintenance.
+For a long time I have developed systems and often had to maintain code developed by other programmers, only who confronted that knows how arduous the task of keeping it clean. This framework helps us to keep the code clean kicking the SQL code to XML files and keeping business logic to java, facilitating its maintenance.
 
 The advantage to use SQLegance it's that can be adopted to your current project or a new project with another frameworks like Hibernate, EclipseLink, Spring or JDBC easily. Because SQLegance don't use `java.sql.Connection` or mapping java objects to SQL. SQLegance just keep your queries (native SQL, JPQL, HQL etc) in XML files, independently from framework.
 

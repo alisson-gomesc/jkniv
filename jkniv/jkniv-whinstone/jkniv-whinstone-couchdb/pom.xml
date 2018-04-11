@@ -30,6 +30,19 @@
       <version>2.6.7</version>
     </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.6</version>
+        <configuration>
+          <siteDirectory>src/site/content</siteDirectory>
+          <outputDirectory>../../target/generated-site/${project.artifactId}</outputDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <scm>
     <connection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/jkniv-whinstone/jkniv-whinstone-cassandra</connection>
     <developerConnection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/jkniv-whinstone/jkniv-whinstone-cassandra</developerConnection>

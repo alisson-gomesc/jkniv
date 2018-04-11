@@ -11,7 +11,7 @@ Whinstone-jpa2 is a implementation of  <a href="http://martinfowler.com/eaaCatal
 
 Whinstone allow the developers worry just with implementation of view, controller and business layers. While Whinstone encapsulate all data access with the Repository pattern keeping the secure coding of SQL Injection, paginated queries and others good design practices.
 
-The Whinstone it's a final implementation of repository pattern, where the interface is defined at <a href="jkniv.sourceforge.net/apidocs/net/sf/jkniv/sqlegance/IRepository.html"><![CDATA[net.sf.jkniv.sqlegance.IRepository<T>]]></a> (SQLegance project), using some other frameworks.
+The Whinstone it's a final implementation of repository pattern, where the interface is defined at <a href="jkniv.sourceforge.net/apidocs/net/sf/jkniv/sqlegance/Repository.html">net.sf.jkniv.sqlegance.Repository</a> (SQLegance project), using some other frameworks.
 
 ## Simple Sample
 

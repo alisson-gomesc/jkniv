@@ -14,7 +14,7 @@
   <skin>
     <groupId>org.apache.maven.skins</groupId>
     <artifactId>maven-fluido-skin</artifactId>
-    <version>1.6.0</version>
+    <version>1.6</version>
   </skin>
   <bannerLeft>
     <name>Whinstone-jpa2</name>

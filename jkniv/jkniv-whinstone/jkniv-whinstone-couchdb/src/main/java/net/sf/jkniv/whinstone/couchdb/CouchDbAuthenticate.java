@@ -44,7 +44,7 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 
 public class CouchDbAuthenticate
 {
-    private static final Logger    LOG         = LoggerFactory.getLogger(HttpConnectionFactory.class);
+    private static final Logger    LOG         = LoggerFactory.getLogger(CouchDbAuthenticate.class);
     private static final String    AUTH_COOKIE = "Set-Cookie";
     private final HandlerException handlerException;
     private Date startSession;

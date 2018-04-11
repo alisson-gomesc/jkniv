@@ -37,7 +37,7 @@
       <item name="Introduction" href="index.html" />
       <item name="How-to Config Datasource" href="config-datasource.html" />
       <item name="Transaction" href="transaction.html" />
-      <item name="Batch Commands" href="batch-commands.html" />
+      <item name="Bulk Operations" href="bulk-operations.html" />
       <item name="Stored Procedures" href="stored.html" />
       <item name="Javadoc" href="api-docs/index.html" />
       <item name="Donwload" href="https://sourceforge.net/projects/jkniv/files/jkniv-whinstone/jdbc/" />

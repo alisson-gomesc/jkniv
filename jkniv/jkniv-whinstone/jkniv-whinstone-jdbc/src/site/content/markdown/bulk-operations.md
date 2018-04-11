@@ -1,10 +1,10 @@
-Title: Batch Commands
+Title: Bulk Operations
 
-Whinstone JDBC Batch Commands
+Whinstone JDBC Bulk Operations
 --------------------
 
 
-`Repository` supports batch commands when the parameters are collections over `add`, `update` or `remove` operations:
+`Repository` supports bulk operations when the parameters are collections over `add`, `update` or `remove` methods:
 
 - Collections of array object (`Object[]`)
 - Collections of Map (`java.util.Map`)
@@ -18,8 +18,8 @@ So when the parameters are a collection of data that needs to be executed by the
     
     
     Collection<Book> params = getBooks();
-    Queryable qUpdate = QueryFactory.newInstance("Book#update", params);
-    int rowsAffected = repositoryDerby.update(qUpdate);
+    Queryable queryable = QueryFactory.newInstance("Book#update", params);
+    int rowsAffected = repositoryDerby.update(queryable);
     
 
 `rowsAffected` receive the sum of records changed by `Book#update` for each Book in collection.
