@@ -20,8 +20,10 @@
 package net.sf.jkniv.whinstone.couchdb.commands;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -31,6 +33,8 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.jkniv.reflect.beans.ObjectProxy;
+import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
@@ -53,13 +57,15 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
         this.body = stmt.getBody();
     }
     
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public <T> T execute()
     {
         String json = null;
         CloseableHttpResponse response = null;
+        Class returnType = null;
         AllDocsAnswer answer = null;
-        List<?> list = Collections.emptyList();
+        List list = Collections.emptyList();
         try
         {
             CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -72,8 +78,26 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
             int statusCode = response.getStatusLine().getStatusCode();
             if (isOk(statusCode))
             {
+                if (queryable.getReturnType() != null)
+                    returnType = queryable.getReturnType();
+                else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
+                    returnType = queryable.getDynamicSql().getReturnTypeAsClass();
+                
                 answer = JsonMapper.mapper(json, AllDocsAnswer.class);
-                list = answer.getRows();
+                if (returnType != null)
+                {
+                    list = new ArrayList();
+                    // FIXME overload performance, writer better deserialization using jackson
+                    for(Map map : answer.getRows())
+                    {
+                        Map content = (Map) map.get("value"); 
+                        //ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(returnType);
+                        //list.add(proxy.from(r));
+                        list.add(JsonMapper.mapper(content, returnType));
+                    }
+                }
+                else
+                    list = answer.getRows();
             }
             else if (isNotFound(statusCode))
             {
@@ -105,6 +129,8 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
                 }
             }
         }
+        if (list == null)
+            list = Collections.emptyList();
         return (T) list;
     }
     

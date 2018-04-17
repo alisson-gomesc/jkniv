@@ -65,20 +65,65 @@ public interface StatementAdapter<T, R>
      */
     StatementAdapter<T, R> bind(Object... values);
 
+    /**
+     * return type
+     * @param returnType
+     * @return
+     * @deprecated Command must to know return type TODO change design
+     */
     StatementAdapter<T, R> returnType(Class<T> returnType);
-    
+
+    /**
+     * result row
+     * @param resultRow
+     * @return
+      * @deprecated Command must to know result row TODO change design
+    */
     StatementAdapter<T, R> resultRow(ResultRow<T, R> resultRow);
     
+    /**
+     * scalar value
+     * @return
+     * @deprecated Command must to know return type TODO change design
+     */
     StatementAdapter<T, R> scalar();
     
+    /**
+     * one to many
+     * @param oneToManies
+     * @return
+      * @deprecated Command must to know one to many TODO change design
+    */
     StatementAdapter<T, R> oneToManies(Set<OneToMany> oneToManies);
     
+    /**
+     * group by
+     * @param groupingBy
+     * @return
+     * @deprecated Command must to know group by TODO change design
+     */
     StatementAdapter<T, R> groupingBy(List<String> groupingBy);
 
+    /**
+     * key generator type
+     * @param keyGeneratorType
+     * @return
+     * @deprecated Command must to know return type TODO change design
+     */
     StatementAdapter<T, R> keyGeneratorType(KeyGeneratorType keyGeneratorType);
 
+    /**
+     * get key generator type
+     * @return
+     * @deprecated Command must to know return type TODO change design
+     */
     KeyGeneratorType getKeyGeneratorType();
 
+    /**
+     * generate keys
+     * @return
+     * @deprecated Command must to know return type TODO change design
+     */
     ResultSetParser<T, R> generatedKeys();
     
     List<T> rows();

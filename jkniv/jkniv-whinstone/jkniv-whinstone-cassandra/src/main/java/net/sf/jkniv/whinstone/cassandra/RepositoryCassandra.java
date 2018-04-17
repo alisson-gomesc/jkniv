@@ -105,7 +105,7 @@ class RepositoryCassandra implements Repository
     
     RepositoryCassandra(String sqlContext)
     {
-        this(new Properties(), SqlContextFactory.newInstance("/repository-sql.xml"));
+        this(new Properties(), SqlContextFactory.newInstance(sqlContext));
     }
 
     RepositoryCassandra(SqlContext sqlContext)
@@ -486,7 +486,7 @@ class RepositoryCassandra implements Repository
                 prop = (Properties) resource;
             else
                 throw new RepositoryException("Resource with name [" + remaining
-                        + "] must be an instance of java.util.Properties to connect with CouchDb");
+                        + "] must be an instance of java.util.Properties to connect with Cassandra");
           //TODO exception design, must have ConfigurationException?
         }
         return prop;

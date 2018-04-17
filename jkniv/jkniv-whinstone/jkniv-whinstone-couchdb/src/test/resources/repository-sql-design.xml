@@ -8,7 +8,6 @@
    <select id="map#natio">
      function(doc){ emit(doc.nationality, doc)}
    </select>
-
   </package>
 <!--
   <package name="_design/docs2">

@@ -48,8 +48,8 @@ public class HttpBuilder
             "end_key", "endkey_docid", "end_key_doc_id", "include_docs", "inclusive_end", "key", "keys", "stale",
             "startkey", "start_key", "startkey_docid", "start_key_doc_id", "update_seq");                            /*"limit","skip"*/
     
-    private static final List<QueryParam> KEY_PARAMS_VIEW        = Arrays.asList(new QueryParam("key"),
-            new QueryParam("keys"), new QueryParam("startkey", true), new QueryParam("endkey", true),
+    private static final List<QueryParam> KEY_PARAMS_VIEW        = Arrays.asList(new QueryParam("key", true),
+            new QueryParam("keys", true), new QueryParam("startkey", true), new QueryParam("endkey", true),
             new QueryParam("descending"), new QueryParam("group"), new QueryParam("group_level"),
             new QueryParam("startkey_docid"), new QueryParam("endkey_docid"), new QueryParam("limit"),
             new QueryParam("skip"), new QueryParam("descending"), new QueryParam("stale"), new QueryParam("reduce"),

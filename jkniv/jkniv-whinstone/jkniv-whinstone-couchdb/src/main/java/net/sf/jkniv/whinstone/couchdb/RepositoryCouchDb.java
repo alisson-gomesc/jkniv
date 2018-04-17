@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.exception.HandleableException;
+import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.sqlegance.Command;
 import net.sf.jkniv.sqlegance.QueryFactory;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
@@ -102,10 +103,12 @@ public class RepositoryCouchDb implements Repository
         else
             sqlContext.getRepositoryConfig().add(props);
         
+        
         this.sqlContext = new CouchDbSqlContext(sqlContext);
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
         this.factoryConnection = (HttpCookieConnectionAdapter) new HttpConnectionFactory(sqlContext.getRepositoryConfig().getProperties()).open();
+        this.handlerException = new HandlerException(RepositoryException.class, "CouchDB error at [%s]");
         this.init();
     }
     
@@ -125,13 +128,13 @@ public class RepositoryCouchDb implements Repository
     public <T> T get(Queryable queryable)
     {
         notNull.verify(queryable);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as get command", queryable);
+        //if (isTraceEnabled)
+        //    LOG.trace("Executing [{}] as get command", queryable);
         
         T ret = get(queryable, null, null);
         
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
+        //if (isDebugEnabled)
+        //    LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
         
         return ret;
     }
@@ -140,12 +143,12 @@ public class RepositoryCouchDb implements Repository
     public <T> T get(Queryable queryable, Class<T> returnType)
     {
         notNull.verify(queryable, returnType);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as get command with [{}] as return type", queryable, returnType);
+        //if (isTraceEnabled)
+        //    LOG.trace("Executing [{}] as get command with [{}] as return type", queryable, returnType);
 
         T ret = get(queryable, returnType, null);
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
+        //if (isDebugEnabled)
+        //    LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
         
         return ret;
     }
@@ -171,14 +174,14 @@ public class RepositoryCouchDb implements Repository
     public <T> T get(T object)
     {
         notNull.verify(object);
-        if (isTraceEnabled)
-            LOG.trace("Executing as get command with object [{}]", object);
+        //if (isTraceEnabled)
+        //    LOG.trace("Executing as get command with object [{}]", object);
         
         Queryable queryable = QueryFactory.newInstance("get", object);
         T ret = (T) get(queryable, object.getClass(), null);
         
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
+        //if (isDebugEnabled)
+        //    LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
         
         return ret;
     }
@@ -187,19 +190,22 @@ public class RepositoryCouchDb implements Repository
     public <T> T get(Class<T> returnType, Object object)
     {
         notNull.verify(object);
-        if (isTraceEnabled)
-            LOG.trace("Executing as get command with object [{}]", object);
+        //if (isTraceEnabled)
+        //    LOG.trace("Executing as get command with object [{}]", object);
         
         Queryable queryable = QueryFactory.newInstance("get", object);
         T ret = (T) get(queryable, returnType, null);
         
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
+        //if (isDebugEnabled)
+        //    LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
         
         return ret;    }
 
     private <T, R> T get(Queryable queryable, Class<T> returnType, ResultRow<T, R> resultRow)
     {
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as get command", queryable);
+
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.SELECT);
         isql.getValidateType().assertValidate(queryable.getParams());
@@ -209,7 +215,17 @@ public class RepositoryCouchDb implements Repository
             queryable.bind(isql);
         
         Command command = factoryConnection.asSelectCommand(queryable, null);
-        T ret = command.execute();
+        List<T> list = command.execute();
+        T ret = null;
+        if (list.size() > 1)
+            handlerException.throwMessage("No unique result for query [%s]", queryable.getName());// TODO design exception throw NoUniqueResultException
+        
+        else if (list.size() == 1)
+            ret = list.get(0);
+        
+        if (isDebugEnabled)
+            LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(), queryable.getTotal());
+
         return ret;    
     }
 

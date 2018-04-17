@@ -80,8 +80,10 @@ public class FindCommand extends AbstractCommand implements CouchCommand
             }
             else
             {
-                LOG.error("Http Body\n{}", EntityUtils.toString(httpPost.getEntity()));
-                LOG.error("{} -> {} ", response.getStatusLine().toString(), json);
+                StringBuilder sb = new StringBuilder("URI -> " + httpPost.getURI());
+                sb.append("\nHttp Body\n" +EntityUtils.toString(httpPost.getEntity()));
+                sb.append("\n"+response.getStatusLine().toString()+" -> " + json);
+                LOG.error(sb.toString());
                 throw new RepositoryException(response.getStatusLine().toString());
             }
         }

@@ -207,7 +207,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         constructor = getProbablyContructor();
         return constructor;
     }
-
+    
     private Constructor<T> getProbablyContructor() // TODO test me
     {
         Constructor<T> constructor = null;
@@ -224,13 +224,14 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
                 {
                     if (this.constructorArgs[i] != null)
                     {
-                            if(cargs[i].isAssignableFrom(this.constructorArgs[i].getClass()))
-                                match++;
-                            else
-                                LOG.warn("The [{}] parameter from type [{}] isn't assignable to [{}]", i, cargs[i].getName(), this.constructorArgs[i].getClass());
+                        if (cargs[i].isAssignableFrom(this.constructorArgs[i].getClass()))
+                            match++;
+                        else
+                            LOG.warn("The [{}] parameter from type [{}] isn't assignable to [{}]", i,
+                                    cargs[i].getName(), this.constructorArgs[i].getClass());
                     }
                 }
-                probably = ((double)match/(double)this.constructorArgs.length);
+                probably = ((double) match / (double) this.constructorArgs.length);
                 if (probably > biggerProbably)
                 {
                     biggerProbably = probably;
@@ -240,7 +241,6 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         }
         return constructor;
     }
-
     
     private int countNotNull(Object[] args)
     {
@@ -361,21 +361,32 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     public T from(Object object)
     {
         notNull.verify(object);
-        Method[] methods = object.getClass().getMethods();
-        for (Method method : methods)
+        if (object instanceof Map)// TODO test me merge Object <- Map
         {
-            if (SKIP_NAMES.contains(method.getName()))
-                continue;
-            
-            if (method.getName().startsWith("get"))
+            Map<String, Object> map = (Map) object;
+            for (Entry<String, Object> entry : map.entrySet())
             {
-                Object v = pojoInvoke.invoke(method, object);
-                invoke(SETTER.capitalize(method.getName().substring(3)), v);
+                invoke(SETTER.capitalize(entry.getKey()), entry.getValue());
             }
-            else if (method.getName().startsWith("is"))
+        }
+        else
+        {
+            Method[] methods = object.getClass().getMethods();
+            for (Method method : methods)
             {
-                Object v = pojoInvoke.invoke(method, object);
-                invoke(SETTER.capitalize(method.getName().substring(2)), v);
+                if (SKIP_NAMES.contains(method.getName()))
+                    continue;
+                
+                if (method.getName().startsWith("get"))
+                {
+                    Object v = pojoInvoke.invoke(method, object);
+                    invoke(SETTER.capitalize(method.getName().substring(3)), v);
+                }
+                else if (method.getName().startsWith("is"))
+                {
+                    Object v = pojoInvoke.invoke(method, object);
+                    invoke(SETTER.capitalize(method.getName().substring(2)), v);
+                }
             }
         }
         return this.instance;
@@ -388,7 +399,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         if (object instanceof Map)// TODO test me merge Object <- Map
         {
             Map<String, Object> map = (Map) object;
-            for(Entry<String, Object> entry : map.entrySet())
+            for (Entry<String, Object> entry : map.entrySet())
             {
                 invoke(SETTER.capitalize(entry.getKey()), entry.getValue());
             }

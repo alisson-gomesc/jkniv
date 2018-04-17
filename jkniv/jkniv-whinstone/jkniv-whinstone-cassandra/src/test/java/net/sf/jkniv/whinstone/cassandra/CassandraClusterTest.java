@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import net.sf.jkniv.sqlegance.Repository;
@@ -18,7 +19,8 @@ import net.sf.jkniv.sqlegance.RepositoryType;
 public class CassandraClusterTest extends BaseJdbc
 {
     private static Repository repository;
-    @BeforeClass
+    
+    //@BeforeClass
     public static void setUp()
     {
         Properties config = new Properties();
@@ -32,7 +34,7 @@ public class CassandraClusterTest extends BaseJdbc
         
     }
     
-    @Test
+    @Test @Ignore("cluste another enviroment")
     public void whenRun()
     {
         

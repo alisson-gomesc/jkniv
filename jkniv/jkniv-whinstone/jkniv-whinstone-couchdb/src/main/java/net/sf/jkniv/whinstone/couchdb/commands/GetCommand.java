@@ -20,6 +20,8 @@
 package net.sf.jkniv.whinstone.couchdb.commands;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -29,8 +31,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.RepositoryException;
@@ -56,6 +56,7 @@ public class GetCommand extends AbstractCommand implements CouchCommand
         String json = null;
         CloseableHttpResponse response = null;
         //Map<String, Object> answer = null;
+        List<T> list = new ArrayList<T>(1);
         T answer = null;
         try
         {
@@ -80,6 +81,8 @@ public class GetCommand extends AbstractCommand implements CouchCommand
                     answer =  (T) JsonMapper.mapper(json, queryable.getReturnType());
                 else
                     answer = (T) JsonMapper.mapper(json, Map.class);
+                
+                list.add(answer);
             }
             else if (isNotFound(statusCode))
             {
@@ -111,7 +114,7 @@ public class GetCommand extends AbstractCommand implements CouchCommand
                 }
             }
         }
-        return answer;
+        return (T)list;
     }
     
     @Override

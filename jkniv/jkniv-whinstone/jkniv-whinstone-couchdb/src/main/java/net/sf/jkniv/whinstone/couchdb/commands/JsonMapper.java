@@ -21,8 +21,7 @@ package net.sf.jkniv.whinstone.couchdb.commands;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-
-import org.apache.http.client.ClientProtocolException;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -63,6 +62,22 @@ public class JsonMapper
         try
         {
             return newMapper().readValue(content, valueType);
+        }
+        catch (Exception e)
+        {
+            // JsonParseException | JsonMappingException | IOException
+            handlerException.handle(e);
+        }
+        return null;
+    }
+    
+    public static <T> T mapper(Map<String, Object> content, Class<T> valueType)
+    {
+        try
+        {
+            //final ObjectMapper mapper = new ObjectMapper(); // jackson's objectmapper
+            return newMapper().convertValue(content, valueType);
+            //return newMapper().readValue(content, valueType);
         }
         catch (Exception e)
         {
