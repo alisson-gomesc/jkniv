@@ -4,8 +4,9 @@
 
   <parent>
     <groupId>net.sf.jkniv</groupId>
-    <artifactId>jkniv-whinstone</artifactId>
+    <artifactId>jkniv</artifactId>
     <version>0.6.0.M18</version>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
 
   <name>jkniv-whinstone-cassandra</name>
@@ -14,19 +15,25 @@
   <url>http://jkniv.sourceforge.net/whinstone</url>
 
   <dependencies>
-     <dependency>
+    <dependency>
+      <groupId>net.sf.jkniv</groupId>
+      <artifactId>jkniv-whinstone</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>spring-jdbc</artifactId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
     </dependency>
     <dependency>
       <groupId>com.datastax.cassandra</groupId>
       <artifactId>cassandra-driver-core</artifactId>
-      <version>3.4.0</version>
     </dependency>
       <dependency>
         <groupId>com.datastax.cassandra</groupId>
         <artifactId>cassandra-driver-mapping</artifactId>
-        <version>3.4.0</version>
     </dependency>    
     
 <!-- 

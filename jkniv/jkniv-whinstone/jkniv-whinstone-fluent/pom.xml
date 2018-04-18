@@ -3,8 +3,9 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>net.sf.jkniv</groupId>
-    <artifactId>jkniv-whinstone</artifactId>
+    <artifactId>jkniv</artifactId>
     <version>0.6.0.M18</version>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
   <artifactId>jkniv-whinstone-fluent</artifactId>
   <url>http://jkniv.sourceforge.net/Whinstone</url>

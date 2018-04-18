@@ -35,6 +35,14 @@
     <module>jkniv-sqlegance</module>
     <module>jkniv-whinstone</module>
     <module>jkniv-test-jdk8</module>
+    <module>jkniv-whinstone</module>
+    <module>jkniv-whinstone-jdbc</module>
+    <module>jkniv-whinstone-jpa2</module>
+    <module>jkniv-whinstone-cassandra</module>
+    <module>jkniv-whinstone-couchdb</module>
+    <module>jkniv-whinstone-fluent</module>
+    <module>jkniv-whinstone-rest</module>
+    
     <!-- 
     <module>jkniv-camel/jkniv-camel-sap-jco3</module>
     <module>jkniv-jaas/jkniv-jaas-glassfish</module>
@@ -50,6 +58,11 @@
     <dependency>
       <groupId>net.sf.jkniv</groupId>
       <artifactId>jkniv-sqlegance</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.jkniv</groupId>
+      <artifactId>jkniv-whinstone</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -91,7 +104,118 @@
       <version>4.3.2.Final</version>
       <scope>test</scope>
      </dependency>
-   </dependencies>
+      <dependency>
+        <groupId>com.microsoft.sqlserver</groupId>
+        <artifactId>mssql-jdbc</artifactId>
+        <version>6.1.0.jre8</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.microsoft.sqlserver</groupId>
+        <artifactId>sqljdbc4</artifactId>
+        <version>4.0</version>
+        <scope>test</scope>
+      </dependency>
+    <!-- whinstone dependencies -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring.version}</version>
+      <type>jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>${spring.version}</version>
+      <type>jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+      <version>${spring.version}</version>
+      <type>jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+      <version>1.2.2</version>
+      <type>jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.oracle</groupId>
+      <artifactId>ojdbc6</artifactId>
+      <version>11.2.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>8.4-702.jdbc4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+      <version>1.5.4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.12.1.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+    <groupId>org.apache.derby</groupId>
+    <artifactId>derbyclient</artifactId>
+      <version>10.12.1.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+     <groupId>org.hibernate</groupId>
+     <artifactId>hibernate-entitymanager</artifactId>
+     <version>4.3.11.Final</version>
+     <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>2.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.datastax.cassandra</groupId>
+      <artifactId>cassandra-driver-core</artifactId>
+      <version>3.4.0</version>
+    </dependency>
+      <dependency>
+        <groupId>com.datastax.cassandra</groupId>
+        <artifactId>cassandra-driver-mapping</artifactId>
+        <version>3.4.0</version>
+    </dependency>        
+    </dependencies>     
   </dependencyManagement>
 
   <dependencies>

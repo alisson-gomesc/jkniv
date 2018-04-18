@@ -4,8 +4,9 @@
 
   <parent>
     <groupId>net.sf.jkniv</groupId>
-    <artifactId>jkniv-whinstone</artifactId>
+    <artifactId>jkniv</artifactId>
     <version>0.6.0.M18</version>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
 
   <name>jkniv-whinstone-jdbc</name>
@@ -15,10 +16,26 @@
 
   <!-- begin essential -->
   <dependencies>
-     <dependency>
+    <dependency>
+      <groupId>net.sf.jkniv</groupId>
+      <artifactId>jkniv-whinstone</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>    
     <dependency>
       <groupId>com.microsoft.sqlserver</groupId>
       <artifactId>mssql-jdbc</artifactId>
