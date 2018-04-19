@@ -3,7 +3,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sf.jkniv</groupId>
-  <version>0.6.0.M18</version>
+  <version>0.6.0.M20</version>
   <packaging>pom</packaging>
   <name>jkniv</name>
   <artifactId>jkniv</artifactId>
@@ -34,14 +34,13 @@
     <module>jkniv-utils</module>
     <module>jkniv-sqlegance</module>
     <module>jkniv-whinstone</module>
-    <module>jkniv-test-jdk8</module>
-    <module>jkniv-whinstone</module>
-    <module>jkniv-whinstone-jdbc</module>
-    <module>jkniv-whinstone-jpa2</module>
-    <module>jkniv-whinstone-cassandra</module>
-    <module>jkniv-whinstone-couchdb</module>
-    <module>jkniv-whinstone-fluent</module>
-    <module>jkniv-whinstone-rest</module>
+    <!-- <module>jkniv-test-jdk8</module>-->
+    <module>jkniv-whinstone/jkniv-whinstone-jdbc</module>
+    <module>jkniv-whinstone/jkniv-whinstone-jpa2</module>
+    <module>jkniv-whinstone/jkniv-whinstone-cassandra</module>
+    <module>jkniv-whinstone/jkniv-whinstone-couchdb</module>
+    <module>jkniv-whinstone/jkniv-whinstone-fluent</module>
+    <module>jkniv-whinstone/jkniv-whinstone-rest</module>
     
     <!-- 
     <module>jkniv-camel/jkniv-camel-sap-jco3</module>
