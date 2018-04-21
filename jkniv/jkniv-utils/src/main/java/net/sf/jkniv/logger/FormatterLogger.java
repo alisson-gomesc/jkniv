@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 public class FormatterLogger
 {
     
-    private static final Pattern pattern = Pattern.compile("\\{\\}");
+    private static final Pattern pattern = Pattern.compile("\\{[w]*\\}");
     
     /**
      * Formatter a string from <code>org.slf4j.Logger</code> format to <code>String.format</code>
@@ -49,7 +49,7 @@ public class FormatterLogger
         {
             groups.add(matcher.start());
             groups.add(matcher.end());
-            
+            //matcher.group()
             sb.append( format.substring(initial, matcher.start()));
             sb.append("%" + (index++) + "$s"); // string format "%1$s";
             initial = matcher.end();
@@ -61,6 +61,13 @@ public class FormatterLogger
         return sb.toString();
     }
     
+    /**
+     * to String the objects <code>args</code> calling toString method, when
+     * the object is instance of <code>java.lang.Exception</code> the <code>getMessage()</code>
+     * is called.
+     * @param args objects to get message as string
+     * @return Return the string values from objects. <code>null</code> values are converted to <b>"null"</b> string.
+     */
     public Object[] toString(Object... args)
     {
         Object[] newArray = new Object[0];

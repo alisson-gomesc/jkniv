@@ -33,8 +33,10 @@ import java.util.TreeMap;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import net.sf.jkniv.sqlegance.QueryFactory;
 import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.Repository;
+import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
 
 public class CouchDbRepositoryFindTest extends BaseJdbc
@@ -51,6 +53,20 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
         assertThat(list.get(0), instanceOf(Map.class));
         System.out.println(list.get(0));
     }
+    
+
+    @Test
+    public void whenCouchDbListTypedObject()
+    {
+        Repository repositoryDb = getRepository();
+        Queryable q = QueryFactory.asQueryable("authorsBRTyped");
+        
+        List<Author> list = repositoryDb.list(q);
+        assertThat(list.size(), greaterThan(0));
+        assertThat(list.get(0), instanceOf(Author.class));
+        System.out.println(list.get(0));
+    }
+    
     
     @Test
     public void whenCouchDbListWithFindParametrized()

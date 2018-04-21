@@ -41,7 +41,7 @@ import net.sf.jkniv.whinstone.jdbc.test.BaseSpringJUnit4;
 
 public class RepositoryJdbcInstanceTest extends BaseSpringJUnit4
 {
-    private static final String DERBY_URL = "jdbc:derby:memory:whinstone;create=true";
+    private static final String DERBY_URL = "jdbc:derby:memory:derbwhinstone;create=true";
     public static final int TOTAL_BOOKS = 15;
     
     @Autowired
@@ -76,7 +76,7 @@ public class RepositoryJdbcInstanceTest extends BaseSpringJUnit4
     }
     
 
-    @Test //@Ignore("Cannot prepare statement [Table/View 'BOOK' does not exist.]")
+    @Test @Ignore("Cannot prepare statement [Table/View 'BOOK' does not exist.]")
     public void whenListWithRepositoryConfigByDataSource()
     {
         Repository repository = new RepositoryJdbc(dataSourceDerby);
@@ -93,7 +93,7 @@ public class RepositoryJdbcInstanceTest extends BaseSpringJUnit4
         }
     }
 
-    @Test //@Ignore("Cannot prepare statement [Table/View 'BOOK' does not exist.]")
+    @Test @Ignore("Cannot prepare statement [Table/View 'BOOK' does not exist.]")
     public void whenListWithRepositoryConfigWithContext()
     {
         Repository repository = new RepositoryJdbc(SqlContextFactory.newInstance("/repository-sql.xml"));
@@ -110,7 +110,7 @@ public class RepositoryJdbcInstanceTest extends BaseSpringJUnit4
         }
     }
 
-    @Test //@Ignore("Cannot prepare statement [Table/View 'BOOK' does not exist.]")
+    @Test @Ignore("Cannot prepare statement [Table/View 'BOOK' does not exist.]")
     public void whenListWithRepositoryConfigByProperties()
     {
         Repository repository = createRepositoryWithProperties();

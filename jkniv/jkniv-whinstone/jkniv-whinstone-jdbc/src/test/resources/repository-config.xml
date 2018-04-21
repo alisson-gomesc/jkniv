@@ -10,7 +10,10 @@
       <property name="jkniv.repository.query_namestrategy"          value="net.sf.jkniv.sqlegance.HashQueryNameStrategy" />
       <property name="jkniv.repository.jdbc.dialect"                value="net.sf.jkniv.whinstone.jdbc.dialect.Derby10o7Dialect" />
       <property name="jkniv.repository.jdbc_adapter_factory"        value="net.sf.jkniv.whinstone.jdbc.DataSourceAdapter" />
-      <property name="user" value="admin" />
+      <!-- 
+      <property name="user" value="derbwhinstone" />
+      <property name="password" value="derbwhinstone" />
+      -->
     </properties>
   </repository>
 
@@ -35,8 +38,8 @@
       <property name="jkniv.repository.jdbc_adapter_factory"        value="net.sf.jkniv.whinstone.jdbc.DriverManagerAdapter" />
       <property name="driver" value="oracle.jdbc.driver.OracleDriver" />
       <property name="url" value="jdbc:oracle:thin:@127.0.0.1:1521/XE" />
-      <property name="user" value="whinstone" />
-      <property name="password" value="whinstone" />
+      <property name="user" value="orawhinstone" />
+      <property name="password" value="orawhinstone" />
     </properties>
   </repository>
 

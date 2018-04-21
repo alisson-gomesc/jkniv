@@ -23,4 +23,12 @@
   </select>
   
 
+  <select id="authorsBRTyped" returnType="net.sf.jkniv.whinstone.couchdb.model.orm.Author">
+    {
+     "selector": {"nationality": "BR" },
+     "fields": ["_id", "_rev", "name", "nationality"]
+    }
+  </select>
+  
+
 </statements>

@@ -2,7 +2,8 @@ package net.sf.jkniv.sqlegance;
 
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+
+import static org.junit.Assert.*;
 
 import static org.mockito.Mockito.*;
 import static org.mockito.BDDMockito.*;
@@ -18,7 +19,6 @@ import net.sf.jkniv.sqlegance.domain.flat.Car;
 
 public class RepositoryTest
 {
- 
     Repository repository;
     Queryable queryable = new QueryName("save");
     Car entity = new Car("147", "Fiat", 2);

@@ -160,7 +160,7 @@ public class HttpCookieConnectionAdapter implements ConnectionAdapter
             else if (queryable.getDynamicSql().getLanguageType() == LanguageType.STORED)
                 command = new ViewCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
             else
-                command = new FindCommand((CouchDbStatementAdapter) stmt, this.httpBuilder);
+                command = new FindCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
         return command;
     }
 

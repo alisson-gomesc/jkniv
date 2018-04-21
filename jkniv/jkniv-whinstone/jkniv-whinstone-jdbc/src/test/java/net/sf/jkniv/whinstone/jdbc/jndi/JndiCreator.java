@@ -37,8 +37,9 @@ public class JndiCreator
     {
         try
         {
+            //jdbc:derby:memory:derbwhinstone;create=true
             BasicDataSource datasource = new BasicDataSource();
-            datasource.setUrl("jdbc:derby:memory:whinstone");
+            datasource.setUrl("jdbc:derby:memory:derbwhinstone;create=true");
             datasource.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
             final SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
             builder.bind(jndiName, datasource);

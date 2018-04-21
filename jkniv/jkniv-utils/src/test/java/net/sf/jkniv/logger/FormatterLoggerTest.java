@@ -20,6 +20,10 @@
 package net.sf.jkniv.logger;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static org.hamcrest.CoreMatchers.*;
 
 import org.junit.Test;
@@ -77,5 +81,32 @@ public class FormatterLoggerTest
         String msg = "The user {} cannot make login with password [{}]";
         String expected = "The user %1$s cannot make login with password [%2$s]";
         assertThat(f.formatterSlf4j(msg), is(expected));
+    }
+    
+    
+
+    @Test
+    public void whenExtractParameterNumber()
+    {
+        assertThat(extractNumber("{}"), is(""));
+        assertThat(extractNumber("{0}"), is("0"));
+        assertThat(extractNumber("{1}"), is("1"));
+        assertThat(extractNumber("{10}"), is("10"));
+        assertThat(extractNumber("{234}"), is("234"));
+        assertThat(extractNumber("[]"), is(""));
+        assertThat(extractNumber("[12]"), is("12"));
+    }
+    
+    
+    private static String extractNumber(String m)
+    {
+        String ret = "";
+        final Pattern PATTERN_NUMBER = Pattern.compile("-?\\d+");
+        
+        Matcher matcher = PATTERN_NUMBER.matcher(m);
+        if(matcher.find())
+            ret = matcher.group();
+        
+        return ret;
     }
 }

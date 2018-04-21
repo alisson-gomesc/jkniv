@@ -30,7 +30,8 @@ import net.sf.jkniv.whinstone.jdbc.test.BaseSpringJUnit4;
 
 public class BaseJdbc extends BaseSpringJUnit4
 {
-    protected static final String url = "jdbc:derby:memory:whinstone;create=true;user=admin;password=secret";
+    //protected static final String url = "jdbc:derby:memory:derbwhinstone;create=true;user=admin;password=secret";
+    protected static final String url = "jdbc:derby:memory:derbwhinstone;create=true";
     protected static final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
     protected static final String user = "sa";
     protected static final String pass = "";

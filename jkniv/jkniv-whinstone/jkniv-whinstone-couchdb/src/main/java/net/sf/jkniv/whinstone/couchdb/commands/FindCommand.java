@@ -20,8 +20,10 @@
 package net.sf.jkniv.whinstone.couchdb.commands;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -31,6 +33,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 import net.sf.jkniv.whinstone.couchdb.statement.CouchDbStatementAdapter;
@@ -42,12 +45,14 @@ public class FindCommand extends AbstractCommand implements CouchCommand
     private String body;
     //private CouchDbStatementAdapter<?, String> stmt;
     private HttpBuilder httpBuilder;
-
-    public FindCommand(CouchDbStatementAdapter<?, String> stmt, HttpBuilder httpBuilder)
+    private Queryable queryable;
+    
+    public FindCommand(CouchDbStatementAdapter<?, String> stmt, HttpBuilder httpBuilder, Queryable queryable)
     {
         super();
-        //this.stmt = stmt;
+        this.queryable = queryable;
         this.httpBuilder = httpBuilder;
+        //this.stmt = stmt;
         stmt.rows();
         this.body = stmt.getBody();
     }
@@ -57,8 +62,9 @@ public class FindCommand extends AbstractCommand implements CouchCommand
     {
         String json = null;
         CloseableHttpResponse response = null;
+        Class returnType = null;
         FindAnswer answer = null;
-        List<?> list = Collections.emptyList();
+        List list = Collections.emptyList();
         try
         {
             CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -66,12 +72,29 @@ public class FindCommand extends AbstractCommand implements CouchCommand
             response = httpclient.execute(httpPost);
             json = EntityUtils.toString(response.getEntity());
             int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode == HTTP_OK)
+            if (isOk(statusCode))
             {
+                if (queryable.getReturnType() != null)
+                    returnType = queryable.getReturnType();
+                else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
+                    returnType = queryable.getDynamicSql().getReturnTypeAsClass();
+
+                
                 answer = JsonMapper.mapper(json, FindAnswer.class);
                 if (answer.getWarning() != null)
                     LOG.warn(answer.getWarning());
-                list =  answer.getDocs();
+                
+                if (returnType != null)
+                {
+                    list = new ArrayList();
+                    // FIXME overload performance, writer better deserialization using jackson
+                    for(Object row : answer.getDocs())
+                    {
+                        list.add(JsonMapper.mapper((Map)row, returnType));
+                    }
+                }
+                else
+                    list =  answer.getDocs();
             }
             else if (isNotFound(statusCode))
             {
