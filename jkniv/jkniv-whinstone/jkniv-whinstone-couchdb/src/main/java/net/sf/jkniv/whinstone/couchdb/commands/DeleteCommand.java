@@ -168,8 +168,7 @@ public class DeleteCommand extends AbstractCommand implements CouchCommand
             {
                 Map<String,String> result = JsonMapper.mapper(json, Map.class);
                 String reason = result.get("reason");
-                LOG.error("Http Body\n{}", this.body);
-                LOG.error("{} -> {} ", response.getStatusLine().toString(), json);
+                LOG.error(errorFormat(http, response.getStatusLine(), json));
                 throw new RepositoryException(response.getStatusLine().toString() +", "+ reason);
             }
         }

@@ -3,7 +3,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sf.jkniv</groupId>
-  <version>0.6.0.M20</version>
+  <version>0.6.0.M22</version>
   <packaging>pom</packaging>
   <name>jkniv</name>
   <artifactId>jkniv</artifactId>
@@ -552,7 +552,7 @@
     </plugins>
   </reporting>
   <organization>
-    <name>jkniv</name>
+    <name>jkniv, copyleft code</name>
     <url>http://jkniv.sourceforge.net/</url>
   </organization>
   <developers>

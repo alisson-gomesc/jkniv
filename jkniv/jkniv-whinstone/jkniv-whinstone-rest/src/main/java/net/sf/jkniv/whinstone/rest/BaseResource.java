@@ -3,7 +3,6 @@ package net.sf.jkniv.whinstone.rest;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +48,16 @@ public class BaseResource
     //private Repository repository;
     public static Map<String, Repository> repositories = new HashMap<>();
     
+    /*
+    static {
+        if (sqlContextName == null)
+            sqlContextName = "/repository-sql.xml";
+        
+        if(repositories.isEmpty())
+            initRepositories();
+    }
+     */
+    
     public BaseResource()
     {
         if (sqlContextName == null)
@@ -56,18 +65,9 @@ public class BaseResource
         
         if(repositories.isEmpty())
             initRepositories();
-        
-        
-//        if (sqlContext.getRepositoryConfig().getRepositoryType() == RepositoryType.JDBC)
-//            this.repository = service.lookup(RepositoryType.JDBC).newInstance(sqlContext);
-//        else if (sqlContext.getRepositoryConfig().getRepositoryType() == RepositoryType.JPA)
-//            this.repository = service.lookup(RepositoryType.JPA).newInstance(sqlContext);
-//        /*this.repository = service.lookup(RepositoryType.JPA).newInstance(sqlContext.getRepositoryConfig().getName(), sqlContext);*/
-//        else
-//            LOG.error("Repository type no identified, must be JDBC or JPA");
     }
-    
-    private void initRepositories()
+        
+    private static void initRepositories()
     {
         RepositoryService service = RepositoryService.getInstance();
         String[] contexts = sqlContextName.split(",");

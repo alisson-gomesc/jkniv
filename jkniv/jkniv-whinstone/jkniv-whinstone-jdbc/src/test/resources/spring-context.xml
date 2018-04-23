@@ -35,7 +35,6 @@
     <property name="username" value="orawhinstone" />
     <property name="password" value="orawhinstone" />
   </bean>
-  
   <bean id="dataSourcePostgres" class="org.apache.commons.dbcp.BasicDataSource"
     destroy-method="close">
     <property name="driverClassName" value="org.postgresql.xa.PGXADataSource" />
@@ -80,8 +79,6 @@
   <jdbc:initialize-database data-source="dataSourcePostgres"
     enabled="true" ignore-failures="DROPS">
     <jdbc:script location="classpath:database/postgresql/db-drop.sql" execution="DESTROY" encoding="UTF-8" />
-    <!-- 
-    -->
     <jdbc:script location="classpath:database/postgresql/db-create.sql" execution="INIT" encoding="UTF-8" />
     <jdbc:script location="classpath:database/postgresql/db-load.sql" execution="INIT" encoding="UTF-8" />
   </jdbc:initialize-database>

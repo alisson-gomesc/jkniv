@@ -92,7 +92,7 @@ public class GetCommand extends AbstractCommand implements CouchCommand
             else
             {
                 //LOG.error("Http Body\n{}", EntityUtils.toString(http.getEntity()));
-                LOG.error("{} -> {} ", response.getStatusLine().toString(), json);
+                LOG.error(errorFormat(http, response.getStatusLine(), json));
                 throw new RepositoryException(response.getStatusLine().toString());
             }
         }

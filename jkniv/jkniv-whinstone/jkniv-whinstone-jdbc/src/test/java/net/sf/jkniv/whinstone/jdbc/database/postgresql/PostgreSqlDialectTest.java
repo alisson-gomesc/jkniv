@@ -24,6 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import net.sf.jkniv.sqlegance.Queryable;
@@ -33,6 +34,7 @@ import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.whinstone.jdbc.dialect.PostgreSqlDialect;
 import net.sf.jkniv.whinstone.jdbc.dialect.SqlDialectAbstractTest;
 
+//@Ignore("Windows service posgresql CRASH")
 public class PostgreSqlDialectTest extends SqlDialectAbstractTest
 {
     /** select name from author LIMIT 50 OFFSET 10 */

@@ -94,9 +94,7 @@ public class AllDocsCommand extends AbstractCommand implements CouchCommand
             }
             else
             {
-                LOG.error("URI:\n{}", http.getURI());
-                LOG.error("Header:\n{}", Arrays.asList(http.getAllHeaders()).toString());
-                LOG.error("{} -> {} ", response.getStatusLine().toString(), json);
+                LOG.error(errorFormat(http, response.getStatusLine(), json));
                 throw new RepositoryException(response.getStatusLine().toString());
             }
         }

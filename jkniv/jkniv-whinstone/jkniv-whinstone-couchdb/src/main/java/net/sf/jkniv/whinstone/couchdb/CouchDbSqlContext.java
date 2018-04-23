@@ -23,13 +23,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.jkniv.sqlegance.Deletable;
+import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
+import net.sf.jkniv.sqlegance.Updateable;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.xml.TagFactory;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
+import net.sf.jkniv.sqlegance.validation.ValidateType;
 
 public class CouchDbSqlContext implements SqlContext
 {
@@ -44,9 +48,19 @@ public class CouchDbSqlContext implements SqlContext
         // initialize built in Sql
         BUILTIN.put(ALL_DOCS_QUERY, TagFactory.newSelect(ALL_DOCS_QUERY, LanguageType.STORED, couchDbDialect));
         BUILTIN.put(GET_QUERY, TagFactory.newSelect(GET_QUERY, LanguageType.STORED, couchDbDialect));
-        BUILTIN.put(PUT_QUERY, TagFactory.newInsert(PUT_QUERY, LanguageType.STORED, couchDbDialect));
-        BUILTIN.put(UPDATE_QUERY, TagFactory.newUpdate(UPDATE_QUERY, LanguageType.STORED, couchDbDialect));
-        BUILTIN.put(DELETE_QUERY, TagFactory.newDelete(DELETE_QUERY, LanguageType.STORED, couchDbDialect));
+        
+        Insertable insertable = TagFactory.newInsert(PUT_QUERY, LanguageType.STORED, couchDbDialect);
+        insertable.setValidateType(ValidateType.ADD);
+        
+        Updateable  updateable = TagFactory.newUpdate(UPDATE_QUERY, LanguageType.STORED, couchDbDialect);
+        updateable.setValidateType(ValidateType.UPDATE);
+        
+        Deletable deletable = TagFactory.newDelete(DELETE_QUERY, LanguageType.STORED, couchDbDialect);
+        deletable.setValidateType(ValidateType.REMOVE);
+
+        BUILTIN.put(PUT_QUERY, insertable);
+        BUILTIN.put(UPDATE_QUERY, updateable);
+        BUILTIN.put(DELETE_QUERY, deletable);
     }
     
     public CouchDbSqlContext(SqlContext sqlContext)

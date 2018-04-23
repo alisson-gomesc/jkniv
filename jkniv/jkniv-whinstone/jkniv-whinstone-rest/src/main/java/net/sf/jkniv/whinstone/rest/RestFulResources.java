@@ -96,6 +96,11 @@ public class RestFulResources extends BaseResource
         BaseResource.transformers.cleanup();
     }
     
+    public RestFulResources()
+    {
+        super();
+    }
+    
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Path("ping")

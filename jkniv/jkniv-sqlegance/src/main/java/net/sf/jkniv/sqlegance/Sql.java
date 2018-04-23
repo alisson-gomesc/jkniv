@@ -229,6 +229,9 @@ public interface Sql
      
      ValidateType getValidateType();
      
+     void setValidateType(ValidateType validateType);
+
+     
      void bind(SqlDialect sqlDialect);
      
      SqlDialect getSqlDialect();
