@@ -43,6 +43,11 @@ public class ConstraintException extends RepositoryException
         this.violations = violations;
     }
     
+    /**
+     * Map with violations where key is {@code javax.validation.ConstraintViolation.getPropertyPath()} name with 
+     * violation message.
+     * @return set of violation messages from Bean Validation
+     */
     public Map<String, String> getViolations()
     {
         return violations;
