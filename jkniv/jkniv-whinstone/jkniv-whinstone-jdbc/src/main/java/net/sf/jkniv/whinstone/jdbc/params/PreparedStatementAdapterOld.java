@@ -12,7 +12,7 @@ import net.sf.jkniv.experimental.converters.SqlDateConverter;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.params.StatementAdapterOld;
-import net.sf.jkniv.whinstone.LoggerFactory;
+import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
 import net.sf.jkniv.whinstone.jdbc.statement.PreparedStatementAdapter;
 
 /**

@@ -31,7 +31,7 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.classification.MapTransform;
 import net.sf.jkniv.sqlegance.classification.Transformable;
-import net.sf.jkniv.whinstone.LoggerFactory;
+import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
 
 /**
  * 

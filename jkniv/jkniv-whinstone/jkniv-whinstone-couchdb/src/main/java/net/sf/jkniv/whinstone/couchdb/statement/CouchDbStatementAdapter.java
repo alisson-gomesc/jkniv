@@ -27,8 +27,6 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.ResultSetParser;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
-import net.sf.jkniv.sqlegance.logger.LogLevel;
-import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
 import net.sf.jkniv.sqlegance.params.ParamParser;
 import net.sf.jkniv.sqlegance.statement.StatementAdapter;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
@@ -44,8 +42,8 @@ import net.sf.jkniv.whinstone.couchdb.result.StringResultRow;
 public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String>
 {
     private static final Logger      LOG     = LoggerFactory.getLogger(CouchDbStatementAdapter.class);
-    private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.LoggerFactory.getLogger();
-    private static final DataMasking MASKING = net.sf.jkniv.whinstone.LoggerFactory.getDataMasking();
+    private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
+    private static final DataMasking MASKING = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getDataMasking();
     private final HandlerException   handlerException;
     private final SqlDateConverter   dtConverter;
     private int                      index, indexIN;

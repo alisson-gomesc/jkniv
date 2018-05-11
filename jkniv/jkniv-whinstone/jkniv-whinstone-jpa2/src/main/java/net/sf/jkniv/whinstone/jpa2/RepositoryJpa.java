@@ -62,7 +62,7 @@ import net.sf.jkniv.sqlegance.transaction.Transactional;
 public class RepositoryJpa implements RepositoryJpaExtend
 {
     private static final Logger                       LOG                  = LoggerFactory.getLogger(RepositoryJpa.class);
-    private static final Logger                       SQLLOG               = net.sf.jkniv.whinstone.LoggerFactory.getLogger();
+    private static final Logger                       SQLLOG               = net.sf.jkniv.whinstone.jpa2.LoggerFactory.getLogger();
     private static final Assertable                   notNull              = AssertsFactory.getNotNull();
     private QueryNameStrategy                         xmlQueryName;
     private final static Map<String, PersistenceInfo> cachePersistenceInfo = new HashMap<String, PersistenceInfo>();

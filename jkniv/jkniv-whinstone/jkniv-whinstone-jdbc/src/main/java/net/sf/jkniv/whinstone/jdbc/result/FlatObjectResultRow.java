@@ -48,8 +48,8 @@ import net.sf.jkniv.sqlegance.logger.DataMasking;
 public class FlatObjectResultRow<T> implements ResultRow<T, ResultSet>
 {
     private final static Logger LOG = LoggerFactory.getLogger(FlatObjectResultRow.class);
-    private static final Logger  SQLLOG = net.sf.jkniv.whinstone.LoggerFactory.getLogger();
-    private static final DataMasking  MASKING = net.sf.jkniv.whinstone.LoggerFactory.getDataMasking();
+    private static final Logger  SQLLOG = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
+    private static final DataMasking  MASKING = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getDataMasking();
     private final Class<T>     returnType;
     private final Transformable<T> transformable;
     private JdbcColumn<ResultSet>[] columns;

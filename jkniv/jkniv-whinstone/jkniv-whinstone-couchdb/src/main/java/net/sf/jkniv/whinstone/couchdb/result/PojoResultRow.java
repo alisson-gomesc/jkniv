@@ -59,8 +59,8 @@ import net.sf.jkniv.sqlegance.logger.DataMasking;
 public class PojoResultRow<T> implements ResultRow<T, ResultSet>
 {
     private final static Logger      LOG     = LoggerFactory.getLogger(PojoResultRow.class);
-    private final static Logger      SQLLOG  = net.sf.jkniv.whinstone.LoggerFactory.getLogger();
-    private final static DataMasking MASKING = net.sf.jkniv.whinstone.LoggerFactory.getDataMasking();
+    private final static Logger      SQLLOG  = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
+    private final static DataMasking MASKING = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getDataMasking();
     private final static MethodName  SETTER  = MethodNameFactory.getInstanceSetter();
     private final static MethodName  GETTER  = MethodNameFactory.getInstanceGetter();
     private final Class<T>           returnType;

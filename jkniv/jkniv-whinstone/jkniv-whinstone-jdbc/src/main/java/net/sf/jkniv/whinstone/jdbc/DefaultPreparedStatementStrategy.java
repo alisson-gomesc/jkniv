@@ -44,7 +44,7 @@ import net.sf.jkniv.sqlegance.statement.ResultSetType;
 public class DefaultPreparedStatementStrategy implements PreparedStatementStrategy
 {
     private static final Logger LOG    = LoggerFactory.getLogger(DefaultPreparedStatementStrategy.class);
-    private static final Logger SQLLOG = net.sf.jkniv.whinstone.LoggerFactory.getLogger();
+    private static final Logger SQLLOG = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
     private String              sql;
     private String              sqlCount;
     private Queryable           queryable;

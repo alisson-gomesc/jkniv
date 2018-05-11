@@ -1,4 +1,4 @@
-package net.sf.jkniv.whinstone;
+package net.sf.jkniv.whinstone.cassandra;
 
 import org.slf4j.Logger;
 
@@ -7,7 +7,7 @@ import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
 
 public class LoggerFactory
 {
-    private static final Logger  LOG = org.slf4j.LoggerFactory.getLogger("net.sf.jkniv.whinstone.SQL");
+    private static final Logger  LOG = org.slf4j.LoggerFactory.getLogger("jkniv.whinstone.cassandra.SQL");
     private static final DataMasking masking = new SimpleDataMasking();
     
     public static Logger getLogger()

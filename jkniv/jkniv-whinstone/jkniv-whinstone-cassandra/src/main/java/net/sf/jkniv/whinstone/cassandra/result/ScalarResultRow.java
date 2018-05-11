@@ -28,7 +28,7 @@ import com.datastax.driver.core.Row;
 import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.classification.Transformable;
-import net.sf.jkniv.whinstone.LoggerFactory;
+import net.sf.jkniv.whinstone.cassandra.LoggerFactory;
 
 /**
  * 

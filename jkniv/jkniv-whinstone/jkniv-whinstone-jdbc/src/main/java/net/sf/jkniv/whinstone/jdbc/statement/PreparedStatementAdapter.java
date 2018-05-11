@@ -27,8 +27,8 @@ import net.sf.jkniv.sqlegance.classification.NoGroupingBy;
 import net.sf.jkniv.sqlegance.classification.Transformable;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.statement.StatementAdapter;
-import net.sf.jkniv.whinstone.LoggerFactory;
 import net.sf.jkniv.whinstone.jdbc.DefaultJdbcColumn;
+import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
 import net.sf.jkniv.whinstone.jdbc.result.FlatObjectResultRow;
 import net.sf.jkniv.whinstone.jdbc.result.MapResultRow;
 import net.sf.jkniv.whinstone.jdbc.result.NumberResultRow;
@@ -40,7 +40,7 @@ import net.sf.jkniv.whinstone.jdbc.result.StringResultRow;
 public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
 {
     private static final Logger  LOG = LoggerFactory.getLogger();
-    private static final DataMasking  MASKING = net.sf.jkniv.whinstone.LoggerFactory.getDataMasking();
+    private static final DataMasking  MASKING = LoggerFactory.getDataMasking();
 
     private final PreparedStatement stmt;
     private final HandlerException  handlerException;

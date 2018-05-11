@@ -30,7 +30,7 @@ import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.classification.Transformable;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
-import net.sf.jkniv.whinstone.LoggerFactory;
+import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
 
 /**
  * 
@@ -43,7 +43,7 @@ import net.sf.jkniv.whinstone.LoggerFactory;
 public class NumberResultRow<T> implements ResultRow<T, ResultSet>
 {
     private static final Logger  LOG = LoggerFactory.getLogger();
-    private static final DataMasking  MASKING = net.sf.jkniv.whinstone.LoggerFactory.getDataMasking();
+    private static final DataMasking  MASKING = LoggerFactory.getDataMasking();
 
     private final Numerical numerical;
     private JdbcColumn<ResultSet>[] columns;

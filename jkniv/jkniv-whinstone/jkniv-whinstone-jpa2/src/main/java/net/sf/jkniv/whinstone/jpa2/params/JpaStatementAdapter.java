@@ -13,8 +13,8 @@ import net.sf.jkniv.sqlegance.params.StatementAdapterOld;
 public class JpaStatementAdapter implements StatementAdapterOld
 {
     private static final Logger LOG = LoggerFactory.getLogger(JpaStatementAdapter.class);
-    private static final Logger SQLLOG = net.sf.jkniv.whinstone.LoggerFactory.getLogger();
-    private static final DataMasking MASKING = net.sf.jkniv.whinstone.LoggerFactory.getDataMasking();
+    private static final Logger SQLLOG = net.sf.jkniv.whinstone.jpa2.LoggerFactory.getLogger();
+    private static final DataMasking MASKING = net.sf.jkniv.whinstone.jpa2.LoggerFactory.getDataMasking();
     private final Query query;
     private int index;
     private int indexIN;

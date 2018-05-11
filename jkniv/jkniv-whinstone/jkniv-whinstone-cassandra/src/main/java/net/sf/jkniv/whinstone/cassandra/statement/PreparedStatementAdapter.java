@@ -34,8 +34,8 @@ import net.sf.jkniv.sqlegance.classification.NoGroupingBy;
 import net.sf.jkniv.sqlegance.classification.Transformable;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.statement.StatementAdapter;
-import net.sf.jkniv.whinstone.LoggerFactory;
 import net.sf.jkniv.whinstone.cassandra.CassandraColumn;
+import net.sf.jkniv.whinstone.cassandra.LoggerFactory;
 import net.sf.jkniv.whinstone.cassandra.result.FlatObjectResultRow;
 import net.sf.jkniv.whinstone.cassandra.result.MapResultRow;
 import net.sf.jkniv.whinstone.cassandra.result.NumberResultRow;
@@ -70,7 +70,7 @@ import net.sf.jkniv.whinstone.cassandra.result.StringResultRow;
 public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Row>
 {
     private static final Logger  LOG = LoggerFactory.getLogger();
-    private static final DataMasking  MASKING = net.sf.jkniv.whinstone.LoggerFactory.getDataMasking();
+    private static final DataMasking  MASKING = LoggerFactory.getDataMasking();
 
     private final HandlerException  handlerException;
     private final PreparedStatement stmt;
