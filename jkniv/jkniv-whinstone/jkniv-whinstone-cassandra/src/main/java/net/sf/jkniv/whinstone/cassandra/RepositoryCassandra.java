@@ -57,9 +57,6 @@ import net.sf.jkniv.sqlegance.classification.Groupable;
 import net.sf.jkniv.sqlegance.classification.GroupingBy;
 import net.sf.jkniv.sqlegance.classification.NoGroupingBy;
 import net.sf.jkniv.sqlegance.classification.Transformable;
-import net.sf.jkniv.sqlegance.logger.LogLevel;
-import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
 import net.sf.jkniv.sqlegance.statement.StatementAdapter;
 import net.sf.jkniv.sqlegance.transaction.Transactional;
 import net.sf.jkniv.whinstone.cassandra.result.FlatObjectResultRow;
@@ -285,7 +282,6 @@ class RepositoryCassandra implements Repository
         ResultRow<T, R> rsRowParser = null;
         Groupable<T, ?> grouping = new NoGroupingBy<T, T>();
         Transformable<?> transformable = null;
-        SqlLogger sqlLogger = new SqlLogger(LogLevel.ALL, new SimpleDataMasking());
         ResultSet rs = session.execute(bound);
         JdbcColumn<Row>[] columns = getJdbcColumns(rs.getColumnDefinitions());
         Class<T> returnType = (Class<T>) Map.class;
@@ -303,28 +299,28 @@ class RepositoryCassandra implements Repository
         {
             if (queryable.isScalar())
             {
-                rsRowParser = new ScalarResultRow(columns, sqlLogger);
+                rsRowParser = new ScalarResultRow(columns);
             }
             else if (Map.class.isAssignableFrom(returnType))
             {
-                rsRowParser = new MapResultRow(returnType, columns, sqlLogger);
+                rsRowParser = new MapResultRow(returnType, columns);
                 //transformable = new MapTransform();
             }
             else if (Number.class.isAssignableFrom(returnType)) // FIXME implements for date, calendar, boolean improve design
             {
-                rsRowParser = new NumberResultRow(returnType, columns, sqlLogger);
+                rsRowParser = new NumberResultRow(returnType, columns);
             }
             else if (String.class.isAssignableFrom(returnType))
             {
-                rsRowParser = new StringResultRow(columns, sqlLogger);
+                rsRowParser = new StringResultRow(columns);
             }
             else if (isql.getOneToMany().isEmpty())
             {
-                rsRowParser = new FlatObjectResultRow(returnType, columns, sqlLogger);
+                rsRowParser = new FlatObjectResultRow(returnType, columns);
             }
             else
             {
-                rsRowParser = new PojoResultRow(returnType, columns, isql.getOneToMany(), sqlLogger);
+                rsRowParser = new PojoResultRow(returnType, columns, isql.getOneToMany());
             }
         }
         

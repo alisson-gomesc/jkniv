@@ -22,11 +22,12 @@ package net.sf.jkniv.whinstone.couchdb.result;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+
 import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.classification.Transformable;
-import net.sf.jkniv.sqlegance.logger.LogLevel;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
+import net.sf.jkniv.whinstone.LoggerFactory;
 
 /**
  * 
@@ -38,18 +39,17 @@ import net.sf.jkniv.sqlegance.logger.SqlLogger;
  */
 public class ScalarResultRow<T> implements ResultRow<T, ResultSet>
 {
-    private final SqlLogger  sqlLogger;
+    private static final Logger  LOG = LoggerFactory.getLogger();
     private JdbcColumn<ResultSet>[] columns;
 
-    public ScalarResultRow(SqlLogger log)
+    public ScalarResultRow()
     {
-        this(null, log);
+        this(null);
     }
 
-    public ScalarResultRow(JdbcColumn<ResultSet>[] columns, SqlLogger log)
+    public ScalarResultRow(JdbcColumn<ResultSet>[] columns)
     {
         this.columns = columns;
-        this.sqlLogger = log;
     }
     
     @SuppressWarnings("unchecked")
@@ -60,8 +60,8 @@ public class ScalarResultRow<T> implements ResultRow<T, ResultSet>
             jdbcObject = columns[0].getBytes(rs);
         else
             jdbcObject = columns[0].getValue(rs);
-        
-        sqlLogger.log(LogLevel.RESULTSET, "Mapping index [0] column [{}] to set scalar value", columns[0].getAttributeName());
+        if(LOG.isTraceEnabled())
+            LOG.trace("Mapping index [0] column [{}] to set scalar value", columns[0].getAttributeName());
         return (T) jdbcObject;
     }
 

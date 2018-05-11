@@ -32,7 +32,6 @@ import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
 import net.sf.jkniv.sqlegance.params.ParamParser;
 import net.sf.jkniv.sqlegance.params.PrepareParamsFactory;
 import net.sf.jkniv.sqlegance.params.AutoBindParams;

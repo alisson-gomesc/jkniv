@@ -30,7 +30,6 @@ import org.junit.Test;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
 
 public class RepositoryConfigTest
@@ -107,7 +106,7 @@ public class RepositoryConfigTest
         assertThat(config.getQueryNameStrategy(), is(RepositoryProperty.QUERY_NAME_STRATEGY.defaultValue()));
         
         assertThat(config.getDataMasking(), instanceOf(SimpleDataMasking.class));
-        assertThat(config.getSqlLogger(), instanceOf(SqlLogger.class));
+        //assertThat(config.getSqlLogger(), instanceOf(SqlLogger.class));
         assertThat(config.getSqlDialect(), is(RepositoryProperty.SQL_DIALECT.defaultValue()));                
     }
 }

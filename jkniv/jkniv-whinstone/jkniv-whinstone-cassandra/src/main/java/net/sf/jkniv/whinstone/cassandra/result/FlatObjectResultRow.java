@@ -34,7 +34,6 @@ import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.classification.ObjectTransform;
 import net.sf.jkniv.sqlegance.classification.Transformable;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
 
 /**
  * 
@@ -54,13 +53,13 @@ public class FlatObjectResultRow<T> implements ResultRow<T, Row>
     private final Transformable<T> transformable;
     private JdbcColumn<Row>[] columns;
 
-    public FlatObjectResultRow(Class<T> returnType, SqlLogger log)
+    public FlatObjectResultRow(Class<T> returnType)
     {
-        this(returnType, null, log);
+        this(returnType, null);
     }
 
     @SuppressWarnings("unchecked")
-    public FlatObjectResultRow(Class<T> returnType, JdbcColumn<Row>[] columns, SqlLogger log)
+    public FlatObjectResultRow(Class<T> returnType, JdbcColumn<Row>[] columns)
     {
         this.returnType = returnType;
         this.columns = columns;

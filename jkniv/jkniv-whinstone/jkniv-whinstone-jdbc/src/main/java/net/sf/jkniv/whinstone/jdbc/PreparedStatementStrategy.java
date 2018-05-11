@@ -22,7 +22,6 @@ package net.sf.jkniv.whinstone.jdbc;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
 
 /**
  * TODO docme
@@ -36,7 +35,7 @@ public interface PreparedStatementStrategy
     
 //    void setSqlLogger(SqlLogger logger);
     
-    SqlLogger getSqlLogger();
+//    SqlLogger getSqlLogger();
     
     /**
      * Creates a PreparedStatement object that will generate ResultSet objects with the given type, 

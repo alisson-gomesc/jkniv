@@ -19,14 +19,14 @@
  */
 package net.sf.jkniv.whinstone.couchdb.result;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import org.slf4j.Logger;
 
 import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.classification.Transformable;
-import net.sf.jkniv.sqlegance.logger.LogLevel;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
+import net.sf.jkniv.whinstone.LoggerFactory;
 
 /**
  * 
@@ -38,18 +38,17 @@ import net.sf.jkniv.sqlegance.logger.SqlLogger;
  */
 public class StringResultRow<T> implements ResultRow<T, String>
 {
-    private final SqlLogger  sqlLogger;
+    private final static Logger  sqlLogger = LoggerFactory.getLogger();
     private JdbcColumn<String>[] columns;
 
-    public StringResultRow(SqlLogger log)
+    public StringResultRow()
     {
-        this(null, log);
+        this(null);
     }
 
-    public StringResultRow(JdbcColumn<String>[] columns, SqlLogger log)
+    public StringResultRow(JdbcColumn<String>[] columns)
     {
         this.columns = columns;
-        this.sqlLogger = log;
     }
     
     @SuppressWarnings("unchecked")
@@ -62,7 +61,7 @@ public class StringResultRow<T> implements ResultRow<T, String>
 //            jdbcObject = columns[0].getValue(rs);
 
         // FIXME couchdb logger ResultSet
-        sqlLogger.log(LogLevel.RESULTSET, "Column index [0] named [{}] to set String", columns[0].getAttributeName());
+        sqlLogger.trace("Column index [0] named [{}] to set String", columns[0].getAttributeName());
         return (T)(jdbcObject != null ? jdbcObject.toString() : null);
     }
 

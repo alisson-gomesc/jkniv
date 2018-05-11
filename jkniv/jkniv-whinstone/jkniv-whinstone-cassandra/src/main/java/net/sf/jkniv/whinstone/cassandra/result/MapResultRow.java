@@ -23,7 +23,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.datastax.driver.core.ResultSet;
+import org.slf4j.Logger;
+
 import com.datastax.driver.core.Row;
 
 import net.sf.jkniv.sqlegance.JdbcColumn;
@@ -31,8 +32,7 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.classification.MapTransform;
 import net.sf.jkniv.sqlegance.classification.Transformable;
-import net.sf.jkniv.sqlegance.logger.LogLevel;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
+import net.sf.jkniv.whinstone.LoggerFactory;
 
 /**
  * 
@@ -44,23 +44,22 @@ import net.sf.jkniv.sqlegance.logger.SqlLogger;
  */
 public class MapResultRow<T> implements ResultRow<T, Row>
 {
-    private final SqlLogger  sqlLogger;
+    private final static Logger LOG = LoggerFactory.getLogger();
     private final Class<T> returnType;
     private JdbcColumn<Row>[] columns;
     private final Transformable<T> transformable;
 
-    public MapResultRow(Class<T> returnType, SqlLogger sqlLogger)
+    public MapResultRow(Class<T> returnType)
     {
-        this(returnType, null, sqlLogger);
+        this(returnType, null);
     }
     
     @SuppressWarnings("unchecked")
-    public MapResultRow(Class<T> returnType, JdbcColumn<Row>[] columns, SqlLogger sqlLogger)
+    public MapResultRow(Class<T> returnType, JdbcColumn<Row>[] columns)
     {
         this.returnType = returnType;
         this.columns = columns;
         this.transformable = (Transformable<T>) new MapTransform();
-        this.sqlLogger = sqlLogger;
     }
     
     @SuppressWarnings("unchecked")
@@ -83,8 +82,8 @@ public class MapResultRow<T> implements ResultRow<T, Row>
             jdbcObject = column.getBytes(row);
         else
             jdbcObject = column.getValue(row);
-        sqlLogger.log(LogLevel.RESULTSET, "Using sensitive key [{}] for type [{}] with value [{}]", column.getAttributeName(), (jdbcObject == null ? "null" : jdbcObject.getClass()), jdbcObject);
-        //sqlLogger.log(LogLevel.RESULTSET, "Using sensitive key [{}] for type [{}] with value [{}]", column.getAttributeName());
+        if(LOG.isTraceEnabled())
+            LOG.trace("Using sensitive key [{}] for type [{}] with value [{}]", column.getAttributeName(), (jdbcObject == null ? "null" : jdbcObject.getClass()), jdbcObject);
         map.put(column.getAttributeName(), jdbcObject);
     }
     

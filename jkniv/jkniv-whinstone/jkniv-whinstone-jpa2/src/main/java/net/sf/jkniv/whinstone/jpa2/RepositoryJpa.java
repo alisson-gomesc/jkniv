@@ -47,7 +47,7 @@ import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
+import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.transaction.Transactional;
 
 /**
@@ -61,8 +61,8 @@ import net.sf.jkniv.sqlegance.transaction.Transactional;
  */
 public class RepositoryJpa implements RepositoryJpaExtend
 {
-    private static final Logger                       LOG                  = LoggerFactory
-            .getLogger(RepositoryJpa.class);
+    private static final Logger                       LOG                  = LoggerFactory.getLogger(RepositoryJpa.class);
+    private static final Logger                       SQLLOG               = net.sf.jkniv.whinstone.LoggerFactory.getLogger();
     private static final Assertable                   notNull              = AssertsFactory.getNotNull();
     private QueryNameStrategy                         xmlQueryName;
     private final static Map<String, PersistenceInfo> cachePersistenceInfo = new HashMap<String, PersistenceInfo>();
@@ -71,7 +71,7 @@ public class RepositoryJpa implements RepositoryJpaExtend
     private SqlContext                                sqlContext;
     private boolean                                   isTraceEnabled;
     private boolean                                   isDebugEnabled;
-    private SqlLogger sqlLogger;
+    
     /**
      * Create a JPA repository using default persistence unit name, where
      * EntityManager is a container-managed persistence context.
@@ -115,7 +115,7 @@ public class RepositoryJpa implements RepositoryJpaExtend
         
         this.init();
     }
-
+    
     RepositoryJpa(Properties props, SqlContext sqlContext)
     {
         notNull.verify(props, sqlContext);
@@ -130,7 +130,7 @@ public class RepositoryJpa implements RepositoryJpaExtend
         
         this.init();
     }
-
+    
     RepositoryJpa(SqlContext sqlContext)
     {
         notNull.verify(sqlContext);
@@ -144,7 +144,7 @@ public class RepositoryJpa implements RepositoryJpaExtend
         
         this.init();
     }
-
+    
     RepositoryJpa(String unitName, SqlContext sqlContext)
     {
         notNull.verify(unitName, sqlContext);
@@ -158,7 +158,7 @@ public class RepositoryJpa implements RepositoryJpaExtend
         
         this.init();
     }
-
+    
     /**
      * This constructor must be evict because <b>ISN'T thread-safe</b>, the programmer is responsible to
      * to provider a new instance of Repository for each thread.
@@ -192,7 +192,6 @@ public class RepositoryJpa implements RepositoryJpaExtend
             showPersistenceConfig();
         isTraceEnabled = LOG.isTraceEnabled();
         isDebugEnabled = LOG.isDebugEnabled();
-        this.sqlLogger = sqlContext.getRepositoryConfig().getSqlLogger();
     }
     
     private EntityManager getEntityManager()
@@ -251,7 +250,7 @@ public class RepositoryJpa implements RepositoryJpaExtend
         isql.getValidateType().assertValidate(queryable.getParams());
         if (!queryable.isBoundSql())
             queryable.bind(isql);
-
+        
         int rowsAffected = executeUpdate(queryable, isql);
         if (isDebugEnabled)
             LOG.debug("{} records was affected by add [{}] command", rowsAffected, queryable.getName());
@@ -272,7 +271,7 @@ public class RepositoryJpa implements RepositoryJpaExtend
         em.remove(entity);
         if (isDebugEnabled)
             LOG.debug("1 record [{}] MUST BE affected by remove command", entity);
-
+        
         return 1;
     }
     
@@ -296,7 +295,7 @@ public class RepositoryJpa implements RepositoryJpaExtend
             queryable.bind(isql);
         int rowsAffected = executeUpdate(queryable, isql);
         if (isDebugEnabled)
-            LOG.debug("{} records was affected by remove [{}] command", rowsAffected, queryable.getName());        
+            LOG.debug("{} records was affected by remove [{}] command", rowsAffected, queryable.getName());
         return rowsAffected;
     }
     
@@ -304,7 +303,7 @@ public class RepositoryJpa implements RepositoryJpaExtend
     {
         boolean enriched = false;
         List<Object> list = list(queryable);
-        for(Object o : list)
+        for (Object o : list)
         {
             ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(queryable.getParams());
             proxy.merge(o);
@@ -331,7 +330,7 @@ public class RepositoryJpa implements RepositoryJpaExtend
         isql.getValidateType().assertValidate(queryable.getParams());
         if (!queryable.isBoundSql())
             queryable.bind(isql);
-
+        
         int rowsAffected = executeUpdate(queryable, isql);
         if (isDebugEnabled)
             LOG.debug("{} records was affected by update [{}] command", rowsAffected, queryable.getName());
@@ -354,7 +353,6 @@ public class RepositoryJpa implements RepositoryJpaExtend
         return t;
     }
     
-    
     /**
      * Get one object instance from repository using a query with name "T.get",
      * where 'T' it's a generic type.
@@ -376,9 +374,10 @@ public class RepositoryJpa implements RepositoryJpaExtend
         Queryable queryable = getDefaultQuery(object);
         if (isTraceEnabled)
             LOG.trace("executing get method with query [" + queryable.getName() + "]");
-
-        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable, null, sqlLogger);
-        ret  = queryableJpaAdapter.getSingleResult();
+        
+        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable,
+                null);
+        ret = queryableJpaAdapter.getSingleResult();
         /*
         Query queryJpa = _getQueryJpa_(queryable);
         try
@@ -400,8 +399,9 @@ public class RepositoryJpa implements RepositoryJpaExtend
         Queryable queryable = getDefaultQuery(object);
         if (isTraceEnabled)
             LOG.trace("executing get method with query [{}] returning [{}]", queryable.getName(), returnType.getName());
-        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable, returnType, sqlLogger);
-        ret  = queryableJpaAdapter.getSingleResult();
+        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable,
+                returnType);
+        ret = queryableJpaAdapter.getSingleResult();
         return ret;
     }
     
@@ -416,12 +416,13 @@ public class RepositoryJpa implements RepositoryJpaExtend
     public <T> T get(Queryable queryable)
     {
         notNull.verify(queryable);
-
+        
         if (isTraceEnabled)
             LOG.trace("executing get method with query [" + queryable.getName() + "]");
         T ret = null;
-        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable, null, sqlLogger);
-        ret  = queryableJpaAdapter.getSingleResult();
+        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable,
+                null);
+        ret = queryableJpaAdapter.getSingleResult();
         return ret;
         
         /*
@@ -445,7 +446,8 @@ public class RepositoryJpa implements RepositoryJpaExtend
             LOG.trace("executing get method with query [" + queryable.getName() + "]");
         
         T ret = null;
-        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable, returnType, sqlLogger);
+        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable,
+                returnType);
         ret = queryableJpaAdapter.getSingleResult();
         return ret;
         /*
@@ -463,7 +465,7 @@ public class RepositoryJpa implements RepositoryJpaExtend
         */
     }
     
-    public <T,R> T get(Queryable queryName, ResultRow<T,R> resultRow)
+    public <T, R> T get(Queryable queryName, ResultRow<T, R> resultRow)
     {
         throw new UnsupportedOperationException("Cannot iterate over Jpa query. Not implemented.");
     }
@@ -502,8 +504,9 @@ public class RepositoryJpa implements RepositoryJpaExtend
     {
         if (isTraceEnabled)
             LOG.trace("executing list method with query [" + queryable.getName() + "]");
-
-        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable, null, sqlLogger);
+        
+        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable,
+                null);
         
         List<T> ret = queryableJpaAdapter.getResultList();
         
@@ -522,60 +525,61 @@ public class RepositoryJpa implements RepositoryJpaExtend
         if (isTraceEnabled)
             LOG.trace("executing list method with query [" + queryable.getName() + "]");
         //throw new UnsupportedOperationException("Not implemented yet. list with Class<T> returnType.");
-        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable, returnType, sqlLogger);
+        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable,
+                returnType);
         
         List<T> ret = queryableJpaAdapter.getResultList();
         return ret;
-//        List<T> ret = null;
-//        SelectTag isql = null;
-//        Query queryJpa = null;
-//        List<String>  groupingBy = Collections.emptyList();
-//        int totalBeforeGroup = 0;
-//        boolean containQuery = sqlContext.containsQuery(queryable.getName());
-//        if (containQuery)
-//        {
-//            isql = (SelectTag)sqlContext.getQuery(queryable.getName());
-//            isql.getValidateType().assertValidate(queryable.getParams());
-//            queryJpa = QueryFactory.newQuery(isql, getEntityManager(), queryable, sqlLogger);
-//            groupingBy = isql.getGroupByAsList();
-//        }
-//        else
-//        {
-//            // read from orm.xml named query
-//            queryJpa = QueryFactory.newNamedQuery(getEntityManager(), queryable);
-//        }
-//        
-//        ret = queryJpa.getResultList();
-//        if (containQuery && isql.getLanguageType() == LanguageType.NATIVE && isql.getReturnType() != null)
-//        {
-//            //ret = cast((List<Object[]>) ret, isql.getReturnType());
-//        }
-//        
-//        if (containQuery)
-//        {
-//            setTotalObjectsOfQuery(queryable, isql);// FIXME implements count of total objects
-//            if (queryable.getTotal() == -1)
-//                queryable.setTotal(Long.valueOf(ret.size()));
-//        }
-//        else if (ret != null)
-//            queryable.setTotal(Long.valueOf(ret.size()));
-//        else
-//            ret = new ArrayList<T>();
-//        
-//        totalBeforeGroup = ret.size();
-//        if (!groupingBy.isEmpty() && !ret.isEmpty())
-//        {
-//            Class<T> returnedType = (Class<T>) ret.get(0).getClass();
-//            Groupable<T, T> grouping = new GroupingBy<T, T>(groupingBy, returnedType, TransformableType.OBJECT);
-//            for(T  row : ret)
-//                grouping.classifier(row);
-//
-//            ret = grouping.asList();
-//        }
-//        if (isDebugEnabled)
-//            LOG.debug("Executed [{}] query, {}/{} rows fetched transformed to -> {}", queryable.getName(), totalBeforeGroup, queryable.getTotal(), ret.size());
-//
-//        return ret;
+        //        List<T> ret = null;
+        //        SelectTag isql = null;
+        //        Query queryJpa = null;
+        //        List<String>  groupingBy = Collections.emptyList();
+        //        int totalBeforeGroup = 0;
+        //        boolean containQuery = sqlContext.containsQuery(queryable.getName());
+        //        if (containQuery)
+        //        {
+        //            isql = (SelectTag)sqlContext.getQuery(queryable.getName());
+        //            isql.getValidateType().assertValidate(queryable.getParams());
+        //            queryJpa = QueryFactory.newQuery(isql, getEntityManager(), queryable, sqlLogger);
+        //            groupingBy = isql.getGroupByAsList();
+        //        }
+        //        else
+        //        {
+        //            // read from orm.xml named query
+        //            queryJpa = QueryFactory.newNamedQuery(getEntityManager(), queryable);
+        //        }
+        //        
+        //        ret = queryJpa.getResultList();
+        //        if (containQuery && isql.getLanguageType() == LanguageType.NATIVE && isql.getReturnType() != null)
+        //        {
+        //            //ret = cast((List<Object[]>) ret, isql.getReturnType());
+        //        }
+        //        
+        //        if (containQuery)
+        //        {
+        //            setTotalObjectsOfQuery(queryable, isql);// FIXME implements count of total objects
+        //            if (queryable.getTotal() == -1)
+        //                queryable.setTotal(Long.valueOf(ret.size()));
+        //        }
+        //        else if (ret != null)
+        //            queryable.setTotal(Long.valueOf(ret.size()));
+        //        else
+        //            ret = new ArrayList<T>();
+        //        
+        //        totalBeforeGroup = ret.size();
+        //        if (!groupingBy.isEmpty() && !ret.isEmpty())
+        //        {
+        //            Class<T> returnedType = (Class<T>) ret.get(0).getClass();
+        //            Groupable<T, T> grouping = new GroupingBy<T, T>(groupingBy, returnedType, TransformableType.OBJECT);
+        //            for(T  row : ret)
+        //                grouping.classifier(row);
+        //
+        //            ret = grouping.asList();
+        //        }
+        //        if (isDebugEnabled)
+        //            LOG.debug("Executed [{}] query, {}/{} rows fetched transformed to -> {}", queryable.getName(), totalBeforeGroup, queryable.getTotal(), ret.size());
+        //
+        //        return ret;
     }
     
     public <T> T scalar(Queryable queryable)
@@ -585,12 +589,14 @@ public class RepositoryJpa implements RepositoryJpaExtend
         queryable.scalar();
         T ret = null;
         
-        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable, null, sqlLogger);
+        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable,
+                null);
         ret = (T) queryableJpaAdapter.getSingleResult();
-            
+        
         if (isDebugEnabled)
-            LOG.debug("Executed scalar query [{}] retrieving [{}] type of [{}]", queryable.getName(), ret, (ret !=null ? ret.getClass().getName() : "NULL"));
-
+            LOG.debug("Executed scalar query [{}] retrieving [{}] type of [{}]", queryable.getName(), ret,
+                    (ret != null ? ret.getClass().getName() : "NULL"));
+        
         return ret;
     }
     
@@ -625,31 +631,29 @@ public class RepositoryJpa implements RepositoryJpaExtend
         return getEntityManager().createQuery(criteriaQuery);
     }
     
-    private int executeUpdate(Queryable queryable, Sql isql) 
+    private int executeUpdate(Queryable queryable, Sql isql)
     {
         int rowsAffected = 0;
         EntityManager em = getEntityManager();
-        if (queryable.isTypeOfCollectionFromPojo() || 
-        	queryable.isTypeOfCollectionFromMap() ||
-        	queryable.isTypeOfCollectionFromArray() ||
-        	queryable.isTypeOfArrayFromPojo())
+        if (queryable.isTypeOfCollectionFromPojo() || queryable.isTypeOfCollectionFromMap()
+                || queryable.isTypeOfCollectionFromArray() || queryable.isTypeOfArrayFromPojo())
         {
             Iterator<Object> it = queryable.iterator();
-            while(it.hasNext())
+            while (it.hasNext())
             {
-                Queryable queryableIt = QueryFactory.newInstance(queryable.getName(), it.next(), queryable.getOffset(), queryable.getMax());
-                QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(em, sqlContext, queryableIt, null, sqlLogger);
+                Queryable queryableIt = QueryFactory.newInstance(queryable.getName(), it.next(), queryable.getOffset(),
+                        queryable.getMax());
+                QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(em, sqlContext, queryableIt, null);
                 rowsAffected += queryableJpaAdapter.executeUpdate();
             }
         }
         else
         {
-            QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(em, sqlContext, queryable, null, sqlLogger);
+            QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(em, sqlContext, queryable, null);
             rowsAffected = queryableJpaAdapter.executeUpdate();
         }
         return rowsAffected;
     }
-
     
     /*
      * Verify if query is paginated, that must return the total records of the
@@ -685,7 +689,6 @@ public class RepositoryJpa implements RepositoryJpaExtend
             */
         }
     }
-    
     
     /*
     private Query _getQueryJpa_(Queryable queryable)
@@ -754,8 +757,12 @@ public class RepositoryJpa implements RepositoryJpaExtend
         Map<String, Object> map = new TreeMap<String, Object>(em.getEntityManagerFactory().getProperties());
         // getEntityManager().getDelegate();
         map.putAll(em.getProperties());
-        for (String s : map.keySet())
-            LOG.info("{}={}",s , sqlLogger.mask(s, map.get(s)));
+        if (SQLLOG.isInfoEnabled()) 
+        {
+            DataMasking masking = this.sqlContext.getRepositoryConfig().getDataMasking();
+            for (String s : map.keySet())
+                SQLLOG.info("{}={}",s , masking.mask(s, map.get(s)));
+        }
     }
     
     private PersistenceInfo getPersitenceInfo(String unitName)
@@ -772,13 +779,12 @@ public class RepositoryJpa implements RepositoryJpaExtend
         return pInfo;
     }
     
-    
     private void checkSqlType(Sql isql, SqlType expected)
     {
         if (isql.getSqlType() != expected)
-            throw new IllegalArgumentException("Cannot execute sql ["+isql.getName()+"] as ["+isql.getSqlType()+"], exptected is "+ expected);
+            throw new IllegalArgumentException("Cannot execute sql [" + isql.getName() + "] as [" + isql.getSqlType()
+                    + "], exptected is " + expected);
     }
-
     
     //private Object[] getSimpleProperties(Object[] values) {
     //    

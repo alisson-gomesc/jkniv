@@ -33,7 +33,7 @@ import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.classification.ObjectTransform;
 import net.sf.jkniv.sqlegance.classification.Transformable;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
+import net.sf.jkniv.sqlegance.logger.DataMasking;
 
 /**
  * 
@@ -48,16 +48,16 @@ import net.sf.jkniv.sqlegance.logger.SqlLogger;
 public class FlatObjectResultRow<T> implements ResultRow<T, ResultSet>
 {
     private final static Logger LOG = LoggerFactory.getLogger(FlatObjectResultRow.class);
-    //private final SqlLogger    sqlLogger;
+    private static final Logger  SQLLOG = net.sf.jkniv.whinstone.LoggerFactory.getLogger();
+    private static final DataMasking  MASKING = net.sf.jkniv.whinstone.LoggerFactory.getDataMasking();
     private final Class<T>     returnType;
     private final Transformable<T> transformable;
     private JdbcColumn<ResultSet>[] columns;
     
     @SuppressWarnings("unchecked")
-    public FlatObjectResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns, SqlLogger log)
+    public FlatObjectResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns)
     {
         this.returnType = returnType;
-        //this.sqlLogger = log;
         this.columns = columns;
         this.transformable = (Transformable<T>) new ObjectTransform();
     }
@@ -79,7 +79,11 @@ public class FlatObjectResultRow<T> implements ResultRow<T, ResultSet>
             jdbcObject = column.getBytes(rs);
         else
             jdbcObject = column.getValue(rs);
-        
+
+        if(SQLLOG.isTraceEnabled())
+            SQLLOG.trace("Mapping index [0] column [{}] type of [{}] to value [{}]", column.getIndex(), column.getAttributeName(), 
+                    (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), MASKING.mask(column.getAttributeName(), jdbcObject));
+
         if (column.isNestedAttribute())
             reflect.inject(column.getAttributeName(), jdbcObject);
         else

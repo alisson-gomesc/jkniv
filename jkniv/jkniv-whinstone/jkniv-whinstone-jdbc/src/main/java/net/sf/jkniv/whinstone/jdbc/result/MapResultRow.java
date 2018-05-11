@@ -24,13 +24,14 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+
 import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.classification.MapTransform;
 import net.sf.jkniv.sqlegance.classification.Transformable;
-import net.sf.jkniv.sqlegance.logger.LogLevel;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
+import net.sf.jkniv.whinstone.LoggerFactory;
 
 /**
  * 
@@ -42,18 +43,17 @@ import net.sf.jkniv.sqlegance.logger.SqlLogger;
  */
 public class MapResultRow<T> implements ResultRow<T, ResultSet>
 {
-    private final SqlLogger  sqlLogger;
+    private static final Logger  LOG = LoggerFactory.getLogger();
     private final Class<T> returnType;
     private final Transformable<T> transformable;
     private JdbcColumn<ResultSet>[] columns;
     
     @SuppressWarnings("unchecked")
-    public MapResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns, SqlLogger sqlLogger)
+    public MapResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns)
     {
         this.returnType = returnType;
         this.columns = columns;
         this.transformable = (Transformable<T>) new MapTransform();
-        this.sqlLogger = sqlLogger;
     }
     
     @SuppressWarnings("unchecked")
@@ -74,7 +74,7 @@ public class MapResultRow<T> implements ResultRow<T, ResultSet>
         else
             jdbcObject = column.getValue(rs);
         
-        sqlLogger.log(LogLevel.RESULTSET, "Using [{}] column name as sensitive key for Map", column.getAttributeName());
+        LOG.trace("Using [{}] column name as sensitive key for Map", column.getAttributeName());
         map.put(column.getAttributeName(), jdbcObject);
     }
     

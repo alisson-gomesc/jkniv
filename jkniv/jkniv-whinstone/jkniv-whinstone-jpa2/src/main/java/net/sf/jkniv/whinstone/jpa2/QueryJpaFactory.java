@@ -17,7 +17,6 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
 import net.sf.jkniv.sqlegance.params.AutoBindParams;
 import net.sf.jkniv.sqlegance.params.ParamParser;
 import net.sf.jkniv.sqlegance.params.PrepareParamsFactory;
@@ -31,7 +30,7 @@ public class QueryJpaFactory
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
     
     public static QueryableJpaAdapter build(EntityManager em, SqlContext sqlContext, Queryable queryable,
-            Class<?> overloadReturnedType, SqlLogger sqlLogger)
+            Class<?> overloadReturnedType)
     {
         QueryableJpaAdapter adapter = null;
         Class<?> mandatoryReturnType = null;
@@ -52,20 +51,19 @@ public class QueryJpaFactory
             else if (isql.getReturnTypeAsClass() != null)
                 mandatoryReturnType = isql.getReturnTypeAsClass();
 
-            adapter = new QueryJpaAdapter(em, queryable, isql, mandatoryReturnType, sqlLogger);
+            adapter = new QueryJpaAdapter(em, queryable, isql, mandatoryReturnType);
             if (queryable.isPaging())
-                adapter.setQueryJpaForPaging(getQueryForPaging(em, sqlContext, queryable, isql, sqlLogger));
+                adapter.setQueryJpaForPaging(getQueryForPaging(em, sqlContext, queryable, isql));
         }
         else
         {
-            adapter = new NamedQueryJpaAdapter(em, queryable, overloadReturnedType, sqlLogger);
+            adapter = new NamedQueryJpaAdapter(em, queryable, overloadReturnedType);
         }
         
         return adapter;
     }
     
-    private static Query getQueryForPaging(EntityManager em, SqlContext sqlContext, Queryable queryable, Sql isql,
-            SqlLogger sqlLogger)
+    private static Query getQueryForPaging(EntityManager em, SqlContext sqlContext, Queryable queryable, Sql isql)
     {
         Query queryJpa = null;
         Sql isqlCount = null;
@@ -75,7 +73,7 @@ public class QueryJpaFactory
             isqlCount = sqlContext.getQuery(queryName);
             LOG.trace("executing count query [" + queryable.getName() + "#count" + "]");
             Queryable queryCopy = QueryFactory.newInstance(queryName, queryable.getParams(), 0, Integer.MAX_VALUE);
-            queryJpa = QueryJpaFactory.newQuery(isqlCount, em, queryCopy, sqlLogger);
+            queryJpa = QueryJpaFactory.newQuery(isqlCount, em, queryCopy);
         }
         catch (QueryNotFoundException e)
         {
@@ -88,7 +86,7 @@ public class QueryJpaFactory
             Queryable queryCopy = QueryFactory.newInstance(queryable.getName(), queryable.getParams(), 0,
                     Integer.MAX_VALUE);
             queryJpa = QueryJpaFactory.newQueryForCount(sql, isql.getLanguageType(), em, queryCopy,
-                    isql.getParamParser(), sqlLogger);
+                    isql.getParamParser());
         }
         return queryJpa;
     }
@@ -113,11 +111,11 @@ public class QueryJpaFactory
         return sb.toString();
     }
     
-    private static Query newQuery(Sql isql, EntityManager em, Queryable query, SqlLogger sqlLogger)
+    private static Query newQuery(Sql isql, EntityManager em, Queryable query)
     {
         String sql = isql.getSql(query.getParams());
         Query queryJpa = create(isql.getLanguageType(), sql, em);
-        StatementAdapterOld stmtAdapter = new JpaStatementAdapter(queryJpa, sqlLogger);
+        StatementAdapterOld stmtAdapter = new JpaStatementAdapter(queryJpa);
         AutoBindParams prepareParams = PrepareParamsFactory.newPrepareParams(stmtAdapter, isql.getParamParser(), query);
         //prepareParams.parameterized(isql.getParamParser().find(sql));
         if (query.isPaging() && isql.isSelectable())
@@ -129,10 +127,10 @@ public class QueryJpaFactory
     }
     
     private static Query newQueryForCount(String sql, LanguageType languageType, EntityManager em, Queryable queryable,
-            ParamParser paramParser, SqlLogger sqlLogger)
+            ParamParser paramParser)
     {
         Query queryJpa = create(languageType, sql, em);
-        StatementAdapterOld stmtAdapter = new JpaStatementAdapter(queryJpa, sqlLogger);
+        StatementAdapterOld stmtAdapter = new JpaStatementAdapter(queryJpa);
         AutoBindParams prepareParams = PrepareParamsFactory.newPrepareParams(stmtAdapter, paramParser, queryable);
         
         prepareParams.parameterized(paramParser.find(sql));

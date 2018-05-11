@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.sqlegance.builder;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
@@ -36,9 +38,7 @@ import net.sf.jkniv.sqlegance.ConnectionFactory;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.RepositoryType;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
-import net.sf.jkniv.sqlegance.logger.LogLevel;
 import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
 
 /**
@@ -48,30 +48,32 @@ import net.sf.jkniv.sqlegance.transaction.TransactionType;
  */
 public class RepositoryConfig
 {
-    private static final Logger     LOG                    = LoggerFactory.getLogger(RepositoryConfig.class);
-    private static String           defaultFileConfig      = "/repository-config.xml";
-    private static final String     ATTR_NAME              = "name";
-    private static final String     ATTR_VALUE             = "value";
-    private static final String     ATTR_TX_TYPE           = "transaction-type";
-    private static final String     XPATH_REPO_NODE        = "/repository";
-    static final String             SCHEMA_XSD             = "/net/sf/jkniv/sqlegance/builder/xml/sqlegance-config.xsd";
-    static final String             XPATH_ROOT_NODE        = "repository-config";
-    private static final String     XPATH_PROPERTY_NODE    = XPATH_ROOT_NODE + XPATH_REPO_NODE
+    private static final Logger                 LOG                    = LoggerFactory
+            .getLogger(RepositoryConfig.class);
+    private static String                       defaultFileConfig      = "/repository-config.xml";
+    private static final String                 ATTR_NAME              = "name";
+    private static final String                 ATTR_VALUE             = "value";
+    private static final String                 ATTR_TX_TYPE           = "transaction-type";
+    private static final String                 XPATH_REPO_NODE        = "/repository";
+    static final String                         SCHEMA_XSD             = "/net/sf/jkniv/sqlegance/builder/xml/sqlegance-config.xsd";
+    static final String                         XPATH_ROOT_NODE        = "repository-config";
+    private static final String                 XPATH_PROPERTY_NODE    = XPATH_ROOT_NODE + XPATH_REPO_NODE
             + "[@name='%s']/properties/property";
-    private static final String     XPATH_DESCRIPTION_NODE = XPATH_ROOT_NODE + XPATH_REPO_NODE
+    private static final String                 XPATH_DESCRIPTION_NODE = XPATH_ROOT_NODE + XPATH_REPO_NODE
             + "[@name='%s']/description[1]";
-    private static final String     XPATH_JNDI_DS_NODE     = XPATH_ROOT_NODE + XPATH_REPO_NODE
+    private static final String                 XPATH_JNDI_DS_NODE     = XPATH_ROOT_NODE + XPATH_REPO_NODE
             + "[@name='%s']/jndi-data-source[1]";
     
-    private static final Assertable notNull                = AssertsFactory.getNotNull();
-    private String                  name;
-    private String                  description;
-    private String                  jndiDataSource;
-    private TransactionType         transactionType;
-    private Properties              properties;
-    private SqlLogger               sqlLogger;
-    private DataMasking             masking;
-    private RepositoryType repositoryType;
+    private static final Assertable             notNull                = AssertsFactory.getNotNull();
+    //private static final Map<String, SqlLogger> loggers                = new HashMap<String, SqlLogger>();
+    private String                              name;
+    private String                              description;
+    private String                              jndiDataSource;
+    private TransactionType                     transactionType;
+    private Properties                          properties;
+    //private SqlLogger                           sqlLogger;
+    private DataMasking                         masking;
+    private RepositoryType                      repositoryType;
     
     public RepositoryConfig()
     {
@@ -97,7 +99,7 @@ public class RepositoryConfig
         this.properties = new Properties();
         this.load();
         setDataMasking();
-        setSqlLogger();
+        //setSqlLogger();
         //this.sqlDialectName = getProperty(RepositoryProperty.SQL_DIALECT);
         if (this.transactionType == null)
             this.transactionType = TransactionType.LOCAL;
@@ -203,14 +205,16 @@ public class RepositoryConfig
         }
     }
     
-    private void setSqlLogger()
-    {
-        if (this.sqlLogger == null || this.sqlLogger.getLogLevel() == LogLevel.NONE)
-        {
-            LogLevel logLevel = LogLevel.get(getProperty(RepositoryProperty.DEBUG_SQL));
-            this.sqlLogger = new SqlLogger(logLevel, this.masking);
-        }
-    }
+//    private void setSqlLogger()
+//    {
+//        SqlLogger sqlLogger = loggers.get(name);
+//        if (sqlLogger == null || sqlLogger.getLogLevel() == LogLevel.NONE)
+//        {
+//            LogLevel logLevel = LogLevel.get(getProperty(RepositoryProperty.DEBUG_SQL));
+//            sqlLogger = new SqlLogger(logLevel, this.masking);
+//            loggers.put(this.name, sqlLogger);
+//        }
+//    }
     
     private void setDataMasking()
     {
@@ -226,10 +230,10 @@ public class RepositoryConfig
         }
     }
     
-//    public String getPreparedStatementStrategy()
-//    {
-//        return getProperty(RepositoryProperty.PREPARED_STATEMENT_STRATEGY);
-//    }
+    //    public String getPreparedStatementStrategy()
+    //    {
+    //        return getProperty(RepositoryProperty.PREPARED_STATEMENT_STRATEGY);
+    //    }
     
     public String getQueryNameStrategy()
     {
@@ -265,12 +269,12 @@ public class RepositoryConfig
     {
         return Boolean.valueOf(getProperty(RepositoryProperty.SHORT_NAME_ENABLE));
     }
-
+    
     public boolean isReloadableXmlEnable()
     {
         return Boolean.valueOf(getProperty(RepositoryProperty.RELOADABLE_XML_ENABLE));
     }
-
+    
     /*
     public boolean isProjectPackageEnable()
     {
@@ -282,11 +286,12 @@ public class RepositoryConfig
     {
         if (props != null)
         {
-            for(Entry<Object, Object> entry : props.entrySet())
+            for (Entry<Object, Object> entry : props.entrySet())
             {
                 Object old = this.properties.put(entry.getKey().toString(), entry.getValue());
                 if (old != null)
-                    LOG.info("The value of key [{}] with original value [{}] was replacement to [{}]", entry.getKey(), old, entry.getValue());
+                    LOG.info("The value of key [{}] with original value [{}] was replacement to [{}]", entry.getKey(),
+                            old, entry.getValue());
             }
         }
     }
@@ -314,10 +319,10 @@ public class RepositoryConfig
     }
     */
     
-    public SqlLogger getSqlLogger()
-    {
-        return this.sqlLogger;
-    }
+//    public SqlLogger getSqlLogger()
+//    {
+//        return loggers.get(name);
+//    }
     
     public DataMasking getDataMasking()
     {
@@ -363,7 +368,7 @@ public class RepositoryConfig
     {
         return (value == null || "".equals(value));
     }
-
+    
     public RepositoryType getRepositoryType()
     {
         return repositoryType;

@@ -158,7 +158,7 @@ public class UpdateCommand extends AbstractCommand implements CouchCommand
             {
                 answer = (T)Integer.valueOf("0");
                 // 204 No Content, 304 Not Modified, 205 Reset Content, 404 Not Found
-                LOG.info(response.getStatusLine().toString());
+                LOG.warn(errorFormat(http, response.getStatusLine(), json));
             }
             else
             {

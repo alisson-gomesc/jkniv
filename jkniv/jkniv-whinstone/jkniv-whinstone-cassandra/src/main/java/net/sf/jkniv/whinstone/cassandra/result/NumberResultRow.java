@@ -21,6 +21,8 @@ package net.sf.jkniv.whinstone.cassandra.result;
 
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+
 import com.datastax.driver.core.Row;
 
 import net.sf.jkniv.reflect.NumberFactory;
@@ -28,8 +30,7 @@ import net.sf.jkniv.reflect.Numerical;
 import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.classification.Transformable;
-import net.sf.jkniv.sqlegance.logger.LogLevel;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
+import net.sf.jkniv.whinstone.LoggerFactory;
 
 /**
  * 
@@ -41,19 +42,18 @@ import net.sf.jkniv.sqlegance.logger.SqlLogger;
  */
 public class NumberResultRow<T> implements ResultRow<T, Row>
 {
-    private final SqlLogger  sqlLogger;
+    private static final Logger  LOG = LoggerFactory.getLogger();
     private JdbcColumn<Row>[] columns;
     private final Numerical numerical;
 
-    public NumberResultRow(Class<T> returnType, SqlLogger log)
+    public NumberResultRow(Class<T> returnType)
     {
-        this(returnType, null, log);
+        this(returnType, null);
     }
 
-    public NumberResultRow(Class<T> returnType, JdbcColumn<Row>[] columns, SqlLogger log)
+    public NumberResultRow(Class<T> returnType, JdbcColumn<Row>[] columns)
     {
         this.columns = columns;
-        this.sqlLogger = log;
         this.numerical = NumberFactory.getInstance(returnType.getCanonicalName());
     }
     
@@ -66,7 +66,8 @@ public class NumberResultRow<T> implements ResultRow<T, Row>
         else
             jdbcObject = columns[0].getValue(rs);
         
-        sqlLogger.log(LogLevel.RESULTSET, "Column index [0] named [{}] to set number type of [{}]", columns[0].getAttributeName(), numerical.getClass().getCanonicalName());
+        if(LOG.isTraceEnabled())
+            LOG.trace("Column index [0] named [{}] type of [{}] with value [{}]", columns[0].getAttributeName(), numerical.getClass().getCanonicalName(), jdbcObject);
         return (T) numerical.valueOf(jdbcObject);
     }
 

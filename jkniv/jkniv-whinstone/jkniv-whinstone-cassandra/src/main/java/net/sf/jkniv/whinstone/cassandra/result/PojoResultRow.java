@@ -42,7 +42,7 @@ import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.classification.ObjectTransform;
 import net.sf.jkniv.sqlegance.classification.Transformable;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
+import net.sf.jkniv.sqlegance.logger.DataMasking;
 
 /**
  * 
@@ -57,27 +57,26 @@ import net.sf.jkniv.sqlegance.logger.SqlLogger;
 public class PojoResultRow<T> implements ResultRow<T, Row>
 {
     private final static Logger     LOG    = LoggerFactory.getLogger(PojoResultRow.class);
+    private static final Logger     SQLLOG = net.sf.jkniv.whinstone.LoggerFactory.getLogger();
+    private static final DataMasking  MASKING = net.sf.jkniv.whinstone.LoggerFactory.getDataMasking();
     private final static MethodName SETTER = MethodNameFactory.getInstanceSetter();
     private final static MethodName GETTER = MethodNameFactory.getInstanceGetter();
-    private final SqlLogger         sqlLogger;
     private final Class<T>          returnType;
-    private final Set<OneToMany> oneToManies;
+    private final Set<OneToMany>    oneToManies;
     private final Transformable<T>  transformable;
-    private JdbcColumn<Row>[] columns;
+    private JdbcColumn<Row>[]       columns;
     
-    public PojoResultRow(Class<T> returnType, Set<OneToMany> oneToManies, SqlLogger log)
+    public PojoResultRow(Class<T> returnType, Set<OneToMany> oneToManies)
     {
-        this(returnType, null, oneToManies, log);
+        this(returnType, null, oneToManies);
     }
     
     @SuppressWarnings("unchecked")
-    public PojoResultRow(Class<T> returnType, JdbcColumn<Row>[] columns, Set<OneToMany> oneToManies,
-            SqlLogger log)
+    public PojoResultRow(Class<T> returnType, JdbcColumn<Row>[] columns, Set<OneToMany> oneToManies)
     {
         this.returnType = returnType;
         this.columns = columns;
         this.oneToManies = oneToManies;
-        this.sqlLogger = log;
         this.transformable = (Transformable<T>) new ObjectTransform();
     }
     
@@ -124,7 +123,11 @@ public class PojoResultRow<T> implements ResultRow<T, Row>
             jdbcObject = column.getBytes(rs);
         else
             jdbcObject = column.getValue(rs);
-        
+
+        if(SQLLOG.isTraceEnabled())
+            SQLLOG.trace("Mapping index [0] column [{}] type of [{}] to value [{}]", column.getIndex(), column.getAttributeName(), 
+                    (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), MASKING.mask(column.getAttributeName(), jdbcObject));
+
         if (column.isNestedAttribute())
             reflect.inject(column.getAttributeName(), jdbcObject);
         else
@@ -157,8 +160,8 @@ public class PojoResultRow<T> implements ResultRow<T, Row>
         return otm;
     }
     
-    private void prepareOneToManyValue(OneToMany otm, JdbcColumn column, Row rs,
-            final Map<OneToMany, Object> otmValues) throws SQLException
+    private void prepareOneToManyValue(OneToMany otm, JdbcColumn column, Row rs, final Map<OneToMany, Object> otmValues)
+            throws SQLException
     {
         ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(otmValues.get(otm));
         Injectable<?> reflect = InjectableFactory.newMethodInjection(proxy);

@@ -58,7 +58,7 @@ public class HttpConnectionFactory implements ConnectionFactory
     @Override
     public ConnectionAdapter open()
     {
-        String token = auth.authenticate();
+        //String token = auth.authenticate();
         HttpBuilder httpBuilder = new HttpBuilder(auth, this.url, this.schema, new RequestParams(this.schema));
         return new HttpCookieConnectionAdapter(httpBuilder);
     }

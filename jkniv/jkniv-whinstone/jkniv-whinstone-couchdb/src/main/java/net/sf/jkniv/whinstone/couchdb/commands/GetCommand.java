@@ -87,7 +87,7 @@ public class GetCommand extends AbstractCommand implements CouchCommand
             else if (isNotFound(statusCode))
             {
                 // 204 No Content, 304 Not Modified, 205 Reset Content
-                LOG.info(response.getStatusLine().toString());
+                LOG.warn(errorFormat(http, response.getStatusLine(), json));
             }
             else
             {

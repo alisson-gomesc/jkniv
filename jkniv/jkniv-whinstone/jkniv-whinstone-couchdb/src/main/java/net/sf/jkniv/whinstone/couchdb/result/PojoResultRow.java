@@ -25,6 +25,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.xml.crypto.Data;
+
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -41,7 +44,7 @@ import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.classification.ObjectTransform;
 import net.sf.jkniv.sqlegance.classification.Transformable;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
+import net.sf.jkniv.sqlegance.logger.DataMasking;
 
 /**
  * 
@@ -55,28 +58,27 @@ import net.sf.jkniv.sqlegance.logger.SqlLogger;
  */
 public class PojoResultRow<T> implements ResultRow<T, ResultSet>
 {
-    private final static Logger     LOG    = LoggerFactory.getLogger(PojoResultRow.class);
-    private final static MethodName SETTER = MethodNameFactory.getInstanceSetter();
-    private final static MethodName GETTER = MethodNameFactory.getInstanceGetter();
-    private final SqlLogger         sqlLogger;
-    private final Class<T>          returnType;
-    private final Set<OneToMany> oneToManies;
-    private final Transformable<T>  transformable;
-    private JdbcColumn<ResultSet>[] columns;
+    private final static Logger      LOG     = LoggerFactory.getLogger(PojoResultRow.class);
+    private final static Logger      SQLLOG  = net.sf.jkniv.whinstone.LoggerFactory.getLogger();
+    private final static DataMasking MASKING = net.sf.jkniv.whinstone.LoggerFactory.getDataMasking();
+    private final static MethodName  SETTER  = MethodNameFactory.getInstanceSetter();
+    private final static MethodName  GETTER  = MethodNameFactory.getInstanceGetter();
+    private final Class<T>           returnType;
+    private final Set<OneToMany>     oneToManies;
+    private final Transformable<T>   transformable;
+    private JdbcColumn<ResultSet>[]  columns;
     
-    public PojoResultRow(Class<T> returnType, Set<OneToMany> oneToManies, SqlLogger log)
+    public PojoResultRow(Class<T> returnType, Set<OneToMany> oneToManies)
     {
-        this(returnType, null, oneToManies, log);
+        this(returnType, null, oneToManies);
     }
     
     @SuppressWarnings("unchecked")
-    public PojoResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns, Set<OneToMany> oneToManies,
-            SqlLogger log)
+    public PojoResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns, Set<OneToMany> oneToManies)
     {
         this.returnType = returnType;
         this.columns = columns;
         this.oneToManies = oneToManies;
-        this.sqlLogger = log;
         this.transformable = (Transformable<T>) new ObjectTransform();
     }
     

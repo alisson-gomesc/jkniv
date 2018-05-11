@@ -5,22 +5,23 @@ import javax.persistence.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import antlr.MakeGrammar;
+import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.logger.LogLevel;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
 import net.sf.jkniv.sqlegance.params.StatementAdapterOld;
 
 public class JpaStatementAdapter implements StatementAdapterOld
 {
     private static final Logger LOG = LoggerFactory.getLogger(JpaStatementAdapter.class);
+    private static final Logger SQLLOG = net.sf.jkniv.whinstone.LoggerFactory.getLogger();
+    private static final DataMasking MASKING = net.sf.jkniv.whinstone.LoggerFactory.getDataMasking();
     private final Query query;
-    private SqlLogger sqlLogger;
     private int index;
     private int indexIN;
     
-    public JpaStatementAdapter(Query query, SqlLogger sqlLogger)
+    public JpaStatementAdapter(Query query)
     {
         this.query = query;
-        this.sqlLogger = sqlLogger;
         this.index = 0;
         this.indexIN = 0;
         this.reset();
@@ -66,19 +67,17 @@ public class JpaStatementAdapter implements StatementAdapterOld
     
     private void log(String name, Object value)
     {
-        if (sqlLogger.isEnabled(LogLevel.STMT))
-            sqlLogger.log(LogLevel.STMT,
-                    "Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index,
-                    name, sqlLogger.mask(name, value), (value == null ? "NULL" : value.getClass()));
+        if (SQLLOG.isDebugEnabled())
+            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index,
+                    name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
 
     private void log(int position, Object value)
     {
         String name = String.valueOf(position);
-        if (sqlLogger.isEnabled(LogLevel.STMT))
-            sqlLogger.log(LogLevel.STMT,
-                    "Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index,
-                    name, sqlLogger.mask(name, value), (value == null ? "NULL" : value.getClass()));
+        if (SQLLOG.isDebugEnabled())
+            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index,
+                    name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
 
 }

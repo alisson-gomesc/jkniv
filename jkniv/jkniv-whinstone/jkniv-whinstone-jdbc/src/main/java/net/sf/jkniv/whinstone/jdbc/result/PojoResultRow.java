@@ -41,7 +41,7 @@ import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.classification.ObjectTransform;
 import net.sf.jkniv.sqlegance.classification.Transformable;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
+import net.sf.jkniv.sqlegance.logger.DataMasking;
 
 /**
  * 
@@ -55,22 +55,22 @@ import net.sf.jkniv.sqlegance.logger.SqlLogger;
  */
 public class PojoResultRow<T> implements ResultRow<T, ResultSet>
 {
-    private final static Logger          LOG = LoggerFactory.getLogger(PojoResultRow.class);
-    private final static MethodName SETTER =  MethodNameFactory.getInstanceSetter();
-    private final static MethodName GETTER =  MethodNameFactory.getInstanceGetter();
-    private final SqlLogger              sqlLogger;
-    private final Class<T>               returnType;
-    private final Set<OneToMany>         oneToManies;
-    private final Transformable<T> transformable;
-    private JdbcColumn<ResultSet>[]           columns;
+    private final static Logger      LOG     = LoggerFactory.getLogger(PojoResultRow.class);
+    private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.LoggerFactory.getLogger();
+    private static final DataMasking MASKING = net.sf.jkniv.whinstone.LoggerFactory.getDataMasking();
+    private final static MethodName  SETTER  = MethodNameFactory.getInstanceSetter();
+    private final static MethodName  GETTER  = MethodNameFactory.getInstanceGetter();
+    private final Class<T>           returnType;
+    private final Set<OneToMany>     oneToManies;
+    private final Transformable<T>   transformable;
+    private JdbcColumn<ResultSet>[]  columns;
     
     @SuppressWarnings("unchecked")
-    public PojoResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns, Set<OneToMany> oneToManies, SqlLogger log)
+    public PojoResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns, Set<OneToMany> oneToManies)
     {
         this.returnType = returnType;
         this.columns = columns;
         this.oneToManies = oneToManies;
-        this.sqlLogger = log;
         this.transformable = (Transformable<T>) new ObjectTransform();
     }
     
@@ -91,12 +91,12 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
         }
         for (Entry<OneToMany, Object> entry : otmValues.entrySet())
         {
-         
+            
             String attrName = entry.getKey().getProperty();
             String getterName = GETTER.capitalize(attrName);
             String setterName = SETTER.capitalize(attrName);
             Collection<Object> collection = (Collection<Object>) proxyRow.invoke(getterName);
-            if (collection ==  null)
+            if (collection == null)
             {
                 collection = (Collection<Object>) ObjectProxyFactory.newProxy(entry.getKey().getImpl()).newInstance();
                 proxyRow.invoke(setterName, collection);
@@ -117,6 +117,10 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
             jdbcObject = column.getBytes(rs);
         else
             jdbcObject = column.getValue(rs);
+    
+        if(SQLLOG.isTraceEnabled())
+            SQLLOG.trace("Mapping index [0] column [{}] type of [{}] to value [{}]", column.getIndex(), column.getAttributeName(), 
+                (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), MASKING.mask(column.getAttributeName(), jdbcObject));
 
         if (column.isNestedAttribute())
             reflect.inject(column.getAttributeName(), jdbcObject);
@@ -130,7 +134,6 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
                         proxy.getTargetClass().getName(), jdbcObject);
         }
     }
-    
     
     private OneToMany getOneToMany(JdbcColumn<ResultSet> jdbcColumn, final Map<OneToMany, Object> otmValues)
     {
@@ -151,7 +154,8 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
         return otm;
     }
     
-    private void prepareOneToManyValue(OneToMany otm, JdbcColumn<ResultSet> column, ResultSet rs, final Map<OneToMany, Object> otmValues) throws SQLException
+    private void prepareOneToManyValue(OneToMany otm, JdbcColumn<ResultSet> column, ResultSet rs,
+            final Map<OneToMany, Object> otmValues) throws SQLException
     {
         ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(otmValues.get(otm));
         Injectable<?> reflect = InjectableFactory.newMethodInjection(proxy);
@@ -161,10 +165,10 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
         else
             jdbcObject = column.getValue(rs);
         // otm.property : 'book', JdbcColumn: book.name, capitalize -> setName
-        String method = SETTER.capitalize(column.getName().substring(otm.getProperty().length()+1));
+        String method = SETTER.capitalize(column.getName().substring(otm.getProperty().length() + 1));
         reflect.inject(method, jdbcObject);
     }
-/*
+    /*
     private void __prepareOneToManyValue__(OneToMany otm, JdbcColumn column, ResultSet rs) throws SQLException
     {
         ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(otmValues.get(otm));
@@ -208,7 +212,7 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
         return "set" + capitalize;
     }
     */
-
+    
     @Override
     public Transformable<T> getTransformable()
     {
@@ -220,5 +224,5 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
     {
         this.columns = columns;
     }
-
+    
 }

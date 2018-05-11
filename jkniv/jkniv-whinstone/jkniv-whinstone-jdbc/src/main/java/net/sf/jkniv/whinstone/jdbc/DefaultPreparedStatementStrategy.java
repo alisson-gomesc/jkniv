@@ -28,11 +28,9 @@ import java.sql.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.dialect.SqlDialect;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
+import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
 import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
 import net.sf.jkniv.sqlegance.statement.ResultSetType;
@@ -45,17 +43,16 @@ import net.sf.jkniv.sqlegance.statement.ResultSetType;
  */
 public class DefaultPreparedStatementStrategy implements PreparedStatementStrategy
 {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultPreparedStatementStrategy.class);
-    private SqlLogger           sqlLogger;
+    private static final Logger LOG    = LoggerFactory.getLogger(DefaultPreparedStatementStrategy.class);
+    private static final Logger SQLLOG = net.sf.jkniv.whinstone.LoggerFactory.getLogger();
     private String              sql;
     private String              sqlCount;
-    private Queryable          queryable;
+    private Queryable           queryable;
     private String[]            paramsNames;
-
-    public DefaultPreparedStatementStrategy(Queryable queryable, SqlLogger sqlLogger)
+    
+    public DefaultPreparedStatementStrategy(Queryable queryable)
     {
         this.queryable = queryable;
-        this.sqlLogger = sqlLogger;
         setSqlWithQuestionMark();
     }
     
@@ -71,7 +68,6 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
             this.sqlCount = queryable.queryCount();
     }
     
-
     /**
      * Creates a PreparedStatement object that will generate ResultSet objects with the given type, concurrency, and holdability.
      * The parameters values is setting
@@ -99,18 +95,20 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
         
         try
         {
-            if(LOG.isTraceEnabled())
-                LOG.trace("Preparing SQL statement type [{}], concurrency [{}], holdability [{}] with [{}] parameters", isql.getResultSetType(), isql.getResultSetConcurrency(), isql.getResultSetHoldability(), paramsNames.length);
-
+            if (LOG.isTraceEnabled())
+                LOG.trace("Preparing SQL statement type [{}], concurrency [{}], holdability [{}] with [{}] parameters",
+                        isql.getResultSetType(), isql.getResultSetConcurrency(), isql.getResultSetHoldability(),
+                        paramsNames.length);
+            
             if (queryable.getDynamicSql().getSqlDialect().supportsStmtHoldability())
                 stmt = conn.prepareStatement(sql, rsType, rsConcurrency, rsHoldability);
-            else 
+            else
             {
                 // SQLServer doesn't support Holdability
                 stmt = conn.prepareStatement(sql, rsType, rsConcurrency);
                 conn.setHoldability(rsHoldability);
             }
-                
+            
             //if (paramsNames.length > 0)
             //    setValues(stmt);
             
@@ -119,11 +117,11 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
         }
         catch (SQLException sqle)
         {
-            throw new RepositoryException("Cannot prepare statement ["+sqle.getMessage()+"]", sqle);
+            throw new RepositoryException("Cannot prepare statement [" + sqle.getMessage() + "]", sqle);
         }
         return stmt;
     }
-
+    
     /**
      * Creates a {@code PreparedStatement} object object capable of returning the auto-generated 
      * keys designated by the given array.
@@ -140,7 +138,7 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
         Sql isql = queryable.getDynamicSql();
         try
         {
-            if(LOG.isTraceEnabled())
+            if (LOG.isTraceEnabled())
                 LOG.trace("Preparing SQL statement type with [{}] column names", paramsNames.length);
             
             if (columnNames.length > 0)
@@ -160,7 +158,7 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
         }
         return stmt;
     }
-
+    
     public PreparedStatement prepareStatementCount(Connection conn)
     {
         PreparedStatement stmt = null;
@@ -172,8 +170,7 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
         }
         catch (SQLException sqle)
         {
-            throw new RepositoryException(
-                    "Cannot prepare count statement to [" + queryable.getName() + "]!", sqle);
+            throw new RepositoryException("Cannot prepare count statement to [" + queryable.getName() + "]!", sqle);
         }
         return stmt;
     }
@@ -248,7 +245,7 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
                         paramsIN = ((Collection) paramValue).toArray();
                     else if (p != null)
                         paramsIN = p;
-
+    
                     if (paramsIN == null)
                         throw new ParameterException(
                                 "Cannot set parameter [" + paramsNames[i] + "] from IN clause with NULL");
@@ -302,11 +299,11 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
     }
     */
     
-    @Override
-    public SqlLogger getSqlLogger()
-    {
-        return sqlLogger;
-    }
+//    @Override
+//    public SqlLogger getSqlLogger()
+//    {
+//        return sqlLogger;
+//    }
     /*
     
     @Override

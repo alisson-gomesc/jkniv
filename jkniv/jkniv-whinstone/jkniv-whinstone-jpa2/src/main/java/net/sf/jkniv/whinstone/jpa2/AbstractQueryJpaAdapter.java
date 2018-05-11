@@ -25,25 +25,24 @@ import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.classification.Groupable;
 import net.sf.jkniv.sqlegance.classification.GroupingBy;
 import net.sf.jkniv.sqlegance.classification.Transformable.TransformableType;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
 
 public abstract class AbstractQueryJpaAdapter implements QueryableJpaAdapter
 {
     private static final Logger    LOG        = LoggerFactory.getLogger(AbstractQueryJpaAdapter.class);
+    //protected SqlLogger sqlLogger;
     private static final BasicType BASIC_TYPE = BasicType.getInstance();
     protected Queryable queryable;
     protected Sql isql;
     protected EntityManager em;
-    protected SqlLogger sqlLogger;
     private Query queryJpaForPaging;
     protected Query queryJpa;
     
-    public AbstractQueryJpaAdapter(EntityManager em, Queryable queryable, Sql isql, SqlLogger sqlLogger)
+    public AbstractQueryJpaAdapter(EntityManager em, Queryable queryable, Sql isql)//, SqlLogger sqlLogger)
     {
         this.em = em;
         this.queryable = queryable;
         this.isql = isql;
-        this.sqlLogger = sqlLogger;
+        //this.sqlLogger = sqlLogger;
     }
     
     /**

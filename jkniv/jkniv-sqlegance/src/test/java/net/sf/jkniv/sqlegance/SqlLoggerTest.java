@@ -19,19 +19,20 @@
  */
 package net.sf.jkniv.sqlegance;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import net.sf.jkniv.sqlegance.logger.LogLevel;
 import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
 
+@Ignore("SqlLogger was deprecated")
 public class SqlLoggerTest
 {
 
     @Test
     public void whenLoggerIsConfigAsALL()
     {
-        SqlLogger log = new SqlLogger(LogLevel.ALL, new SimpleDataMasking());
+        //SqlLogger log = new SqlLogger(LogLevel.ALL, new SimpleDataMasking());
         //log.debug("This log level [{}] works", "DEFAULT ALL");
         //log.debugconn("This log level [{}] works", "Level Connection");
         //log.debugtx("This log level [{}] works", "Level Transaction");
@@ -43,7 +44,7 @@ public class SqlLoggerTest
     @Test
     public void whenLoggerIsConfigAsConn()
     {
-        SqlLogger log = new SqlLogger(LogLevel.ALL, new SimpleDataMasking());
+        //SqlLogger log = new SqlLogger(LogLevel.ALL, new SimpleDataMasking());
         //log.debug("This log level [{}] works", "DEFAULT ALL");
         //log.debugconn("This log level [{}] works", "Level Connection");
         //log.debugtx("This log level [{}] works", "Level Transaction");
@@ -54,7 +55,7 @@ public class SqlLoggerTest
     @Test
     public void whenLoggerIsConfigAsStmt()
     {
-        SqlLogger log = new SqlLogger(LogLevel.STMT, new SimpleDataMasking());
+        //SqlLogger log = new SqlLogger(LogLevel.STMT, new SimpleDataMasking());
         //log.debug("This log level [{}] works", "DEFAULT ALL");
         //log.debugconn("This log level [{}] works", "Level Connection");
         //log.debugtx("This log level [{}] works", "Level Transaction");
@@ -65,7 +66,7 @@ public class SqlLoggerTest
     @Test
     public void whenLoggerIsConfigAsResultSet()
     {
-        SqlLogger log = new SqlLogger(LogLevel.RESULTSET, new SimpleDataMasking());
+        //SqlLogger log = new SqlLogger(LogLevel.RESULTSET, new SimpleDataMasking());
         //log.debug("This log level [{}] works", "DEFAULT ALL");
         //log.debugconn("This log level [{}] works", "Level Connection");
         //log.debugtx("This log level [{}] works", "Level Transaction");
@@ -76,7 +77,7 @@ public class SqlLoggerTest
     @Test
     public void whenLoggerIsConfigAsNone()
     {
-        SqlLogger log = new SqlLogger(LogLevel.NONE, new SimpleDataMasking());
+        //SqlLogger log = new SqlLogger(LogLevel.NONE, new SimpleDataMasking());
         //log.debug("This log level [{}] works", "DEFAULT ALL");
         //log.debugconn("This log level [{}] works", "Level Connection");
         //log.debugtx("This log level [{}] works", "Level Transaction");

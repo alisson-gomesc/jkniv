@@ -58,7 +58,7 @@ class InsertCommand2 extends AbstractCommand
                 {
                     // first execute insert after get keys
                     stmt = prepareStatement();
-                    StatementAdapterOld stmtAdapter = new PreparedStatementAdapterOld(stmt, stmtStrategy.getSqlLogger());
+                    StatementAdapterOld stmtAdapter = new PreparedStatementAdapterOld(stmt);
                     AutoBindParams prepareParams = PrepareParamsFactory.newPrepareParams(stmtAdapter,
                             isql.getParamParser(), queryable);
                     prepareParams.parameterized(queryable.getParamsNames());
@@ -70,7 +70,7 @@ class InsertCommand2 extends AbstractCommand
                     // first get sequence after execute insert
                     new SettingSequenceGeneratedKey(queryable, isql, conn, handlerException).set();
                     stmt = prepareStatement();
-                    StatementAdapterOld stmtAdapter = new PreparedStatementAdapterOld(stmt, stmtStrategy.getSqlLogger());
+                    StatementAdapterOld stmtAdapter = new PreparedStatementAdapterOld(stmt);
                     AutoBindParams prepareParams = PrepareParamsFactory.newPrepareParams(stmtAdapter,
                             isql.getParamParser(), queryable);
                     prepareParams.parameterized(queryable.getParamsNames());
@@ -80,7 +80,7 @@ class InsertCommand2 extends AbstractCommand
             else
             {
                 stmt = prepareStatement();
-                StatementAdapterOld stmtAdapter = new PreparedStatementAdapterOld(stmt, stmtStrategy.getSqlLogger());
+                StatementAdapterOld stmtAdapter = new PreparedStatementAdapterOld(stmt);
                 AutoBindParams prepareParams = PrepareParamsFactory.newPrepareParams(stmtAdapter, isql.getParamParser(), queryable);
                 prepareParams.parameterized(queryable.getParamsNames());
                 affected = stmt.executeUpdate();

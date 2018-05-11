@@ -42,7 +42,6 @@ import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
 import net.sf.jkniv.sqlegance.statement.StatementAdapter;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.sqlegance.transaction.TransactionContext;
@@ -65,7 +64,6 @@ public class UnitOfWork implements Work
     private final static Logger     LOG        = LoggerFactory.getLogger(UnitOfWork.class);
     private final static Assertable notNull    = AssertsFactory.getNotNull();
     private final static BasicType  BASIC_TYPE = BasicType.getInstance();
-    private final SqlLogger         sqlLogger;
     
     private ConnectionFactory      connectionFactory;
     private Transactional           transaction;
@@ -78,7 +76,6 @@ public class UnitOfWork implements Work
         this.connectionFactory = connectionFactory;
         this.transaction = connectionFactory.getTransactionManager();
         this.config = config;
-        this.sqlLogger = config.getSqlLogger();
     }
     
     @Override
@@ -111,7 +108,7 @@ public class UnitOfWork implements Work
             //SqlDialect sqlDialect = newDialect(queryable);
             adapterConn = getConnection(queryable.getDynamicSql().getIsolation());
             conn = (Connection)adapterConn.unwrap();
-            PreparedStatementStrategy stmtStrategy = new DefaultPreparedStatementStrategy(queryable, sqlLogger);//getPreparedStatementStrategy(sqlDialect);
+            PreparedStatementStrategy stmtStrategy = new DefaultPreparedStatementStrategy(queryable);//getPreparedStatementStrategy(sqlDialect);
             
             if (queryable.getDynamicSql().isInsertable())
             {
@@ -356,29 +353,29 @@ public class UnitOfWork implements Work
         Selectable selectTag = (Selectable) isql;
         if (queryable.isScalar())
         {
-            rsRowParser = new ScalarResultRow(columns, sqlLogger);
+            rsRowParser = new ScalarResultRow(columns);
         }
         else if (Map.class.isAssignableFrom(returnType))
         {
-            rsRowParser = new MapResultRow(returnType, columns, sqlLogger);
+            rsRowParser = new MapResultRow(returnType, columns);
             //transformable = new MapTransform();
         }
         else if (Number.class.isAssignableFrom(returnType)) // FIXME implements for date, calendar, boolean improve design
         {
-            rsRowParser = new NumberResultRow(returnType, columns, sqlLogger);
+            rsRowParser = new NumberResultRow(returnType, columns);
         }
         else if (String.class.isAssignableFrom(returnType))
         {
-            rsRowParser = new StringResultRow(columns, sqlLogger);
+            rsRowParser = new StringResultRow(columns);
         }
         else if (selectTag.getOneToMany().isEmpty())
         {
-            rsRowParser = new FlatObjectResultRow(returnType, columns, sqlLogger);
+            rsRowParser = new FlatObjectResultRow(returnType, columns);
             //transformable = new ObjectTransform();
         }
         else
         {
-            rsRowParser = new PojoResultRow(returnType, columns, selectTag.getOneToMany(), sqlLogger);
+            rsRowParser = new PojoResultRow(returnType, columns, selectTag.getOneToMany());
             //transformable = new ObjectTransform();
         }
         

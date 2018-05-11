@@ -14,7 +14,6 @@ import net.sf.jkniv.sqlegance.NonUniqueResultException;
 import net.sf.jkniv.sqlegance.QueryFactory;
 import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.Sql;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
 import net.sf.jkniv.sqlegance.params.AutoBindParams;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.params.ParamParser;
@@ -28,9 +27,9 @@ public class QueryJpaAdapter extends AbstractQueryJpaAdapter
 {
     private static final Logger LOG = LoggerFactory.getLogger(QueryJpaAdapter.class);
 
-    public QueryJpaAdapter(EntityManager em, Queryable queryable, Sql isql, Class<?> overloadReturnType, SqlLogger sqlLogger)
+    public QueryJpaAdapter(EntityManager em, Queryable queryable, Sql isql, Class<?> overloadReturnType)
     {
-        super(em, queryable, isql, sqlLogger);
+        super(em, queryable, isql);
         String sql = isql.getSql(queryable.getParams());
         ParamParser paramParser = isql.getParamParser();
         String[] paramsNames = isql.getParamParser().find(sql);
@@ -76,7 +75,7 @@ public class QueryJpaAdapter extends AbstractQueryJpaAdapter
             default:
                 throw new UnsupportedOperationException("RepositoryJpa supports JPQL or NATIVE queries none other, Stored Procedure is pending to implements");
         }
-        StatementAdapterOld stmtAdapter = new JpaStatementAdapter(queryJpa, sqlLogger);
+        StatementAdapterOld stmtAdapter = new JpaStatementAdapter(queryJpa);
         AutoBindParams prepareParams = PrepareParamsFactory.newPrepareParams(stmtAdapter, paramParser, queryable2);
         prepareParams.parameterized(paramsNames);
         if (queryable.isPaging() && isql.isSelectable())

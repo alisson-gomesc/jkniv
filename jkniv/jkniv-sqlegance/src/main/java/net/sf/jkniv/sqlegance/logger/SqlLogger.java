@@ -34,7 +34,7 @@ import net.sf.jkniv.logger.FormatterLogger;
  * @author Alisson Gomes
  *
  */
-public class SqlLogger// implements Logger
+class SqlLogger// implements Logger
 {
     private static final Logger          LOG       = LoggerFactory.getLogger("net.sf.jkniv.sqlegance.SQL");
     private static final FormatterLogger formatter = new FormatterLogger();

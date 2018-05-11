@@ -10,15 +10,14 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.sqlegance.QueryNotFoundException;
 import net.sf.jkniv.sqlegance.Queryable;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
 
 public class NamedQueryJpaAdapter extends AbstractQueryJpaAdapter
 {
     private static final Logger    LOG        = LoggerFactory.getLogger(NamedQueryJpaAdapter.class);
 
-    public NamedQueryJpaAdapter(EntityManager em, Queryable queryable, Class<?> mandatoryReturnType, SqlLogger sqlLogger)
+    public NamedQueryJpaAdapter(EntityManager em, Queryable queryable, Class<?> mandatoryReturnType)
     {
-        super(em, queryable, null, sqlLogger);
+        super(em, queryable, null);
         try
         {
             if (mandatoryReturnType == null)

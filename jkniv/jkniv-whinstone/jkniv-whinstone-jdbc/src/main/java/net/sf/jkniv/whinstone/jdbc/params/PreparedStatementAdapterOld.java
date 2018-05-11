@@ -5,12 +5,14 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.slf4j.Logger;
+
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.experimental.converters.SqlDateConverter;
 import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.logger.LogLevel;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
+import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.params.StatementAdapterOld;
+import net.sf.jkniv.whinstone.LoggerFactory;
 import net.sf.jkniv.whinstone.jdbc.statement.PreparedStatementAdapter;
 
 /**
@@ -21,16 +23,17 @@ import net.sf.jkniv.whinstone.jdbc.statement.PreparedStatementAdapter;
  */
 public class PreparedStatementAdapterOld implements StatementAdapterOld
 {
+    private static final Logger  LOG = LoggerFactory.getLogger();
+    private static final DataMasking  MASKING = LoggerFactory.getDataMasking();
+
     private final PreparedStatement stmt;
     private int                     index, indexIN;
-    private final SqlLogger         sqlLogger;
     private final HandlerException  handerException;
     private final SqlDateConverter  dtConverter;
     
-    public PreparedStatementAdapterOld(PreparedStatement stmt, SqlLogger sqlLogger)
+    public PreparedStatementAdapterOld(PreparedStatement stmt)
     {
         this.stmt = stmt;
-        this.sqlLogger = sqlLogger;
         this.index = 0;
         this.indexIN = 0;
         this.handerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
@@ -208,19 +211,17 @@ public class PreparedStatementAdapterOld implements StatementAdapterOld
     
     private void log(String name, Object value)
     {
-        if (sqlLogger.isEnabled(LogLevel.STMT))
-            sqlLogger.log(LogLevel.STMT,
-                    "Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index, name,
-                    sqlLogger.mask(name, value), (value == null ? "NULL" : value.getClass()));
+        if (LOG.isDebugEnabled())
+            LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index, name,
+                    MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
     private void log(int position, Object value)
     {
         String name = String.valueOf(position);
-        if (sqlLogger.isEnabled(LogLevel.STMT))
-            sqlLogger.log(LogLevel.STMT,
-                    "Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index, name,
-                    sqlLogger.mask(name, value), (value == null ? "NULL" : value.getClass()));
+        if (LOG.isDebugEnabled())
+            LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index, name,
+                    MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
 }

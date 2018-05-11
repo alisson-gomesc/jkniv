@@ -26,9 +26,9 @@ import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.ResultSetParser;
+import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.logger.LogLevel;
 import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
 import net.sf.jkniv.sqlegance.params.ParamParser;
 import net.sf.jkniv.sqlegance.statement.StatementAdapter;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
@@ -43,22 +43,24 @@ import net.sf.jkniv.whinstone.couchdb.result.StringResultRow;
  */
 public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String>
 {
-    private static final Logger LOG = LoggerFactory.getLogger(CouchDbStatementAdapter.class);
-    private final HandlerException handlerException;
-    private final SqlDateConverter dtConverter;
-    private int                    index, indexIN;
-    private SqlLogger              sqlLogger;
-    private Class<T>               returnType;
-    private ResultRow<T, String>      resultRow;
-    private boolean                scalar;
-    private Set<OneToMany>         oneToManies;
-    private List<String>           groupingBy;
-    private KeyGeneratorType       keyGeneratorType;
-    private String body;
-    private ParamParser paramParser;
-    private HttpBuilder httpBuilder;
-    private Map<String, Object> params;
-    private boolean boundParams;
+    private static final Logger      LOG     = LoggerFactory.getLogger(CouchDbStatementAdapter.class);
+    private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.LoggerFactory.getLogger();
+    private static final DataMasking MASKING = net.sf.jkniv.whinstone.LoggerFactory.getDataMasking();
+    private final HandlerException   handlerException;
+    private final SqlDateConverter   dtConverter;
+    private int                      index, indexIN;
+    //private SqlLogger              sqlLogger;
+    private Class<T>                 returnType;
+    private ResultRow<T, String>     resultRow;
+    private boolean                  scalar;
+    private Set<OneToMany>           oneToManies;
+    private List<String>             groupingBy;
+    private KeyGeneratorType         keyGeneratorType;
+    private String                   body;
+    private ParamParser              paramParser;
+    private HttpBuilder              httpBuilder;
+    private Map<String, Object>      params;
+    private boolean                  boundParams;
     
     public CouchDbStatementAdapter(HttpBuilder httpBuilder, String body, ParamParser paramParser)//HttpRequestBase request)
     {
@@ -72,10 +74,8 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
         this.groupingBy = Collections.emptyList();
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
         this.reset();
-        this.sqlLogger = new SqlLogger(LogLevel.ALL, new SimpleDataMasking());// FIXME design retrieve SqlLogger another way 
         configHanlerException();
     }
-    
     
     public String getBody()
     {
@@ -200,7 +200,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     @Override
     public StatementAdapter<T, String> bind(Object... values)
     {
-        for(Object v : values)
+        for (Object v : values)
         {
             this.params.put(String.valueOf(currentIndex()), v);
         }
@@ -245,71 +245,71 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
             handlerException.handle(e);
         }
         */
-//        try
-//        {
-//            CloseableHttpClient httpclient = HttpClients.createDefault();
-//            
-//            response = httpclient.execute(this.request);
-//            String json = EntityUtils.toString(response.getEntity());
-//            //LOG.debug(response.getStatusLine().toString());
-//            int statusCode = response.getStatusLine().getStatusCode();
-//            if (statusCode == DbCommand.HTTP_OK)
-//            {
-//                // FIXME
-//                ///rs = session.execute(bound);
-//                //JdbcColumn<Row>[] columns = getJdbcColumns(rs.getColumnDefinitions());
-//                //setResultRow(columns);
-//                //
-//                //Transformable<T> transformable = resultRow.getTransformable();
-////                if (!groupingBy.isEmpty())
-////                {
-////                    grouping = new GroupingBy(groupingBy, returnType, transformable);
-////                }
-//                rsParser = new ObjectResultSetParser(resultRow, grouping);
-//                list = rsParser.parser(json);
-//            }
-//            else if (statusCode == DbCommand.HTTP_NO_CONTENT || 
-//                     statusCode == DbCommand.HTTP_NOT_MODIFIED || 
-//                     statusCode == DbCommand.HTTP_RESET_CONTENT)
-//            {
-//                // 204 No Content, 304 Not Modified, 205 Reset Content
-//                LOG.info(response.getStatusLine().toString());
-//            }
-//            else
-//            {
-//                LOG.error("{} -> {} ",response.getStatusLine().toString(), json);
-//                throw new RepositoryException(response.getStatusLine().toString());
-//            }
-//        }
-//        catch (SQLException e)
-//        {
-//            handlerException.handle(e, e.getMessage());
-//        }
-//        catch (ClientProtocolException e)
-//        {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//        catch (IOException e)
-//        {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//        finally 
-//        {
-//            if(response != null)
-//            {
-//                try
-//                {
-//                    response.close();
-//                }
-//                catch (IOException e)
-//                {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
-//            }
-//        }        
+        //        try
+        //        {
+        //            CloseableHttpClient httpclient = HttpClients.createDefault();
+        //            
+        //            response = httpclient.execute(this.request);
+        //            String json = EntityUtils.toString(response.getEntity());
+        //            //LOG.debug(response.getStatusLine().toString());
+        //            int statusCode = response.getStatusLine().getStatusCode();
+        //            if (statusCode == DbCommand.HTTP_OK)
+        //            {
+        //                // FIXME
+        //                ///rs = session.execute(bound);
+        //                //JdbcColumn<Row>[] columns = getJdbcColumns(rs.getColumnDefinitions());
+        //                //setResultRow(columns);
+        //                //
+        //                //Transformable<T> transformable = resultRow.getTransformable();
+        ////                if (!groupingBy.isEmpty())
+        ////                {
+        ////                    grouping = new GroupingBy(groupingBy, returnType, transformable);
+        ////                }
+        //                rsParser = new ObjectResultSetParser(resultRow, grouping);
+        //                list = rsParser.parser(json);
+        //            }
+        //            else if (statusCode == DbCommand.HTTP_NO_CONTENT || 
+        //                     statusCode == DbCommand.HTTP_NOT_MODIFIED || 
+        //                     statusCode == DbCommand.HTTP_RESET_CONTENT)
+        //            {
+        //                // 204 No Content, 304 Not Modified, 205 Reset Content
+        //                LOG.info(response.getStatusLine().toString());
+        //            }
+        //            else
+        //            {
+        //                LOG.error("{} -> {} ",response.getStatusLine().toString(), json);
+        //                throw new RepositoryException(response.getStatusLine().toString());
+        //            }
+        //        }
+        //        catch (SQLException e)
+        //        {
+        //            handlerException.handle(e, e.getMessage());
+        //        }
+        //        catch (ClientProtocolException e)
+        //        {
+        //            // TODO Auto-generated catch block
+        //            e.printStackTrace();
+        //        }
+        //        catch (IOException e)
+        //        {
+        //            // TODO Auto-generated catch block
+        //            e.printStackTrace();
+        //        }
+        //        finally 
+        //        {
+        //            if(response != null)
+        //            {
+        //                try
+        //                {
+        //                    response.close();
+        //                }
+        //                catch (IOException e)
+        //                {
+        //                    // TODO Auto-generated catch block
+        //                    e.printStackTrace();
+        //                }
+        //            }
+        //        }        
         return list;
     }
     
@@ -346,12 +346,12 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     
     private void bindParams()
     {
-        if(!boundParams)
+        if (!boundParams)
         {
-            for(String k : params.keySet())
+            for (String k : params.keySet())
             {
                 Object v = params.get(k);
-                this.body = this.body.replaceFirst("\\?", String.valueOf("\""+v+"\""));// FIXME stament bind type like Date, Double, Calendar, Float
+                this.body = this.body.replaceFirst("\\?", String.valueOf("\"" + v + "\""));// FIXME stament bind type like Date, Double, Calendar, Float
             }
         }
         this.boundParams = true;
@@ -402,7 +402,6 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
         }
         return this;
     }
-    
     
     private void setInternalValue(Calendar value)
     {
@@ -499,64 +498,62 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
         
         if (scalar)
         {
-            resultRow = new ScalarResultRow(columns, sqlLogger);
+            resultRow = new ScalarResultRow(columns);
         }
-//        else if (Map.class.isAssignableFrom(returnType))
-//        {
-//            resultRow = new MapResultRow(returnType, columns, sqlLogger);
-//        }
-//        else if (Number.class.isAssignableFrom(returnType)) // FIXME implements for date, calendar, boolean improve design
-//        {
-//            resultRow = new NumberResultRow(returnType, columns, sqlLogger);
-//        }
+        //        else if (Map.class.isAssignableFrom(returnType))
+        //        {
+        //            resultRow = new MapResultRow(returnType, columns, sqlLogger);
+        //        }
+        //        else if (Number.class.isAssignableFrom(returnType)) // FIXME implements for date, calendar, boolean improve design
+        //        {
+        //            resultRow = new NumberResultRow(returnType, columns, sqlLogger);
+        //        }
         else if (String.class.isAssignableFrom(returnType))
         {
-            resultRow = new StringResultRow(columns, sqlLogger);
+            resultRow = new StringResultRow(columns);
         }
-//        else if (oneToManies.isEmpty())
-//        {
-//            resultRow = new FlatObjectResultRow(returnType, columns, sqlLogger);
-//        }
+        //        else if (oneToManies.isEmpty())
+        //        {
+        //            resultRow = new FlatObjectResultRow(returnType, columns, sqlLogger);
+        //        }
         else
         {
-            resultRow = new PojoResultRow(returnType, columns, oneToManies, sqlLogger);
+            resultRow = new PojoResultRow(returnType, columns, oneToManies);
         }
     }
     
     private void log(String name, Object value)
     {
-        if (sqlLogger.isEnabled(LogLevel.STMT))
-            sqlLogger.log(LogLevel.STMT,
-                    "Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index, name,
-                    sqlLogger.mask(name, value), (value == null ? "NULL" : value.getClass()));
+        if (SQLLOG.isDebugEnabled())
+            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index,
+                    name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
     private void log(Object value)
     {
         String name = String.valueOf(index + indexIN);
-        if (sqlLogger.isEnabled(LogLevel.STMT))
-            sqlLogger.log(LogLevel.STMT,
-                    "Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index, name,
-                    sqlLogger.mask(name, value), (value == null ? "NULL" : value.getClass()));
+        if (SQLLOG.isDebugEnabled())
+            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index, name,
+                    MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
-//    /**
-//     * Summarize the columns from SQL result in binary data or not.
-//     * @param metadata  object that contains information about the types and properties of the columns in a <code>ResultSet</code> 
-//     * @return Array of columns with name and index
-//     */
-//    @SuppressWarnings("unchecked")
-//    private JdbcColumn<Row>[] getJdbcColumns(ColumnDefinitions metadata)
-//    {
-//        JdbcColumn<Row>[] columns = new JdbcColumn[metadata.size()];
-//        
-//        for (int i = 0; i < columns.length; i++)
-//        {
-//            String columnName = metadata.getName(i);//getColumnName(metadata, columnNumber);
-//            int columnType = metadata.getType(i).getName().ordinal(); //metadata.getColumnType(columnNumber);
-//            columns[i] = new CouchDbColumn(i, columnName, columnType);
-//        }
-//        return columns;
-//    }
+    //    /**
+    //     * Summarize the columns from SQL result in binary data or not.
+    //     * @param metadata  object that contains information about the types and properties of the columns in a <code>ResultSet</code> 
+    //     * @return Array of columns with name and index
+    //     */
+    //    @SuppressWarnings("unchecked")
+    //    private JdbcColumn<Row>[] getJdbcColumns(ColumnDefinitions metadata)
+    //    {
+    //        JdbcColumn<Row>[] columns = new JdbcColumn[metadata.size()];
+    //        
+    //        for (int i = 0; i < columns.length; i++)
+    //        {
+    //            String columnName = metadata.getName(i);//getColumnName(metadata, columnNumber);
+    //            int columnType = metadata.getType(i).getName().ordinal(); //metadata.getColumnType(columnNumber);
+    //            columns[i] = new CouchDbColumn(i, columnName, columnType);
+    //        }
+    //        return columns;
+    //    }
     
 }

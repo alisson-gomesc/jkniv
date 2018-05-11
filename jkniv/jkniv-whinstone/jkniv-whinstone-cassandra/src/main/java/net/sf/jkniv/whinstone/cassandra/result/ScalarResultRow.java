@@ -21,13 +21,14 @@ package net.sf.jkniv.whinstone.cassandra.result;
 
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+
 import com.datastax.driver.core.Row;
 
 import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.classification.Transformable;
-import net.sf.jkniv.sqlegance.logger.LogLevel;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
+import net.sf.jkniv.whinstone.LoggerFactory;
 
 /**
  * 
@@ -39,18 +40,17 @@ import net.sf.jkniv.sqlegance.logger.SqlLogger;
  */
 public class ScalarResultRow<T> implements ResultRow<T, Row>
 {
-    private final SqlLogger  sqlLogger;
-    private JdbcColumn<Row>[] columns;
-
-    public ScalarResultRow(SqlLogger log)
+    private static final Logger LOG = LoggerFactory.getLogger();
+    private JdbcColumn<Row>[]   columns;
+    
+    public ScalarResultRow()
     {
-        this(null, log);
+        this(null);
     }
-
-    public ScalarResultRow(JdbcColumn<Row>[] columns, SqlLogger log)
+    
+    public ScalarResultRow(JdbcColumn<Row>[] columns)
     {
         this.columns = columns;
-        this.sqlLogger = log;
     }
     
     @SuppressWarnings("unchecked")
@@ -62,15 +62,17 @@ public class ScalarResultRow<T> implements ResultRow<T, Row>
         else
             jdbcObject = columns[0].getValue(rs);
         
-        sqlLogger.log(LogLevel.RESULTSET, "Mapping index [0] column [{}] to set scalar value", columns[0].getAttributeName());
+        if(LOG.isTraceEnabled())
+            LOG.trace("Mapping index [0] column [{}] to set scalar value [{}]",
+                columns[0].getAttributeName(), jdbcObject);
         return (T) jdbcObject;
     }
-
+    
     @Override
     public Transformable<T> getTransformable()
     {
         return null;
-    }    
+    }
     
     @Override
     public void setColumns(JdbcColumn<Row>[] columns)

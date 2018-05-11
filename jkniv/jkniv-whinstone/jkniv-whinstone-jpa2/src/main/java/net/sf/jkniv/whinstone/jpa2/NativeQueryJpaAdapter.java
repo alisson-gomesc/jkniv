@@ -7,15 +7,14 @@ import javax.persistence.Query;
 
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.Queryable;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
 
 public class NativeQueryJpaAdapter extends AbstractQueryJpaAdapter
 {
     private Query queryJpa;
     
-    public NativeQueryJpaAdapter(EntityManager em, Queryable queryable, Sql isql, SqlLogger sqlLogger)
+    public NativeQueryJpaAdapter(EntityManager em, Queryable queryable, Sql isql)
     {
-        super(em, queryable, isql, sqlLogger);
+        super(em, queryable, isql);
     }
 
     @Override

@@ -6,14 +6,13 @@ import javax.persistence.EntityManager;
 
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.Queryable;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
 
 public class ExecuteUpdateJpaAdapter extends AbstractQueryJpaAdapter
 {
 
-    public ExecuteUpdateJpaAdapter(EntityManager em, Queryable queryable, Sql isql, SqlLogger sqlLogger)
+    public ExecuteUpdateJpaAdapter(EntityManager em, Queryable queryable, Sql isql)
     {
-        super(em, queryable, isql, sqlLogger);
+        super(em, queryable, isql);
     }
 
     @Override

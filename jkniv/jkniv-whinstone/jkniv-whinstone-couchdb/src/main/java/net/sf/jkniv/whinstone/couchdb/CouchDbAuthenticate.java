@@ -117,7 +117,6 @@ public class CouchDbAuthenticate
             }
             else if (statusCode == 401)
             {
-                
                 throw new RepositoryException("Access denied, unauthorized for user ["+username+"] and url ["+url+"]");
             }
             else

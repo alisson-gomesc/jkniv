@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.PreparedStatement;
@@ -30,10 +32,9 @@ import net.sf.jkniv.sqlegance.classification.Groupable;
 import net.sf.jkniv.sqlegance.classification.GroupingBy;
 import net.sf.jkniv.sqlegance.classification.NoGroupingBy;
 import net.sf.jkniv.sqlegance.classification.Transformable;
-import net.sf.jkniv.sqlegance.logger.LogLevel;
-import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
-import net.sf.jkniv.sqlegance.logger.SqlLogger;
+import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.LoggerFactory;
 import net.sf.jkniv.whinstone.cassandra.CassandraColumn;
 import net.sf.jkniv.whinstone.cassandra.result.FlatObjectResultRow;
 import net.sf.jkniv.whinstone.cassandra.result.MapResultRow;
@@ -68,6 +69,9 @@ import net.sf.jkniv.whinstone.cassandra.result.StringResultRow;
  */
 public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Row>
 {
+    private static final Logger  LOG = LoggerFactory.getLogger();
+    private static final DataMasking  MASKING = net.sf.jkniv.whinstone.LoggerFactory.getDataMasking();
+
     private final HandlerException  handlerException;
     private final PreparedStatement stmt;
     private BoundStatement          bound;
@@ -75,7 +79,6 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Row>
     private final SqlDateConverter  dtConverter;
     
     private int                     index, indexIN;
-    private SqlLogger               sqlLogger;
     private Class<T>                returnType;
     private ResultRow<T, Row>       resultRow;
     private boolean                 scalar;
@@ -95,7 +98,6 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Row>
         this.groupingBy = Collections.emptyList();
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
         this.reset();
-        this.sqlLogger = new SqlLogger(LogLevel.ALL, new SimpleDataMasking());// FIXME design retrieve SqlLogger another way 
     }
     
     /*
@@ -508,45 +510,43 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Row>
         
         if (scalar)
         {
-            resultRow = new ScalarResultRow(columns, sqlLogger);
+            resultRow = new ScalarResultRow(columns);
         }
         else if (Map.class.isAssignableFrom(returnType))
         {
-            resultRow = new MapResultRow(returnType, columns, sqlLogger);
+            resultRow = new MapResultRow(returnType, columns);
         }
         else if (Number.class.isAssignableFrom(returnType)) // FIXME implements for date, calendar, boolean improve design
         {
-            resultRow = new NumberResultRow(returnType, columns, sqlLogger);
+            resultRow = new NumberResultRow(returnType, columns);
         }
         else if (String.class.isAssignableFrom(returnType))
         {
-            resultRow = new StringResultRow(columns, sqlLogger);
+            resultRow = new StringResultRow(columns);
         }
         else if (oneToManies.isEmpty())
         {
-            resultRow = new FlatObjectResultRow(returnType, columns, sqlLogger);
+            resultRow = new FlatObjectResultRow(returnType, columns);
         }
         else
         {
-            resultRow = new PojoResultRow(returnType, columns, oneToManies, sqlLogger);
+            resultRow = new PojoResultRow(returnType, columns, oneToManies);
         }
     }
     
     private void log(String name, Object value)
     {
-        if (sqlLogger.isEnabled(LogLevel.STMT))
-            sqlLogger.log(LogLevel.STMT,
-                    "Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index, name,
-                    sqlLogger.mask(name, value), (value == null ? "NULL" : value.getClass()));
+        if (LOG.isDebugEnabled())
+            LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index, name,
+                    MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
     private void log(Object value)
     {
         String name = String.valueOf(index+indexIN);
-        if (sqlLogger.isEnabled(LogLevel.STMT))
-            sqlLogger.log(LogLevel.STMT,
-                    "Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index, name,
-                    sqlLogger.mask(name, value), (value == null ? "NULL" : value.getClass()));
+        if (LOG.isDebugEnabled())
+            LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index, name,
+                    MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
     /**
