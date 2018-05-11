@@ -7,7 +7,7 @@ import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
 
 public class LoggerFactory
 {
-    private static final Logger  LOG = org.slf4j.LoggerFactory.getLogger("jkniv.whinstone.jpa.SQL");
+    private static final Logger  LOG = org.slf4j.LoggerFactory.getLogger("jkniv.whinstone.jpa2.SQL");
     private static final DataMasking masking = new SimpleDataMasking();
     
     public static Logger getLogger()
