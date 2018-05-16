@@ -38,7 +38,11 @@ import net.sf.jkniv.whinstone.couchdb.LoggerFactory;
  */
 public class StringResultRow<T> implements ResultRow<T, String>
 {
+<<<<<<< HEAD
     private final static Logger  sqlLogger = LoggerFactory.getLogger();
+=======
+    private final SqlLogger  sqlLogger;
+>>>>>>> refs/remotes/origin/master
     private JdbcColumn<String>[] columns;
 
     public StringResultRow()
@@ -46,7 +50,11 @@ public class StringResultRow<T> implements ResultRow<T, String>
         this(null);
     }
 
+<<<<<<< HEAD
     public StringResultRow(JdbcColumn<String>[] columns)
+=======
+    public StringResultRow(JdbcColumn<String>[] columns, SqlLogger log)
+>>>>>>> refs/remotes/origin/master
     {
         this.columns = columns;
     }
@@ -61,7 +69,11 @@ public class StringResultRow<T> implements ResultRow<T, String>
 //            jdbcObject = columns[0].getValue(rs);
 
         // FIXME couchdb logger ResultSet
+<<<<<<< HEAD
         sqlLogger.trace("Column index [0] named [{}] to set String", columns[0].getAttributeName());
+=======
+        sqlLogger.log(LogLevel.RESULTSET, "Column index [0] named [{}] to set String", columns[0].getAttributeName());
+>>>>>>> refs/remotes/origin/master
         return (T)(jdbcObject != null ? jdbcObject.toString() : null);
     }
 

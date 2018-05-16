@@ -95,11 +95,17 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
         
         try
         {
+<<<<<<< HEAD
             if (LOG.isTraceEnabled())
                 LOG.trace("Preparing SQL statement type [{}], concurrency [{}], holdability [{}] with [{}] parameters",
                         isql.getResultSetType(), isql.getResultSetConcurrency(), isql.getResultSetHoldability(),
                         paramsNames.length);
             
+=======
+            if(LOG.isTraceEnabled())
+                LOG.trace("Preparing SQL statement type [{}], concurrency [{}], holdability [{}] with [{}] parameters", isql.getResultSetType(), isql.getResultSetConcurrency(), isql.getResultSetHoldability(), paramsNames.length);
+
+>>>>>>> refs/remotes/origin/master
             if (queryable.getDynamicSql().getSqlDialect().supportsStmtHoldability())
                 stmt = conn.prepareStatement(sql, rsType, rsConcurrency, rsHoldability);
             else

@@ -19,6 +19,7 @@
  */
 package net.sf.jkniv.whinstone.couchdb;
 
+<<<<<<< HEAD
 import static net.sf.jkniv.whinstone.couchdb.statement.AllDocsQueryParams.KEY_limit;
 import static net.sf.jkniv.whinstone.couchdb.statement.AllDocsQueryParams.KEY_skip;
 
@@ -293,4 +294,84 @@ public class HttpBuilder
                 throw new RepositoryException("Query Parameters [" + k + "] isn't supported yet!");
         }
     }
+=======
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
+
+import net.sf.jkniv.sqlegance.RepositoryException;
+
+public class HttpBuilder
+{
+    private String        url;
+    private String        schema;
+    private Charset       charset;
+    private RequestParams requestParams;
+    
+    public HttpBuilder(String url, String schema, RequestParams requestParams)
+    {
+        super();
+        this.url = url;
+        this.schema = schema;
+        this.requestParams = requestParams;
+        this.charset = Charset.forName("UTF-8");
+    }
+    
+    public void setHeader(HttpRequestBase http)
+    {
+        requestParams.setHeader(http);
+    }
+    
+    public HttpPost newFind(String bodyStr)
+    {
+        HttpPost httpPost = null;
+        try
+        {
+            StringEntity body = new StringEntity(bodyStr);
+            String fullUrl = this.url+"/"+this.schema+"/_find";
+            if (this.url.endsWith("/"))
+                fullUrl = this.url+this.schema+"/_find";
+            
+            httpPost = new HttpPost(fullUrl);
+            requestParams.setHeader(httpPost);
+            httpPost.setEntity(body);
+        }
+        catch (Exception ex)
+        {
+            throw new RepositoryException("Cannot build new URI ["+this.url+"/_find]");
+        }
+        requestParams.setHeader(httpPost);
+        return httpPost;
+    }
+
+    public HttpPost newFind()
+    {
+        HttpPost httpPost = null;
+        try
+        {
+            String fullUrl = this.url+"/"+this.schema+"/_find";
+            if (this.url.endsWith("/"))
+                fullUrl = this.url+this.schema+"/_find";
+            
+            httpPost = new HttpPost(fullUrl);
+            requestParams.setHeader(httpPost);
+        }
+        catch (Exception ex)
+        {
+            throw new RepositoryException("Cannot build new URI ["+this.url+"/_find]");
+        }
+        requestParams.setHeader(httpPost);
+        return httpPost;
+    }
+    
+
+>>>>>>> refs/remotes/origin/master
 }

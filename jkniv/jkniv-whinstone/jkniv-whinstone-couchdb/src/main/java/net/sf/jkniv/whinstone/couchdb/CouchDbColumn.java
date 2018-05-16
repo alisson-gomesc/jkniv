@@ -22,11 +22,21 @@ package net.sf.jkniv.whinstone.couchdb;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Locale;
+<<<<<<< HEAD
 
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.JdbcColumnMapper;
 import net.sf.jkniv.whinstone.UnderscoreToCamelCaseMapper;
+=======
+>>>>>>> refs/remotes/origin/master
 
+<<<<<<< HEAD
+=======
+import net.sf.jkniv.sqlegance.JdbcColumn;
+import net.sf.jkniv.sqlegance.JdbcColumnMapper;
+import net.sf.jkniv.sqlegance.UnderscoreToCamelCaseMapper;
+
+>>>>>>> refs/remotes/origin/master
 public class CouchDbColumn implements JdbcColumn<String>
 {
     private final int                     columnIndex;

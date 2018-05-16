@@ -20,6 +20,7 @@
 package net.sf.jkniv.whinstone.couchdb;
 
 import java.sql.SQLException;
+<<<<<<< HEAD
 import java.util.Map;
 
 import net.sf.jkniv.sqlegance.LanguageType;
@@ -248,5 +249,133 @@ public class HttpCookieConnectionAdapter implements ConnectionAdapter
         return "HttpConnectionAdapter [httpBuilder=" + httpBuilder + "]";
     }
 
+=======
+
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+
+import net.sf.jkniv.sqlegance.ConnectionAdapter;
+import net.sf.jkniv.sqlegance.LanguageType;
+import net.sf.jkniv.sqlegance.Queryable;
+import net.sf.jkniv.sqlegance.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.couchdb.commands.DbCommand;
+import net.sf.jkniv.whinstone.couchdb.commands.PostCommand;
+import net.sf.jkniv.whinstone.couchdb.statement.PreparedStatementAdapter;
+
+public class HttpCookieConnectionAdapter implements ConnectionAdapter
+{
+    private HttpBuilder httpBuilder;
+    
+    public HttpCookieConnectionAdapter(HttpBuilder httpBuilder)
+    {
+        this.httpBuilder = httpBuilder;
+    }
+    
+    @Override
+    public void commit() throws SQLException
+    {
+        throw new UnsupportedOperationException("CouchDb doesn't support commit operation");
+    }
+    
+    @Override
+    public void rollback() throws SQLException
+    {
+        throw new UnsupportedOperationException("CouchDb doesn't support rollback operation");
+    }
+    
+    @Override
+    public void close() throws SQLException
+    {
+        /*
+        if (session != null && !session.isClosed())
+        {
+            session.close();
+            
+        }
+        if (cluster != null && !cluster.isClosed())
+        {
+            cluster.close();
+        }
+        cluster = null;
+        session = null;
+        */
+    }
+    
+    @Override
+    public boolean isClosed() throws SQLException
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    
+    @Override
+    public boolean isAutoCommit() throws SQLException
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    
+    @Override
+    public void autoCommitOn() throws SQLException
+    {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    @Override
+    public void autoCommitOff() throws SQLException
+    {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    @Override
+    public Object getMetaData()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public <T, R> StatementAdapter<T, R> newStatement(Queryable queryable)
+    {
+        String sql = queryable.query(); //queryable.getDynamicSql().getSql(queryable.getParams());
+        //String positionalSql = queryable.getDynamicSql().getParamParser().replaceForQuestionMark(sql, queryable.getParams());
+        //HttpRequestBase httpRequest = null;
+        DbCommand command = null;
+        if (queryable.getDynamicSql().getLanguageType() == LanguageType.STORED)
+        {
+            
+        }
+        else
+        {
+            //command = new PostCommand(httpBuilder, sql);
+            //httpRequest = httpBuilder.newFind(sql);
+        }
+        StatementAdapter<T, R> adapter = new PreparedStatementAdapter(this.httpBuilder, sql, queryable.getDynamicSql().getParamParser());
+        return adapter;
+    }
+    
+    @Override
+    public <T, R> StatementAdapter<T, R> newStatement(String sql)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public Object unwrap()
+    {
+        return null;//session;
+    }
+    
+    
+    
+    @Override
+    public String toString()
+    {
+        return "HttpConnectionAdapter [httpBuilder=" + httpBuilder + "]";
+    }
+>>>>>>> refs/remotes/origin/master
     
 }

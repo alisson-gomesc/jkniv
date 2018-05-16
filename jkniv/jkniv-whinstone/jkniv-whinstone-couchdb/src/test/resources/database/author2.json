@@ -5,6 +5,7 @@
     {
      "isbn": "978-0201895421",
      "name": "Analysis Patterns: Reusable Object Models",
+<<<<<<< HEAD
      "published": 1996,
      "lastView": "2018-04-23T18:00:00.000-0300",
      "visualization": 0
@@ -36,6 +37,29 @@
      "published": 2009,
      "lastView": "2017-05-20T08:10:00.000-0300",
      "visualization": 0
+=======
+     "VISUALIZATION": 0
+    },
+        {
+     "isbn": "007-6092019909",
+     "name": "Patterns of Enterprise Application Architecture",
+     "VISUALIZATION": 0
+    },
+    {
+     "isbn": "978-0321826626",
+     "name": "NoSQL Distilled: A Brief Guide to the Emerging World of Polyglot Persistence",
+     "VISUALIZATION": 0
+    },
+    {
+     "isbn": "978-0321712943",
+     "name": "Domain-Specific Languages (Addison-Wesley Signature Series",
+     "VISUALIZATION": 0
+    },
+    {
+     "isbn": "978-0321984135",
+     "name": "Refactoring: Ruby Edition: Ruby Edition",
+     "VISUALIZATION": 0
+>>>>>>> refs/remotes/origin/master
     }
   ]
 }  

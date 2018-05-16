@@ -7,8 +7,27 @@
   xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
        http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
   
+<<<<<<< HEAD
  <include href="/repository-sql-design.xml" />
  <include href="/repository-sql-find.xml" />
  <include href="/repository-sql-views.xml" />
   
+=======
+
+  <select id="adminRoles" returnType="">
+    {
+     "selector": {"nationality": "BR" }
+    }
+  </select>
+
+  <select id="role">
+    {
+     "selector": {"nationality": #{nat} },
+     "fields": ["_id", "_rev", "sourceId", "name","email","role"],
+     "limit": 2,
+     "skip": 0
+    }
+  </select>
+
+>>>>>>> refs/remotes/origin/master
 </statements>

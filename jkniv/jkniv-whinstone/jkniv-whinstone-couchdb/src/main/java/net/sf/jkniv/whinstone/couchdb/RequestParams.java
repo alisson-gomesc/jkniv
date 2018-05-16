@@ -19,6 +19,7 @@
  */
 package net.sf.jkniv.whinstone.couchdb;
 
+<<<<<<< HEAD
 import org.apache.http.Header;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
@@ -74,6 +75,67 @@ class RequestParams
     public Header getCookie()
     {
         return new BasicHeader("Cookie", cookieSession);
+=======
+import java.util.concurrent.TimeUnit;
+
+import org.apache.http.Header;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+
+class RequestParams
+{
+    private String connection;  // Connection: keep-alive
+    private String cookie;      // Cookie: AuthSession=YWRtaW46NUFCN0Y1Qzc6SQD7rM4vjA42_xp5ngAXYojGCEI
+    private String accept;      // Accept: application/json, text/javascript, */*; q=0.01
+    private String contentType; // Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+    private String schema;
+    private long sessionTimeout;
+    
+    public RequestParams(String cookie, String schema)
+    {
+        super();
+        this.connection = HTTP.CONN_KEEP_ALIVE;
+        //this.accept = "application/json";
+        this.contentType = "application/json; charset=UTF-8";
+        this.sessionTimeout = TimeUnit.MINUTES.toSeconds(10L);// default cookie authentication timeout
+        this.cookie = cookie;
+    }
+
+    public void setHeader(HttpRequestBase http)
+    {
+        if (connection != null)
+            http.addHeader("Connection", connection);
+        if (cookie != null)
+            http.addHeader("Cookie", cookie);
+        if (accept != null)
+            http.addHeader("Accept", accept);
+        if (contentType != null)
+            http.addHeader(HTTP.CONTENT_TYPE, contentType);
+    }
+    
+    public void setConnection(String connection)
+    {
+        this.connection = connection;
+    }
+
+    public Header getConnection()
+    {
+        return new BasicHeader("Connection", connection);
+    }
+
+
+    public void setCookie(String cookie)
+    {
+        this.cookie = cookie;
+    }
+
+    public Header getCookie()
+    {
+        return new BasicHeader("Cookie", cookie);
+>>>>>>> refs/remotes/origin/master
     }
 
 

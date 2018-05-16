@@ -32,15 +32,27 @@ import org.slf4j.LoggerFactory;
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.exception.HandleableException;
+<<<<<<< HEAD
 import net.sf.jkniv.exception.HandlerException;
+=======
+import net.sf.jkniv.sqlegance.ConnectionAdapter;
+>>>>>>> refs/remotes/origin/master
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
+<<<<<<< HEAD
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
+=======
+import net.sf.jkniv.sqlegance.Queryable;
+import net.sf.jkniv.sqlegance.Repository;
+import net.sf.jkniv.sqlegance.ResultRow;
+import net.sf.jkniv.sqlegance.Selectable;
+>>>>>>> refs/remotes/origin/master
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
+<<<<<<< HEAD
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
@@ -48,6 +60,10 @@ import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.couchdb.commands.CouchDbSynchViewDesign;
 import net.sf.jkniv.whinstone.transaction.Transactional;
+=======
+import net.sf.jkniv.sqlegance.statement.StatementAdapter;
+import net.sf.jkniv.sqlegance.transaction.Transactional;
+>>>>>>> refs/remotes/origin/master
 
 /**
  * Encapsulate the data access for Cassandra
@@ -57,6 +73,7 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
  */
 public class RepositoryCouchDb implements Repository
 {
+<<<<<<< HEAD
     private static final Logger     LOG     = LoggerFactory.getLogger(RepositoryCouchDb.class);
     private static final Assertable notNull = AssertsFactory.getNotNull();
     private QueryNameStrategy       strategyQueryName;
@@ -67,14 +84,36 @@ public class RepositoryCouchDb implements Repository
     private final static Map<String, Boolean> DOC_SCHEMA_UPDATED = new HashMap<String, Boolean>();
     private boolean                 isTraceEnabled;
     private boolean                 isDebugEnabled;
+=======
+    private static final Logger LOG       = LoggerFactory.getLogger(RepositoryCouchDb.class);
+    private static final Assertable                         notNull = AssertsFactory.getNotNull();
+    private QueryNameStrategy   strategyQueryName;
+    private HandleableException handlerException;
+    private RepositoryConfig    repositoryConfig;
+    private SqlContext          sqlContext;
+    private ConnectionAdapter   factoryConnection;
+    
+    
+    private boolean             isTraceEnabled;
+    private boolean             isDebugEnabled;
+>>>>>>> refs/remotes/origin/master
     
     RepositoryCouchDb()
     {
+<<<<<<< HEAD
         this(new Properties(), SqlContextFactory.newInstance("/repository-sql.xml"));
+=======
+        //openConnection();
+        this.sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
+        this.isDebugEnabled = LOG.isDebugEnabled();
+        this.isTraceEnabled = LOG.isTraceEnabled();
+        this.factoryConnection = new HttpConnectionFactory(new Properties()).open();
+>>>>>>> refs/remotes/origin/master
     }
     
     RepositoryCouchDb(Properties props)
     {
+<<<<<<< HEAD
         this(props, SqlContextFactory.newInstance("/repository-sql.xml"));
     }
 
@@ -86,6 +125,12 @@ public class RepositoryCouchDb implements Repository
     RepositoryCouchDb(SqlContext sqlContext)
     {
         this(new Properties(), sqlContext);
+=======
+        this.sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
+        this.isDebugEnabled = LOG.isDebugEnabled();
+        this.isTraceEnabled = LOG.isTraceEnabled();
+        this.factoryConnection = new HttpConnectionFactory(props).open();
+>>>>>>> refs/remotes/origin/master
     }
 
     RepositoryCouchDb(Properties props, SqlContext sqlContext)
@@ -107,9 +152,13 @@ public class RepositoryCouchDb implements Repository
         this.sqlContext = new CouchDbSqlContext(sqlContext);
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
+<<<<<<< HEAD
         this.factoryConnection = (HttpCookieConnectionAdapter) new HttpConnectionFactory(sqlContext.getRepositoryConfig().getProperties()).open();
         this.handlerException = new HandlerException(RepositoryException.class, "CouchDB error at [%s]");
         this.init();
+=======
+        this.factoryConnection = new HttpConnectionFactory(props).open();
+>>>>>>> refs/remotes/origin/master
     }
     
     private void init()
@@ -276,6 +325,17 @@ public class RepositoryCouchDb implements Repository
         
         if (!queryable.isBoundSql())
             queryable.bind(isql);
+<<<<<<< HEAD
+=======
+
+        if (overloadReturnType != null)
+            returnType = overloadReturnType;
+        else if (isql.getReturnTypeAsClass() != null)
+            returnType = (Class<T>) isql.getReturnTypeAsClass();
+
+        StatementAdapter<T, R> stmt = factoryConnection.newStatement(queryable);
+        queryable.bind(stmt).on();
+>>>>>>> refs/remotes/origin/master
         
         Command command = factoryConnection.asSelectCommand(queryable, overloadResultRow);
         
@@ -287,7 +347,11 @@ public class RepositoryCouchDb implements Repository
         return list;
         
     }
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> refs/remotes/origin/master
     @Override
     public int add(Queryable queryable)
     {
@@ -302,11 +366,18 @@ public class RepositoryCouchDb implements Repository
         
         isql.getValidateType().assertValidate(queryable.getParams());
         
+<<<<<<< HEAD
         Command command = factoryConnection.asAddCommand(queryable, null);
         //StatementAdapter<Number, String> adapterStmt = factoryConnection.newStatement(queryable);
         //queryable.bind(adapterStmt).on();
         int affected = command.execute();
         
+=======
+        StatementAdapter<Number, String> adapterStmt = factoryConnection.newStatement(queryable);
+        queryable.bind(adapterStmt).on();
+        int affected = adapterStmt.execute();
+
+>>>>>>> refs/remotes/origin/master
         if (isDebugEnabled)
             LOG.debug("{} records was affected by add [{}] query", affected, queryable.getName());
         return affected;
@@ -459,6 +530,7 @@ public class RepositoryCouchDb implements Repository
                     + "], exptected is " + expected);
     }
 
+<<<<<<< HEAD
     private Properties lookup(String remaining)
     {
         Properties prop = null;
@@ -474,6 +546,31 @@ public class RepositoryCouchDb implements Repository
         }
         return prop;
     }
+=======
+//    /**
+//     * Summarize the columns from SQL result in binary data or not.
+//     * @param metadata  object that contains information about the types and properties of the columns in a <code>ResultSet</code> 
+//     * @return Array of columns with name and index
+//     */
+//    @SuppressWarnings("unchecked")
+//    private JdbcColumn<Row>[] getJdbcColumns(ColumnDefinitions metadata)
+//    {
+//        JdbcColumn<Row>[] columns = new JdbcColumn[metadata.size()];
+//        
+//        for (int i = 0; i < columns.length; i++)
+//        {
+//            //int columnNumber = i + 1;
+//            
+//            String columnName = metadata.getName(i);//getColumnName(metadata, columnNumber);
+//            int columnType = metadata.getType(i).getName().ordinal(); //metadata.getColumnType(columnNumber);
+//            //boolean binaryData = false;
+//            //if (columnType == Types.CLOB || columnType == Types.BLOB)
+//            //    binaryData = true;
+//            columns[i] = new CouchDbColumn(i, columnName, columnType);
+//        }
+//        return columns;
+//    }
+>>>>>>> refs/remotes/origin/master
 
     
     //    /**

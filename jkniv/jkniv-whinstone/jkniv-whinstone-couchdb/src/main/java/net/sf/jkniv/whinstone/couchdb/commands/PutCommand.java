@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* 
  * JKNIV, whinstone one contract to access your database.
  * 
@@ -48,6 +49,38 @@ public class PutCommand extends AbstractCommand implements CouchCommand
     public PutCommand(HttpPut put, String body)
     {
         super();
+=======
+package net.sf.jkniv.whinstone.couchdb.commands;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.jkniv.sqlegance.RepositoryException;
+
+public class PutCommand implements DbCommand
+{
+    private static final Logger LOG = LoggerFactory.getLogger(PutCommand.class);
+    private HttpPut            put;
+    private String body;
+
+    public PutCommand(HttpPut put)
+    {
+        this(put,"");
+    }
+
+    public PutCommand(HttpPut put, String body)
+    {
+>>>>>>> refs/remotes/origin/master
         this.body = body;
         this.put = put;
         try

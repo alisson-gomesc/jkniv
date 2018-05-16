@@ -5,9 +5,13 @@
     {
      "isbn": "978-1503250888",
      "name": "Beyond Good and Evil",
+<<<<<<< HEAD
      "published": 1886,
      "lastView": "2012-04-23T18:25:43.698-0300",
      "visualization": 0
+=======
+     "VISUALIZATION": 0
+>>>>>>> refs/remotes/origin/master
     }
   ]
 }

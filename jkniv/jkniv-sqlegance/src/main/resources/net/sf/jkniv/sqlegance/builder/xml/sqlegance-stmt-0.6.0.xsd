@@ -303,6 +303,7 @@
       <xsd:enumeration value="NATIVE"></xsd:enumeration>
       <xsd:enumeration value="CRITERIA"></xsd:enumeration>
       <xsd:enumeration value="STORED"></xsd:enumeration>
+      <xsd:enumeration value="VIEW"></xsd:enumeration>
     </xsd:restriction>
   </xsd:simpleType>
 

@@ -26,9 +26,15 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+<<<<<<< HEAD
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.ResultSetParser;
 import net.sf.jkniv.whinstone.classification.Groupable;
+=======
+import net.sf.jkniv.sqlegance.ResultRow;
+import net.sf.jkniv.sqlegance.ResultSetParser;
+import net.sf.jkniv.sqlegance.classification.Groupable;
+>>>>>>> refs/remotes/origin/master
 
 /**
  * 
@@ -42,10 +48,17 @@ import net.sf.jkniv.whinstone.classification.Groupable;
  */
 public class ObjectResultSetParser<T> implements ResultSetParser<T, String>
 {
+<<<<<<< HEAD
     private final static Logger        LOG = LoggerFactory.getLogger(ObjectResultSetParser.class);
     private final ResultRow<T, String> resultRow;
     private final Groupable<T, T>      groupable;
     private final int                  rows;
+=======
+    private final static Logger LOG = LoggerFactory.getLogger(ObjectResultSetParser.class);
+    private final ResultRow<T, String> resultRow;
+    private final Groupable<T, T> groupable;
+    private final int          rows;
+>>>>>>> refs/remotes/origin/master
     
     public ObjectResultSetParser(ResultRow<T, String> resultRow, Groupable<T, T> groupable)
     {
@@ -62,6 +75,7 @@ public class ObjectResultSetParser<T> implements ResultSetParser<T, String>
     
     public List<T> parser(String json) throws SQLException
     {
+<<<<<<< HEAD
         List<String> list = new ArrayList<String>();
         list.add(json);
         int rownum = 0;
@@ -70,10 +84,24 @@ public class ObjectResultSetParser<T> implements ResultSetParser<T, String>
         //                T row = resultRow.row(rs.one(), rownum++);
         //                groupable.classifier(row); FIXME
         //            }
+=======
+        List<String> list= new ArrayList<String>();
+        list.add(json);
+            int rownum = 0;
+//            while (!rs.isExhausted())
+//            {
+//                T row = resultRow.row(rs.one(), rownum++);
+//                groupable.classifier(row); FIXME
+//            }
+>>>>>>> refs/remotes/origin/master
         return (List<T>) list;//groupable.asList();
     }
     
     public void close(String json)
+<<<<<<< HEAD
     {
+=======
+    {        
+>>>>>>> refs/remotes/origin/master
     }
 }

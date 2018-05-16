@@ -236,12 +236,15 @@ public interface Sql
      
      SqlDialect getSqlDialect();
      
+<<<<<<< HEAD
      /**
       * name of package that this SQL belongs
       * @return name of package
       */
      String getPackage();
      
+=======
+>>>>>>> refs/remotes/origin/master
      /*
       * Use validator (JSR 303) to perform validation against params
       * @param params parameters of query

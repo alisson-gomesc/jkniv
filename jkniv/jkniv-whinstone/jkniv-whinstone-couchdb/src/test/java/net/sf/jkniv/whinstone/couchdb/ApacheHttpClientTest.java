@@ -18,6 +18,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+<<<<<<< HEAD
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -70,6 +71,59 @@ public class ApacheHttpClientTest
             Content response = null;
             if (header == null)
                 response = Request.Get(uri).addHeader("Accept","application/json").execute().returnContent();
+=======
+import org.junit.Test;
+
+public class ApacheHttpClientTest
+{
+    
+    @Test
+    public void whenAuthRequestGetRecord()
+    {
+        RequestParams header = new RequestParams("AuthSession=YWRtaW46NUFCODQ5MkU6z0cUPq7oPfFz6zh3-ghAZJeDNEE","tecno3t-useraccess");
+        String uri = "http://127.0.0.1:5984/tecno3t-useraccess/1";
+        String answer = executeGet(uri, header);
+        System.out.println(answer);
+        assertThat(answer, not(is("Unauthorized")));
+    }
+
+    @Test
+    public void whenAuthRequestGetSecurity()
+    {
+        String uri = "http://admin:admin@127.0.0.1:5984/tecno3t-useraccess/_security";
+        String answer = executeGet(uri, null);
+        System.out.println(answer);
+        assertThat(answer, not(is("Unauthorized")));
+    }
+
+    @Test
+    public void whenAuthenticate()
+    {
+        String uri = "http://127.0.0.1:5984/_session";
+        String answer = authenticate(uri);
+        System.out.println(answer);
+        assertThat(answer, not(is("Unauthorized")));
+    }
+
+    @Test
+    public void whenAuthRequestAllDbs()
+    {
+        String uri = "http://admin:admiin@127.0.0.1:5984/_all_dbs";
+        String answer = executeGet(uri, null);
+        System.out.println(answer);
+        assertThat(answer, not(is("Unauthorized")));
+    }
+    
+    private String executeGet(String uri, RequestParams header)
+    {
+        String content = "";
+        
+        try
+        {
+            Content response = null;
+            if (header == null)
+            response = Request.Get(uri).addHeader("Accept","application/json").execute().returnContent();
+>>>>>>> refs/remotes/origin/master
             else
             {
                 response = Request.Get(uri)

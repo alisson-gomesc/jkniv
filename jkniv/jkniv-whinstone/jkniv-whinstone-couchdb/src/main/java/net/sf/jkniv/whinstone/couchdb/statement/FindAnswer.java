@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* 
  * JKNIV, whinstone one contract to access your database.
  * 
@@ -17,6 +18,9 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+=======
+
+>>>>>>> refs/remotes/origin/master
 package net.sf.jkniv.whinstone.couchdb.statement;
 
 import java.util.List;
