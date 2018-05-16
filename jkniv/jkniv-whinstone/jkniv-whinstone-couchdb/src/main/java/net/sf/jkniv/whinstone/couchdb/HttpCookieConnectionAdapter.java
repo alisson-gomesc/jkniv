@@ -24,6 +24,7 @@ import java.util.Map;
 
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.Sql;
+import net.sf.jkniv.whinstone.statement.StatementAdapter;
 import net.sf.jkniv.whinstone.couchdb.commands.AllDocsCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.CouchCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.DeleteCommand;
@@ -37,7 +38,6 @@ import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.couchdb.commands.AddCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.ViewCommand;
 import net.sf.jkniv.whinstone.couchdb.statement.CouchDbStatementAdapter;
-import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 public class HttpCookieConnectionAdapter implements ConnectionAdapter
 {

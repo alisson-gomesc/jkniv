@@ -228,5 +228,4 @@ public class DeleteCommand extends AbstractCommand implements CouchCommand
         this.method = HttpMethod.DELETE;
         return this.method;
     }
-
 }

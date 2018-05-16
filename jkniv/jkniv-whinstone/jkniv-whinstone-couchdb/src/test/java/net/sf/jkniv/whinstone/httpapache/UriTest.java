@@ -1,6 +1,6 @@
 package net.sf.jkniv.whinstone.httpapache;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.UnsupportedEncodingException;

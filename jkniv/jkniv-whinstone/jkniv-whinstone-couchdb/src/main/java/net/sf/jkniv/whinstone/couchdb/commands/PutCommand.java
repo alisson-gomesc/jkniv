@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
 
-public class PutCommand extends AbstractCommand implements CouchCommand
+public class PutCommand implements DbCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger(PutCommand.class);
     private HttpPut            put;
@@ -47,7 +47,6 @@ public class PutCommand extends AbstractCommand implements CouchCommand
 
     public PutCommand(HttpPut put, String body)
     {
-        super();
         this.body = body;
         this.put = put;
         try

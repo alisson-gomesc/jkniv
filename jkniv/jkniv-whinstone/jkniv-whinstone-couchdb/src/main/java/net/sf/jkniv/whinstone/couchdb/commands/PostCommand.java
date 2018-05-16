@@ -34,12 +34,11 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
 
-public class PostCommand extends AbstractCommand implements CouchCommand
+public class PostCommand implements DbCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger(PostCommand.class);
     private HttpPost            post;
     private String body;
-    
     
     public PostCommand(HttpPost post, String body)
     {
@@ -54,7 +53,6 @@ public class PostCommand extends AbstractCommand implements CouchCommand
         {
             throw new RepositoryException("Cannot build new URI ["+this.post.getURI()+"] encoding unsupported\n"+body);
         }
-        this.method = HttpMethod.POST;
     }
     
     @Override
@@ -129,12 +127,5 @@ public class PostCommand extends AbstractCommand implements CouchCommand
             }
         }
         return (T)json;
-    }
-
-    @Override
-    public HttpMethod asPost()
-    {
-        this.method = HttpMethod.POST;
-        return this.method;
     }
 }
