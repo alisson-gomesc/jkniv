@@ -28,10 +28,10 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
-import net.sf.jkniv.sqlegance.ConnectionAdapter;
 import net.sf.jkniv.sqlegance.Insertable;
-import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.whinstone.ConnectionAdapter;
+import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.jdbc.PreparedStatementStrategy;
 
 abstract class AbstractCommand implements DbCommand

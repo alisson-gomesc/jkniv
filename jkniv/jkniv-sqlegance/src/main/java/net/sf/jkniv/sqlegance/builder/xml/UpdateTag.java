@@ -23,8 +23,8 @@ import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.Updateable;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
-import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
+import net.sf.jkniv.sqlegance.transaction.Isolation;
 
 /**
  * Tag of update sentence.

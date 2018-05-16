@@ -14,10 +14,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import net.sf.jkniv.sqlegance.ConnectionAdapter;
 import net.sf.jkniv.sqlegance.ConstraintException;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
+import net.sf.jkniv.whinstone.ConnectionAdapter;
 
 public class HttpConnectionFactoryTest
 {

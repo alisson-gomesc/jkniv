@@ -24,6 +24,8 @@ import java.sql.Connection;
 import org.junit.Assert;
 import org.junit.Test;
 
+import net.sf.jkniv.sqlegance.transaction.Isolation;
+
 public class IsolationTest
 {
     

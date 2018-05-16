@@ -21,10 +21,10 @@ package net.sf.jkniv.whinstone.cassandra;
 
 import java.util.Properties;
 
-import net.sf.jkniv.sqlegance.Repository;
 import net.sf.jkniv.sqlegance.RepositoryType;
 import net.sf.jkniv.sqlegance.SqlContext;
-import net.sf.jkniv.sqlegance.spi.RepositoryFactory;
+import net.sf.jkniv.whinstone.Repository;
+import net.sf.jkniv.whinstone.spi.RepositoryFactory;
 
 public class RepositoryFactoryCassandra implements RepositoryFactory
 {

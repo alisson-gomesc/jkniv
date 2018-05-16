@@ -34,8 +34,8 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
-import net.sf.jkniv.sqlegance.QueryFactory;
-import net.sf.jkniv.sqlegance.Queryable;
+import net.sf.jkniv.whinstone.QueryFactory;
+import net.sf.jkniv.whinstone.Queryable;
 
 /**
  * 

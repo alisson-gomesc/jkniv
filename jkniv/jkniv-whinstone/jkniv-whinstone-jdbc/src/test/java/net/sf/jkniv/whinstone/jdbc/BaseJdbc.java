@@ -21,10 +21,10 @@ package net.sf.jkniv.whinstone.jdbc;
 
 import java.util.Properties;
 
-import net.sf.jkniv.sqlegance.QueryFactory;
-import net.sf.jkniv.sqlegance.Queryable;
-import net.sf.jkniv.sqlegance.Repository;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
+import net.sf.jkniv.whinstone.QueryFactory;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.dialect.Derby10o7Dialect;
 import net.sf.jkniv.whinstone.jdbc.test.BaseSpringJUnit4;
 

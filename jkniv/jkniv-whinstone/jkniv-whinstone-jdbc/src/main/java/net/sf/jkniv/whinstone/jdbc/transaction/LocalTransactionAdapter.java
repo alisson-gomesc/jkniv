@@ -19,10 +19,10 @@
  */
 package net.sf.jkniv.whinstone.jdbc.transaction;
 
-import net.sf.jkniv.sqlegance.ConnectionAdapter;
-import net.sf.jkniv.sqlegance.ConnectionFactory;
-import net.sf.jkniv.sqlegance.transaction.TransactionScope;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
+import net.sf.jkniv.whinstone.ConnectionAdapter;
+import net.sf.jkniv.whinstone.ConnectionFactory;
+import net.sf.jkniv.whinstone.transaction.TransactionScope;
 
 public class LocalTransactionAdapter extends AbstractTransaction
 {

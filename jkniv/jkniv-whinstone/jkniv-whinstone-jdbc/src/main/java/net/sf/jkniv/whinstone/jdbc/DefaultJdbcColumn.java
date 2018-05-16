@@ -25,9 +25,9 @@ import java.sql.Types;
 import java.util.Date;
 import java.util.Locale;
 
-import net.sf.jkniv.sqlegance.JdbcColumn;
-import net.sf.jkniv.sqlegance.JdbcColumnMapper;
-import net.sf.jkniv.sqlegance.UnderscoreToCamelCaseMapper;
+import net.sf.jkniv.whinstone.JdbcColumn;
+import net.sf.jkniv.whinstone.JdbcColumnMapper;
+import net.sf.jkniv.whinstone.UnderscoreToCamelCaseMapper;
 
 public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
 {

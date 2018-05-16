@@ -19,14 +19,11 @@
  */
 package net.sf.jkniv.sqlegance.validation;
 
-import net.sf.jkniv.sqlegance.Repository;
 
 /**
  * Bean validation apply for {@code Repository.get} operations when configured.
  * 
  * @author Alisson Gomes
- * @see Repository#get(net.sf.jkniv.sqlegance.Queryable)
- * @see Repository#get(Object)
  * @since 0.6.0
  */
 public interface GetValidate

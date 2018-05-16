@@ -19,8 +19,6 @@
  */
 package net.sf.jkniv.sqlegance.builder;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
@@ -34,7 +32,6 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
-import net.sf.jkniv.sqlegance.ConnectionFactory;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.RepositoryType;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
@@ -239,26 +236,32 @@ public class RepositoryConfig
     {
         return getProperty(RepositoryProperty.QUERY_NAME_STRATEGY);
     }
-    
-    public ConnectionFactory getJdbcAdapterFactory(Class<? extends ConnectionFactory> defaultClass, Object[] args,
-            Class<?>[] types)
+
+    public String getJdbcAdapterFactory()
     {
         String adpterClassName = getProperty(RepositoryProperty.JDBC_ADAPTER_FACTORY);
-        ObjectProxy<? extends ConnectionFactory> factory = null;
-        
-        if (adpterClassName == null)
-            factory = ObjectProxyFactory.newProxy(defaultClass);
-        else
-            factory = ObjectProxyFactory.newProxy(adpterClassName);
-        
-        if (args != null)
-        {
-            factory.setConstructorArgs(args);
-            if (types != null)
-                factory.setConstructorTypes(types);
-        }
-        return factory.newInstance();
+        return adpterClassName;
     }
+
+//    public ConnectionFactory getJdbcAdapterFactory(Class<? extends ConnectionFactory> defaultClass, Object[] args,
+//            Class<?>[] types)
+//    {
+//        String adpterClassName = getProperty(RepositoryProperty.JDBC_ADAPTER_FACTORY);
+//        ObjectProxy<? extends ConnectionFactory> factory = null;
+//        
+//        if (adpterClassName == null)
+//            factory = ObjectProxyFactory.newProxy(defaultClass);
+//        else
+//            factory = ObjectProxyFactory.newProxy(adpterClassName);
+//        
+//        if (args != null)
+//        {
+//            factory.setConstructorArgs(args);
+//            if (types != null)
+//                factory.setConstructorTypes(types);
+//        }
+//        return factory.newInstance();
+//    }
     
     public String getSqlDialect()
     {

@@ -12,17 +12,17 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
-import net.sf.jkniv.sqlegance.Command;
-import net.sf.jkniv.sqlegance.ConnectionAdapter;
 import net.sf.jkniv.sqlegance.Insertable;
-import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
 import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
 import net.sf.jkniv.sqlegance.statement.ResultSetType;
-import net.sf.jkniv.sqlegance.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.Command;
+import net.sf.jkniv.whinstone.ConnectionAdapter;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 public class JdbcConnectionAdapter implements ConnectionAdapter
 {

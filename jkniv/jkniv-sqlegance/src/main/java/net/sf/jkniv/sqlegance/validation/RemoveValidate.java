@@ -19,14 +19,10 @@
  */
 package net.sf.jkniv.sqlegance.validation;
 
-import net.sf.jkniv.sqlegance.Repository;
-
 /**
  * Bean validation apply for {@code Repository.remove} operations when configured.
  * 
  * @author Alisson Gomes
- * @see Repository#remove(net.sf.jkniv.sqlegance.Queryable)
- * @see Repository#remove(Object)
  * @since 0.6.0
  */
 public interface RemoveValidate

@@ -32,9 +32,9 @@ import org.slf4j.LoggerFactory;
 import net.sf.jkniv.sqlegance.IQuery;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.LanguageType;
-import net.sf.jkniv.sqlegance.Queryable;
-import net.sf.jkniv.sqlegance.params.ParameterNotFoundException;
 import net.sf.jkniv.sqlegance.parser.ParameterParser;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 
 class QueryBuilder
 {

@@ -21,7 +21,7 @@ package net.sf.jkniv.whinstone.jdbc.experimental.commands;
 
 import java.sql.Connection;
 
-import net.sf.jkniv.sqlegance.Queryable;
+import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.jdbc.PreparedStatementStrategy;
 
 class StoredCommand extends AbstractCommand

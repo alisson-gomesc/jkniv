@@ -20,19 +20,19 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.experimental.converters.SqlDateConverter;
-import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.KeyGeneratorType;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.ResultRow;
-import net.sf.jkniv.sqlegance.ResultSetParser;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.params.ParamParser;
-import net.sf.jkniv.sqlegance.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.JdbcColumn;
+import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.ResultSetParser;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 import net.sf.jkniv.whinstone.couchdb.result.PojoResultRow;
 import net.sf.jkniv.whinstone.couchdb.result.ScalarResultRow;
 import net.sf.jkniv.whinstone.couchdb.result.StringResultRow;
+import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
  * 

@@ -24,9 +24,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import net.sf.jkniv.sqlegance.ConnectionAdapter;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
+import net.sf.jkniv.whinstone.ConnectionAdapter;
 
 public class DriverManagerAdapter extends AbstractJdbcAdapter
 {

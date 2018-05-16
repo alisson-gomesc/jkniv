@@ -23,8 +23,8 @@ import java.sql.Connection;
 
 import javax.sql.DataSource;
 
-import net.sf.jkniv.sqlegance.ConnectionAdapter;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
+import net.sf.jkniv.whinstone.ConnectionAdapter;
 
 public class DataSourceAdapter extends AbstractJdbcAdapter
 {

@@ -31,8 +31,8 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import net.sf.jkniv.sqlegance.Queryable;
-import net.sf.jkniv.sqlegance.Repository;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.Repository;
 
 public class CouchDbRepositoryAllDocsTest extends BaseJdbc
 {

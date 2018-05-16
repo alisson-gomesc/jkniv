@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import antlr.MakeGrammar;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.logger.LogLevel;
-import net.sf.jkniv.sqlegance.params.StatementAdapterOld;
+import net.sf.jkniv.whinstone.params.StatementAdapterOld;
 
 public class JpaStatementAdapter implements StatementAdapterOld
 {

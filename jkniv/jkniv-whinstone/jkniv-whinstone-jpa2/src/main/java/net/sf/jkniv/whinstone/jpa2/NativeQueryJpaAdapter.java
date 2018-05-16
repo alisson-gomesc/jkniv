@@ -6,7 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import net.sf.jkniv.sqlegance.Sql;
-import net.sf.jkniv.sqlegance.Queryable;
+import net.sf.jkniv.whinstone.Queryable;
 
 public class NativeQueryJpaAdapter extends AbstractQueryJpaAdapter
 {

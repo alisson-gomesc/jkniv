@@ -34,8 +34,8 @@ import java.util.TreeMap;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.sf.jkniv.sqlegance.Queryable;
-import net.sf.jkniv.sqlegance.Repository;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
 

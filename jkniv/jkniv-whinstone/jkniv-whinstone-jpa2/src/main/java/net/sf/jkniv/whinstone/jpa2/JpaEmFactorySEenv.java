@@ -8,9 +8,9 @@ import javax.persistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.jkniv.sqlegance.transaction.Transactional;
 import net.sf.jkniv.whinstone.jpa2.transaction.EmptyTransactionAdapter;
 import net.sf.jkniv.whinstone.jpa2.transaction.JpaTransactionAdapter;
+import net.sf.jkniv.whinstone.transaction.Transactional;
 
 class JpaEmFactorySEenv implements JpaEmFactory
 {

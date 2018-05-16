@@ -26,11 +26,11 @@ import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 
 import org.junit.Test;
 
-import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
+import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.jdbc.dialect.DB2EnableORADialect;
 import net.sf.jkniv.whinstone.jdbc.dialect.OracleDialect;
 import net.sf.jkniv.whinstone.jdbc.dialect.SqlDialectAbstractTest;

@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import net.sf.jkniv.sqlegance.Queryable;
+import net.sf.jkniv.whinstone.Queryable;
 
 /**
  * Adapter for different Queries from JPA, like: {@code Query}, {@code NativeQuery}, {@code NamedQuery}, {@code TypedQuery}.

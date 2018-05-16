@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 
-import net.sf.jkniv.sqlegance.ResultRow;
-import net.sf.jkniv.sqlegance.ResultSetParser;
-import net.sf.jkniv.sqlegance.classification.Groupable;
+import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.ResultSetParser;
+import net.sf.jkniv.whinstone.classification.Groupable;
 
 /**
  * 

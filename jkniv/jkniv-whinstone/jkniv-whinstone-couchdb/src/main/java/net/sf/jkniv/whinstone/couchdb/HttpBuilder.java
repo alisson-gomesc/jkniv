@@ -30,10 +30,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 
-import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.params.ParameterNotFoundException;
+import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.couchdb.statement.QueryParam;
+import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 
 public class HttpBuilder
 {

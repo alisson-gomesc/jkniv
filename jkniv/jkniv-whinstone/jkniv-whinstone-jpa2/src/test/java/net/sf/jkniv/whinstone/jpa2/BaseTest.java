@@ -29,9 +29,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import net.sf.jkniv.sqlegance.Repository;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
+import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jpa2.test.infra.JndiJpaCreator;
 
 @RunWith(SpringJUnit4ClassRunner.class)

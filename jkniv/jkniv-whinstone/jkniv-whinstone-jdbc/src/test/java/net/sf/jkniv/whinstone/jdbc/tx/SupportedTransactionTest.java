@@ -26,11 +26,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Test;
 
-import net.sf.jkniv.sqlegance.Repository;
-import net.sf.jkniv.sqlegance.RepositoryService;
 import net.sf.jkniv.sqlegance.RepositoryType;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
+import net.sf.jkniv.whinstone.Repository;
+import net.sf.jkniv.whinstone.RepositoryService;
 import net.sf.jkniv.whinstone.jdbc.UnsupportedTransactionException;
 
 public class SupportedTransactionTest

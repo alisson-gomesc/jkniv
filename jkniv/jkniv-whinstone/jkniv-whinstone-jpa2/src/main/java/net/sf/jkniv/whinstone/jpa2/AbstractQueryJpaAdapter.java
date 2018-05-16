@@ -17,14 +17,14 @@ import net.sf.jkniv.reflect.Numerical;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.LanguageType;
-import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlType;
-import net.sf.jkniv.sqlegance.classification.Groupable;
-import net.sf.jkniv.sqlegance.classification.GroupingBy;
-import net.sf.jkniv.sqlegance.classification.Transformable.TransformableType;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.classification.Groupable;
+import net.sf.jkniv.whinstone.classification.GroupingBy;
+import net.sf.jkniv.whinstone.classification.Transformable.TransformableType;
 
 public abstract class AbstractQueryJpaAdapter implements QueryableJpaAdapter
 {

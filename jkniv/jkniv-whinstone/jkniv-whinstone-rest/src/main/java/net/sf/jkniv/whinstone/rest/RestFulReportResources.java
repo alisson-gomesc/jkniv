@@ -30,7 +30,7 @@ import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
-import net.sf.jkniv.sqlegance.Queryable;
+import net.sf.jkniv.whinstone.Queryable;
 
 /**
  * 

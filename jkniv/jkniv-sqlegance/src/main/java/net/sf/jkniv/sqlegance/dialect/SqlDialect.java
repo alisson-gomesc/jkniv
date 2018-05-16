@@ -19,8 +19,6 @@
  */
 package net.sf.jkniv.sqlegance.dialect;
 
-import net.sf.jkniv.sqlegance.Repository;
-
 /**
  * Represents a SQL syntax from a specific database.
  * 
@@ -28,7 +26,7 @@ import net.sf.jkniv.sqlegance.Repository;
  * of rows returned and SQL to count of total records.
  * 
  * <p><b>Note:</b> The implementation MUST BE state-less and thread-safe because one instance parse all queries from one
- * {@link Repository}.
+ * {@code Repository}.
  * 
  * @author Alisson Gomes 
  */

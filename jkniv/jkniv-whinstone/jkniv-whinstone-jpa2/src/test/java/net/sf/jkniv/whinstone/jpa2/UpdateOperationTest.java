@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.acme.domain.orm.Book;
 
-import net.sf.jkniv.sqlegance.Repository;
+import net.sf.jkniv.whinstone.Repository;
 
 public class UpdateOperationTest extends BaseTest
 {

@@ -32,9 +32,9 @@ import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jkniv.sqlegance.ConstraintException;
-import net.sf.jkniv.sqlegance.QueryFactory;
-import net.sf.jkniv.sqlegance.Queryable;
-import net.sf.jkniv.sqlegance.Repository;
+import net.sf.jkniv.whinstone.QueryFactory;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.BaseJdbc;
 import net.sf.jkniv.whinstone.jdbc.acme.domain.Author;
 

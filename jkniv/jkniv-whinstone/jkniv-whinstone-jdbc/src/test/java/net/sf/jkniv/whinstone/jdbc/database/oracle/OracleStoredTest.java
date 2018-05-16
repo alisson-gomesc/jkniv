@@ -4,9 +4,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.sf.jkniv.sqlegance.QueryFactory;
-import net.sf.jkniv.sqlegance.Queryable;
-import net.sf.jkniv.sqlegance.Repository;
+import net.sf.jkniv.whinstone.QueryFactory;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.BaseJdbc;
 
 public class OracleStoredTest extends BaseJdbc

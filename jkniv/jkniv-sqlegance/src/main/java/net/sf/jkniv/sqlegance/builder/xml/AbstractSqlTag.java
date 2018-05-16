@@ -42,7 +42,6 @@ import net.sf.jkniv.sqlegance.ConstraintException;
 import net.sf.jkniv.sqlegance.Deletable;
 import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.LanguageType;
-import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Storable;
 import net.sf.jkniv.sqlegance.Updateable;
@@ -50,16 +49,17 @@ import net.sf.jkniv.sqlegance.builder.xml.dynamic.ITextTag;
 import net.sf.jkniv.sqlegance.builder.xml.dynamic.StaticText;
 import net.sf.jkniv.sqlegance.builder.xml.dynamic.WhereTag;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
+import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
+import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
+import net.sf.jkniv.sqlegance.statement.ResultSetType;
+import net.sf.jkniv.sqlegance.validation.ValidateType;
 import net.sf.jkniv.sqlegance.params.ParamParser;
+//import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.sqlegance.params.ParamParserColonMark;
 import net.sf.jkniv.sqlegance.params.ParamParserHashMark;
 import net.sf.jkniv.sqlegance.params.ParamParserNoMark;
 import net.sf.jkniv.sqlegance.params.ParamParserQuestionMark;
-import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
-import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
-import net.sf.jkniv.sqlegance.statement.ResultSetType;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
-import net.sf.jkniv.sqlegance.validation.ValidateType;
 
 /**
  * Generic tag to support the common functions from other tags.
@@ -118,7 +118,7 @@ public abstract class AbstractSqlTag implements SqlTag
     private String               paket;
     //private long                 timeToLive;
     
-    private ResultRow<?, ?> parserRow;
+    //private ResultRow<?, ?> parserRow;
     private SqlDialect sqlDialect;
     
     /**
@@ -503,6 +503,7 @@ public abstract class AbstractSqlTag implements SqlTag
         return this.returnTypeClass;
     }
     
+    /*
     public ResultRow<?, ?> getParserRow()
     {
         return parserRow;
@@ -512,6 +513,7 @@ public abstract class AbstractSqlTag implements SqlTag
     {
         this.parserRow = parserRow;
     }
+    */
     
     
     @Override

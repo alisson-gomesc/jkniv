@@ -26,11 +26,11 @@ import java.util.Map;
 
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
-import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.ResultRow;
-import net.sf.jkniv.sqlegance.classification.MapTransform;
-import net.sf.jkniv.sqlegance.classification.Transformable;
+import net.sf.jkniv.whinstone.JdbcColumn;
+import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.classification.MapTransform;
+import net.sf.jkniv.whinstone.classification.Transformable;
 
 /**
  * 

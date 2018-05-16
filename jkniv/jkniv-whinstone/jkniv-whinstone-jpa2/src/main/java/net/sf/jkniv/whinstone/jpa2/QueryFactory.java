@@ -29,14 +29,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.sqlegance.Sql;
-import net.sf.jkniv.sqlegance.LanguageType;
-import net.sf.jkniv.sqlegance.Queryable;
-import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.params.ParamParser;
-import net.sf.jkniv.sqlegance.params.PrepareParamsFactory;
-import net.sf.jkniv.sqlegance.params.AutoBindParams;
-import net.sf.jkniv.sqlegance.params.StatementAdapterOld;
+import net.sf.jkniv.sqlegance.LanguageType;
+import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.jpa2.params.JpaStatementAdapter;
+import net.sf.jkniv.whinstone.params.AutoBindParams;
+import net.sf.jkniv.whinstone.params.PrepareParamsFactory;
+import net.sf.jkniv.whinstone.params.StatementAdapterOld;
 
 class QueryFactory
 {

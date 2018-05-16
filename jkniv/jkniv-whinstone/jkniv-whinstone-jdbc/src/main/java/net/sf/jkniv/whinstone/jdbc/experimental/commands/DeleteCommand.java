@@ -21,10 +21,10 @@ package net.sf.jkniv.whinstone.jdbc.experimental.commands;
 
 import java.sql.ResultSet;
 
-import net.sf.jkniv.sqlegance.ConnectionAdapter;
-import net.sf.jkniv.sqlegance.Queryable;
-import net.sf.jkniv.sqlegance.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.ConnectionAdapter;
+import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.jdbc.PreparedStatementStrategy;
+import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 class DeleteCommand extends AbstractCommand
 {

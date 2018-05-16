@@ -22,9 +22,9 @@ package net.sf.jkniv.whinstone.jpa2.transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.jkniv.sqlegance.transaction.TransactionStatus;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
-import net.sf.jkniv.sqlegance.transaction.Transactional;
+import net.sf.jkniv.whinstone.transaction.TransactionStatus;
+import net.sf.jkniv.whinstone.transaction.Transactional;
 
 public class EmptyTransactionAdapter implements Transactional
 {

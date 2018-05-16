@@ -11,10 +11,10 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import net.sf.jkniv.sqlegance.Repository;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
-import net.sf.jkniv.sqlegance.RepositoryService;
 import net.sf.jkniv.sqlegance.RepositoryType;
+import net.sf.jkniv.whinstone.Repository;
+import net.sf.jkniv.whinstone.RepositoryService;
 
 public class CassandraClusterTest extends BaseJdbc
 {

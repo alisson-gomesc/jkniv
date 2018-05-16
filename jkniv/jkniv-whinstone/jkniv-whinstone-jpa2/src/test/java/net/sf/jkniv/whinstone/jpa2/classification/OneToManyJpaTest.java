@@ -29,8 +29,8 @@ import org.junit.Test;
 
 import com.acme.domain.noorm.Author;
 
-import net.sf.jkniv.sqlegance.QueryFactory;
-import net.sf.jkniv.sqlegance.Queryable;
+import net.sf.jkniv.whinstone.QueryFactory;
+import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.jpa2.BaseTest;
 
 public class OneToManyJpaTest extends BaseTest

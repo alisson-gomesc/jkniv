@@ -29,7 +29,7 @@ import net.sf.jkniv.sqlegance.transaction.Isolation;
  * 
  * @author Alisson Gomes
  * @since 0.0.28
- * @deprecated use {@link QueryFactory}, DON'T use this class WILL BE REMOVED at 1.0.0 version
+ * @deprecated use {@code QueryFactory}, DON'T use this class WILL BE REMOVED at 1.0.0 version
  */
 public class Query implements IQuery
 {

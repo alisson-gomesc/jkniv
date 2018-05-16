@@ -30,8 +30,8 @@ import java.util.Map;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import net.sf.jkniv.sqlegance.QueryFactory;
-import net.sf.jkniv.sqlegance.Repository;
+import net.sf.jkniv.whinstone.QueryFactory;
+import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jpa2.BaseTest;
 
 public class SelectWithMapTest extends BaseTest

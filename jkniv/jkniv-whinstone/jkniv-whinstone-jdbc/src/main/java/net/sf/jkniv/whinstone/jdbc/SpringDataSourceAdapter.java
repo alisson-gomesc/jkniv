@@ -27,9 +27,9 @@ import javax.sql.DataSource;
 
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
-import net.sf.jkniv.sqlegance.ConnectionAdapter;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
+import net.sf.jkniv.whinstone.ConnectionAdapter;
 
 @SuppressWarnings("unchecked")
 public class SpringDataSourceAdapter extends AbstractJdbcAdapter

@@ -38,16 +38,10 @@ import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
-import net.sf.jkniv.sqlegance.ConnectionAdapter;
-import net.sf.jkniv.sqlegance.ConnectionFactory;
 import net.sf.jkniv.sqlegance.NonUniqueResultException;
-import net.sf.jkniv.sqlegance.QueryFactory;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
-import net.sf.jkniv.sqlegance.Queryable;
-import net.sf.jkniv.sqlegance.Repository;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
-import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
@@ -55,8 +49,14 @@ import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
-import net.sf.jkniv.sqlegance.transaction.Transactional;
+import net.sf.jkniv.whinstone.ConnectionAdapter;
+import net.sf.jkniv.whinstone.ConnectionFactory;
+import net.sf.jkniv.whinstone.QueryFactory;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.Repository;
+import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.jdbc.transaction.Work;
+import net.sf.jkniv.whinstone.transaction.Transactional;
 
 /**
  * Repository pattern implementation for JDBC API.
@@ -186,7 +186,7 @@ class RepositoryJdbc implements Repository
             args = new Object[]{repositoryConfig.getProperties(), repositoryConfig.getName()};
             types = new Class<?>[] {Properties.class, String.class};            
         }
-        this.connectionFactory = repositoryConfig.getJdbcAdapterFactory(adapterClassFactory, args, types);
+        this.connectionFactory = getJdbcAdapterFactory(classNameJdbcAdapter, adapterClassFactory, args, types);
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
         defineQueryNameStrategy();
@@ -741,4 +741,27 @@ class RepositoryJdbc implements Repository
         return stmtStrategy;
     }
     */
+    
+    private ConnectionFactory getJdbcAdapterFactory(
+            String adpterClassName,
+            Class<? extends ConnectionFactory> defaultClass, 
+            Object[] args,
+            Class<?>[] types)
+    {
+        ObjectProxy<? extends ConnectionFactory> factory = null;
+        
+        if (adpterClassName == null)
+            factory = ObjectProxyFactory.newProxy(defaultClass);
+        else
+            factory = ObjectProxyFactory.newProxy(adpterClassName);
+        
+        if (args != null)
+        {
+            factory.setConstructorArgs(args);
+            if (types != null)
+                factory.setConstructorTypes(types);
+        }
+        return factory.newInstance();
+    }
+    
 }

@@ -33,17 +33,16 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.QueryNotFoundException;
+import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.xml.AbstractSqlTag;
 import net.sf.jkniv.sqlegance.builder.xml.IncludeTag;
 import net.sf.jkniv.sqlegance.builder.xml.SelectColumnsTag;
-import net.sf.jkniv.sqlegance.builder.xml.SqlCommandType;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 
 /**
@@ -92,15 +91,15 @@ class ClassPathSqlContext implements SqlContext
         this.defineDialect();
         this.shortnameEnable = repositoryConfig.isShotKeyEnable();// FIXME implements DotQueryNameStrategy cannot use shortkeyenable
                                                                   // TODO test me ShortKeyEnable with DotQueryNameStrategy
-        
         build(xmlStatementMain, resourceName);
         
-        if (isEmpty(defaultContextName))
+      if (isEmpty(defaultContextName))
             this.contextName = repositoryConfig.getName();
         else
             this.contextName = defaultContextName;
         
-        if (this.repositoryConfig.isReloadableXmlEnable())
+        
+      if (this.repositoryConfig.isReloadableXmlEnable())
         {
             ReloadableXmlResource reloadable = new ReloadableXmlResource();
             reloadable.pooling(this);
@@ -109,8 +108,8 @@ class ClassPathSqlContext implements SqlContext
         LOG.info("{} SQL was loaded at {} ms", statements.size(), (System.currentTimeMillis() - initial));
     }
     
-    private void defineDialect()
-    {
+  private void defineDialect()
+  {
         String sqlDialectName = repositoryConfig.getSqlDialect();
         ObjectProxy<SqlDialect> proxy = ObjectProxyFactory.newProxy(sqlDialectName);
         sqlDialect = proxy.newInstance();

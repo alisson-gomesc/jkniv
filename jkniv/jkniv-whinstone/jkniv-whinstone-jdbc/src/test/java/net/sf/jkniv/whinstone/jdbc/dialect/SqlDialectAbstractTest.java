@@ -22,12 +22,12 @@ package net.sf.jkniv.whinstone.jdbc.dialect;
 import java.util.Collections;
 
 import net.sf.jkniv.sqlegance.LanguageType;
-import net.sf.jkniv.sqlegance.QueryFactory;
-import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.xml.SqlTag;
 import net.sf.jkniv.sqlegance.builder.xml.TagFactory;
+import net.sf.jkniv.whinstone.QueryFactory;
+import net.sf.jkniv.whinstone.Queryable;
 
 public abstract class SqlDialectAbstractTest
 {

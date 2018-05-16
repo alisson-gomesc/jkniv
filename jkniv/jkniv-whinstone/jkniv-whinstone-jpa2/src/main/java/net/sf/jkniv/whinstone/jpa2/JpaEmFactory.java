@@ -2,7 +2,7 @@ package net.sf.jkniv.whinstone.jpa2;
 
 import javax.persistence.EntityManager;
 
-import net.sf.jkniv.sqlegance.transaction.Transactional;
+import net.sf.jkniv.whinstone.transaction.Transactional;
 
 public interface JpaEmFactory
 {

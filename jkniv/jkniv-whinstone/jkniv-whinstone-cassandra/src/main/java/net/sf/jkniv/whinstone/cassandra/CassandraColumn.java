@@ -27,9 +27,9 @@ import java.util.Locale;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Row;
 
-import net.sf.jkniv.sqlegance.JdbcColumn;
-import net.sf.jkniv.sqlegance.JdbcColumnMapper;
-import net.sf.jkniv.sqlegance.UnderscoreToCamelCaseMapper;
+import net.sf.jkniv.whinstone.JdbcColumn;
+import net.sf.jkniv.whinstone.JdbcColumnMapper;
+import net.sf.jkniv.whinstone.UnderscoreToCamelCaseMapper;
 
 public class CassandraColumn implements JdbcColumn<Row>
 {

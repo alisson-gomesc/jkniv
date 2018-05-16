@@ -22,10 +22,10 @@ package net.sf.jkniv.whinstone.jdbc.transaction;
 import java.sql.ResultSet;
 import java.util.List;
 
-import net.sf.jkniv.sqlegance.Queryable;
-import net.sf.jkniv.sqlegance.ResultRow;
-import net.sf.jkniv.sqlegance.transaction.TransactionStatus;
-import net.sf.jkniv.sqlegance.transaction.Transactional;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.transaction.TransactionStatus;
+import net.sf.jkniv.whinstone.transaction.Transactional;
 
 public interface Work
 {

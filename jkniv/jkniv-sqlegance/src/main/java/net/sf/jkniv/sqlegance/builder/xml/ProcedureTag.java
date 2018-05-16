@@ -22,8 +22,8 @@ package net.sf.jkniv.sqlegance.builder.xml;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.Storable;
-import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
+import net.sf.jkniv.sqlegance.transaction.Isolation;
 
 /**
  * Tag of procedure sentence. <b>Stored procedures don't work yet!</b>

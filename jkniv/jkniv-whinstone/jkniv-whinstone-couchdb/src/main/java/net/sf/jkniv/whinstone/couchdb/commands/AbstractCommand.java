@@ -39,9 +39,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import net.sf.jkniv.exception.HandlerException;
-import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.params.ParameterNotFoundException;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 
 public abstract class AbstractCommand implements CouchCommand
 {

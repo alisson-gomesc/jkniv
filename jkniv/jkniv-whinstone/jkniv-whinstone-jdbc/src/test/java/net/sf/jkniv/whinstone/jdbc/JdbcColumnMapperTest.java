@@ -24,7 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Test;
 
-import net.sf.jkniv.sqlegance.UnderscoreToCamelCaseMapper;
+import net.sf.jkniv.whinstone.UnderscoreToCamelCaseMapper;
 
 
 public class JdbcColumnMapperTest

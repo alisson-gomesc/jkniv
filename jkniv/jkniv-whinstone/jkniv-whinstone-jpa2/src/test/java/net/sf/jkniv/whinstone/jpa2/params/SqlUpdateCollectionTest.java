@@ -35,9 +35,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.acme.domain.orm.Book;
 
-import net.sf.jkniv.sqlegance.QueryFactory;
-import net.sf.jkniv.sqlegance.Queryable;
-import net.sf.jkniv.sqlegance.Repository;
+import net.sf.jkniv.whinstone.QueryFactory;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jpa2.BaseTest;
 
 public class SqlUpdateCollectionTest extends BaseTest

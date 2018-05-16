@@ -33,8 +33,8 @@ import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
 import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
 import net.sf.jkniv.sqlegance.statement.ResultSetType;
-import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
+import net.sf.jkniv.sqlegance.transaction.Isolation;
 
 /**
  * Tag of select sentence.

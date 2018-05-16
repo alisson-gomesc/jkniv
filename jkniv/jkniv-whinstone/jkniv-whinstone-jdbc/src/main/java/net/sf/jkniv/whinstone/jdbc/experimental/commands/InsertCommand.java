@@ -22,9 +22,9 @@ package net.sf.jkniv.whinstone.jdbc.experimental.commands;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import net.sf.jkniv.sqlegance.ConnectionAdapter;
 import net.sf.jkniv.sqlegance.KeyGeneratorType;
-import net.sf.jkniv.sqlegance.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.ConnectionAdapter;
+import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
  * 

@@ -11,16 +11,16 @@ import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.NonUniqueResultException;
-import net.sf.jkniv.sqlegance.QueryFactory;
-import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.Sql;
-import net.sf.jkniv.sqlegance.params.AutoBindParams;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.params.ParamParser;
 import net.sf.jkniv.sqlegance.params.ParamParserQuestionMark;
-import net.sf.jkniv.sqlegance.params.PrepareParamsFactory;
-import net.sf.jkniv.sqlegance.params.StatementAdapterOld;
+import net.sf.jkniv.whinstone.QueryFactory;
+import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.jpa2.params.JpaStatementAdapter;
+import net.sf.jkniv.whinstone.params.AutoBindParams;
+import net.sf.jkniv.whinstone.params.PrepareParamsFactory;
+import net.sf.jkniv.whinstone.params.StatementAdapterOld;
 
 @SuppressWarnings("unchecked")
 public class QueryJpaAdapter extends AbstractQueryJpaAdapter

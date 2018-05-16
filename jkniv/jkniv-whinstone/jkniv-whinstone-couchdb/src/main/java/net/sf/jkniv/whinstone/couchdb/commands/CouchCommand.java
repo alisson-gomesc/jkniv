@@ -19,7 +19,7 @@
  */
 package net.sf.jkniv.whinstone.couchdb.commands;
 
-import net.sf.jkniv.sqlegance.Command;
+import net.sf.jkniv.whinstone.Command;
 
 /**
  * 

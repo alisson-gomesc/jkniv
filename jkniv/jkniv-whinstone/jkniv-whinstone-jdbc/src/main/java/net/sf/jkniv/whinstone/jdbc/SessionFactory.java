@@ -25,8 +25,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.jkniv.sqlegance.ConnectionFactory;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
+import net.sf.jkniv.whinstone.ConnectionFactory;
 import net.sf.jkniv.whinstone.jdbc.transaction.UnitOfWork;
 import net.sf.jkniv.whinstone.jdbc.transaction.Work;
 

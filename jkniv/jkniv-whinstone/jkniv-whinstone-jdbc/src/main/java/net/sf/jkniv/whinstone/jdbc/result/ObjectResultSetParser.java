@@ -26,9 +26,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.jkniv.sqlegance.ResultRow;
-import net.sf.jkniv.sqlegance.ResultSetParser;
-import net.sf.jkniv.sqlegance.classification.Groupable;
+import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.ResultSetParser;
+import net.sf.jkniv.whinstone.classification.Groupable;
 
 /**
  * 

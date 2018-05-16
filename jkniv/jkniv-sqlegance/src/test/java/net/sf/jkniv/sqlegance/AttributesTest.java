@@ -25,10 +25,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.Test;
 
 import net.sf.jkniv.sqlegance.builder.XmlBuilderSql;
-import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
 import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
 import net.sf.jkniv.sqlegance.statement.ResultSetType;
+import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 
 public class AttributesTest

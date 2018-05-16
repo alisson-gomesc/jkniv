@@ -22,12 +22,12 @@ package net.sf.jkniv.sqlegance;
 import java.util.Date;
 
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
-import net.sf.jkniv.sqlegance.params.ParamParser;
 import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
 import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
 import net.sf.jkniv.sqlegance.statement.ResultSetType;
-import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
+import net.sf.jkniv.sqlegance.params.ParamParser;
+import net.sf.jkniv.sqlegance.transaction.Isolation;
 
 /**
  * This interface represent Structured Query Language (SQL and some derivations like JPQL, HQL, JPQL, CQL...) 

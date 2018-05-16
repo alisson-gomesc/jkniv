@@ -22,22 +22,22 @@ package net.sf.jkniv.whinstone.couchdb;
 import java.sql.SQLException;
 import java.util.Map;
 
-import net.sf.jkniv.sqlegance.Command;
-import net.sf.jkniv.sqlegance.ConnectionAdapter;
 import net.sf.jkniv.sqlegance.LanguageType;
-import net.sf.jkniv.sqlegance.Queryable;
-import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.Sql;
-import net.sf.jkniv.sqlegance.statement.StatementAdapter;
 import net.sf.jkniv.whinstone.couchdb.commands.AllDocsCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.CouchCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.DeleteCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.FindCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.GetCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.UpdateCommand;
+import net.sf.jkniv.whinstone.Command;
+import net.sf.jkniv.whinstone.ConnectionAdapter;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.couchdb.commands.AddCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.ViewCommand;
 import net.sf.jkniv.whinstone.couchdb.statement.CouchDbStatementAdapter;
+import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 public class HttpCookieConnectionAdapter implements ConnectionAdapter
 {

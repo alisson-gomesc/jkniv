@@ -33,21 +33,16 @@ import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.BasicType;
-import net.sf.jkniv.sqlegance.ConnectionAdapter;
-import net.sf.jkniv.sqlegance.ConnectionFactory;
-import net.sf.jkniv.sqlegance.JdbcColumn;
-import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.ResultRow;
 import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
-import net.sf.jkniv.sqlegance.statement.StatementAdapter;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
-import net.sf.jkniv.sqlegance.transaction.TransactionContext;
-import net.sf.jkniv.sqlegance.transaction.TransactionSessions;
-import net.sf.jkniv.sqlegance.transaction.TransactionStatus;
-import net.sf.jkniv.sqlegance.transaction.Transactional;
+import net.sf.jkniv.whinstone.ConnectionAdapter;
+import net.sf.jkniv.whinstone.ConnectionFactory;
+import net.sf.jkniv.whinstone.JdbcColumn;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.jdbc.DefaultPreparedStatementStrategy;
 import net.sf.jkniv.whinstone.jdbc.PreparedStatementStrategy;
 import net.sf.jkniv.whinstone.jdbc.experimental.commands.DbCommand;
@@ -58,6 +53,11 @@ import net.sf.jkniv.whinstone.jdbc.result.NumberResultRow;
 import net.sf.jkniv.whinstone.jdbc.result.PojoResultRow;
 import net.sf.jkniv.whinstone.jdbc.result.ScalarResultRow;
 import net.sf.jkniv.whinstone.jdbc.result.StringResultRow;
+import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.transaction.TransactionContext;
+import net.sf.jkniv.whinstone.transaction.TransactionSessions;
+import net.sf.jkniv.whinstone.transaction.TransactionStatus;
+import net.sf.jkniv.whinstone.transaction.Transactional;
 
 public class UnitOfWork implements Work
 {

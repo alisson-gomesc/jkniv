@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.sqlegance.QueryNotFoundException;
-import net.sf.jkniv.sqlegance.Queryable;
+import net.sf.jkniv.whinstone.Queryable;
 
 public class NamedQueryJpaAdapter extends AbstractQueryJpaAdapter
 {

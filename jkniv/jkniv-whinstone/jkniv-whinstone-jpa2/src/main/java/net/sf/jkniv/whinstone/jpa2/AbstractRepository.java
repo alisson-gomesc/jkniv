@@ -45,10 +45,10 @@ import net.sf.jkniv.sqlegance.DotQueryNameStrategy;
 import net.sf.jkniv.sqlegance.IQuery;
 import net.sf.jkniv.sqlegance.IRepository;
 import net.sf.jkniv.sqlegance.Sql;
-import net.sf.jkniv.sqlegance.QueryFactory;
-import net.sf.jkniv.sqlegance.Queryable;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.builder.XmlBuilderSql;
+import net.sf.jkniv.whinstone.QueryFactory;
+import net.sf.jkniv.whinstone.Queryable;
 
 /**
  * This an abstract class that implements Repository pattern using JPA 2. 

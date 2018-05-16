@@ -24,13 +24,13 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.jkniv.sqlegance.ConnectionAdapter;
-import net.sf.jkniv.sqlegance.transaction.TransactionContext;
-import net.sf.jkniv.sqlegance.transaction.TransactionException;
-import net.sf.jkniv.sqlegance.transaction.TransactionScope;
-import net.sf.jkniv.sqlegance.transaction.TransactionSessions;
-import net.sf.jkniv.sqlegance.transaction.TransactionStatus;
-import net.sf.jkniv.sqlegance.transaction.Transactional;
+import net.sf.jkniv.whinstone.ConnectionAdapter;
+import net.sf.jkniv.whinstone.transaction.TransactionContext;
+import net.sf.jkniv.whinstone.transaction.TransactionException;
+import net.sf.jkniv.whinstone.transaction.TransactionScope;
+import net.sf.jkniv.whinstone.transaction.TransactionSessions;
+import net.sf.jkniv.whinstone.transaction.TransactionStatus;
+import net.sf.jkniv.whinstone.transaction.Transactional;
 
 public abstract class AbstractTransaction implements Transactional
 {

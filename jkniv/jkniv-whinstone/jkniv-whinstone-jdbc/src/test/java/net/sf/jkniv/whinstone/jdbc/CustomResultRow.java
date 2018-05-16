@@ -24,11 +24,10 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-
-import net.sf.jkniv.sqlegance.JdbcColumn;
-import net.sf.jkniv.sqlegance.ResultRow;
-import net.sf.jkniv.sqlegance.classification.ObjectTransform;
-import net.sf.jkniv.sqlegance.classification.Transformable;
+import net.sf.jkniv.whinstone.JdbcColumn;
+import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.classification.ObjectTransform;
+import net.sf.jkniv.whinstone.classification.Transformable;
 
 public class CustomResultRow<T> implements ResultRow<T, ResultSet>
 {

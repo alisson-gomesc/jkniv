@@ -22,18 +22,13 @@ import com.datastax.driver.core.Session;
 
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.experimental.converters.SqlDateConverter;
-import net.sf.jkniv.sqlegance.JdbcColumn;
 import net.sf.jkniv.sqlegance.KeyGeneratorType;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.ResultRow;
-import net.sf.jkniv.sqlegance.ResultSetParser;
-import net.sf.jkniv.sqlegance.classification.Groupable;
-import net.sf.jkniv.sqlegance.classification.GroupingBy;
-import net.sf.jkniv.sqlegance.classification.NoGroupingBy;
-import net.sf.jkniv.sqlegance.classification.Transformable;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
-import net.sf.jkniv.sqlegance.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.JdbcColumn;
+import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.ResultSetParser;
 import net.sf.jkniv.whinstone.cassandra.CassandraColumn;
 import net.sf.jkniv.whinstone.cassandra.LoggerFactory;
 import net.sf.jkniv.whinstone.cassandra.result.FlatObjectResultRow;
@@ -43,6 +38,11 @@ import net.sf.jkniv.whinstone.cassandra.result.ObjectResultSetParser;
 import net.sf.jkniv.whinstone.cassandra.result.PojoResultRow;
 import net.sf.jkniv.whinstone.cassandra.result.ScalarResultRow;
 import net.sf.jkniv.whinstone.cassandra.result.StringResultRow;
+import net.sf.jkniv.whinstone.classification.Groupable;
+import net.sf.jkniv.whinstone.classification.GroupingBy;
+import net.sf.jkniv.whinstone.classification.NoGroupingBy;
+import net.sf.jkniv.whinstone.classification.Transformable;
+import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
  * https://docs.datastax.com/en/developer/java-driver/3.1/manual/statements/prepared/

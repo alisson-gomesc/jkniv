@@ -6,7 +6,7 @@ import static org.hamcrest.CoreMatchers.*;
 
 import org.junit.Test;
 
-import net.sf.jkniv.sqlegance.UnderscoreToCamelCaseMapper;
+import net.sf.jkniv.whinstone.UnderscoreToCamelCaseMapper;
 
 public class UnderscoreToCamelCaseMapperTest
 {

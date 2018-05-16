@@ -23,7 +23,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
-import net.sf.jkniv.sqlegance.Repository;
+import net.sf.jkniv.whinstone.Repository;
 
 /**
  * 

@@ -19,13 +19,11 @@
  */
 package net.sf.jkniv.sqlegance.validation;
 
-import net.sf.jkniv.sqlegance.Repository;
 
 /**
  * Bean validation apply for {@code Repository.enrich} operation when configured.
  * 
  * @author Alisson Gomes
- * @see Repository#enrich(net.sf.jkniv.sqlegance.Queryable)
  * @since 0.6.0
  */
 public interface EnrichValidate

@@ -19,14 +19,11 @@
  */
 package net.sf.jkniv.sqlegance.validation;
 
-import net.sf.jkniv.sqlegance.Repository;
 
 /**
  * Bean validation apply for {@code Repository.add} operations when configured.
  * 
  * @author Alisson Gomes
- * @see Repository#add(net.sf.jkniv.sqlegance.Queryable)
- * @see Repository#add(Object)
  * @since 0.6.0
  */
 public interface AddValidate

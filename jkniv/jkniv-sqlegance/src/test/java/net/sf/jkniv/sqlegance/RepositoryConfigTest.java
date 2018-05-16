@@ -27,6 +27,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
+import net.sf.jkniv.sqlegance.RepositoryProperty;
+import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
