@@ -45,14 +45,14 @@ public interface StatementAdapter<T, R>
      * Bind an argument to a named parameter.
      * @param name of parameter
      * @param value of parameter
-     * @return this instance
+     * @return instance of this object
      */
     StatementAdapter<T,R> bind(String name, Object value);
 
     /**
      * Bind an argument to a position parameter.
      * @param value of parameter
-     * @return this instance
+     * @return instance of this object
      */
     StatementAdapter<T, R> bind(Object value);
     //* @param position index of parameter positions, initial is 1
@@ -67,61 +67,61 @@ public interface StatementAdapter<T, R>
 
     /**
      * return type
-     * @param returnType
-     * @return
+     * @param returnType type of return
+     * @return instance of this object
      * @deprecated Command must to know return type TODO change design
      */
     StatementAdapter<T, R> returnType(Class<T> returnType);
 
     /**
      * result row
-     * @param resultRow
-     * @return
-      * @deprecated Command must to know result row TODO change design
-    */
+     * @param resultRow how to process the rows
+     * @return instance of this object
+     * @deprecated Command must to know result row TODO change design
+     */
     StatementAdapter<T, R> resultRow(ResultRow<T, R> resultRow);
     
     /**
      * scalar value
-     * @return
+     * @return instance of this object
      * @deprecated Command must to know return type TODO change design
      */
     StatementAdapter<T, R> scalar();
     
     /**
      * one to many
-     * @param oneToManies
-     * @return
-      * @deprecated Command must to know one to many TODO change design
+     * @param oneToManies one-to-many relationship
+     * @return instance of this object
+     * @deprecated Command must to know one to many TODO change design
     */
     StatementAdapter<T, R> oneToManies(Set<OneToMany> oneToManies);
     
     /**
      * group by
-     * @param groupingBy
-     * @return
+     * @param groupingBy list of fields to group the rows
+     * @return instance of this object
      * @deprecated Command must to know group by TODO change design
      */
     StatementAdapter<T, R> groupingBy(List<String> groupingBy);
 
     /**
      * key generator type
-     * @param keyGeneratorType
-     * @return
+     * @param keyGeneratorType type of generator key
+     * @return instance of this object
      * @deprecated Command must to know return type TODO change design
      */
     StatementAdapter<T, R> keyGeneratorType(KeyGeneratorType keyGeneratorType);
 
     /**
      * get key generator type
-     * @return
+     * @return instance of this object
      * @deprecated Command must to know return type TODO change design
      */
     KeyGeneratorType getKeyGeneratorType();
 
     /**
      * generate keys
-     * @return
+     * @return instance of this object
      * @deprecated Command must to know return type TODO change design
      */
     ResultSetParser<T, R> generatedKeys();

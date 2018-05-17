@@ -40,12 +40,10 @@ public class BaseResource
     private static final MethodName SETTER = MethodNameFactory.getInstanceSetter();
     protected static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
     protected static String sqlContextName;
-    //private static SqlContext sqlContext;// = SqlContextFactory.newInstance("/repository-sql.xml");
     private static int       MAX       = 10;
     protected static final SimpleNameRegistry modelTypes = new SimpleNameRegistry();
     protected static final SimpleNameRegistry reportJaspers = new SimpleNameRegistry();
     protected static final SimpleNameRegistry transformers = new SimpleNameRegistry();
-    //private Repository repository;
     public static Map<String, Repository> repositories = new HashMap<>();
     
     /*
@@ -67,7 +65,7 @@ public class BaseResource
             initRepositories();
     }
         
-    private static void initRepositories()
+    static void initRepositories()
     {
         RepositoryService service = RepositoryService.getInstance();
         String[] contexts = sqlContextName.split(",");
@@ -283,6 +281,8 @@ public class BaseResource
 
     public static Repository getRepository(String context)
     {
+        if(repositories.isEmpty())
+            initRepositories();
         return repositories.get(context);
     }
 

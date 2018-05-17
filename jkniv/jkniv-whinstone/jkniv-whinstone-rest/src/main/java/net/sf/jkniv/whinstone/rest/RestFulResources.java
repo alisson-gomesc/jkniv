@@ -36,6 +36,7 @@ import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.Repository;
 
 /**
  * 
@@ -48,8 +49,8 @@ import net.sf.jkniv.whinstone.Queryable;
 public class RestFulResources extends BaseResource
 {
     private static final Logger LOG = LoggerFactory.getLogger(RestFulResources.class);
-    protected static final SimpleNameRegistry modelTypes = new SimpleNameRegistry();
-    protected static final SimpleNameRegistry reportJaspers = new SimpleNameRegistry();
+    //protected static final SimpleNameRegistry modelTypes = new SimpleNameRegistry();
+    //protected static final SimpleNameRegistry reportJaspers = new SimpleNameRegistry();
     private final static Assertable notNull = AssertsFactory.getNotNull(); 
     private final static Assertable isNull = AssertsFactory.getIsNull();
     
@@ -57,7 +58,7 @@ public class RestFulResources extends BaseResource
      * Provider a way to reference a class type with a shortname
      * @param className entity represented
      */
-    public static void registryModel(String className) 
+    static void registryModel(String className) 
     {
         notNull.verify(className);   
         modelTypes.registry(className);
@@ -68,32 +69,41 @@ public class RestFulResources extends BaseResource
      * Provider a way to reference a class type with a shortname
      * @param className entity represented
      */
-    public static void registryReport(String className) 
+    static void registryReport(String className) 
     {
         notNull.verify(className);
         reportJaspers.registry(className);
         LOG.debug("Jasper file {} was registered", className);
     }
     
-    public static void registryTransformers(String className) 
+    static void registryTransformers(String className) 
     {
         notNull.verify(className);
         transformers.registry(className);
         LOG.debug("Transform class {} was registered", className);
     }
 
-    public static void registrySqlContext(String name)
+    static void registrySqlContext(String name)
     {
         notNull.verify(name);
         isNull.verify(RestFulResources.sqlContextName); // cannot change sql context file
         RestFulResources.sqlContextName = name;
     }
     
-    public static void cleanup()
+    static void init()
+    {
+        initRepositories();
+    }
+    
+    static void cleanup()
     {
         BaseResource.modelTypes.cleanup();
         BaseResource.reportJaspers.cleanup();
         BaseResource.transformers.cleanup();
+        for (Repository repo : BaseResource.repositories.values())
+            repo.close();
+            
+        BaseResource.repositories.clear();
     }
     
     public RestFulResources()
