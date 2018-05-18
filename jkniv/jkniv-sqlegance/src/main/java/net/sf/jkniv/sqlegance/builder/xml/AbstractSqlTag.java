@@ -102,7 +102,7 @@ public abstract class AbstractSqlTag implements SqlTag
     private String               hint;
     private int                  timeout;
     private boolean              batch;
-    private boolean              cache;
+    private String               cache;
     private ResultSetType        resultSetType;
     private ResultSetConcurrency resultSetConcurrency;
     private ResultSetHoldability resultSetHoldability;
@@ -131,12 +131,12 @@ public abstract class AbstractSqlTag implements SqlTag
      */
     public AbstractSqlTag(String id, LanguageType languageType)
     {
-        this(id, languageType, Isolation.DEFAULT, -1, false, false, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", ValidateType.NONE);
+        this(id, languageType, Isolation.DEFAULT, -1, false, null, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", ValidateType.NONE);
     }
     
     public AbstractSqlTag(String id, LanguageType languageType, SqlDialect sqlDialect)
     {
-        this(id, languageType, Isolation.DEFAULT, -1, false, false, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", ValidateType.NONE);
+        this(id, languageType, Isolation.DEFAULT, -1, false, null, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", ValidateType.NONE);
         this.sqlDialect = sqlDialect;
     }
 
@@ -166,7 +166,7 @@ public abstract class AbstractSqlTag implements SqlTag
                           Isolation isolation, 
                           int timeout, 
                           boolean batch, 
-                          boolean cache,
+                          String cache,
                           String hint, 
                           ValidateType validateType)
     {
@@ -204,7 +204,7 @@ public abstract class AbstractSqlTag implements SqlTag
                           Isolation isolation, 
                           int timeout, 
                           boolean batch,
-                          boolean cache,
+                          String cache,
                           String hint,
                           ResultSetType resultSetType, 
                           ResultSetConcurrency resultSetConcurrency, 
@@ -393,12 +393,12 @@ public abstract class AbstractSqlTag implements SqlTag
         this.batch = batch;
     }
     
-    public boolean isCache()
+    public String getCache()
     {
         return cache;
     }
     
-    public void setCache(boolean cache)
+    public void setCache(String cache)
     {
         this.cache = cache;
     }

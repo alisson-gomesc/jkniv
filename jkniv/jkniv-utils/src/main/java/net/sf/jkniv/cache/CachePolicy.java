@@ -27,10 +27,21 @@ package net.sf.jkniv.cache;
  */
 public interface CachePolicy
 {
- 
     /**
-     * 
+     * Verify if cache is live indicating to discard the cache content.
      * @return <b>true</b> when object is alive, <b>false</b> otherwise
      */
-    boolean isAlive();
+    boolean isAlive(long miliseconds);
+    
+    /**
+     * Returns the number of elements in cache.
+     * @return the number of elements in cache.
+     */
+    long limit();
+    
+    /**
+     * Returns the limit size of objects in cache.
+     * @return the limit size of objects in cache.
+     */
+    long sizeof();
 }

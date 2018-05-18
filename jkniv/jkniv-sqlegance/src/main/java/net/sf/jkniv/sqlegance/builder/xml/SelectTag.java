@@ -44,6 +44,7 @@ import net.sf.jkniv.sqlegance.transaction.Isolation;
  */
 class SelectTag extends AbstractSqlTag implements Selectable
 {
+    private String          cacheName;
     private String          groupBy;
     private Set<OneToMany>  oneToMany;
     
@@ -96,7 +97,7 @@ class SelectTag extends AbstractSqlTag implements Selectable
      * @param validateType validation to apply before execute SQL.
      */
     public SelectTag(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch,
-            boolean cache, String hint, ResultSetType resultSetType, ResultSetConcurrency resultSetConcurrency,
+            String cache, String hint, ResultSetType resultSetType, ResultSetConcurrency resultSetConcurrency,
             ResultSetHoldability resultSetHoldability, String returnType, String groupBy, ValidateType validateType)
     {
         super(id, languageType, isolation, timeout, batch, cache, hint, resultSetType, resultSetConcurrency,

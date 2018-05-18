@@ -29,32 +29,50 @@ import java.util.concurrent.TimeUnit;
  */
 public class TTLCachePolicy implements CachePolicy
 {
-    private long timestamp;
-    private long ttl;
+    //private long timestamp;
+    private long ttl;// time-to-live
+    private long limit;
+    private long sizeof;
     
     /**
-     * Build a policy with TTL as paramenter to keep the objects alive in cache
+     * Build a policy with TTL as parameter to keep the objects alive in cache
      * @param ttl time in seconds
      */
     public TTLCachePolicy(long ttl)
     {
         this.ttl = TimeUnit.SECONDS.toMillis(ttl);
-        this.timestamp = System.currentTimeMillis();
+        //this.timestamp = System.currentTimeMillis();
     }
     
     @Override
-    public boolean isAlive()
+    public boolean isAlive(long timestamp)
     {
-        System.out.printf("\n ttl=%d +=%d current=%d", ttl, (timestamp+ttl), System.currentTimeMillis());
+        if (this.ttl < 0)
+            return true;
+        
+        //System.out.printf("\n ttl=%d +=%d current=%d", ttl, (timestamp+ttl), System.currentTimeMillis());
         return ( (timestamp+ttl) > System.currentTimeMillis());
     }
 
+    // FIXME implements limit from CachePolicy
+    @Override
+    public long limit()
+    {
+        return this.limit;
+    }
+
+    // FIXME implements sizeof from CachePolicy
+    @Override
+    public long sizeof()
+    {
+        return this.sizeof;
+    }
+    
     @Override
     public String toString()
     {
-        return "TTLCachePolicy [timestamp=" + timestamp + ", ttl=" + ttl + "]";
+        return "TTLCachePolicy [ttl=" + ttl + ", limit=" + limit + ", sizeof=" + sizeof + "]";
     }
-    
     
     
 }

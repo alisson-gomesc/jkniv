@@ -188,24 +188,24 @@ public interface Sql
     
     /**
      * Timestamp when sql was read from xml
-     * @return when sql was read from xml file
+     * @return when SQL was read from XML file
      */
     Date getTimestamp();
     
     /**
-     * The filename that sql belong to
-     * @return return the filename, relative to absolute classpath, where the sql was read.
+     * The filename that SQL belong to
+     * @return return the filename, relative to absolute classpath, where the SQL was read.
      */
     String getResourceName();
     
     /**
-     * Expression XPATH to read sql
-     * @return the XPATH expression to read the sql at xml file.
+     * Expression XPATH to read SQL
+     * @return the XPATH expression to read the SQL at XML file.
      */
      String getXPath();
      
      /***
-      * strategy to parser the parameters from sql.
+      * strategy to parser the parameters from SQL.
       * @return return the implementation of parser (colon, hash or question mark)
       */
      ParamParser getParamParser();
@@ -219,7 +219,7 @@ public interface Sql
      String[] extractNames(Object params);
      
      /**
-      * Extract the name parameters from sql
+      * Extract the name parameters from SQL
       * @param sql sentence
       * @return array of parameters names from query, array based-zero length when haven't param.
       * Array of questions marks (?) is returned when the isn't name based.
