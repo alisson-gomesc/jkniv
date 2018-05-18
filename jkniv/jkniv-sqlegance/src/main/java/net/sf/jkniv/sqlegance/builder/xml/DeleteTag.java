@@ -74,7 +74,7 @@ class DeleteTag extends AbstractSqlTag implements Deletable
     public DeleteTag(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch, String hint,
             ValidateType validateType)
     {
-        super(id, languageType, isolation, timeout, batch, false, hint, validateType);
+        super(id, languageType, isolation, timeout, batch, null, hint, validateType);
     }
     
     /**

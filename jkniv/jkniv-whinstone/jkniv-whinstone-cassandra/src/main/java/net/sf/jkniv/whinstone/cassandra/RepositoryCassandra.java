@@ -423,6 +423,13 @@ class RepositoryCassandra implements Repository
     }
     
     @Override
+    public boolean containsQuery(String name)
+    {
+        return sqlContext.containsQuery(name);
+    }
+
+    
+    @Override
     public Transactional getTransaction()
     {
         throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");

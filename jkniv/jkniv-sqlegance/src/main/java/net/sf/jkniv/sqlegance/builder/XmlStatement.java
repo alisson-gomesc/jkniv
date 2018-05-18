@@ -190,7 +190,7 @@ class XmlStatement
             Isolation isolation = Isolation.get(element.getAttribute(AbstractSqlTag.ATTRIBUTE_ISOLATION));
             int timeout = parserTimeout(element.getAttribute(AbstractSqlTag.ATTRIBUTE_TIMEOUT));
             boolean batch = Boolean.valueOf(element.getAttribute(AbstractSqlTag.ATTRIBUTE_BATCH));
-            boolean cache = Boolean.valueOf(element.getAttribute(AbstractSqlTag.ATTRIBUTE_CACHE));
+            String cache = element.getAttribute(AbstractSqlTag.ATTRIBUTE_CACHE);
             String hint = element.getAttribute(AbstractSqlTag.ATTRIBUTE_HINT);
             String returnType = element.getAttribute(AbstractSqlTag.ATTRIBUTE_RETURN_TYPE);
             String groupBy = element.getAttribute(AbstractSqlTag.ATTRIBUTE_GROUP_BY);
@@ -327,7 +327,7 @@ class XmlStatement
     }
     
     private SqlTag newTag(String nodeName, String id, LanguageType type, Isolation isolation, int timeout,
-            boolean batch, boolean cache, String hint, ResultSetType resultSetType,
+            boolean batch, String cache, String hint, ResultSetType resultSetType,
             ResultSetConcurrency resultSetConcurrency, ResultSetHoldability resultSetHoldability, String returnType,
             String groupBy, ValidateType validateType, Element element)
     {

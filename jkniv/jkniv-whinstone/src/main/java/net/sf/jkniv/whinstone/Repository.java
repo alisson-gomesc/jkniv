@@ -238,4 +238,6 @@ public interface Repository
     Transactional getTransaction();
     
     void close();
+    
+    boolean containsQuery(String name);
 }

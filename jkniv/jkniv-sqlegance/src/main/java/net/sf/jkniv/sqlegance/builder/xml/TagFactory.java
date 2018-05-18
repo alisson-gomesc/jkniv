@@ -72,7 +72,7 @@ public class TagFactory
      * @return select tag
      */
     public static Selectable newSelect(String id, LanguageType languageType, Isolation isolation, int timeout,
-            boolean batch, boolean cache, String hint, ResultSetType resultSetType,
+            boolean batch, String cache, String hint, ResultSetType resultSetType,
             ResultSetConcurrency resultSetConcurrency, ResultSetHoldability resultSetHoldability, String returnType,
             String groupBy, ValidateType validateType)
     {

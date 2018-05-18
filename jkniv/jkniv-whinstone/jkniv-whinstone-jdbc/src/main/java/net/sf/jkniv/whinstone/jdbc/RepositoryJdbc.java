@@ -573,6 +573,13 @@ class RepositoryJdbc implements Repository
         throw new UnsupportedOperationException("Not Implemented yet");
     }
     
+    @Override
+    public boolean containsQuery(String name)
+    {
+        return sqlContext.containsQuery(name);
+    }
+
+    
     public Transactional getTransaction()
     {
         return currentWork().getTransaction();

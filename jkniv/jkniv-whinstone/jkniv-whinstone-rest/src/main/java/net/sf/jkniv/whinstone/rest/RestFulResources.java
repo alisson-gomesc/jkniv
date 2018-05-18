@@ -46,6 +46,7 @@ import net.sf.jkniv.whinstone.Repository;
 @Path("{context}")
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Produces(MediaType.APPLICATION_JSON)
+@SuppressWarnings("unchecked")
 public class RestFulResources extends BaseResource
 {
     private static final Logger LOG = LoggerFactory.getLogger(RestFulResources.class);
@@ -395,7 +396,7 @@ public class RestFulResources extends BaseResource
         //Queryable queryable = buildQueryable(q, id, ui);
         Integer rowsAffected = getRepository().update(queryable);
         return buildSimpleResponse(rowsAffected);
-        //return buildSimpleResponse(rowsAffected, queryable);// FIXME HTTP status
+        //return buildSimpleResponse(rowsAffected, queryable);// FIXME design HTTP status
          */
     }
 
@@ -464,14 +465,36 @@ public class RestFulResources extends BaseResource
     // HTTP 409 Conflict
     // HTTP 410 Gone (Resource already deleted )
     // HTTP 404 Not Found (Resource not exists)
+    /**
+     * 
+     * @param ctx
+     * @param q query name to delete the data. If the {@code queryname} not exist 
+     * the value is used as {@code id} attribute
+     * @param ui URL query parameterss
+     * @return the quantity of data deleted
+     */
+    
     @DELETE
-    @Path("remove/{q}")
+    @Path("{q}")
     public Response remove(@PathParam("context") String ctx, @PathParam("q") String q, @Context UriInfo ui) 
     {
-        Queryable queryable = buildQueryable(q, ui);
-        Integer rowsAffected = getRepository(ctx).remove(queryable);
+        Integer rowsAffected = 0;
+        Repository repository = getRepository(ctx);
+        Queryable queryable = null;
+        if (repository.containsQuery(q))
+        {
+            queryable = buildQueryable(q, ui);
+            rowsAffected = repository.remove(queryable);            
+        }
+        else
+        {
+            Map<String, Object> params = marshallToMap(ui.getQueryParameters());
+            params.put("id", q);
+            queryable = QueryFactory.newInstance("remove", params);
+            rowsAffected = getRepository(ctx).remove(queryable);
+        }
         return buildSimpleResponse(rowsAffected);
-        //return buildSimpleResponse(rowsAffected, queryable);// FIXME HTTP status
+        //return buildSimpleResponse(rowsAffected, queryable);// FIXME design HTTP status
     }
 
     // HTTP 204 No Content
@@ -480,14 +503,16 @@ public class RestFulResources extends BaseResource
     // HTTP 410 Gone (Resource already deleted )
     // HTTP 404 Not Found (Resource not exists)
     @DELETE
-    @Path("remove/{q}/{m}")
+    @Path("{q}/{m}")
     public Response remove(@PathParam("context") String ctx, @PathParam("q") String q, @PathParam("m") String m, @Context UriInfo ui) 
     {
+        if(true)
+            throw new UnsupportedOperationException("Bad implementation FIXME design");
         Class<?> clazz = modelTypes.getType(m);
         Queryable queryable = buildQueryable(q, clazz, ui);
         int rowsAffected = getRepository(ctx).remove(queryable);
         return buildSimpleResponse(rowsAffected);
-        //return buildSimpleResponse(rowsAffected, queryable);// FIXME HTTP status
+        //return buildSimpleResponse(rowsAffected, queryable);// FIXME design HTTP status
     }
 /*
     // HTTP 204 No Content
@@ -501,7 +526,7 @@ public class RestFulResources extends BaseResource
         Object entity = getRepository().get(id);
         Queryable queryable = buildQueryable(q, entity, ui);
         int rowsAffected = getRepository().remove(queryable);
-        return buildSimpleResponse(rowsAffected, queryable);// FIXME HTTP status
+        return buildSimpleResponse(rowsAffected, queryable);// FIXME design HTTP status
     }
     */
 

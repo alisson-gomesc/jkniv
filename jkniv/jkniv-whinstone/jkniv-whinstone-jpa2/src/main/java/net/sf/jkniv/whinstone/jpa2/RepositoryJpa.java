@@ -621,6 +621,13 @@ public class RepositoryJpa implements RepositoryJpaExtend
         getEntityManager().flush();
     }
     
+    @Override
+    public boolean containsQuery(String name)
+    {
+        return sqlContext.containsQuery(name);
+    }
+
+    
     public CriteriaBuilder getCriteriaBuilder()
     {
         return getEntityManager().getCriteriaBuilder();
