@@ -54,7 +54,7 @@
       <xsd:attribute name="isolation" use="optional" type="transactionIsolation" />
       <xsd:attribute name="hint" use="optional" type="xsd:string" />
       <xsd:attribute name="timeout" use="optional" type="xsd:int" />
-      <xsd:attribute name="cache" use="optional" type="xsd:boolean" />
+      <xsd:attribute name="cache" use="optional" type="xsd:string" />
       <xsd:attribute name="batch" use="optional" type="xsd:boolean" />
       <xsd:attribute name="resultSetType" use="optional" type="resultSetType" />
       <xsd:attribute name="resultSetConcurrency" use="optional" type="resultSetConcurrency" />
