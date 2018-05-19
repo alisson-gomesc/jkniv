@@ -22,6 +22,8 @@ package net.sf.jkniv.sqlegance;
 import java.util.List;
 import java.util.Set;
 
+import net.sf.jkniv.cache.Cacheable;
+
 public interface Selectable extends Sql
 {
     public static final String TAG_NAME = "select";
@@ -33,4 +35,9 @@ public interface Selectable extends Sql
     Set<OneToMany> getOneToMany();
 
     void addOneToMany(OneToMany oneToMany);
+    
+    boolean hasCache();
+    
+    Cacheable getCache();
+    
 }

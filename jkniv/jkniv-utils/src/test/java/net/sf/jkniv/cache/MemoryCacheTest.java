@@ -37,7 +37,7 @@ public class MemoryCacheTest
     {
         catcher.expect(IllegalArgumentException.class);
         catcher.expectMessage("[Assertion failed] - this argument is required; it must not be null");
-        Cacheable<String> cache = new MemoryCache<String>();
+        Cacheable<String, Object> cache = new MemoryCache<String, Object>();
         cache.put("1", null); // illegal argument
     }
 
@@ -46,7 +46,7 @@ public class MemoryCacheTest
     {
         catcher.expect(IllegalArgumentException.class);
         catcher.expectMessage("[Assertion failed] - this argument is required; it must not be null");
-        Cacheable<String> cache = new MemoryCache<String>();
+        Cacheable<String, Object> cache = new MemoryCache<String, Object>();
         cache.put(null, "A"); // illegal argument
     }
     
@@ -55,7 +55,7 @@ public class MemoryCacheTest
     {
         catcher.expect(IllegalArgumentException.class);
         catcher.expectMessage("[Assertion failed] - this argument is required; it must not be null");
-        Cacheable<String> cache = new MemoryCache<String>();
+        Cacheable<String, Object> cache = new MemoryCache<String, Object>();
         cache.put(null, null); // illegal argument
     }
     
@@ -63,7 +63,8 @@ public class MemoryCacheTest
     @Test
     public void whenMemoryCacheAlwaysExpire() throws InterruptedException
     {
-        Cacheable<String> cache = new MemoryCache<String>();
+        CachePolicy policy = new TTLCachePolicy(0L);
+        Cacheable<String, String> cache = new MemoryCache<String, String>(policy);
         String oldValue = cache.put("1", "A");
         String value = cache.get("1");
         assertThat(oldValue, nullValue());
@@ -74,7 +75,7 @@ public class MemoryCacheTest
     public void whenCachePutGetReplaceAndExpireObjects() throws InterruptedException
     {
         CachePolicy policy = new TTLCachePolicy(2L);
-        Cacheable<String> cache = new MemoryCache<String>(policy);
+        Cacheable<String, String> cache = new MemoryCache<String, String>(policy);
 
         String oldValue = cache.put("1", "A");
         String value = cache.get("1");

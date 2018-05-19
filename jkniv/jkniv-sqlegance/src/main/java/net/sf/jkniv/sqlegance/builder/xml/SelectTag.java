@@ -25,6 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.sf.jkniv.cache.Cacheable;
+import net.sf.jkniv.cache.MemoryCache;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.Selectable;
@@ -44,9 +46,10 @@ import net.sf.jkniv.sqlegance.transaction.Isolation;
  */
 class SelectTag extends AbstractSqlTag implements Selectable
 {
-    private String          cacheName;
     private String          groupBy;
     private Set<OneToMany>  oneToMany;
+    private String          cacheName;
+    private Cacheable       cache;
     
     /**
      * Build a new <code>select</code> tag from XML file.
@@ -60,6 +63,7 @@ class SelectTag extends AbstractSqlTag implements Selectable
         super(id, languageType);
         this.oneToMany = new HashSet<OneToMany>();
         this.groupBy = "";
+        this.cacheName = null;
     }
     
     /**
@@ -86,8 +90,7 @@ class SelectTag extends AbstractSqlTag implements Selectable
      * @param timeout Retrieves the number of seconds the repository will wait for a Query
      * object to execute.
      * @param batch Indicate if query is a batch of commands.
-     * @param cache 
-     *            Indicate if must keep SQL result in cache           
+     * @param cacheName cache name to keep result queries
      * @param hint A SQL hint can be used on certain database platforms.
      * @param resultSetType TODO javadoc
      * @param resultSetConcurrency TODO javadoc
@@ -97,13 +100,16 @@ class SelectTag extends AbstractSqlTag implements Selectable
      * @param validateType validation to apply before execute SQL.
      */
     public SelectTag(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch,
-            String cache, String hint, ResultSetType resultSetType, ResultSetConcurrency resultSetConcurrency,
+            String cacheName, String hint, ResultSetType resultSetType, ResultSetConcurrency resultSetConcurrency,
             ResultSetHoldability resultSetHoldability, String returnType, String groupBy, ValidateType validateType)
     {
-        super(id, languageType, isolation, timeout, batch, cache, hint, resultSetType, resultSetConcurrency,
+        super(id, languageType, isolation, timeout, batch/*, cache*/, hint, resultSetType, resultSetConcurrency,
                 resultSetHoldability, returnType, validateType);
         this.groupBy = groupBy;
         this.oneToMany = new HashSet<OneToMany>();
+        this.cacheName = cacheName;
+        if(cacheName != null)
+            this.cache = new MemoryCache();
     }
     
     /**
@@ -177,5 +183,17 @@ class SelectTag extends AbstractSqlTag implements Selectable
     public Selectable asSelectable()
     {
         return this;
+    }
+
+    @Override
+    public boolean hasCache()
+    {
+        return (this.cacheName != null);
+    }
+
+    @Override
+    public Cacheable getCache()
+    {
+        return cache;
     }
 }

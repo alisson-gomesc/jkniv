@@ -1,6 +1,6 @@
 package net.sf.jkniv.cache;
 
-public class NoCache<T> implements Cacheable<T>
+public class NoCache<K, V> implements Cacheable<K, V>
 {
     private static final String name = "NoCaChe";
     private static final CachePolicy policy = new TTLCachePolicy(0L);
@@ -18,13 +18,13 @@ public class NoCache<T> implements Cacheable<T>
     }
 
     @Override
-    public T put(String key, T object)
+    public V put(K key, V object)
     {
         return null;
     }
 
     @Override
-    public T get(String key)
+    public V get(K key)
     {
         return null;
     }

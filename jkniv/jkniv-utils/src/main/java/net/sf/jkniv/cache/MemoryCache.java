@@ -22,27 +22,28 @@ package net.sf.jkniv.cache;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 
-public class MemoryCache<T> implements Cacheable<T>
+public class MemoryCache<K,V> implements Cacheable<K,V>
 {
     private static final transient Assertable notNull = AssertsFactory.getNotNull();
     private String      name;
     private CachePolicy policy;
-    private Map<String, Entry<T>> cache;
+    private Map<K, Entry<V>> cache;
     
     
     public MemoryCache()
     {
-        this(new TTLCachePolicy(0L));
+        this(new TTLCachePolicy(TimeUnit.MINUTES.toSeconds(10L)));
     }
 
     public MemoryCache(CachePolicy policy)
     {
         this.policy = policy;
-        this.cache = new ConcurrentHashMap<String, Entry<T>>();
+        this.cache = new ConcurrentHashMap<K, Entry<V>>();
     }
 
     /* (non-Javadoc)
@@ -67,11 +68,11 @@ public class MemoryCache<T> implements Cacheable<T>
      * @see net.sf.jkniv.cache.Cacheable#put(java.lang.String, T)
      */
     @Override
-    public T put(String key, T object)
+    public V put(K key, V object)
     {
         notNull.verify(key, object);
-        MemoryCache.Entry<T> entry = new MemoryCache.Entry<T>(object);
-        MemoryCache.Entry<T> old = this.cache.put(key, entry);
+        MemoryCache.Entry<V> entry = new MemoryCache.Entry<V>(object);
+        MemoryCache.Entry<V> old = this.cache.put(key, entry);
         if (old != null)
             return old.getValue();
         
@@ -82,9 +83,9 @@ public class MemoryCache<T> implements Cacheable<T>
      * @see net.sf.jkniv.cache.Cacheable#get(java.lang.String)
      */
     @Override
-    public T get(String key)
+    public V get(K key)
     {
-        MemoryCache.Entry<T> entry = this.cache.get(key);
+        MemoryCache.Entry<V> entry = this.cache.get(key);
         if (entry == null || !policy.isAlive(entry.getTimestamp().getTime()))
             return null;
         

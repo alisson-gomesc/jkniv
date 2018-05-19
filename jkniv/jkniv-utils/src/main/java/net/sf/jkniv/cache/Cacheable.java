@@ -5,9 +5,10 @@ package net.sf.jkniv.cache;
  * each key can map to at most one value.
  * @author Alisson Gomes
  *
- * @param <T> Type of objects stored in cache
+ * @param <K> the type of keys maintained by this map
+ * @param <V> Type of objects stored in cache
  */
-public interface Cacheable<T>
+public interface Cacheable<K,V>
 {
     /**
      * cache name
@@ -35,7 +36,7 @@ public interface Cacheable<T>
      * @throws IllegalArgumentException if some property of the specified element
      *         prevents it from being added to this set (`{@code null} values for example.
      */
-    T put(String key, T value);
+    V put(K key, V value);
 
     /**
      * Returns the value to which the specified key is mapped,
@@ -44,6 +45,6 @@ public interface Cacheable<T>
      * @return the value to which the specified key is mapped, or
      *         {@code null} if this map contains no mapping for the key
      */
-    T get(String key);
+    V get(K key);
     
 }
