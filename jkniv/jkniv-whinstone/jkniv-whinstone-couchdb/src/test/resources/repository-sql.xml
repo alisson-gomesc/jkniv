@@ -10,8 +10,9 @@
  <include href="/repository-sql-design.xml" />
  <include href="/repository-sql-find.xml" />
  <include href="/repository-sql-views.xml" />
+ <include href="/repository-sql-cache.xml" />
   
-    <select id="adminRoles" returnType="">
+   <select id="adminRoles" returnType="">
     {
      "selector": {"nationality": "BR" }
     }

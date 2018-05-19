@@ -19,37 +19,22 @@
  */
 package net.sf.jkniv.cache;
 
+import java.util.Map;
+
 /*
-
-no expiry    - this means cache mappings will never expire,
-time-to-live - this means cache mappings will expire after a fixed duration following their creation,
-time-to-idle - this means cache mappings will expire after a fixed duration following the time they were last accessed.
-
+ *  use ScheduledExecutorService do control the policies 
  */
+
 /**
- * Cache keep the objects with a {@code Policy} to indicate if continue alive.
+ * Class to manager the Caches and your entries.
  * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public interface CachePolicy
+public class CacheManager
 {
-    /**
-     * Verify if cache is live indicating to discard the cache content.
-     * @param miliseconds time from object stored
-     * @return <b>true</b> when object is alive, <b>false</b> otherwise
-     */
-    boolean isAlive(long miliseconds);
+    private Map<String, ? extends Cacheable<Object, Object>> caches;
     
-    /**
-     * Returns the number of elements in cache.
-     * @return the number of elements in cache.
-     */
-    long limit();
     
-    /**
-     * Returns the limit size of objects in cache.
-     * @return the limit size of objects in cache.
-     */
-    long sizeof();
+    
 }

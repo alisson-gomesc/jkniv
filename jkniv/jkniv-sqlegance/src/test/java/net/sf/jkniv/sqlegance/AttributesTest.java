@@ -19,11 +19,15 @@
  */
 package net.sf.jkniv.sqlegance;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 
+import org.hamcrest.core.IsInstanceOf;
 import org.junit.Test;
 
+import net.sf.jkniv.cache.Cacheable;
+import net.sf.jkniv.cache.NoCache;
 import net.sf.jkniv.sqlegance.builder.XmlBuilderSql;
 import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
 import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
@@ -147,6 +151,9 @@ public class AttributesTest
         assertThat(sql1.getParamParser().getType(), is(ParamMarkType.NO_MARK));
         assertThat(sql1.getGroupBy(), is("name"));
         assertThat(sql1.getGroupByAsList().size(), is(1));
+        assertThat(sql1.getCache().getName(), is("NoCache"));
+        assertThat(sql1.getCache(), instanceOf(Cacheable.class));
+        assertThat(sql1.getCache(), instanceOf(NoCache.class));
         
         assertThat(sql2.getSql().toLowerCase(), is("select name, code, priority from color"));        
         assertThat(sql2.getLanguageType(), is(LanguageType.NATIVE));
@@ -155,5 +162,8 @@ public class AttributesTest
         assertThat(sql2.getParamParser().getType(), is(ParamMarkType.NO_MARK));
         assertThat(sql2.getGroupBy(), is("name,code"));
         assertThat(sql2.getGroupByAsList().size(), is(2));
+        assertThat(sql2.getCache().getName(), is("NoCache"));
+        assertThat(sql2.getCache(), instanceOf(Cacheable.class));
+        assertThat(sql2.getCache(), instanceOf(NoCache.class));
     }
 }

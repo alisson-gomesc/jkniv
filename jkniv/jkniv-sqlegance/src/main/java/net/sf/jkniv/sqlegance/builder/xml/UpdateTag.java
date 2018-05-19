@@ -75,7 +75,7 @@ class UpdateTag extends AbstractSqlTag implements Updateable
      */
     public UpdateTag(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch, String hint, ValidateType validateType)
     {
-        super(id, languageType, isolation, timeout, batch, null, hint, validateType);
+        super(id, languageType, isolation, timeout, batch/*, null*/, hint, validateType);
     }
 
     /**

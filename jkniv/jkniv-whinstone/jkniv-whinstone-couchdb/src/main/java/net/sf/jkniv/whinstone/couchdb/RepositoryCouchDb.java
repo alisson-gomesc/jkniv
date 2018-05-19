@@ -31,10 +31,13 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
+import net.sf.jkniv.cache.Cacheable;
+import net.sf.jkniv.cache.MemoryCache;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
+import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
@@ -57,16 +60,17 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
  */
 public class RepositoryCouchDb implements Repository
 {
-    private static final Logger     LOG     = LoggerFactory.getLogger(RepositoryCouchDb.class);
-    private static final Assertable notNull = AssertsFactory.getNotNull();
-    private QueryNameStrategy       strategyQueryName;
-    private HandleableException     handlerException;
-    private RepositoryConfig        repositoryConfig;
-    private CouchDbSqlContext       sqlContext;
-    private HttpCookieConnectionAdapter factoryConnection;
+    private static final Logger               LOG                = LoggerFactory.getLogger(RepositoryCouchDb.class);
+    private static final Assertable           notNull            = AssertsFactory.getNotNull();
+    private QueryNameStrategy                 strategyQueryName;
+    private HandleableException               handlerException;
+    private RepositoryConfig                  repositoryConfig;
+    private CouchDbSqlContext                 sqlContext;
+    private HttpCookieConnectionAdapter       factoryConnection;
     private final static Map<String, Boolean> DOC_SCHEMA_UPDATED = new HashMap<String, Boolean>();
-    private boolean                 isTraceEnabled;
-    private boolean                 isDebugEnabled;
+    private boolean                           isTraceEnabled;
+    private boolean                           isDebugEnabled;
+    private Cacheable<Queryable, Object>      cache;
     
     RepositoryCouchDb()
     {
@@ -77,17 +81,17 @@ public class RepositoryCouchDb implements Repository
     {
         this(props, SqlContextFactory.newInstance("/repository-sql.xml"));
     }
-
+    
     RepositoryCouchDb(String sqlContext)
     {
         this(new Properties(), SqlContextFactory.newInstance(sqlContext));
     }
-
+    
     RepositoryCouchDb(SqlContext sqlContext)
     {
         this(new Properties(), sqlContext);
     }
-
+    
     RepositoryCouchDb(Properties props, SqlContext sqlContext)
     {
         notNull.verify(props, sqlContext);
@@ -103,12 +107,13 @@ public class RepositoryCouchDb implements Repository
         else
             sqlContext.getRepositoryConfig().add(props);
         
-        
         this.sqlContext = new CouchDbSqlContext(sqlContext);
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
-        this.factoryConnection = (HttpCookieConnectionAdapter) new HttpConnectionFactory(sqlContext.getRepositoryConfig().getProperties()).open();
+        this.factoryConnection = (HttpCookieConnectionAdapter) new HttpConnectionFactory(
+                sqlContext.getRepositoryConfig().getProperties()).open();
         this.handlerException = new HandlerException(RepositoryException.class, "CouchDB error at [%s]");
+        this.cache = new MemoryCache<Queryable, Object>();
         this.init();
     }
     
@@ -118,7 +123,8 @@ public class RepositoryCouchDb implements Repository
         if (!DOC_SCHEMA_UPDATED.containsKey(hostContext))
         {
             // TODO property to config behavior like auto ddl from hibernate
-            CouchDbSynchViewDesign _design = new CouchDbSynchViewDesign(this.factoryConnection.getHttpBuilder(), sqlContext);
+            CouchDbSynchViewDesign _design = new CouchDbSynchViewDesign(this.factoryConnection.getHttpBuilder(),
+                    sqlContext);
             _design.update();
             DOC_SCHEMA_UPDATED.put(hostContext, Boolean.TRUE);
         }
@@ -145,7 +151,7 @@ public class RepositoryCouchDb implements Repository
         notNull.verify(queryable, returnType);
         //if (isTraceEnabled)
         //    LOG.trace("Executing [{}] as get command with [{}] as return type", queryable, returnType);
-
+        
         T ret = get(queryable, returnType, null);
         //if (isDebugEnabled)
         //    LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
@@ -157,17 +163,17 @@ public class RepositoryCouchDb implements Repository
     public <T, R> T get(Queryable queryable, ResultRow<T, R> resultRow)
     {
         throw new UnsupportedOperationException("CouchDb Repository doesn't implement this method yet!");
-//        notNull.verify(queryable, resultRow);
-//        if (isTraceEnabled)
-//            LOG.trace("Executing [{}] as get command", queryable);
-//        
-//        T ret = get(queryable, null, resultRow);
-//        
-//        if (isDebugEnabled)
-//            LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
-//        
-//        return ret;
-//        
+        //        notNull.verify(queryable, resultRow);
+        //        if (isTraceEnabled)
+        //            LOG.trace("Executing [{}] as get command", queryable);
+        //        
+        //        T ret = get(queryable, null, resultRow);
+        //        
+        //        if (isDebugEnabled)
+        //            LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
+        //        
+        //        return ret;
+        //        
     }
     
     @Override
@@ -199,42 +205,45 @@ public class RepositoryCouchDb implements Repository
         //if (isDebugEnabled)
         //    LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
         
-        return ret;    }
-
+        return ret;
+    }
+    
     private <T, R> T get(Queryable queryable, Class<T> returnType, ResultRow<T, R> resultRow)
     {
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as get command", queryable);
-
+        
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.SELECT);
         isql.getValidateType().assertValidate(queryable.getParams());
-        queryable.setReturnType(returnType);        
+        queryable.setReturnType(returnType);
         
         if (!queryable.isBoundSql())
             queryable.bind(isql);
         
         Command command = factoryConnection.asSelectCommand(queryable, null);
         List<T> list = command.execute();
+        
         T ret = null;
         if (list.size() > 1)
             handlerException.throwMessage("No unique result for query [%s]", queryable.getName());// TODO design exception throw NoUniqueResultException
-        
+            
         else if (list.size() == 1)
             ret = list.get(0);
         
         if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(), queryable.getTotal());
-
-        return ret;    
+            LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(),
+                    queryable.getTotal());
+        
+        return ret;
     }
-
+    
     @Override
     public <T> T scalar(Queryable queryable)
     {
         throw new UnsupportedOperationException("CouchDb Repository doesn't implement this method yet!");
     }
-
+    
     @Override
     public boolean enrich(Queryable queryable)
     {
@@ -271,23 +280,38 @@ public class RepositoryCouchDb implements Repository
         
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.SELECT);
-        isql.getValidateType().assertValidate(queryable.getParams());
+        Selectable selectable = isql.asSelectable();
+        selectable.getValidateType().assertValidate(queryable.getParams());
         queryable.setReturnType(overloadReturnType);
         
         if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        Command command = factoryConnection.asSelectCommand(queryable, overloadResultRow);
-        
-        list = command.execute();
-        
+            queryable.bind(selectable);
+
+        Cacheable.Entry entry = selectable.getCache().getEntry(queryable);
+        if (entry == null)
+        {
+            Command command = factoryConnection.asSelectCommand(queryable, overloadResultRow);
+            list = command.execute();
+            if (selectable.hasCache() && !list.isEmpty())
+                selectable.getCache().put(queryable, list);            
+        }
+        else 
+        {
+            if(LOG.isInfoEnabled())
+                LOG.info("{} object(s) was returned from cache [{}] using query [{}] since {}", 
+                    list.size(), 
+                    selectable.getCache().getName(), 
+                    selectable.getName(),
+                    entry.getTimestamp());
+            list = (List<T>)entry.getValue();
+        }
         if (isDebugEnabled)
             LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
         
         return list;
         
     }
-
+    
     @Override
     public int add(Queryable queryable)
     {
@@ -424,7 +448,7 @@ public class RepositoryCouchDb implements Repository
         
         if (isDebugEnabled)
             LOG.debug("{} records was affected by remove [{}] query", affected, queryable.getName());
-        return affected;    
+        return affected;
     }
     
     @Override
@@ -464,7 +488,7 @@ public class RepositoryCouchDb implements Repository
             throw new IllegalArgumentException("Cannot execute sql [" + isql.getName() + "] as [" + isql.getSqlType()
                     + "], exptected is " + expected);
     }
-
+    
     private Properties lookup(String remaining)
     {
         Properties prop = null;
@@ -476,11 +500,10 @@ public class RepositoryCouchDb implements Repository
             else
                 throw new RepositoryException("Resource with name [" + remaining
                         + "] must be an instance of java.util.Properties to connect with CouchDb");
-          //TODO exception design, must have ConfigurationException?
+            //TODO exception design, must have ConfigurationException?
         }
         return prop;
     }
-
     
     //    /**
     //     * Summarize the columns from SQL result in binary data or not.

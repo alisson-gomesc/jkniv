@@ -75,7 +75,7 @@ public class ProcedureTag extends AbstractSqlTag implements SqlTag, Storable
     public ProcedureTag(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch,
             String hint, ValidateType validateType)
     {
-        super(id, languageType, isolation, timeout, batch, null, hint, validateType);
+        super(id, languageType, isolation, timeout, batch, /*null,*/ hint, validateType);
     }
     
     /**

@@ -37,6 +37,8 @@ import javax.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.jkniv.asserts.Assertable;
+import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.reflect.ReflectionUtils;
 import net.sf.jkniv.sqlegance.ConstraintException;
 import net.sf.jkniv.sqlegance.Deletable;
@@ -69,7 +71,8 @@ import net.sf.jkniv.sqlegance.transaction.Isolation;
  */
 public abstract class AbstractSqlTag implements SqlTag
 {
-    private static final Logger          log                      = LoggerFactory.getLogger(AbstractSqlTag.class);
+    protected static final Assertable notNull = AssertsFactory.getNotNull();
+    private static final transient Logger       log  = LoggerFactory.getLogger(AbstractSqlTag.class);
     // find the pattern #{id}
     private static final String  REGEX_HASH_MARK     = "#\\{[\\w\\.?]+\\}";
     // find the pattern :id
@@ -102,7 +105,6 @@ public abstract class AbstractSqlTag implements SqlTag
     private String               hint;
     private int                  timeout;
     private boolean              batch;
-    private String               cache;
     private ResultSetType        resultSetType;
     private ResultSetConcurrency resultSetConcurrency;
     private ResultSetHoldability resultSetHoldability;
@@ -131,12 +133,12 @@ public abstract class AbstractSqlTag implements SqlTag
      */
     public AbstractSqlTag(String id, LanguageType languageType)
     {
-        this(id, languageType, Isolation.DEFAULT, -1, false, null, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", ValidateType.NONE);
+        this(id, languageType, Isolation.DEFAULT, -1, false, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", ValidateType.NONE);
     }
     
     public AbstractSqlTag(String id, LanguageType languageType, SqlDialect sqlDialect)
     {
-        this(id, languageType, Isolation.DEFAULT, -1, false, null, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", ValidateType.NONE);
+        this(id, languageType, Isolation.DEFAULT, -1, false, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", ValidateType.NONE);
         this.sqlDialect = sqlDialect;
     }
 
@@ -155,8 +157,6 @@ public abstract class AbstractSqlTag implements SqlTag
      *            Query object to execute.
      * @param batch
      *            Indicate if query is a batch of commands.
-     * @param cache 
-     *            Indicate if must keep SQL result in cache           
      * @param hint
      *            A SQL hint can be used on certain database platforms.
      * @param validateType validation to apply before execute SQL.
@@ -166,11 +166,10 @@ public abstract class AbstractSqlTag implements SqlTag
                           Isolation isolation, 
                           int timeout, 
                           boolean batch, 
-                          String cache,
                           String hint, 
                           ValidateType validateType)
     {
-        this(id, languageType, isolation, timeout, batch, cache, hint, ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", validateType);
+        this(id, languageType, isolation, timeout, batch, hint, ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", validateType);
     }
 
     /**
@@ -188,8 +187,6 @@ public abstract class AbstractSqlTag implements SqlTag
      *            Query object to execute.
      * @param batch
      *            Indicate if query is a batch of commands.
-     * @param cache 
-     *            Indicate if must keep SQL result in cache           
      * @param hint
      *            A SQL hint can be used on certain database platforms
      * @param resultSetType TODO javadoc
@@ -204,7 +201,6 @@ public abstract class AbstractSqlTag implements SqlTag
                           Isolation isolation, 
                           int timeout, 
                           boolean batch,
-                          String cache,
                           String hint,
                           ResultSetType resultSetType, 
                           ResultSetConcurrency resultSetConcurrency, 
@@ -218,7 +214,6 @@ public abstract class AbstractSqlTag implements SqlTag
         this.isolation = isolation;
         this.timeout = timeout;
         this.batch = batch;
-        this.cache = cache;
         this.hint = hint;
         this.resultSetType = resultSetType;
         this.resultSetConcurrency = resultSetConcurrency;
@@ -393,6 +388,7 @@ public abstract class AbstractSqlTag implements SqlTag
         this.batch = batch;
     }
     
+    /*
     public String getCache()
     {
         return cache;
@@ -402,6 +398,7 @@ public abstract class AbstractSqlTag implements SqlTag
     {
         this.cache = cache;
     }
+    */
 
     @Override
     public boolean isSelectable()
@@ -603,6 +600,51 @@ public abstract class AbstractSqlTag implements SqlTag
         this.paket = name;
     }
     
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((paket == null) ? 0 : paket.hashCode());
+        result = prime * result + ((resourceName == null) ? 0 : resourceName.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AbstractSqlTag other = (AbstractSqlTag) obj;
+        if (id == null)
+        {
+            if (other.id != null)
+                return false;
+        }
+        else if (!id.equals(other.id))
+            return false;
+        if (paket == null)
+        {
+            if (other.paket != null)
+                return false;
+        }
+        else if (!paket.equals(other.paket))
+            return false;
+        if (resourceName == null)
+        {
+            if (other.resourceName != null)
+                return false;
+        }
+        else if (!resourceName.equals(other.resourceName))
+            return false;
+        return true;
+    }
+
     private void setParamParser(String text)
     {
         if (this.paramParser instanceof ParamParserNoMark)
@@ -626,6 +668,8 @@ public abstract class AbstractSqlTag implements SqlTag
         catch (ClassNotFoundException returnNULL) {  /* NULL type, returnType undefined */}
         return classz;
     }
+    
+    
 
 
 //    /**

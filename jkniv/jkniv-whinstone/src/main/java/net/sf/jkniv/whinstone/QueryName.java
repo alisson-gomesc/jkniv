@@ -70,7 +70,7 @@ class QueryName implements Queryable
     private boolean      scalar;
     private int          size;
     private TYPEOF_PARAM paramType;
-    private Class        returnType;
+    private Class<?>     returnType;
     private Sql          sql;
     
     protected String     sqlText;
@@ -578,12 +578,68 @@ class QueryName implements Queryable
         return this.returnType;
     }
     
-    
     @Override
     public void setReturnType(Class clazz)
     {
         this.returnType = clazz;
     }
+    
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((max == null) ? 0 : max.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((params == null) ? 0 : params.hashCode());
+        result = prime * result + size;
+        result = prime * result + ((sql == null) ? 0 : sql.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        QueryName other = (QueryName) obj;
+        if (max == null)
+        {
+            if (other.max != null)
+                return false;
+        }
+        else if (!max.equals(other.max))
+            return false;
+        if (name == null)
+        {
+            if (other.name != null)
+                return false;
+        }
+        else if (!name.equals(other.name))
+            return false;
+        if (params == null)
+        {
+            if (other.params != null)
+                return false;
+        }
+        else if (!params.equals(other.params))
+            return false;
+        if (size != other.size)
+            return false;
+        if (sql == null)
+        {
+            if (other.sql != null)
+                return false;
+        }
+        else if (!sql.equals(other.sql))
+            return false;
+        return true;
+    }
+
     @Override
     public String toString()
     {

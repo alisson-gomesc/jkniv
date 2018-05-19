@@ -4,8 +4,6 @@ import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 
 public class StartingSqleganceTest
 {
-
-
     public static void main(String[] args)
     {
        SqlContext sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");

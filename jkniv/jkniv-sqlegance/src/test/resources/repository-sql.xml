@@ -16,5 +16,5 @@
   <include href="/sql-test-attributes.xml"/> 
   <include href="/sql-test-shortname.xml"/> 
   <include href="/sql-test-autogeneratekey.xml"/>
-
+  <include href="/sql-test-cache.xml"/>
 </statements>
