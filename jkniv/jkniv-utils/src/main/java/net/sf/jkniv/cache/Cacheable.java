@@ -56,7 +56,7 @@ public interface Cacheable<K, V>
      * @throws IllegalArgumentException if some the <tt>key</tt> or <tt>value</tt> are {@code null}.
      */
     V put(K key, V value);
-    
+
     /**
      * Returns the value to which the specified key is cached,
      * or {@code null} if this cache contains no mapping for the key.
@@ -80,7 +80,7 @@ public interface Cacheable<K, V>
      *
      * @see Cacheable#getEntry(Object)
      */
-    interface Entry<T>
+    interface Entry<V>
     {
         /**
          * Timestamp from cached value
@@ -93,7 +93,7 @@ public interface Cacheable<K, V>
          * @return the value to which the entry cached, or
          *         {@code null} if this cache contains no entry
          */
-        T getValue();
+        V getValue();
     }
     
 }

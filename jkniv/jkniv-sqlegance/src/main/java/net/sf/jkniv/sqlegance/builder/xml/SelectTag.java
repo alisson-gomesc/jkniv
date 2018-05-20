@@ -63,7 +63,6 @@ class SelectTag extends AbstractSqlTag implements Selectable
     {
         super(id, languageType);
         init();
-        //
     }
     
     /**
