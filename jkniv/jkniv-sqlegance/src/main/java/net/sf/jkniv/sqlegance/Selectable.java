@@ -40,4 +40,5 @@ public interface Selectable extends Sql
     
     <K,V> Cacheable<K,V> getCache();
     
+    
 }

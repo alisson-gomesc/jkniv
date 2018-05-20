@@ -56,7 +56,6 @@ import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
 import net.sf.jkniv.sqlegance.statement.ResultSetType;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
 import net.sf.jkniv.sqlegance.params.ParamParser;
-//import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.sqlegance.params.ParamParserColonMark;
 import net.sf.jkniv.sqlegance.params.ParamParserHashMark;
 import net.sf.jkniv.sqlegance.params.ParamParserNoMark;

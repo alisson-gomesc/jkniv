@@ -28,8 +28,6 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 
 /**
- * 
- * 
  * MemoryCache based implementation of the <tt>Cacheable</tt> interface. 
  * This implementation provides a memory cache to keep the objects mapped keys to values.
  * The <tt>Cacheable</tt> doesn't permit {@code null} values.
