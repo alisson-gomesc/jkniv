@@ -21,7 +21,7 @@ public class StoredProcedureTest extends BaseTest
     public void whenCallSqlServerFunctionScalarValue()
     {
         Repository repository = getRepositorySqlServer();
-        Queryable queryable = QueryFactory.newInstance("comunicatePrice");
+        Queryable queryable = QueryFactory.of("comunicatePrice");
         List<Object[]> config = repository.list(queryable);
         assertThat(config.size(), greaterThan(0));
         assertThat(config.get(0), instanceOf(Object[].class));

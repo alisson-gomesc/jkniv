@@ -65,7 +65,7 @@ public class AddOperationTest extends BaseTest
         Author a = new Author();
         a.setId(System.currentTimeMillis());
         a.setName("Bob Dylan");
-        Queryable queryable = QueryFactory.newInstance("saveAuthor2Native", a);
+        Queryable queryable = QueryFactory.of("saveAuthor2Native", a);
         
         int rows = repository.add(queryable);
         

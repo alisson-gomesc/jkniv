@@ -42,7 +42,7 @@ public class SqlSelectNestedObjectTest extends BaseJdbc
     @Test
     public void whenSelectNestedObjectsWorks()
     {
-        Queryable q = QueryFactory.newInstance("listNestedBooks");
+        Queryable q = QueryFactory.of("listNestedBooks");
         List<Book> list = repositoryDerby.list(q);
         for(Book b : list)
         {

@@ -20,11 +20,11 @@
 package net.sf.jkniv.whinstone;
 
 /**
- * Command to be executed at database like {@code Select}, {@code Update}, {@code Delete}, {@code Insert}, {@code Stored Procedure}...
+ * Command to be executed at database like {@code Select}, {@code Update}, {@code Delete}, 
+ * {@code Insert}, {@code Stored Procedure}...
  * 
  * @author Alisson Gomes
  * @since 0.6.0
- *
  */
 public interface Command
 {

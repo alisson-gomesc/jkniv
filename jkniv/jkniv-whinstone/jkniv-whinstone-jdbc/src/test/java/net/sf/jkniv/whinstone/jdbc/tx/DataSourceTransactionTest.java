@@ -43,7 +43,7 @@ public class DataSourceTransactionTest extends BaseJdbc
     @Before
     public void setUp()
     {
-        q = QueryFactory.newInstance("getBookByISBN");
+        q = QueryFactory.of("getBookByISBN");
         System.out.println("setUp->" + Thread.currentThread().getName());
         repositoryDerby.getTransaction().begin();
         countBeforeTransaction = repositoryDerby.list(q).size();

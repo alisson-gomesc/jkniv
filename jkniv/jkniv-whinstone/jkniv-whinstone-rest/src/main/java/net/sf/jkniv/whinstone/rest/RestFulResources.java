@@ -429,7 +429,7 @@ public class RestFulResources extends BaseResource
         }
         if (params == null || params.isEmpty())
             throw new UnsupportedOperationException("List of data is mandatory to HTTP updateAll request");
-        Queryable queryable = QueryFactory.newInstance(q, params);
+        Queryable queryable = QueryFactory.of(q, params);
         Integer rowsAffected = getRepository(ctx).update(queryable);
         return buildSimpleResponse(rowsAffected);
     }
@@ -490,7 +490,7 @@ public class RestFulResources extends BaseResource
         {
             Map<String, Object> params = marshallToMap(ui.getQueryParameters());
             params.put("id", q);
-            queryable = QueryFactory.newInstance("remove", params);
+            queryable = QueryFactory.of("remove", params);
             rowsAffected = getRepository(ctx).remove(queryable);
         }
         return buildSimpleResponse(rowsAffected);

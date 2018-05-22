@@ -39,7 +39,7 @@ public class OneToManyJpaTest extends BaseTest
     @Test
     public void whenGroupingForOneToMany()
     {
-        Queryable q = QueryFactory.newInstance("oneToManyBooksFromAuthors");
+        Queryable q = QueryFactory.of("oneToManyBooksFromAuthors");
         List<Author> authors = getRepository().list(q);
         Iterator<Author> it = authors.iterator();
         

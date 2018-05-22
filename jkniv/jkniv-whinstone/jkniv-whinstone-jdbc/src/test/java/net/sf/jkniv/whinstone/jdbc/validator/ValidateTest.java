@@ -53,7 +53,7 @@ public class ValidateTest extends BaseJdbc
         catcher.expect(ConstraintException.class);
 
         Author author = new Author();
-        Queryable queryable = QueryFactory.newInstance("changeBookName", author);
+        Queryable queryable = QueryFactory.of("changeBookName", author);
         
         repositoryDerby.update(queryable);
         

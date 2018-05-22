@@ -58,7 +58,7 @@ public class SqlSelectTest extends BaseJdbc
     public void whenSelectWrongClassType()
     {
         catcher.expect(RepositoryException.class);
-        Queryable q = QueryFactory.newInstance("getBookByISBN");
+        Queryable q = QueryFactory.of("getBookByISBN");
         List<FlatAuthor> list = repositoryDerby.get(q);
         Assert.assertTrue(list.size() > 0);
         Assert.assertTrue(list.get(0) instanceof FlatAuthor);
@@ -68,7 +68,7 @@ public class SqlSelectTest extends BaseJdbc
     @Test
     public void whenSelectAllRecords()
     {
-        Queryable q = QueryFactory.newInstance("getBookByISBN");
+        Queryable q = QueryFactory.of("getBookByISBN");
         List<FlatBook> books = repositoryDerby.list(q);
         Assert.assertTrue(books.size() == TOTAL_BOOKS);
         Assert.assertTrue(books.get(0) instanceof FlatBook);
@@ -85,7 +85,7 @@ public class SqlSelectTest extends BaseJdbc
     @Test
     public void whenSelectOverloadReturnType()
     {
-        Queryable q = QueryFactory.newInstance("getBookToOverloadType");
+        Queryable q = QueryFactory.of("getBookToOverloadType");
         List<Book> list = repositoryDerby.list(q, Book.class);
         Assert.assertTrue(list.size() == TOTAL_BOOKS);
         for (Book b : list)
@@ -101,7 +101,7 @@ public class SqlSelectTest extends BaseJdbc
     public void whenSelectDoesntDefinedReturnType()
     {
         //catcher.expect(RepositoryException.class); //now, default is java.util.Map
-        Queryable q = QueryFactory.newInstance("listBooksNoSpecificType");
+        Queryable q = QueryFactory.of("listBooksNoSpecificType");
         List<Map> list = repositoryDerby.list(q);
         assertThat(list.size(), is(TOTAL_BOOKS));
         assertThat(list.get(0), instanceOf(Map.class));
@@ -113,7 +113,7 @@ public class SqlSelectTest extends BaseJdbc
     {
         //catcher.expect(RepositoryException.class); //now, default is java.util.Map
         CustomResultRow parser = null;
-        Queryable q = QueryFactory.newInstance("listBooksNoSpecificType");
+        Queryable q = QueryFactory.of("listBooksNoSpecificType");
         List<HashMap<String, Object>> list = repositoryDerby.list(q, parser);
         assertThat(list.get(0), instanceOf(Map.class));
         assertThat(list.get(0), instanceOf(HashMap.class));
@@ -123,7 +123,7 @@ public class SqlSelectTest extends BaseJdbc
     @Test
     public void whenSelectDoesntDefinedReturnTypeButForceOne()
     {
-        Queryable q = QueryFactory.newInstance("listBooksNoSpecificType");
+        Queryable q = QueryFactory.of("listBooksNoSpecificType");
         List<Book> list = repositoryDerby.list(q, Book.class);
         Assert.assertTrue(list.size() == TOTAL_BOOKS);
         Assert.assertTrue(list.get(0) instanceof Book);
@@ -134,7 +134,7 @@ public class SqlSelectTest extends BaseJdbc
     {
         Map<String, String> map = new HashMap<String, String>();
         map.put("isbn", "978-1503250888");
-        Queryable q = QueryFactory.newInstance("getBookByISBNWithMap", map);
+        Queryable q = QueryFactory.of("getBookByISBNWithMap", map);
         List<FlatBook> list = repositoryDerby.list(q);
         Assert.assertTrue(list.size() == 1);
     }
@@ -144,7 +144,7 @@ public class SqlSelectTest extends BaseJdbc
     {
         List<Object> params = new ArrayList<Object>();
         params.add("978-1503250888");
-        Queryable q = QueryFactory.newInstance("getBookByISBN", params);
+        Queryable q = QueryFactory.of("getBookByISBN", params);
         List<FlatBook> list = repositoryDerby.list(q);
         Assert.assertTrue(list.size() == 1);
     }
@@ -154,7 +154,7 @@ public class SqlSelectTest extends BaseJdbc
     {
         Map<String, Long> params = new HashMap<String, Long>();
         params.put("id", Long.valueOf(2));
-        Queryable q = QueryFactory.newInstance("getAuthorWithTwoDots", params);
+        Queryable q = QueryFactory.of("getAuthorWithTwoDots", params);
         List<FlatAuthor> list = repositoryDerby.list(q);
         Assert.assertTrue(list.size() == 1);
     }
@@ -164,7 +164,7 @@ public class SqlSelectTest extends BaseJdbc
     {
         Map<String, Long> params = new HashMap<String, Long>();
         params.put("id", Long.valueOf(1));
-        Queryable q = QueryFactory.newInstance("getAuthorWithHashParam", params);
+        Queryable q = QueryFactory.of("getAuthorWithHashParam", params);
         List<FlatAuthor> list = repositoryDerby.list(q);
         Assert.assertTrue(list.size() == 1);
     }

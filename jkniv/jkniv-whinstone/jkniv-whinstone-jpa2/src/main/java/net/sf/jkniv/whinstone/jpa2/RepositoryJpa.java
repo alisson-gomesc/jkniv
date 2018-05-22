@@ -648,7 +648,7 @@ public class RepositoryJpa implements RepositoryJpaExtend
             Iterator<Object> it = queryable.iterator();
             while (it.hasNext())
             {
-                Queryable queryableIt = QueryFactory.newInstance(queryable.getName(), it.next(), queryable.getOffset(),
+                Queryable queryableIt = QueryFactory.of(queryable.getName(), it.next(), queryable.getOffset(),
                         queryable.getMax());
                 QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(em, sqlContext, queryableIt, null);
                 rowsAffected += queryableJpaAdapter.executeUpdate();
@@ -733,7 +733,7 @@ public class RepositoryJpa implements RepositoryJpaExtend
         else
             queryName = xmlQueryName.toListName(getGenericType());
         
-        return QueryFactory.newInstance(queryName, object);
+        return QueryFactory.of(queryName, object);
     }
     
     /**

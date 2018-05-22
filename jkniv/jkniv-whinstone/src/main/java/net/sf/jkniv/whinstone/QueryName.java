@@ -50,7 +50,8 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  */
 class QueryName implements Queryable
 {
-    private static final Assertable notNull    = AssertsFactory.getNotNull();
+    private static final transient Assertable notNull    = AssertsFactory.getNotNull();
+    private static final transient Assertable isNull    = AssertsFactory.getIsNull();
     private static final BasicType  BASIC_TYPE = BasicType.getInstance();
     
     private enum TYPEOF_PARAM
@@ -66,7 +67,7 @@ class QueryName implements Queryable
     private String       hint;
     private int          timeout;
     private boolean      batch;
-    private Object       params;
+    private final Object       params;
     private boolean      scalar;
     private int          size;
     private TYPEOF_PARAM paramType;
@@ -234,7 +235,13 @@ class QueryName implements Queryable
     {
         return this.boundParams;
     }
-    
+
+//    @Override
+//    public boolean isBoundReturnType()
+//    {
+//        return (this.returnType != null);
+//    }
+
     @Override
     public boolean isTypeOfNull()
     {
@@ -456,6 +463,7 @@ class QueryName implements Queryable
     @Override
     public void bind(Sql sql)//TODO test Queryable.bind method
     {
+        isNull.verify(this.sql);
         notNull.verify(sql);
         if (this.sql != null)
             throw new IllegalStateException("Cannot re-assign new Sql to queryable object");
@@ -578,11 +586,13 @@ class QueryName implements Queryable
         return this.returnType;
     }
     
-    @Override
-    public void setReturnType(Class clazz)
+    void setReturnType(Class clazz)
     {
+        isNull.verify(this.returnType);
         this.returnType = clazz;
     }
+    
+
     
     @Override
     public int hashCode()
@@ -592,6 +602,7 @@ class QueryName implements Queryable
         result = prime * result + ((max == null) ? 0 : max.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((params == null) ? 0 : params.hashCode());
+        result = prime * result + ((returnType == null) ? 0 : returnType.getName().hashCode());
         result = prime * result + size;
         result = prime * result + ((sql == null) ? 0 : sql.hashCode());
         return result;
@@ -627,6 +638,13 @@ class QueryName implements Queryable
                 return false;
         }
         else if (!params.equals(other.params))
+            return false;
+        if (returnType == null)
+        {
+            if (other.returnType != null)
+                return false;
+        }
+        else if (!returnType.equals(other.returnType))
             return false;
         if (size != other.size)
             return false;

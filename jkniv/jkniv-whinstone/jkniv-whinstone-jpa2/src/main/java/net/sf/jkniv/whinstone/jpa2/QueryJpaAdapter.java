@@ -59,7 +59,7 @@ public class QueryJpaAdapter extends AbstractQueryJpaAdapter
                 else
                     params = queryable.values(paramsNames);
                 
-                queryable2 = QueryFactory.newInstance(queryable.getName(), params, queryable.getOffset(), queryable.getMax());
+                queryable2 = QueryFactory.of(queryable.getName(), params, queryable.getOffset(), queryable.getMax());
                 if (overloadReturnType == null)
                     queryJpa = em.createNativeQuery(positionalSql);
                 else if(isql.isReturnTypeManaged())

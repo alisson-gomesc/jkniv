@@ -42,7 +42,7 @@ public class GroupingByJpaTest extends BaseTest
     {
         Repository repository = getRepository();
 
-        Queryable q = QueryFactory.newInstance("test-groupingby1-after-select");
+        Queryable q = QueryFactory.of("test-groupingby1-after-select");
         List<Color> colors = repository.list(q);
         Iterator<Color> it = colors.iterator();
         Color black = it.next();
@@ -61,7 +61,7 @@ public class GroupingByJpaTest extends BaseTest
     public void whenGroupingByTwoFields()
     {
         Repository repository = getRepository();
-        Queryable q = QueryFactory.newInstance("test-groupingby2-after-select");
+        Queryable q = QueryFactory.of("test-groupingby2-after-select");
         List<Color> colors = repository.list(q);
         Iterator<Color> it = colors.iterator();
         Color black = it.next();

@@ -18,8 +18,8 @@ public class OracleStoredTest extends BaseJdbc
     @Test
     public void whenCallingSimpleStoredByUpdateNoParams()
     {
-        Queryable q = QueryFactory.newInstance("helloStored");
-        repositoryOra.update(QueryFactory.newInstance("enable_output"));
+        Queryable q = QueryFactory.of("helloStored");
+        repositoryOra.update(QueryFactory.of("enable_output"));
         repositoryOra.update(q);
     }
     

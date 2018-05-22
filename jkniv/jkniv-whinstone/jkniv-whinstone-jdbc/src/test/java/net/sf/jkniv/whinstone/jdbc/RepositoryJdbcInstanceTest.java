@@ -80,7 +80,7 @@ public class RepositoryJdbcInstanceTest extends BaseSpringJUnit4
     public void whenListWithRepositoryConfigByDataSource()
     {
         Repository repository = new RepositoryJdbc(dataSourceDerby);
-        Queryable q = QueryFactory.newInstance("getAllBooks");
+        Queryable q = QueryFactory.of("getAllBooks");
         List<FlatBook> list = repository.list(q);
         Assert.assertTrue(list.size() == TOTAL_BOOKS);
         Assert.assertTrue(list.get(0) instanceof FlatBook);
@@ -97,7 +97,7 @@ public class RepositoryJdbcInstanceTest extends BaseSpringJUnit4
     public void whenListWithRepositoryConfigWithContext()
     {
         Repository repository = new RepositoryJdbc(SqlContextFactory.newInstance("/repository-sql.xml"));
-        Queryable q = QueryFactory.newInstance("getAllBooks");
+        Queryable q = QueryFactory.of("getAllBooks");
         List<FlatBook> list = repository.list(q);
         Assert.assertTrue(list.size() == TOTAL_BOOKS);
         Assert.assertTrue(list.get(0) instanceof FlatBook);
@@ -114,7 +114,7 @@ public class RepositoryJdbcInstanceTest extends BaseSpringJUnit4
     public void whenListWithRepositoryConfigByProperties()
     {
         Repository repository = createRepositoryWithProperties();
-        Queryable q = QueryFactory.newInstance("getAllBooks");
+        Queryable q = QueryFactory.of("getAllBooks");
         List<FlatBook> list = repository.list(q);
         Assert.assertTrue(list.size() == TOTAL_BOOKS);
         Assert.assertTrue(list.get(0) instanceof FlatBook);

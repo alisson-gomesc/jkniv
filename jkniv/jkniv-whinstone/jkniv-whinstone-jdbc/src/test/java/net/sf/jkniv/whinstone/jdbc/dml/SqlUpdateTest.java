@@ -40,7 +40,7 @@ public class SqlUpdateTest extends BaseJdbc
     @Test
     public void whenUpdateRecord()
     {
-        Queryable q = QueryFactory.newInstance("getBookByISBN");
+        Queryable q = QueryFactory.of("getBookByISBN");
         final String NAME = "Friedrich Wilhelm Nietzsche";
         final Long ID = 1L;
         FlatAuthor author = new FlatAuthor();

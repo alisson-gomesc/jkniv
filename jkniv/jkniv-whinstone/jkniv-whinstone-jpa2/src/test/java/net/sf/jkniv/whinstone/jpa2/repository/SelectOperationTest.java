@@ -68,7 +68,7 @@ public class SelectOperationTest extends BaseTest
             b1.setIsbn(isbn);
             repository.add(b1);
         }
-        List<Book> list = repository.list(QueryFactory.newInstance("Book.list"));
+        List<Book> list = repository.list(QueryFactory.of("Book.list"));
         assertThat(list.size(), is(SIZE+TOTAL_BOOKS));
     }
     
@@ -88,7 +88,7 @@ public class SelectOperationTest extends BaseTest
         }
         Book b = new Book();
         b.setName("Spoke%");
-        Queryable query = QueryFactory.newInstance("listLikeName", b, 0, MAX.intValue());
+        Queryable query = QueryFactory.of("listLikeName", b, 0, MAX.intValue());
         List<Book> list = repository.list(query);
         
         assertThat(list.size(), is(MAX.intValue()));
@@ -122,7 +122,7 @@ public class SelectOperationTest extends BaseTest
         }
         
         repository.flush();
-        query = QueryFactory.newInstance("listBean", author, 0, SIZE);
+        query = QueryFactory.of("listBean", author, 0, SIZE);
         authorFlats = repository.list(query);
         
         Assert.assertNotNull(authorFlats);
@@ -152,8 +152,8 @@ public class SelectOperationTest extends BaseTest
         repository.add(b1);
         Assert.assertNotNull(b1.getId());
         
-        Queryable q1 = QueryFactory.newInstance("jpql_getBookOrdered");
-        Queryable q2 = QueryFactory.newInstance("jpql_getBookByName", params);
+        Queryable q1 = QueryFactory.of("jpql_getBookOrdered");
+        Queryable q2 = QueryFactory.of("jpql_getBookByName", params);
         
         List<Book> list = repository.list(q1);
         b2 = repository.get(q2);

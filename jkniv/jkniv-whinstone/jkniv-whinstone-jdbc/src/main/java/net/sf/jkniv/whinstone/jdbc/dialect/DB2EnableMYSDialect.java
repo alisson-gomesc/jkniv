@@ -19,9 +19,7 @@
  */
 package net.sf.jkniv.whinstone.jdbc.dialect;
 
-import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
-import net.sf.jkniv.whinstone.Queryable;
 
 /**
  * Dialect to DB2 with compatibility features for MySQL applications.

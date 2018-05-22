@@ -51,7 +51,7 @@ public class ResultSetParserTest extends BaseJdbc
     @Test
     public void whenSelectReturnMapInterface()
     {
-        Queryable q = QueryFactory.newInstance("listWithMapInterface");
+        Queryable q = QueryFactory.of("listWithMapInterface");
         List<Map<String, Object>> list = repositoryDerby.list(q);
         assertThat(list.get(0), instanceOf(Map.class));
         assertThat(list.get(0), instanceOf(HashMap.class));
@@ -60,7 +60,7 @@ public class ResultSetParserTest extends BaseJdbc
     @Test
     public void whenSelectReturnHashMap()
     {
-        Queryable q = QueryFactory.newInstance("listWithMapInterface");
+        Queryable q = QueryFactory.of("listWithMapInterface");
         List<HashMap> list = repositoryDerby.list(q, HashMap.class);
         assertThat(list.get(0), instanceOf(Map.class));
         assertThat(list.get(0), instanceOf(HashMap.class));
@@ -69,7 +69,7 @@ public class ResultSetParserTest extends BaseJdbc
     @Test
     public void whenSelectReturnProperties()
     {
-        Queryable q = QueryFactory.newInstance("listWithMapInterface");
+        Queryable q = QueryFactory.of("listWithMapInterface");
         List<Properties> list = repositoryDerby.list(q, Properties.class);
         assertThat(list.get(0), instanceOf(Map.class));
         assertThat(list.get(0), instanceOf(Properties.class));
@@ -78,7 +78,7 @@ public class ResultSetParserTest extends BaseJdbc
     @Test
     public void whenSelectReturnLinkedHashMap()
     {
-        Queryable q = QueryFactory.newInstance("listWithMapInterface");
+        Queryable q = QueryFactory.of("listWithMapInterface");
         List<LinkedHashMap> list = repositoryDerby.list(q, LinkedHashMap.class);
         assertThat(list.get(0), instanceOf(Map.class));
         assertThat(list.get(0), instanceOf(LinkedHashMap.class));
@@ -87,7 +87,7 @@ public class ResultSetParserTest extends BaseJdbc
     @Test
     public void whenSelectReturnHashtable()
     {
-        Queryable q = QueryFactory.newInstance("listWithMapInterface");
+        Queryable q = QueryFactory.of("listWithMapInterface");
         List<Hashtable> list = repositoryDerby.list(q, Hashtable.class);
         assertThat(list.get(0), instanceOf(Map.class));
         assertThat(list.get(0), instanceOf(Hashtable.class));
@@ -96,7 +96,7 @@ public class ResultSetParserTest extends BaseJdbc
     @Test
     public void whenSelectReturnIdentityHashMap()
     {
-        Queryable q = QueryFactory.newInstance("listWithMapInterface");
+        Queryable q = QueryFactory.of("listWithMapInterface");
         List<IdentityHashMap> list = repositoryDerby.list(q, IdentityHashMap.class);
         assertThat(list.get(0), instanceOf(Map.class));
         assertThat(list.get(0), instanceOf(IdentityHashMap.class));
@@ -105,7 +105,7 @@ public class ResultSetParserTest extends BaseJdbc
     @Test
     public void whenSelectReturnConcurrentHashMap()
     {
-        Queryable q = QueryFactory.newInstance("listWithMapInterface");
+        Queryable q = QueryFactory.of("listWithMapInterface");
         List<ConcurrentHashMap> list = repositoryDerby.list(q, ConcurrentHashMap.class);
         assertThat(list.get(0), instanceOf(Map.class));
         assertThat(list.get(0), instanceOf(ConcurrentHashMap.class));
@@ -114,7 +114,7 @@ public class ResultSetParserTest extends BaseJdbc
     @Test
     public void whenSelectWithCustomResultSetParser()
     {
-        Queryable q = QueryFactory.newInstance("listWithMapInterface");
+        Queryable q = QueryFactory.of("listWithMapInterface");
         List<HashMap<String, Object>> list = repositoryDerby.list(q, new CustomResultRow());
         assertThat(list.get(0), instanceOf(Map.class));
         assertThat(list.get(0), instanceOf(HashMap.class));

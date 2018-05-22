@@ -45,7 +45,7 @@ public class SpringTransactionTest extends BaseJdbc
     @Before
     public void setUp()
     {
-        q = QueryFactory.newInstance("getBookByISBN");
+        q = QueryFactory.of("getBookByISBN");
         System.out.println("setUp->" + Thread.currentThread().getName());
         //repositoryOra.getTransaction().begin();
         countBeforeTransaction = repositorySpring.list(q).size();

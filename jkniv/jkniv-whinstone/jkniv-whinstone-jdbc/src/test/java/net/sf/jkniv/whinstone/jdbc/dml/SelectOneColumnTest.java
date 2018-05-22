@@ -45,7 +45,7 @@ public class SelectOneColumnTest extends BaseJdbc
     {
         Author params = new Author();
         params.setId(4L);
-        Queryable queryable = QueryFactory.newInstance("authorByIdSqlOneStringColumn", params);
+        Queryable queryable = QueryFactory.of("authorByIdSqlOneStringColumn", params);
         List<String> authors = repositoryDerby.list(queryable);
         assertThat(authors.size(), is(2));
         assertThat(queryable.getTotal(), is(2L));
@@ -57,7 +57,7 @@ public class SelectOneColumnTest extends BaseJdbc
     {
         Author params = new Author();
         params.setId(4L);
-        Queryable queryable = QueryFactory.newInstance("authorByIdSqlOneNumberColumn", params);
+        Queryable queryable = QueryFactory.of("authorByIdSqlOneNumberColumn", params);
         List<Long> authors = repositoryDerby.list(queryable);
         assertThat(authors.size(), is(2));
         assertThat(queryable.getTotal(), is(2L));
@@ -69,7 +69,7 @@ public class SelectOneColumnTest extends BaseJdbc
     {
         Author params = new Author();
         params.setId(4L);
-        Queryable queryable = QueryFactory.newInstance("authorByIdSqlOneNumberColumn", params);
+        Queryable queryable = QueryFactory.of("authorByIdSqlOneNumberColumn", params);
         List<Integer> authors = repositoryDerby.list(queryable, Integer.class);
         assertThat(authors.size(), is(2));
         assertThat(queryable.getTotal(), is(2L));
@@ -81,7 +81,7 @@ public class SelectOneColumnTest extends BaseJdbc
     {
         Author params = new Author();
         params.setId(4L);
-        Queryable queryable = QueryFactory.newInstance("authorByIdSqlOneNumberColumn", params);
+        Queryable queryable = QueryFactory.of("authorByIdSqlOneNumberColumn", params);
         List<Float> authors = repositoryDerby.list(queryable, Float.class);
         assertThat(authors.size(), is(2));
         assertThat(queryable.getTotal(), is(2L));
@@ -91,7 +91,7 @@ public class SelectOneColumnTest extends BaseJdbc
     @Test
     public void whenUseNativeQueryEmptySelectResult()
     {
-        Queryable queryable = QueryFactory.newInstance("authorNoExists");
+        Queryable queryable = QueryFactory.of("authorNoExists");
         List<String> authors = repositoryDerby.list(queryable);
         assertThat(authors.size(), is(0));
     }

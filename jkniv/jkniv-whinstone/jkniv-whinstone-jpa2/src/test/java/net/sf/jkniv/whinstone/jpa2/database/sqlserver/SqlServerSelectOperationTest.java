@@ -41,7 +41,7 @@ public class SqlServerSelectOperationTest extends BaseTest
     public void getExecuteQueryTest()
     {
         Repository repository = getRepositorySqlServer();
-        Queryable queryable = QueryFactory.newInstance("configuracao");
+        Queryable queryable = QueryFactory.of("configuracao");
         List<Object[]> config = repository.list(queryable);
         assertThat(config.size(), greaterThan(0));
         assertThat(config.get(0), instanceOf(Object[].class));

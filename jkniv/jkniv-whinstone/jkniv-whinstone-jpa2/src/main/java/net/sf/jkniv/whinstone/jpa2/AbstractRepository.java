@@ -517,7 +517,7 @@ class AbstractRepository<T> implements IRepository<T>
             String queryName = query.getName() + ".count";
             Sql isqlCount = XmlBuilderSql.getQuery(queryName);
             LOG.trace("executing count query [" + query.getName() + ".count" + "]");
-            Queryable queryCopy = QueryFactory.newInstance(queryName, query.getParams(), 0, Integer.MAX_VALUE);
+            Queryable queryCopy = QueryFactory.of(queryName, query.getParams(), 0, Integer.MAX_VALUE);
             queryJpa = QueryBuilder.newQuery(isqlCount, em, queryCopy);
         }
         catch (IllegalArgumentException e)

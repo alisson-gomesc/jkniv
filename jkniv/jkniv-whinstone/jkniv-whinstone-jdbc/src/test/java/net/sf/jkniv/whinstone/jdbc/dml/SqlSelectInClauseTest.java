@@ -55,7 +55,7 @@ public class SqlSelectInClauseTest extends BaseJdbc
     {
         String[] params =
         { "Albert Camus", "Franz Kafka", "Martin Fowler" };
-        Queryable q = QueryFactory.newInstance("getBooksFromAuthorUsingIN", params);
+        Queryable q = QueryFactory.ofArray("getBooksFromAuthorUsingIN", params);
         List<FlatAuthor> list = repositoryDerby.list(q);
         assertThat(list.size(), is(9));
     }
@@ -70,7 +70,7 @@ public class SqlSelectInClauseTest extends BaseJdbc
         String[] array =
         { a, b, c };
         
-        q = QueryFactory.newInstance("getBooksFromAuthorUsingIN", array);
+        q = QueryFactory.ofArray("getBooksFromAuthorUsingIN", array);
         result = repositoryDerby.list(q);
         assertThat(result.size(), is(9));
         
@@ -78,7 +78,7 @@ public class SqlSelectInClauseTest extends BaseJdbc
         list.add(a);
         list.add(b);
         list.add(c);
-        q = QueryFactory.newInstance("getBooksFromAuthorUsingIN", list);
+        q = QueryFactory.of("getBooksFromAuthorUsingIN", list);
         result = repositoryDerby.list(q);
         assertThat(result.size(), is(9));
         
@@ -86,7 +86,7 @@ public class SqlSelectInClauseTest extends BaseJdbc
         linkedList.add(a);
         linkedList.add(b);
         linkedList.add(c);
-        q = QueryFactory.newInstance("getBooksFromAuthorUsingIN", linkedList);
+        q = QueryFactory.of("getBooksFromAuthorUsingIN", linkedList);
         result = repositoryDerby.list(q);
         assertThat(result.size(), is(9));
         
@@ -94,7 +94,7 @@ public class SqlSelectInClauseTest extends BaseJdbc
         vector.add(a);
         vector.add(b);
         vector.add(c);
-        q = QueryFactory.newInstance("getBooksFromAuthorUsingIN", vector);
+        q = QueryFactory.of("getBooksFromAuthorUsingIN", vector);
         result = repositoryDerby.list(q);
         assertThat(result.size(), is(9));
         
@@ -102,7 +102,7 @@ public class SqlSelectInClauseTest extends BaseJdbc
         map.put("a", "A");
         map.put("authors", array);
         map.put("c", "A");
-        q = QueryFactory.newInstance("getBooksFromAuthorUsingIN", map);
+        q = QueryFactory.of("getBooksFromAuthorUsingIN", map);
         result = repositoryDerby.list(q);
         assertThat(result.size(), is(9));
         
@@ -117,7 +117,7 @@ public class SqlSelectInClauseTest extends BaseJdbc
         map.put("a", "A");
         map.put("b", "A");
         map.put("c", "A");
-        Queryable q = QueryFactory.newInstance("getBooksFromAuthorUsingIN", map);
+        Queryable q = QueryFactory.of("getBooksFromAuthorUsingIN", map);
         List<FlatBook> result = repositoryDerby.list(q);
     }
     

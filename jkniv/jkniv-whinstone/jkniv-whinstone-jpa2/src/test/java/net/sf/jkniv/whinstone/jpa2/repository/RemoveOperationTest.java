@@ -66,9 +66,9 @@ public class RemoveOperationTest extends BaseTest
         Repository repository = getRepository();
         Author a = new Author();
         a.setId(505L);
-        Queryable queryable = QueryFactory.newInstance("deleteAuthor2Native", a);
+        Queryable queryable = QueryFactory.of("deleteAuthor2Native", a);
         
-        Queryable countQuery = QueryFactory.newInstance("Book.list", a);
+        Queryable countQuery = QueryFactory.of("Book.list", a);
         int count = repository.list(countQuery).size();
 
         assertThat(count, is(6));

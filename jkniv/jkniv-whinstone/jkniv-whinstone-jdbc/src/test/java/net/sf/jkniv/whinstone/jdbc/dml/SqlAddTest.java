@@ -48,7 +48,7 @@ public class SqlAddTest extends BaseJdbc
     @Test
     public void whenSelectOneRecordByUniqueValue()
     {
-        Queryable q = QueryFactory.newInstance("getBookByISBN");
+        Queryable q = QueryFactory.of("getBookByISBN");
         
         FlatBook book = new FlatBook();
         book.setAuthorId(1L);

@@ -71,7 +71,7 @@ public abstract class SqlDialectAbstractTest
     
     protected Queryable getQueryName()
     {
-        Queryable q = QueryFactory.newInstance("sql-test", Collections.emptyMap(), 10, 50);
+        Queryable q = QueryFactory.of("sql-test", Collections.emptyMap(), 10, 50);
         return q;
     }
     

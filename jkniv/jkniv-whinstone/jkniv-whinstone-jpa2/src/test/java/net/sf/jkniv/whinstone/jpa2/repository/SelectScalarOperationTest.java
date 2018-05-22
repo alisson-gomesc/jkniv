@@ -40,7 +40,7 @@ public class SelectScalarOperationTest extends BaseTest
     {
         Repository repository = getRepository();
         String bookName = "Sentimento do Mundo";
-        Book book = repository.get(QueryFactory.newInstance("BookByName", bookName));
+        Book book = repository.get(QueryFactory.of("BookByName", bookName));
         assertThat(book, is(notNullValue()));
         assertThat(book.getName(), is(bookName));
     }
@@ -50,7 +50,7 @@ public class SelectScalarOperationTest extends BaseTest
     {
         Repository repository = getRepository();
         String bookName = "Sentimento do Mundo";
-        String name = repository.scalar(QueryFactory.newInstance("GetNameBookByName", bookName));
+        String name = repository.scalar(QueryFactory.of("GetNameBookByName", bookName));
         assertThat(name, is(notNullValue()));
         assertThat(name, instanceOf(String.class));
         assertThat(name, is(bookName));
@@ -61,7 +61,7 @@ public class SelectScalarOperationTest extends BaseTest
     {
         Repository repository = getRepository();
         String bookName = "Sentimento do Mundo";
-        String name = repository.scalar(QueryFactory.newInstance("GetNameBookByNameNative", bookName));
+        String name = repository.scalar(QueryFactory.of("GetNameBookByNameNative", bookName));
         assertThat(name, is(notNullValue()));
         assertThat(name, instanceOf(String.class));
         assertThat(name, is(bookName));
@@ -72,7 +72,7 @@ public class SelectScalarOperationTest extends BaseTest
     {
         Repository repository = getRepository();
         String bookName = "Sentimento do Mundo";
-        String name = repository.scalar(QueryFactory.newInstance("GetNameBookByName2", bookName));
+        String name = repository.scalar(QueryFactory.of("GetNameBookByName2", bookName));
         assertThat(name, is(notNullValue()));
         assertThat(name, instanceOf(String.class));
         assertThat(name, is(bookName));

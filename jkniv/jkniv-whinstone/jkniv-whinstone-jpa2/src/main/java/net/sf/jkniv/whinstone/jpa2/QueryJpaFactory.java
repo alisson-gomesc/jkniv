@@ -72,7 +72,7 @@ public class QueryJpaFactory
             String queryName = queryable.getName() + "#count";
             isqlCount = sqlContext.getQuery(queryName);
             LOG.trace("executing count query [" + queryable.getName() + "#count" + "]");
-            Queryable queryCopy = QueryFactory.newInstance(queryName, queryable.getParams(), 0, Integer.MAX_VALUE);
+            Queryable queryCopy = QueryFactory.of(queryName, queryable.getParams(), 0, Integer.MAX_VALUE);
             queryJpa = QueryJpaFactory.newQuery(isqlCount, em, queryCopy);
         }
         catch (QueryNotFoundException e)
@@ -83,7 +83,7 @@ public class QueryJpaFactory
             //String entityName = genericType.getSimpleName();
             String sql = "select count (*) from " + isql.getReturnType() + " where exists (" + sqlWithoutOrderBy + ")";
             LOG.trace("try to count rows using dynamically query [" + sql + "]");
-            Queryable queryCopy = QueryFactory.newInstance(queryable.getName(), queryable.getParams(), 0,
+            Queryable queryCopy = QueryFactory.of(queryable.getName(), queryable.getParams(), 0,
                     Integer.MAX_VALUE);
             queryJpa = QueryJpaFactory.newQueryForCount(sql, isql.getLanguageType(), em, queryCopy,
                     isql.getParamParser());

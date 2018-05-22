@@ -302,7 +302,7 @@ class RepositoryJdbc implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as get command", queryName);
 
-        Queryable queryable = QueryFactory.newInstance(queryName, entity);
+        Queryable queryable = QueryFactory.of(queryName, entity);
         
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.SELECT);
@@ -424,7 +424,7 @@ class RepositoryJdbc implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as add command", queryName);
         //LOG.trace("trying query " + queryName);
-        Queryable queryable = QueryFactory.newInstance(queryName, entity);
+        Queryable queryable = QueryFactory.of(queryName, entity);
         
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.INSERT);
@@ -483,7 +483,7 @@ class RepositoryJdbc implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryName);
         //LOG.trace("trying query " + queryName);
-        Queryable queryable = QueryFactory.newInstance(queryName, entity);
+        Queryable queryable = QueryFactory.of(queryName, entity);
         
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.UPDATE);
@@ -538,7 +538,7 @@ class RepositoryJdbc implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as remove command", queryName);
         //LOG.trace("trying query " + queryName);
-        Queryable queryable = QueryFactory.newInstance(queryName, entity);
+        Queryable queryable = QueryFactory.of(queryName, entity);
         
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.DELETE);

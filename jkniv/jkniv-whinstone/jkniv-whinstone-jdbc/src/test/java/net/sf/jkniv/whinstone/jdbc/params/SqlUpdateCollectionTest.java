@@ -56,8 +56,8 @@ public class SqlUpdateCollectionTest extends BaseJdbc
     public void whenUpdateUsingCollectionOfEntity()
     {
         Collection<Book> params = getValuesBook();
-        Queryable qUpdate = QueryFactory.newInstance("Book#update", params);
-        Queryable qIsbn = QueryFactory.newInstance("Book#get", params.iterator().next());        
+        Queryable qUpdate = QueryFactory.of("Book#update", params);
+        Queryable qIsbn = QueryFactory.of("Book#get", params.iterator().next());        
         int rowsAffected = repositoryDerby.update(qUpdate);
         assertThat(rowsAffected, is(10));
         
@@ -73,8 +73,8 @@ public class SqlUpdateCollectionTest extends BaseJdbc
     public void whenUpdateUsingCollectionOfMapWith()
     {
         Collection<Map<String, Object>> params = getValuesBookAsMap();
-        Queryable qUpdate = QueryFactory.newInstance("Book#update", params);
-        Queryable qIsbn = QueryFactory.newInstance("Book#get", params.iterator().next());        
+        Queryable qUpdate = QueryFactory.of("Book#update", params);
+        Queryable qIsbn = QueryFactory.of("Book#get", params.iterator().next());        
         int rowsAffected = repositoryDerby.update(qUpdate);
         assertThat(rowsAffected, is(10));
         
@@ -92,8 +92,8 @@ public class SqlUpdateCollectionTest extends BaseJdbc
         Collection<Object[]> params = getValuesBookAsArray();
         Book book = new Book();
         book.setId(1001L);
-        Queryable qUpdate = QueryFactory.newInstance("Book#update2", params);
-        Queryable qIsbn = QueryFactory.newInstance("Book#get", book);        
+        Queryable qUpdate = QueryFactory.of("Book#update2", params);
+        Queryable qIsbn = QueryFactory.of("Book#get", book);        
         int rowsAffected = repositoryDerby.update(qUpdate);
         assertThat(rowsAffected, is(10));
         
@@ -109,8 +109,8 @@ public class SqlUpdateCollectionTest extends BaseJdbc
     public void whenUpdateUsingArrayOfMapWith()
     {
         Object[] params = getValuesBookAsArrayOfMap();
-        Queryable qUpdate = QueryFactory.newInstance("Book#update", params);
-        Queryable qIsbn = QueryFactory.newInstance("Book#get", params[0]);        
+        Queryable qUpdate = QueryFactory.ofArray("Book#update", params);
+        Queryable qIsbn = QueryFactory.of("Book#get", params[0]);        
         int rowsAffected = repositoryDerby.update(qUpdate);
         assertThat(rowsAffected, is(10));
         

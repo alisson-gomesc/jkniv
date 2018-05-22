@@ -48,7 +48,7 @@ public class DerbyDataTypeTest extends BaseJdbc
     {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date = sdf.parse("2016-02-01");
-        Queryable queryable = QueryFactory.newInstance("myTypeByDate", date);
+        Queryable queryable = QueryFactory.of("myTypeByDate", date);
  
         List<Map<String, Object>> rows = repositoryDerby.list(queryable);
         assertThat(rows.size(), is(3));
@@ -61,7 +61,7 @@ public class DerbyDataTypeTest extends BaseJdbc
         Date date = sdf.parse("2016-02-01");
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("date", date);
-        Queryable queryable = QueryFactory.newInstance("myTypeByDate", params);
+        Queryable queryable = QueryFactory.of("myTypeByDate", params);
  
         List<Map<String, Object>> rows = repositoryDerby.list(queryable);
         assertThat(rows.size(), is(3));

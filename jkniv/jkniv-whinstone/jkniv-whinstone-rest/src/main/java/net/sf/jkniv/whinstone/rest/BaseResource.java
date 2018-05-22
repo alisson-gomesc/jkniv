@@ -188,7 +188,7 @@ public class BaseResource
     
     private Queryable newQuery(String name, Object params, int page)
     {
-        Queryable q = QueryFactory.newInstance(name, params);
+        Queryable q = QueryFactory.of(name, params);
         if (page > 1)
             q.setOffset((page - 1) * MAX);
         return q;

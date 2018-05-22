@@ -132,6 +132,8 @@ public interface Queryable
      * Mark the query as scalar value, means must be return just one value
      */
     void scalar();
+    // FIXME design when invoked as scalar the query cannot be execute another way, always is scalar
+    // return IllegalStateException when this happen
     
     /**
      * verify if the query is scalar value.
@@ -140,10 +142,16 @@ public interface Queryable
     boolean isScalar();
     
     /**
-     * Check if Sql object was bind to queryable instance.
+     * Check if SQL object was bind to this instance.
      * @return {@code true} when was bind, {@code false} otherwise.
      */
     boolean isBoundSql();
+    
+//    /**
+//     * Check if return type from was bind to this instance
+//     * @return {@code true} when was bind, {@code false} otherwise.
+//     */
+//    boolean isBoundReturnType();
     
     /**
      * Check if the parameters from queryable was bind to {@link StatementAdapter} instance.
@@ -182,6 +190,10 @@ public interface Queryable
      */
     boolean isTypeOfCollection();
     
+    /**
+     * verify if the parameter is a collection or array
+     * @return <code>true</code> when they are, <code>false</code> otherwise
+     */
     boolean isTypeOfBulk();
     
     /**
@@ -230,7 +242,7 @@ public interface Queryable
     /**
      * Final SQL statement ready to prepared statement.
      * 
-     * <p><b>Note: </b>Needs to bind {@link Sql} before to call this method.
+     * <p><b>Note: </b>Needs to bind {@link #bind(Sql)} before to call this method.
      * 
      * @return Final SQL statement using question mark read to prepared statement
      */
@@ -239,7 +251,7 @@ public interface Queryable
     /**
      * Final SQL statement ready to prepared statement to count the total of records from original query. 
      * 
-     * <p><b>Note: </b>Needs to bind {@link Sql} before to call this method.
+     * <p><b>Note: </b>Needs to bind {@link #bind(Sql)} before to call this method.
      * 
      * @return SQL statement using question mark read to prepared statement
      */
@@ -257,11 +269,13 @@ public interface Queryable
      * @return the class to return by repository using this query
      */
     Class getReturnType();
-    
-    /**
-     * Overload the return type from XML query.
-     * @param clazz to return by repository using this query
-     */
-    void setReturnType(Class clazz);
-    
+    // FIXME design when invoked return type it's overload the sql the list or get method cannot change de value
+    // return IllegalStateException when this happen
+
+//    /**
+//     * Overload the return type from XML query.
+//     * @param clazz to return by repository using this query
+//     */
+//    void setReturnType(Class clazz);
+//    
 }

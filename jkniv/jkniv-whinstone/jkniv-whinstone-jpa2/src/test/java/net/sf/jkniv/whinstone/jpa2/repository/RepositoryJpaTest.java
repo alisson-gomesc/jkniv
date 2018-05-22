@@ -74,7 +74,7 @@ public class RepositoryJpaTest extends BaseTest
     
     private Queryable newQuery()
     {
-        Queryable query = QueryFactory.newInstance("Book.list");
+        Queryable query = QueryFactory.of("Book.list");
         return query;
     }
    

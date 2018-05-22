@@ -44,6 +44,7 @@ import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
+import net.sf.jkniv.whinstone.BoundException;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
@@ -66,7 +67,7 @@ public class RepositoryCouchDb implements Repository
     private HandleableException               handlerException;
     private RepositoryConfig                  repositoryConfig;
     private CouchDbSqlContext                 sqlContext;
-    private HttpCookieConnectionAdapter       factoryConnection;
+    private HttpCookieConnectionAdapter       adapterConn;
     private final static Map<String, Boolean> DOC_SCHEMA_UPDATED = new HashMap<String, Boolean>();
     private boolean                           isTraceEnabled;
     private boolean                           isDebugEnabled;
@@ -110,7 +111,7 @@ public class RepositoryCouchDb implements Repository
         this.sqlContext = new CouchDbSqlContext(sqlContext);
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
-        this.factoryConnection = (HttpCookieConnectionAdapter) new HttpConnectionFactory(
+        this.adapterConn = (HttpCookieConnectionAdapter) new HttpConnectionFactory(
                 sqlContext.getRepositoryConfig().getProperties()).open();
         this.handlerException = new HandlerException(RepositoryException.class, "CouchDB error at [%s]");
         this.cache = new MemoryCache<Queryable, Object>();
@@ -119,11 +120,11 @@ public class RepositoryCouchDb implements Repository
     
     private void init()
     {
-        String hostContext = factoryConnection.getHttpBuilder().getHostContext();
+        String hostContext = adapterConn.getHttpBuilder().getHostContext();
         if (!DOC_SCHEMA_UPDATED.containsKey(hostContext))
         {
             // TODO property to config behavior like auto ddl from hibernate
-            CouchDbSynchViewDesign _design = new CouchDbSynchViewDesign(this.factoryConnection.getHttpBuilder(),
+            CouchDbSynchViewDesign _design = new CouchDbSynchViewDesign(this.adapterConn.getHttpBuilder(),
                     sqlContext);
             _design.update();
             DOC_SCHEMA_UPDATED.put(hostContext, Boolean.TRUE);
@@ -183,7 +184,7 @@ public class RepositoryCouchDb implements Repository
         //if (isTraceEnabled)
         //    LOG.trace("Executing as get command with object [{}]", object);
         
-        Queryable queryable = QueryFactory.newInstance("get", object);
+        Queryable queryable = QueryFactory.of("get", object);
         T ret = (T) get(queryable, object.getClass(), null);
         
         //if (isDebugEnabled)
@@ -199,7 +200,7 @@ public class RepositoryCouchDb implements Repository
         //if (isTraceEnabled)
         //    LOG.trace("Executing as get command with object [{}]", object);
         
-        Queryable queryable = QueryFactory.newInstance("get", object);
+        Queryable queryable = QueryFactory.of("get", object);
         T ret = (T) get(queryable, returnType, null);
         
         //if (isDebugEnabled)
@@ -208,20 +209,23 @@ public class RepositoryCouchDb implements Repository
         return ret;
     }
     
-    private <T, R> T get(Queryable queryable, Class<T> returnType, ResultRow<T, R> resultRow)
+    private <T, R> T get(Queryable q, Class<T> returnType, ResultRow<T, R> resultRow)
     {
         if (isTraceEnabled)
-            LOG.trace("Executing [{}] as get command", queryable);
+            LOG.trace("Executing [{}] as get command", q);
+        
+        Queryable queryable = QueryFactory.clone(q, returnType);
         
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.SELECT);
         isql.getValidateType().assertValidate(queryable.getParams());
-        queryable.setReturnType(returnType);
+        
+        //queryable.setReturnType(returnType);
         
         if (!queryable.isBoundSql())
             queryable.bind(isql);
         
-        Command command = factoryConnection.asSelectCommand(queryable, null);
+        Command command = adapterConn.asSelectCommand(queryable, null);
         List<T> list = command.execute();
         
         T ret = null;
@@ -271,45 +275,59 @@ public class RepositoryCouchDb implements Repository
     }
     
     @SuppressWarnings("unchecked")
-    private <T, R> List<T> list(Queryable queryable, Class<T> overloadReturnType, ResultRow<T, R> overloadResultRow)
+    private <T, R> List<T> list(Queryable q, Class<T> overloadReturnType, ResultRow<T, R> overloadResultRow)
     {
         if (isTraceEnabled)
-            LOG.trace("Executing [{}] as list command", queryable);
+            LOG.trace("Executing [{}] as list command", q);
+        
+        Queryable queryable = QueryFactory.clone(q, overloadReturnType);
         
         List<T> list = Collections.emptyList();
         
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.SELECT);
-        Selectable selectable = isql.asSelectable();
+        Selectable selectable = sqlContext.getQuery(queryable.getName()).asSelectable();
+        //checkSqlType(isql, SqlType.SELECT);
+        //Selectable selectable = isql.asSelectable();
         selectable.getValidateType().assertValidate(queryable.getParams());
-        queryable.setReturnType(overloadReturnType);
         
+        //assignReturnType(queryable, overloadReturnType);
+
         if (!queryable.isBoundSql())
             queryable.bind(selectable);
-
+        
         Cacheable.Entry entry = selectable.getCache().getEntry(queryable);
         if (entry == null)
         {
-            Command command = factoryConnection.asSelectCommand(queryable, overloadResultRow);
+            Command command = adapterConn.asSelectCommand(queryable, overloadResultRow);
             list = command.execute();
             if (selectable.hasCache() && !list.isEmpty())
-                selectable.getCache().put(queryable, list);            
+                selectable.getCache().put(queryable, list);
         }
-        else 
+        else
         {
-            if(LOG.isInfoEnabled())
-                LOG.info("{} object(s) was returned from cache [{}] using query [{}] since {}", 
-                    list.size(), 
-                    selectable.getCache().getName(), 
-                    selectable.getName(),
-                    entry.getTimestamp());
-            list = (List<T>)entry.getValue();
+            if (LOG.isInfoEnabled())
+                LOG.info("{} object(s) was returned from cache [{}] using query [{}] since {}", list.size(),
+                        selectable.getCache().getName(), selectable.getName(), entry.getTimestamp());
+            list = (List<T>) entry.getValue();
         }
+        q.setTotal(queryable.getTotal());
         if (isDebugEnabled)
             LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
         
         return list;
         
+    }
+    
+    private void assignReturnType(Queryable queryable, Class overloadReturnType)
+    {
+//        if (overloadReturnType != null)
+//        {
+//            if (!queryable.isBoundReturnType())
+//                queryable.setReturnType(overloadReturnType);
+//            else if (queryable.getReturnType().getName().equals(overloadReturnType.getName()))
+//                throw new BoundException("Queryable [" + queryable.getName() + "] " + "already bound a rerturn type ["
+//                        + queryable.getReturnType().getName() + "]" + " assigned, cannot assign ["
+//                        + overloadReturnType.getName() + "] for that");
+//        }        
     }
     
     @Override
@@ -326,7 +344,7 @@ public class RepositoryCouchDb implements Repository
         
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        Command command = factoryConnection.asAddCommand(queryable, null);
+        Command command = adapterConn.asAddCommand(queryable, null);
         //StatementAdapter<Number, String> adapterStmt = factoryConnection.newStatement(queryable);
         //queryable.bind(adapterStmt).on();
         int affected = command.execute();
@@ -340,7 +358,7 @@ public class RepositoryCouchDb implements Repository
     public <T> T add(T entity)
     {
         notNull.verify(entity);
-        Queryable queryable = QueryFactory.newInstance("add", entity);
+        Queryable queryable = QueryFactory.of("add", entity);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as add command", queryable);
         
@@ -351,7 +369,7 @@ public class RepositoryCouchDb implements Repository
         
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        Command command = factoryConnection.asAddCommand(queryable, null);
+        Command command = adapterConn.asAddCommand(queryable, null);
         //StatementAdapter<Number, String> adapterStmt = factoryConnection.newStatement(queryable);
         //queryable.bind(adapterStmt).on();
         int affected = command.execute();
@@ -375,7 +393,7 @@ public class RepositoryCouchDb implements Repository
         
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        Command command = factoryConnection.asUpdateCommand(queryable, null);
+        Command command = adapterConn.asUpdateCommand(queryable, null);
         int affected = command.execute();
         
         if (isDebugEnabled)
@@ -387,7 +405,7 @@ public class RepositoryCouchDb implements Repository
     public <T> T update(T entity)
     {
         notNull.verify(entity);
-        Queryable queryable = QueryFactory.newInstance("update", entity);
+        Queryable queryable = QueryFactory.of("update", entity);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update query", queryable);
         
@@ -398,7 +416,7 @@ public class RepositoryCouchDb implements Repository
         
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        Command command = factoryConnection.asUpdateCommand(queryable, null);
+        Command command = adapterConn.asUpdateCommand(queryable, null);
         int affected = command.execute();
         
         if (isDebugEnabled)
@@ -420,7 +438,7 @@ public class RepositoryCouchDb implements Repository
         
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        Command command = factoryConnection.asDeleteCommand(queryable, null);
+        Command command = adapterConn.asDeleteCommand(queryable, null);
         int affected = command.execute();
         
         if (isDebugEnabled)
@@ -432,7 +450,7 @@ public class RepositoryCouchDb implements Repository
     public <T> int remove(T entity)
     {
         notNull.verify(entity);
-        Queryable queryable = QueryFactory.newInstance("remove", entity);
+        Queryable queryable = QueryFactory.of("remove", entity);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as remove query", queryable);
         
@@ -443,7 +461,7 @@ public class RepositoryCouchDb implements Repository
         
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        Command command = factoryConnection.asDeleteCommand(queryable, null);
+        Command command = adapterConn.asDeleteCommand(queryable, null);
         int affected = command.execute();
         
         if (isDebugEnabled)
@@ -474,11 +492,11 @@ public class RepositoryCouchDb implements Repository
     {
         try
         {
-            factoryConnection.close();
+            adapterConn.close();
         }
         catch (SQLException e)
         {
-            LOG.warn("Error to try close Cassandra session/cluster [{}]", factoryConnection, e);
+            LOG.warn("Error to try close Cassandra session/cluster [{}]", adapterConn, e);
         }
     }
     

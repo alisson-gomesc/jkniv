@@ -37,6 +37,7 @@ import com.datastax.driver.core.Session;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
+import net.sf.jkniv.cache.Cacheable;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
 import net.sf.jkniv.sqlegance.RepositoryException;
@@ -47,8 +48,10 @@ import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
+import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.JdbcColumn;
+import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
@@ -218,7 +221,68 @@ class RepositoryCassandra implements Repository
     }
     
     @SuppressWarnings("unchecked")
-    private <T, R> List<T> list(Queryable queryable, Class<T> overloadReturnType, ResultRow<T, R> overloadResultRow)
+    private <T, R> List<T> list(Queryable q, Class<T> overloadReturnType, ResultRow<T, R> overloadResultRow)
+    {
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as list command", q);
+        
+        Queryable queryable = QueryFactory.clone(q, overloadReturnType);
+        
+        List<T> list = Collections.emptyList();
+        Class<T> returnType = (Class<T>) Map.class;
+        
+        Selectable selectable = sqlContext.getQuery(queryable.getName()).asSelectable();
+        //checkSqlType(isql, SqlType.SELECT);
+        
+        selectable.getValidateType().assertValidate(queryable.getParams());
+        
+        if (!queryable.isBoundSql())
+            queryable.bind(selectable);
+
+        Cacheable.Entry entry = selectable.getCache().getEntry(queryable);
+        if (entry == null)
+        {
+            Command command = adapterConn.asSelectCommand(queryable, overloadResultRow);
+            list = command.execute();
+            if (selectable.hasCache() && !list.isEmpty())
+                selectable.getCache().put(queryable, list);
+        }
+        else
+        {
+            if (LOG.isInfoEnabled())
+                LOG.info("{} object(s) was returned from cache [{}] using query [{}] since {}", list.size(),
+                        selectable.getCache().getName(), selectable.getName(), entry.getTimestamp());
+            list = (List<T>) entry.getValue();
+        }
+//
+//        if (overloadReturnType != null)
+//            returnType = overloadReturnType;
+//        else if (selectable.getReturnTypeAsClass() != null)
+//            returnType = (Class<T>) selectable.getReturnTypeAsClass();
+//
+//        StatementAdapter<T, R> stmt = adapterConn.newStatement(queryable);
+//        queryable.bind(stmt).on();
+//        
+//        stmt
+//        .returnType(returnType)
+//        .resultRow(overloadResultRow)
+//        .oneToManies(selectable.getOneToMany())
+//        .groupingBy(selectable.getGroupByAsList());
+//    
+//        if(queryable.isScalar())
+//            stmt.scalar();
+//        
+//        list = stmt.rows();
+
+        q.setTotal(queryable.getTotal());
+        if (isDebugEnabled)
+            LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
+        
+        return list;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private <T, R> List<T> ___list___(Queryable queryable, Class<T> overloadReturnType, ResultRow<T, R> overloadResultRow)
     {
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as list command", queryable);
@@ -260,6 +324,7 @@ class RepositoryCassandra implements Repository
         return list;
         
     }
+
     //@Override
     //@SuppressWarnings("unchecked")
     public <T, R> List<T> __list__(Queryable queryable, ResultRow<T, R> overloadResultRow)

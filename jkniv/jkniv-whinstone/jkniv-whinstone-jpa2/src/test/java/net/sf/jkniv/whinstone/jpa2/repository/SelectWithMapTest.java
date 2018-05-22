@@ -41,7 +41,7 @@ public class SelectWithMapTest extends BaseTest
     public void whenJpaReturnLisOfMaps()
     {
         Repository repository = getRepository();
-        List<Map<String, Object>> books = repository.list(QueryFactory.newInstance("BookAsMap"));
+        List<Map<String, Object>> books = repository.list(QueryFactory.of("BookAsMap"));
         assertThat(books, is(notNullValue()));
         assertThat(books.size(), is(15));
         assertThat(books.get(0), is(instanceOf(Map.class)));
@@ -53,7 +53,7 @@ public class SelectWithMapTest extends BaseTest
     public void whenJpaReturnLisOfMapsNativeQuery()
     {
         Repository repository = getRepository();
-        List<Map<String, Object>> books = repository.list(QueryFactory.newInstance("BookAsMapNative"));
+        List<Map<String, Object>> books = repository.list(QueryFactory.of("BookAsMapNative"));
         assertThat(books, is(notNullValue()));
         assertThat(books.size(), is(15));
         assertThat(books.get(0), is(instanceOf(Map.class)));

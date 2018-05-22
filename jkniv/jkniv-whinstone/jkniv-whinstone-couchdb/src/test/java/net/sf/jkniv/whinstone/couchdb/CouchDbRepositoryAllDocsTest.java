@@ -31,6 +31,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 
@@ -56,7 +57,7 @@ public class CouchDbRepositoryAllDocsTest extends BaseJdbc
     public void whenListAllDocsWithLimit()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = getQuery("_all_docs", null, 2, 3);
+        Queryable q = QueryFactory.of("_all_docs", 2,3);
         
         List<Map> list = repositoryDb.list(q);
         assertThat(list.size(), is(3));

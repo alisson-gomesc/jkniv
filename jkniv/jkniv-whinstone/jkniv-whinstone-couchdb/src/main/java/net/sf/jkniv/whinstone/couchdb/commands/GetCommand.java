@@ -39,6 +39,7 @@ import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 public class GetCommand extends AbstractCommand implements CouchCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger(GetCommand.class);
+    private static final Logger LOGSQL = LoggerFactory.getLogger("jkniv.whinstone.couchdb.SQL");
     private String              body;
     private Queryable           queryable;
     private HttpBuilder         httpBuilder;
@@ -87,7 +88,7 @@ public class GetCommand extends AbstractCommand implements CouchCommand
             else if (isNotFound(statusCode))
             {
                 // 204 No Content, 304 Not Modified, 205 Reset Content
-                LOG.warn(errorFormat(http, response.getStatusLine(), json));
+                LOGSQL.warn(errorFormat(http, response.getStatusLine(), json));
             }
             else
             {

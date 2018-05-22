@@ -29,7 +29,7 @@ public class ConstraintsTest extends BaseTest
         catcher.expect(IllegalArgumentException.class);
         catcher.expectMessage("JPQL cannot have group by, just NATIVE or STORED, change the type [JPQL] from SQL [oneToManyBooksFromAuthorsJPQL] to execute");
         Repository repository = getRepository();
-        Queryable q = QueryFactory.newInstance("oneToManyBooksFromAuthorsJPQL");
+        Queryable q = QueryFactory.of("oneToManyBooksFromAuthorsJPQL");
         repository.list(q);
     }
     
@@ -40,7 +40,7 @@ public class ConstraintsTest extends BaseTest
         //catcher.expectMessage("JPA NATIVE [constraintNoReturnType] query require returnType with appropriate constructor with parameters from");
         
         Repository repository = getRepository();
-        Queryable queryable = QueryFactory.newInstance("constraintNoReturnType");
+        Queryable queryable = QueryFactory.of("constraintNoReturnType");
         List<Object[]> list = repository.list(queryable);
         assertThat(list.size(), greaterThan(0));
         assertThat(list.get(0), instanceOf(Object[].class));

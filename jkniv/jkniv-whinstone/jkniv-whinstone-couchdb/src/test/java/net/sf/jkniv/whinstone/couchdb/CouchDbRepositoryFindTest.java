@@ -59,7 +59,7 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
     public void whenCouchDbListTypedObject()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = QueryFactory.asQueryable("authorsBRTyped");
+        Queryable q = QueryFactory.of("authorsBRTyped");
         
         List<Author> list = repositoryDb.list(q);
         assertThat(list.size(), greaterThan(0));

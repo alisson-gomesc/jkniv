@@ -67,7 +67,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * @author Alisson Gomes
  *
  */
-public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Row>
+public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
 {
     private static final Logger  LOG = LoggerFactory.getLogger();
     private static final DataMasking  MASKING = LoggerFactory.getDataMasking();
@@ -87,7 +87,7 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Row>
     private KeyGeneratorType        keyGeneratorType;
     private Session                 session;
     
-    public PreparedStatementAdapter(Session session, PreparedStatement stmt)
+    public CassandraStatementAdapter(Session session, PreparedStatement stmt)
     {
         //this.queryable = queryable;
         this.stmt = stmt;

@@ -45,7 +45,7 @@ public class GroupingByTest extends BaseJdbc
     @Test
     public void whenGroupingByOneField()
     {
-        Queryable q = QueryFactory.newInstance("test-groupingby1-after-select");
+        Queryable q = QueryFactory.of("test-groupingby1-after-select");
         List<Color> colors = repositoryDerby.list(q);
         Iterator<Color> it = colors.iterator();
         Color black = it.next();
@@ -60,7 +60,7 @@ public class GroupingByTest extends BaseJdbc
     @Test
     public void whenGroupingByTwoFields()
     {
-        Queryable q = QueryFactory.newInstance("test-groupingby2-after-select");
+        Queryable q = QueryFactory.of("test-groupingby2-after-select");
         List<Color> colors = repositoryDerby.list(q);
         Iterator<Color> it = colors.iterator();
         Color black = it.next();
@@ -81,7 +81,7 @@ public class GroupingByTest extends BaseJdbc
     @Test
     public void whenGroupingForOneToMany()
     {
-        Queryable q = QueryFactory.newInstance("oneToManyBooksFromAuthors");
+        Queryable q = QueryFactory.of("oneToManyBooksFromAuthors");
         List<Author> authors = repositoryDerby.list(q);
         Iterator<Author> it = authors.iterator();
         

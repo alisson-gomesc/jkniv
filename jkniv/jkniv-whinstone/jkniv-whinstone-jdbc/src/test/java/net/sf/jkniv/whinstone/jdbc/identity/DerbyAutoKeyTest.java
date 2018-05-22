@@ -26,14 +26,14 @@ public class DerbyAutoKeyTest extends BaseJdbc
         Foo foo1 = new Foo(),foo2 = new Foo();
         foo1.setName("Foo fights");
         foo2.setName("New Foo fights");
-        Queryable queryable = QueryFactory.newInstance("test-autokey-derby-case-identity", foo1);
+        Queryable queryable = QueryFactory.of("test-autokey-derby-case-identity", foo1);
         int affected = repositoryDerby.add(queryable);
         assertThat(affected, is(1));
         assertThat(foo1.getId(), notNullValue());
         assertThat(foo1.getId().longValue(), greaterThan(0L));
         assertThat(foo1.getId().longValue(), greaterThan(0L));
         
-        Queryable queryable2 = QueryFactory.newInstance("test-autokey-derby-case-identity", foo2);
+        Queryable queryable2 = QueryFactory.of("test-autokey-derby-case-identity", foo2);
         affected = repositoryDerby.add(queryable2);
         assertThat(affected, is(1));
         assertThat(foo2.getId(), notNullValue());

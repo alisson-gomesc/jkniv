@@ -44,7 +44,7 @@ public class SelectOperationNativeTest extends BaseTest
         Repository repository = getRepository();
         Author params = new Author();
         params.setId(4L);
-        Queryable queryable = QueryFactory.newInstance("authorByIdSqlNative", params);
+        Queryable queryable = QueryFactory.of("authorByIdSqlNative", params);
         List<AuthorFlat> authors = repository.list(queryable);
         assertThat(authors.size(), is(2));
         assertThat(queryable.getTotal(), is(2L));
@@ -56,7 +56,7 @@ public class SelectOperationNativeTest extends BaseTest
         Repository repository = getRepository();
         Author params = new Author();
         params.setId(4L);
-        Queryable queryable = QueryFactory.newInstance("authorByIdSqlOneStringColumn", params);
+        Queryable queryable = QueryFactory.of("authorByIdSqlOneStringColumn", params);
         List<String> authors = repository.list(queryable);
         assertThat(authors.size(), is(2));
         assertThat(queryable.getTotal(), is(2L));
@@ -69,7 +69,7 @@ public class SelectOperationNativeTest extends BaseTest
         Repository repository = getRepository();
         Author params = new Author();
         params.setId(4L);
-        Queryable queryable = QueryFactory.newInstance("authorByIdSqlOneNumberColumn", params);
+        Queryable queryable = QueryFactory.of("authorByIdSqlOneNumberColumn", params);
         List<Long> authors = repository.list(queryable);
         assertThat(authors.size(), is(2));
         assertThat(queryable.getTotal(), is(2L));
@@ -80,7 +80,7 @@ public class SelectOperationNativeTest extends BaseTest
     public void whenUseNativeQueryEmptySelectResult()
     {
         Repository repository = getRepository();
-        Queryable queryable = QueryFactory.newInstance("authorNoExists");
+        Queryable queryable = QueryFactory.of("authorNoExists");
         List<String> authors = repository.list(queryable);
         assertThat(authors.size(), is(0));
     }
