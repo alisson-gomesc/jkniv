@@ -344,7 +344,7 @@ public class RepositoryCouchDb implements Repository
         
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        Command command = adapterConn.asAddCommand(queryable, null);
+        Command command = adapterConn.asAddCommand(queryable);
         //StatementAdapter<Number, String> adapterStmt = factoryConnection.newStatement(queryable);
         //queryable.bind(adapterStmt).on();
         int affected = command.execute();
@@ -369,7 +369,7 @@ public class RepositoryCouchDb implements Repository
         
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        Command command = adapterConn.asAddCommand(queryable, null);
+        Command command = adapterConn.asAddCommand(queryable);
         //StatementAdapter<Number, String> adapterStmt = factoryConnection.newStatement(queryable);
         //queryable.bind(adapterStmt).on();
         int affected = command.execute();
@@ -393,7 +393,7 @@ public class RepositoryCouchDb implements Repository
         
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        Command command = adapterConn.asUpdateCommand(queryable, null);
+        Command command = adapterConn.asUpdateCommand(queryable);
         int affected = command.execute();
         
         if (isDebugEnabled)
@@ -416,7 +416,7 @@ public class RepositoryCouchDb implements Repository
         
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        Command command = adapterConn.asUpdateCommand(queryable, null);
+        Command command = adapterConn.asUpdateCommand(queryable);
         int affected = command.execute();
         
         if (isDebugEnabled)
@@ -438,7 +438,7 @@ public class RepositoryCouchDb implements Repository
         
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        Command command = adapterConn.asDeleteCommand(queryable, null);
+        Command command = adapterConn.asDeleteCommand(queryable);
         int affected = command.execute();
         
         if (isDebugEnabled)
@@ -461,7 +461,7 @@ public class RepositoryCouchDb implements Repository
         
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        Command command = adapterConn.asDeleteCommand(queryable, null);
+        Command command = adapterConn.asDeleteCommand(queryable);
         int affected = command.execute();
         
         if (isDebugEnabled)

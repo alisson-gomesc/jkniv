@@ -58,11 +58,11 @@ public interface ConnectionAdapter
 
     <T,R> Command asSelectCommand(Queryable queryable, ResultRow<T, R> overloadResultRow);
 
-    <T, R> Command asUpdateCommand(Queryable queryable, ResultRow<T, R> overloadResultRow);
+    <T, R> Command asUpdateCommand(Queryable queryable);
 
-    <T, R> Command asDeleteCommand(Queryable queryable, ResultRow<T, R> overloadResultRow);
+    <T, R> Command asDeleteCommand(Queryable queryable);
 
-    <T, R> Command asAddCommand(Queryable queryable, ResultRow<T, R> overloadResultRow);
+    <T, R> Command asAddCommand(Queryable queryable);
 
     <T,R> StatementAdapter<T,R> newStatement(Queryable queryable);
     

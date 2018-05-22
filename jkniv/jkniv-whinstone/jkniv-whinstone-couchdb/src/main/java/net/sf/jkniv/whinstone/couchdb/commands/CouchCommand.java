@@ -47,4 +47,5 @@ public interface CouchCommand extends Command
 
     HttpMethod asHead();
 
+    String getBody();
 }

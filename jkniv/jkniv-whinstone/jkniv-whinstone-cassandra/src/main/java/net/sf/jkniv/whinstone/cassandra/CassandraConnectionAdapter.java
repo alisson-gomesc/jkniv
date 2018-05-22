@@ -27,13 +27,14 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 
-import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.Sql;
+import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.cassandra.commands.SelectCommand;
+import net.sf.jkniv.whinstone.cassandra.commands.UpdateCommand;
 import net.sf.jkniv.whinstone.cassandra.statement.CassandraStatementAdapter;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
@@ -149,7 +150,6 @@ public class CassandraConnectionAdapter implements ConnectionAdapter
     {
         Class returnType = Map.class;
         SelectCommand command = null;
-        //String positionalSql = queryable.getDynamicSql().getParamParser().replaceForQuestionMark(sql, queryable.getParams());
         String sql = queryable.query();
         PreparedStatement stmtPrep = session.prepare(sql);
         StatementAdapter<T, R> stmt = new CassandraStatementAdapter(this.session, stmtPrep);
@@ -174,21 +174,27 @@ public class CassandraConnectionAdapter implements ConnectionAdapter
     }
     
     @Override
-    public <T, R> Command asUpdateCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    public <T, R> Command asUpdateCommand(Queryable queryable)
+    {
+        UpdateCommand command = null;
+
+        String sql = queryable.query();
+        PreparedStatement stmtPrep = session.prepare(sql);
+        CassandraStatementAdapter<Number, ResultSet> stmt = new CassandraStatementAdapter<Number, ResultSet>(this.session, stmtPrep);
+        queryable.bind(stmt).on();
+        command = new UpdateCommand((CassandraStatementAdapter) stmt, queryable);
+        return command;
+    }
+    
+    @Override
+    public <T, R> Command asDeleteCommand(Queryable queryable)//, ResultRow<T, R> overloadResultRow)
     {
         // FIXME UnsupportedOperationException
         throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
     }
     
     @Override
-    public <T, R> Command asDeleteCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
-    {
-        // FIXME UnsupportedOperationException
-        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
-    }
-    
-    @Override
-    public <T, R> Command asAddCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    public <T, R> Command asAddCommand(Queryable queryable)//, ResultRow<T, R> overloadResultRow)
     {
         // FIXME UnsupportedOperationException
         throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");

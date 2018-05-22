@@ -296,21 +296,21 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
     }
 
     @Override
-    public <T, R> Command asUpdateCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    public <T, R> Command asUpdateCommand(Queryable queryable)
     {
         // FIXME UnsupportedOperationException
         throw new UnsupportedOperationException("JDBC repository not implemented yet!");        
     }
 
     @Override
-    public <T, R> Command asDeleteCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    public <T, R> Command asDeleteCommand(Queryable queryable)
     {
         // FIXME UnsupportedOperationException
         throw new UnsupportedOperationException("JDBC repository not implemented yet!");        
     }
     
     @Override
-    public <T, R> Command asAddCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    public <T, R> Command asAddCommand(Queryable queryable)
     {
         // FIXME UnsupportedOperationException
         throw new UnsupportedOperationException("JDBC repository not implemented yet!");        

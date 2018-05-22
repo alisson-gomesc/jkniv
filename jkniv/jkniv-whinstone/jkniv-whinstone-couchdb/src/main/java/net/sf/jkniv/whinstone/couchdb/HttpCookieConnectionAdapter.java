@@ -166,7 +166,7 @@ public class HttpCookieConnectionAdapter implements ConnectionAdapter
 
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public <T, R> Command asUpdateCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    public <T, R> Command asUpdateCommand(Queryable queryable)
     {
         //Class returnType = Map.class;
         CouchCommand command = null;
@@ -187,7 +187,7 @@ public class HttpCookieConnectionAdapter implements ConnectionAdapter
     }
 
     @Override
-    public <T, R> Command asDeleteCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    public <T, R> Command asDeleteCommand(Queryable queryable)
     {
         //Class returnType = Map.class;
         CouchCommand command = null;
@@ -208,7 +208,7 @@ public class HttpCookieConnectionAdapter implements ConnectionAdapter
     }
 
     @Override
-    public <T, R> Command asAddCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    public <T, R> Command asAddCommand(Queryable queryable)
     {
         //Class returnType = Map.class;
         CouchCommand command = null;

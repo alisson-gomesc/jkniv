@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+  
+
+  <update id="simpleUpsert">
+   UPDATE dev_data_3t.TEST_DATA SET
+   object_id=?, 
+   lat=?, 
+   lng=?, 
+   warn=?
+   where my_key=? and evt_date=? 
+  </update>
+
+
+</statements>

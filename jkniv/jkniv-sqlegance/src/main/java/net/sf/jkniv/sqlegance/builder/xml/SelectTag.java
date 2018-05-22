@@ -197,7 +197,7 @@ class SelectTag extends AbstractSqlTag implements Selectable
     @Override
     public boolean hasCache()
     {
-        return (this.cacheName != null);
+        return (this.cacheName != null && "".equals(this.cacheName.trim()));
     }
 
     @Override

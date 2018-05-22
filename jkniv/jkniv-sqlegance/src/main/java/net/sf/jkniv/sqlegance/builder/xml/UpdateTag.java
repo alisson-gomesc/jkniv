@@ -103,4 +103,11 @@ class UpdateTag extends AbstractSqlTag implements Updateable
     {
         return true;
     }
+    
+    @Override
+    public Updateable asUpdateable()
+    {
+        return this;
+    }
+
 }

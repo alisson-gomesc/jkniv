@@ -30,5 +30,5 @@ public interface Command
 {
     <T> T execute();
     
-    String getBody();
+    //String getBody();
 }

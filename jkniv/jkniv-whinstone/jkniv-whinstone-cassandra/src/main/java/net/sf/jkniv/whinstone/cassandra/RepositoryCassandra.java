@@ -46,6 +46,7 @@ import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
+import net.sf.jkniv.sqlegance.Updateable;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.whinstone.Command;
@@ -419,8 +420,8 @@ class RepositoryCassandra implements Repository
     public int add(Queryable queryable)
     {
         notNull.verify(queryable);
-        //if (isTraceEnabled)
-        //    LOG.trace("Executing [{}] as add command with dialect [{}]", queryable, this.repositoryConfig.getSqlDialect());
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as add command with dialect [{}]", queryable);//, this.repositoryConfig.getSqlDialect());
         
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.INSERT);
@@ -447,7 +448,22 @@ class RepositoryCassandra implements Repository
     @Override
     public int update(Queryable queryable)
     {
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(queryable);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as add command with dialect [{}]", queryable);
+        
+        Updateable updateable = sqlContext.getQuery(queryable.getName()).asUpdateable();
+        if (!queryable.isBoundSql())
+            queryable.bind(updateable);
+        
+        updateable.getValidateType().assertValidate(queryable.getParams());
+        
+        Command command = adapterConn.asUpdateCommand(queryable);
+        int affected = command.execute();
+
+        if (isDebugEnabled)
+            LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
+        return affected;
     }
     
     @Override

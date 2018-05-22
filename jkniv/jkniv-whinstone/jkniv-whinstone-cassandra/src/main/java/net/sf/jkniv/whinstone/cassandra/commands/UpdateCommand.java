@@ -26,18 +26,17 @@ import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.cassandra.statement.CassandraStatementAdapter;
 
-public class SelectCommand implements Command
+public class UpdateCommand implements Command
 {
-    private static final Logger LOG = LoggerFactory.getLogger(SelectCommand.class);
-    //private String body;
+    private static final Logger LOG = LoggerFactory.getLogger(UpdateCommand.class);
     private CassandraStatementAdapter<?, String> stmt;
-    private Queryable queryable;
+    //private Queryable queryable;
 
     
-    public SelectCommand(CassandraStatementAdapter<?, String> stmt, Queryable queryable)
+    public UpdateCommand(CassandraStatementAdapter<?, String> stmt, Queryable queryable)
     {
         super();
-        this.queryable = queryable;
+        //this.queryable = queryable;
         this.stmt = stmt;
         //stmt.rows();
     }
@@ -45,9 +44,9 @@ public class SelectCommand implements Command
     @Override
     public <T> T execute()
     {
-        T list = (T) stmt.rows();
-      return list;
+        Integer rows = stmt.execute();
+      return (T)rows;
     }
     
-    
+
 }
