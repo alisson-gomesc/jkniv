@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.cache;
 
+import java.util.Set;
+
 public class NoCache<K, V> implements Cacheable<K, V>
 {
     private static final String name = "NoCache";
@@ -64,4 +66,28 @@ public class NoCache<K, V> implements Cacheable<K, V>
     {
         return null;
     }
+    
+    @Override
+    public Set<java.util.Map.Entry<K, net.sf.jkniv.cache.Cacheable.Entry<V>>> entrySet()
+    {
+        return null;
+    }
+    
+    @Override
+    public Cacheable.Entry<V> remove(K key)
+    {
+        return null;
+    }
+
+    @Override
+    public void clear()
+    {
+    }
+    
+    @Override
+    public int size()
+    {
+        return 0;
+    }
+
 }

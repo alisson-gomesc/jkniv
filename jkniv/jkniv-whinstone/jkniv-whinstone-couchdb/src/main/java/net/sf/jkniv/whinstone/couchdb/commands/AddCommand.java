@@ -215,7 +215,8 @@ public class AddCommand extends AbstractCommand implements CouchCommand
             }
             else
             {
-                proxy.invoke("setId", id);
+                if(proxy.hasMethod("setId"))
+                    proxy.invoke("setId", id);
             }
         }
         else
@@ -228,8 +229,10 @@ public class AddCommand extends AbstractCommand implements CouchCommand
             }
             else
             {
-                proxy.invoke("setId", id);
-                proxy.invoke("setRev", rev);
+                if(proxy.hasMethod("setId"))
+                    proxy.invoke("setId", id);
+                if(proxy.hasMethod("setRev"))
+                    proxy.invoke("setRev", rev);
             }
         }
     }

@@ -21,6 +21,13 @@ package net.sf.jkniv.cache;
 
 import java.util.concurrent.TimeUnit;
 
+/*
+
+no expiry    - this means cache mappings will never expire,
+time-to-live - this means cache mappings will expire after a fixed duration following their creation,
+time-to-idle - this means cache mappings will expire after a fixed duration following the time they were last accessed.
+
+ */
 /**
  * Cache policy using concepts from Time to live (TTL) to limit the lifetime of data.
  * 
@@ -30,7 +37,8 @@ import java.util.concurrent.TimeUnit;
 public class TTLCachePolicy implements CachePolicy
 {
     //private long timestamp;
-    private long ttl;// time-to-live
+    private long ttl;   // time-to-live
+    private long tti;   // time-to-idle
     private long limit;
     private long sizeof;
     
@@ -40,27 +48,80 @@ public class TTLCachePolicy implements CachePolicy
      */
     public TTLCachePolicy(long ttl)
     {
-        this.ttl = TimeUnit.SECONDS.toMillis(ttl);
-        //this.timestamp = System.currentTimeMillis();
+        this(ttl, -1L);
+    }
+    
+    /**
+     * Build a policy with TTL and TTI as parameter to keep the objects alive in cache
+     * @param ttl time-to-live in seconds
+     * @param tti time-to-idle in seconds
+     */
+    public TTLCachePolicy(long ttl, long tti)
+    {
+        this(ttl, tti, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Build a policy with TTL and TTI as parameter to keep the objects alive in cache
+     * @param ttl time-to-live in seconds
+     * @param tti time-to-idle in seconds
+     */
+    public TTLCachePolicy(long ttl, long tti, TimeUnit unit)
+    {
+        this.ttl = unit.toMillis(ttl);
+        this.tti = unit.toMillis(tti);
+    }
+
+    @Override
+    public boolean isAlive(long ttl)
+    {
+        if (this.ttl < 0)
+            return true;
+
+        return !expireTTL(ttl);
     }
     
     @Override
-    public boolean isAlive(long timestamp)
+    public boolean isAlive(long ttl, long tti)
     {
         if (this.ttl < 0)
             return true;
         
-        //System.out.printf("\n ttl=%d +=%d current=%d", ttl, (timestamp+ttl), System.currentTimeMillis());
-        return ( (timestamp+ttl) > System.currentTimeMillis());
-    }
+        if (expireTTL(ttl))
+            return false;
 
+        if (this.tti < 0)
+            return true;
+
+        if (expireTTI(tti))
+            return false;
+        return true;
+    }
+    
+    private boolean expireTTL(long ttl)
+    {
+        System.out.printf("\n %d - %d = %b", (ttl + this.ttl), System.currentTimeMillis(), ((ttl + this.ttl) <= System.currentTimeMillis()));
+        return ((ttl + this.ttl) <= System.currentTimeMillis());
+    }
+    
+    private boolean expireTTI(long tti)
+    {
+        return ((tti + this.tti) <= System.currentTimeMillis());
+    }
+    /*
+     * 0---------5-----------10--------15
+     * ......4......................14...
+     * 
+     *      
+     */
+    
     // FIXME implements limit from CachePolicy
     @Override
     public long limit()
     {
         return this.limit;
     }
-
+    
     // FIXME implements sizeof from CachePolicy
     @Override
     public long sizeof()
@@ -73,6 +134,5 @@ public class TTLCachePolicy implements CachePolicy
     {
         return "TTLCachePolicy [ttl=" + ttl + ", limit=" + limit + ", sizeof=" + sizeof + "]";
     }
-    
     
 }

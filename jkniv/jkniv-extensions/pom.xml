@@ -3,7 +3,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sf.jkniv</groupId>
-  <version>0.6.0.M26</version>
+  <version>0.6.0.M27</version>
   <packaging>pom</packaging>
   <name>jkniv-extensions</name>
   <artifactId>jkniv-extensions</artifactId>
@@ -391,8 +391,7 @@
       <name>Alisson Gomes</name>
       <email>alisson.gomesc@gmail.com</email>
       <roles>
-        <role>Architect</role>
-        <role>Developer</role>
+        <role>Programmer</role>
       </roles>
       <organization>jkniv.sourceforge.net</organization>
       <timezone>-3</timezone>

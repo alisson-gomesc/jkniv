@@ -21,7 +21,9 @@ package net.sf.jkniv.cache;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import net.sf.jkniv.asserts.Assertable;
@@ -38,36 +40,35 @@ import net.sf.jkniv.asserts.AssertsFactory;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public class MemoryCache<K,V> implements Cacheable<K,V>
+public class MemoryCache<K, V> implements Cacheable<K, V>
 {
-    private static final transient Assertable notNull = AssertsFactory.getNotNull();
-    private String      name;
-    private CachePolicy policy;
-    private Map<K, Entry<V>> cache;
-    
+    private static final transient Assertable    notNull = AssertsFactory.getNotNull();
+    private String                               name;
+    private CachePolicy                          policy;
+    private ConcurrentMap<K, Cacheable.Entry<V>> cache;
     
     public MemoryCache()
     {
         this(new TTLCachePolicy(TimeUnit.MINUTES.toSeconds(10L)));
     }
-
+    
     public MemoryCache(String name)
     {
         this(new TTLCachePolicy(TimeUnit.MINUTES.toSeconds(10L)), name);
     }
-
+    
     public MemoryCache(CachePolicy policy)
     {
         this(policy, "nonamed");
     }
-
+    
     public MemoryCache(CachePolicy policy, String name)
     {
         this.name = name;
         this.policy = policy;
-        this.cache = new ConcurrentHashMap<K, Entry<V>>();
+        this.cache = new ConcurrentHashMap<K, Cacheable.Entry<V>>();
     }
-
+    
     /* (non-Javadoc)
      * @see net.sf.jkniv.cache.Cacheable#getName()
      */
@@ -93,8 +94,8 @@ public class MemoryCache<K,V> implements Cacheable<K,V>
     public V put(K key, V object)
     {
         notNull.verify(key, object);
-        MemoryCache.Entry<V> entry = new MemoryCache.Entry<V>(object);
-        MemoryCache.Entry<V> old = this.cache.put(key, entry);
+        Cacheable.Entry<V> entry = new MemoryCache.Entry<V>(object);
+        Cacheable.Entry<V> old = this.cache.put(key, entry);
         if (old != null)
             return old.getValue();
         
@@ -107,26 +108,52 @@ public class MemoryCache<K,V> implements Cacheable<K,V>
     @Override
     public V get(K key)
     {
-        MemoryCache.Entry<V> entry = this.cache.get(key);
+        Cacheable.Entry<V> entry = this.cache.get(key);
         if (entry == null || !policy.isAlive(entry.getTimestamp().getTime()))
+        {
+            System.out.println("cache data expire");
             return null;
-        
+        }
         return entry.getValue();
     }
-
+    
     public Cacheable.Entry<V> getEntry(K key)
     {
         return this.cache.get(key);
     }
-
+    
+    public Set<Map.Entry<K, Cacheable.Entry<V>>> entrySet()
+    {
+        return this.cache.entrySet();
+    }
+    
+    public Cacheable.Entry<V> remove(K key)
+    {
+        return this.cache.remove(key);
+    }
+    
+    @Override
+    public void clear()
+    {
+        this.cache.clear();
+    }
+    
+    @Override
+    public int size()
+    {
+        return this.cache.size();
+    }
+    
     static class Entry<V> implements Cacheable.Entry<V>
     {
         final Date timestamp;
+        Date       lastAccess;
         V          value;
         
         public Entry(V value)
         {
             this.timestamp = new Date();
+            this.lastAccess = new Date();
             this.value = value;
         }
         
@@ -135,8 +162,15 @@ public class MemoryCache<K,V> implements Cacheable<K,V>
             return timestamp;
         }
         
+        @Override
+        public Date getLastAccess()
+        {
+            return this.lastAccess;
+        }
+        
         public final V getValue()
         {
+            this.lastAccess = new Date();
             return value;
         }
     }

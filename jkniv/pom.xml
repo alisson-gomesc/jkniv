@@ -3,7 +3,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sf.jkniv</groupId>
-  <version>0.6.0.M26</version>
+  <version>0.6.0.M27</version>
   <packaging>pom</packaging>
   <name>jkniv</name>
   <artifactId>jkniv</artifactId>
@@ -41,10 +41,9 @@
     <module>jkniv-whinstone/jkniv-whinstone-jpa2</module>
     <module>jkniv-whinstone/jkniv-whinstone-cassandra</module>
     <module>jkniv-whinstone/jkniv-whinstone-couchdb</module>
-    <module>jkniv-whinstone/jkniv-whinstone-fluent</module>
-    <module>jkniv-whinstone/jkniv-whinstone-rest</module>
-    
+    <module>jkniv-whinstone/jkniv-whinstone-rest</module>    
     <!-- 
+    <module>jkniv-whinstone/jkniv-whinstone-fluent</module>
     <module>jkniv-camel/jkniv-camel-sap-jco3</module>
     <module>jkniv-jaas/jkniv-jaas-glassfish</module>
      -->
@@ -561,8 +560,7 @@
       <name>Alisson Gomes</name>
       <email>alisson.gomesc@gmail.com</email>
       <roles>
-        <role>Architect</role>
-        <role>Developer</role>
+        <role>Programmer</role>
       </roles>
       <organization>jkniv.sourceforge.net</organization>
       <timezone>-3</timezone>

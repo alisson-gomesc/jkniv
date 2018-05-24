@@ -42,6 +42,14 @@ public interface CachePolicy
     boolean isAlive(long miliseconds);
     
     /**
+     * Verify if cache is live indicating to discard the cache content.
+     * @param ttl time-to-live from stored object in seconds
+     * @param tti time-to-idle for stored store in seconds
+     * @return <b>true</b> when object is alive, <b>false</b> otherwise
+     */
+    boolean isAlive(long ttl, long tti);
+
+    /**
      * Returns the number of elements in cache.
      * @return the number of elements in cache.
      */

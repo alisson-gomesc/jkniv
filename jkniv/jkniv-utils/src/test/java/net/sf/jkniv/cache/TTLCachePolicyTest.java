@@ -41,6 +41,31 @@ public class TTLCachePolicyTest
     }
     
     @Test
+    public void whenCachePolicyContinueAliveWithTTLandTTI() throws InterruptedException
+    {
+        CachePolicy policy = new TTLCachePolicy(-1L, -1L);
+        long timestamp = System.currentTimeMillis();
+        assertThat(policy.isAlive(timestamp, timestamp), is(true));
+        Thread.sleep(1800);
+        assertThat(policy.isAlive(timestamp, timestamp), is(true));
+        Thread.sleep(1000);
+        assertThat(policy.isAlive(timestamp, timestamp), is(true));
+    }
+
+    @Test
+    public void whenCachePolicyExpireWithTTI() throws InterruptedException
+    {
+        CachePolicy policy = new TTLCachePolicy(5L, 2L);
+        long timestamp = System.currentTimeMillis();
+        assertThat(policy.isAlive(timestamp, timestamp), is(true));
+        Thread.sleep(1800);
+        assertThat(policy.isAlive(timestamp, timestamp), is(true));
+        Thread.sleep(1000);
+        assertThat(policy.isAlive(timestamp, timestamp), is(false));
+    }
+
+    
+    @Test
     public void whenCachePolicyTTLalwaysExpire() throws InterruptedException
     {
         CachePolicy policy = new TTLCachePolicy(0L);

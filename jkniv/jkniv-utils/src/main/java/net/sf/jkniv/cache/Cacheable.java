@@ -20,6 +20,8 @@
 package net.sf.jkniv.cache;
 
 import java.util.Date;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * An object that maps keys to values. A map cannot contain duplicate keys;
@@ -74,6 +76,14 @@ public interface Cacheable<K, V>
      */
     Cacheable.Entry<V> getEntry(K key);
     
+    Set<java.util.Map.Entry<K, Cacheable.Entry<V>>> entrySet();
+    
+    Cacheable.Entry<V> remove(K key);
+
+    void clear();
+    
+    int size();
+    
     /**
      * A cache entry (key-value pair).  The <tt>Cacheable.getEntry</tt> method returns
      * a cache value view.
@@ -84,9 +94,15 @@ public interface Cacheable<K, V>
     {
         /**
          * Timestamp from cached value
-         * @return the timestamp whe the value was cached
+         * @return the timestamp when the value was cached
          */
         Date getTimestamp();
+        
+        /**
+         * Last access the cached value
+         * @return the timestamp from last access 
+         */
+        Date getLastAccess();
         
         /**
          * Entry value from cache

@@ -20,6 +20,7 @@
 package net.sf.jkniv.whinstone.rest;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static io.restassured.RestAssured.*;
@@ -31,7 +32,7 @@ import io.restassured.http.ContentType;
 
 public class ServiceApiTest extends EmbeddedJetyServerTest
 {
-    @Test
+    @Test @Ignore
     public void whenWhinstoneRunningData()
     {
         given()

@@ -22,6 +22,9 @@ package net.sf.jkniv.whinstone.couchdb;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
@@ -41,6 +44,7 @@ import net.sf.jkniv.whinstone.couchdb.statement.CouchDbStatementAdapter;
 
 public class HttpCookieConnectionAdapter implements ConnectionAdapter
 {
+    private static final transient Logger LOG = LoggerFactory.getLogger(HttpCookieConnectionAdapter.class);
     private HttpBuilder httpBuilder;
     
     public HttpCookieConnectionAdapter(HttpBuilder httpBuilder)
@@ -68,8 +72,7 @@ public class HttpCookieConnectionAdapter implements ConnectionAdapter
     @Override
     public void close() throws SQLException
     {
-        // FIXME UnsupportedOperationException
-        throw new UnsupportedOperationException("CouchDb repository  doesn't implement this method yet!");
+        LOG.warn("CouchDb repository doesn't implement this method yet!");
     }
     
     @Override
