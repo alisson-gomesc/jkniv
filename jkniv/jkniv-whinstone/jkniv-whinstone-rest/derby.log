@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Thu May 24 01:15:40 BRT 2018:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0163-905c-0843-000001447a70 
+Thu May 24 10:57:37 BRT 2018:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0163-9270-d161-0000003a5080 
 on database directory memory:C:\dev\wks\wks-jkniv-git\jkniv\jkniv-whinstone\jkniv-whinstone-rest\derbwhinstone with class loader sun.misc.Launcher$AppClassLoader@1abab88 
 Loaded from file:/C:/dev/lib/.repository/org/apache/derby/derby/10.12.1.1/derby-10.12.1.1.jar
 java.vendor=Oracle Corporation

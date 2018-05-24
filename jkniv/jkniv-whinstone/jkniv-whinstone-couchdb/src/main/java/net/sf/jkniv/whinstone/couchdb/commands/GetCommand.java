@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -64,7 +65,6 @@ public class GetCommand extends AbstractCommand implements CouchCommand
             CloseableHttpClient httpclient = HttpClients.createDefault();
             String url = httpBuilder.getUrlForGet(queryable);
             HttpGet http = null;
-            LOG.debug(url);
             if (this.method == HttpMethod.GET)
             {
                 http = new HttpGet(url);
@@ -73,6 +73,13 @@ public class GetCommand extends AbstractCommand implements CouchCommand
                 throw new RepositoryException("Get Command just support GET HTTP method!");
             
             httpBuilder.setHeader(http);
+            if(LOGSQL.isInfoEnabled())
+            {
+                StringBuilder sb = new StringBuilder("\nHTTP GET " + url);
+                for (Header h : http.getAllHeaders())
+                    sb.append("\n ").append(h.getName()+": "+h.getValue());
+                LOGSQL.debug(sb.toString());
+            }
             response = httpclient.execute(http);
             json = EntityUtils.toString(response.getEntity());
             int statusCode = response.getStatusLine().getStatusCode();
