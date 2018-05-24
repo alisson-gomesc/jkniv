@@ -19,11 +19,27 @@
  */
 package net.sf.jkniv.whinstone.rest;
 
-import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
 
-public interface TransformReturn<T>
+import static io.restassured.RestAssured.*;
+import static io.restassured.matcher.RestAssuredMatchers.*;
+import static org.hamcrest.Matchers.*;
+import static io.restassured.RestAssured.expect;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+
+public class ServiceApiTest extends EmbeddedJetyServerTest
 {
-    T transform(Object o);
-    
-    List<T> transform(List<?> list);
+    @Test
+    public void whenWhinstoneRunningData()
+    {
+        given()
+          .contentType(ContentType.JSON)
+        .expect()
+          .statusCode(200)
+          .contentType(ContentType.TEXT)
+        .when()
+          .get("/api/whinstone/ping");
+    }
 }

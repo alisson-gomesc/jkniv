@@ -22,6 +22,8 @@ package net.sf.jkniv.whinstone.cassandra;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.slf4j.Logger;
+
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
@@ -40,6 +42,8 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 public class CassandraConnectionAdapter implements ConnectionAdapter
 {
+    private static final transient Logger  LOG = LoggerFactory.getLogger();
+
     private Session session;
     private Cluster cluster;
     
@@ -151,6 +155,9 @@ public class CassandraConnectionAdapter implements ConnectionAdapter
         Class returnType = Map.class;
         SelectCommand command = null;
         String sql = queryable.query();
+        if(LOG.isInfoEnabled())
+            LOG.debug("Bind Native SQL\n{}",sql);
+
         PreparedStatement stmtPrep = session.prepare(sql);
         StatementAdapter<T, R> stmt = new CassandraStatementAdapter(this.session, stmtPrep);
         
@@ -179,6 +186,9 @@ public class CassandraConnectionAdapter implements ConnectionAdapter
         UpdateCommand command = null;
 
         String sql = queryable.query();
+        if(LOG.isInfoEnabled())
+            LOG.debug("Bind Native SQL\n{}",sql);
+
         PreparedStatement stmtPrep = session.prepare(sql);
         CassandraStatementAdapter<Number, ResultSet> stmt = new CassandraStatementAdapter<Number, ResultSet>(this.session, stmtPrep);
         queryable.bind(stmt).on();
