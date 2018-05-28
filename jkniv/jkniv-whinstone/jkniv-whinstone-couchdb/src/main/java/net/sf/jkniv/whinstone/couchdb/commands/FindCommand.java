@@ -42,6 +42,7 @@ import net.sf.jkniv.whinstone.couchdb.statement.FindAnswer;
 public class FindCommand extends AbstractCommand implements CouchCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger(FindCommand.class);
+    private static final Logger LOGSQL = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
     private String body;
     //private CouchDbStatementAdapter<?, String> stmt;
     private HttpBuilder httpBuilder;
@@ -69,6 +70,8 @@ public class FindCommand extends AbstractCommand implements CouchCommand
         {
             CloseableHttpClient httpclient = HttpClients.createDefault();
             HttpPost httpPost = httpBuilder.newFind(body);
+            if(LOGSQL.isInfoEnabled())
+                LOGSQL.info(body);
             response = httpclient.execute(httpPost);
             json = EntityUtils.toString(response.getEntity());
             int statusCode = response.getStatusLine().getStatusCode();
@@ -99,7 +102,7 @@ public class FindCommand extends AbstractCommand implements CouchCommand
             else if (isNotFound(statusCode))
             {
                 // 204 No Content, 304 Not Modified, 205 Reset Content
-                LOG.warn(errorFormat(httpPost, response.getStatusLine(), json));
+                LOGSQL.warn(errorFormat(httpPost, response.getStatusLine(), json));
             }
             else
             {

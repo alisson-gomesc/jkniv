@@ -27,51 +27,56 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(
-{ "warning", "docs", "execution_stats" })
+{ "warning", "docs", "execution_stats", "bookmark" })
 public class FindAnswer
 {
-    
     @JsonProperty("warning")
     private String         warning;
+    @JsonProperty("bookmark")
+    private String bookmark;
     @JsonProperty("docs")
     private List<Object>   docs = null;
     @JsonProperty("execution_stats")
     private ExecutionStats executionStats;
     
-    @JsonProperty("warning")
     public String getWarning()
     {
         return warning;
     }
     
-    @JsonProperty("warning")
     public void setWarning(String warning)
     {
         this.warning = warning;
     }
     
-    @JsonProperty("docs")
     public List<Object> getDocs()
     {
         return docs;
     }
     
-    @JsonProperty("docs")
     public void setDocs(List<Object> docs)
     {
         this.docs = docs;
     }
     
-    @JsonProperty("execution_stats")
     public ExecutionStats getExecutionStats()
     {
         return executionStats;
     }
     
-    @JsonProperty("execution_stats")
     public void setExecutionStats(ExecutionStats executionStats)
     {
         this.executionStats = executionStats;
+    }
+    
+    public String getBookmark()
+    {
+        return bookmark;
+    }
+    
+    public void setBookmark(String bookmark)
+    {
+        this.bookmark = bookmark;
     }
     
 }

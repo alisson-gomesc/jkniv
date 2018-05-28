@@ -27,6 +27,7 @@ import org.hamcrest.Matchers;
 
 import static org.hamcrest.CoreMatchers.*;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class CacheManagerTest
@@ -59,7 +60,7 @@ public class CacheManagerTest
         assertThat(v, nullValue());
     }
     
-    @Test
+    @Test @Ignore
     public void whenCacheManagerExpireWithTTLAndClean() throws InterruptedException
     {
         CacheManager<String, Integer> cacheManager = new CacheManager<String, Integer>();

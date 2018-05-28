@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.sqlegance.RepositoryException;
 
-public class JsonMapper
+class JsonMapper
 {
     private static HandlerException handlerException;
     
@@ -55,7 +55,7 @@ public class JsonMapper
     {
         ObjectMapper mapper = new ObjectMapper();
         // FIXME design jackson json properties config
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        //mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper;
     }
     
