@@ -230,7 +230,7 @@ class RepositoryCassandra implements Repository
         Queryable queryable = QueryFactory.clone(q, overloadReturnType);
         
         List<T> list = Collections.emptyList();
-        Class<T> returnType = (Class<T>) Map.class;
+        //Class<T> returnType = (Class<T>) Map.class;
         
         Selectable selectable = sqlContext.getQuery(queryable.getName()).asSelectable();
         //checkSqlType(isql, SqlType.SELECT);
@@ -240,7 +240,11 @@ class RepositoryCassandra implements Repository
         if (!queryable.isBoundSql())
             queryable.bind(selectable);
 
-        Cacheable.Entry entry = selectable.getCache().getEntry(queryable);
+        Cacheable.Entry entry = null;
+        
+        if(!queryable.isCacheIgnore())
+            entry = selectable.getCache().getEntry(queryable);
+        
         if (entry == null)
         {
             Command command = adapterConn.asSelectCommand(queryable, overloadResultRow);
@@ -254,6 +258,7 @@ class RepositoryCassandra implements Repository
                 LOG.info("{} object(s) was returned from cache [{}] using query [{}] since {}", list.size(),
                         selectable.getCache().getName(), selectable.getName(), entry.getTimestamp());
             list = (List<T>) entry.getValue();
+            q.cached();
         }
 //
 //        if (overloadReturnType != null)

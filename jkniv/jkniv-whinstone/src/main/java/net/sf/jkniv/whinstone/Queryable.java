@@ -30,6 +30,16 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * This class represent a query object to find the query to be performed and
  * your parameters like: query parameters, offset and max objects to return.
  * 
+ * The instance of {@code Queryable} it's bind whith SQL executed, so some {@code Queryable} 
+ * re-executing <b>must be evicted</b>, like:
+ * 
+ * <pre>
+ *   Queryable myQuery = QueryFactory.of("my-query");
+ *   Number number = repository.scalar(myQuery);
+ *   
+ *   List list = repository.scalar(myQuery); // wrong myQuery as marked with scalar result
+ * </pre>
+ * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
@@ -89,7 +99,8 @@ public interface Queryable
      */
     void setMax(int value);
     
-    /** FIXME design rules and make unit test
+    //FIXME design rules and make unit test
+    /** 
      * Get total of rows that query can retrieve, filled after query is
      * executed. Useful to make pagination.
      * 
@@ -269,6 +280,25 @@ public interface Queryable
      * @return the class to return by repository using this query
      */
     Class getReturnType();
+    
+    /**
+     * Specifies intentionally to no hit the cache values when configured
+     */
+    void cacheIgnore();
+    
+    boolean isCacheIgnore();
+    
+    /**
+     * Indicate the query result is from cache, isn't from repository.
+     * @return {@code true} when the result fetch from cache, {@code false} when fetch from repository
+     */
+    boolean isCached();
+    
+    /**
+     * mark the query result as cache
+     */
+    void cached();
+    
     // FIXME design when invoked return type it's overload the sql the list or get method cannot change de value
     // return IllegalStateException when this happen
 

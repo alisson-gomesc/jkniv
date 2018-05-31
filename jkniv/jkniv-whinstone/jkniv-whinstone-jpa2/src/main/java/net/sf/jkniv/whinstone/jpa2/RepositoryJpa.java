@@ -59,7 +59,7 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
  * @author Alisson Gomes
  *
  */
-public class RepositoryJpa implements RepositoryJpaExtend
+class RepositoryJpa implements RepositoryJpaExtend
 {
     private static final Logger                       LOG                  = LoggerFactory.getLogger(RepositoryJpa.class);
     private static final Logger                       SQLLOG               = net.sf.jkniv.whinstone.jpa2.LoggerFactory.getLogger();

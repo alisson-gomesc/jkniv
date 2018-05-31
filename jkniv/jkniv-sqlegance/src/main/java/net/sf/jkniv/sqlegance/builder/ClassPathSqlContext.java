@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import net.sf.jkniv.cache.CacheManager;
+import net.sf.jkniv.cache.Cacheable;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.LanguageType;
@@ -56,14 +58,16 @@ class ClassPathSqlContext implements SqlContext
 {
     private static final Logger                   LOG = LoggerFactory.getLogger(ClassPathSqlContext.class);
     private final Map<String, Sql>                statements;
-    private final Map<String, SelectColumnsTag>   selectColumns;// TODO implements select-columns    
+    private final Map<String, SelectColumnsTag>   selectColumns;                                           // TODO implements select-columns    
     private final String                          mainResourceName;
     private final RepositoryConfig                repositoryConfig;
     private final boolean                         shortnameEnable;
     private final String                          contextName;
-    private SqlDialect sqlDialect;
+    private SqlDialect                            sqlDialect;
     /** XMLs and yours includes */
     private final Map<String, List<XmlStatement>> resources;
+    
+    private final CacheManager                    cacheManager;
     
     public ClassPathSqlContext(String resourceName)
     {
@@ -82,6 +86,7 @@ class ClassPathSqlContext implements SqlContext
         this.statements = new HashMap<String, Sql>();
         this.selectColumns = new HashMap<String, SelectColumnsTag>();
         this.resources = new HashMap<String, List<XmlStatement>>();
+        this.cacheManager = new CacheManager();
         
         XmlStatement xmlStatementMain = preLoad(this.mainResourceName);
         
@@ -93,13 +98,12 @@ class ClassPathSqlContext implements SqlContext
                                                                   // TODO test me ShortKeyEnable with DotQueryNameStrategy
         build(xmlStatementMain, resourceName);
         
-      if (isEmpty(defaultContextName))
+        if (isEmpty(defaultContextName))
             this.contextName = repositoryConfig.getName();
         else
             this.contextName = defaultContextName;
         
-        
-      if (this.repositoryConfig.isReloadableXmlEnable())
+        if (this.repositoryConfig.isReloadableXmlEnable())
         {
             ReloadableXmlResource reloadable = new ReloadableXmlResource();
             reloadable.pooling(this);
@@ -108,8 +112,8 @@ class ClassPathSqlContext implements SqlContext
         LOG.info("{} SQL was loaded at {} ms", statements.size(), (System.currentTimeMillis() - initial));
     }
     
-  private void defineDialect()
-  {
+    private void defineDialect()
+    {
         String sqlDialectName = repositoryConfig.getSqlDialect();
         ObjectProxy<SqlDialect> proxy = ObjectProxyFactory.newProxy(sqlDialectName);
         sqlDialect = proxy.newInstance();
@@ -126,13 +130,12 @@ class ClassPathSqlContext implements SqlContext
                     "There are duplicate short name [" + name + "] for this statement, use fully name to recover it");
         return sql;
     }
-
-
+    
     @Override
     public List<Sql> getPackage(String packageName)
     {
         List<Sql> queries = new ArrayList<Sql>();
-        for(Sql sql : statements.values())
+        for (Sql sql : statements.values())
         {
             if (packageName.equals(sql.getPackage()))
             {
@@ -141,12 +144,12 @@ class ClassPathSqlContext implements SqlContext
         }
         return Collections.unmodifiableList(queries);
     }
-
+    
     @Override
     public Map<String, List<Sql>> getPackageStartWith(String packageName)
     {
         Map<String, List<Sql>> queries = new LinkedHashMap<String, List<Sql>>();
-        for(Sql sql : statements.values())
+        for (Sql sql : statements.values())
         {
             if (sql.getPackage() != null && sql.getPackage().startsWith(packageName))
             {
@@ -161,7 +164,6 @@ class ClassPathSqlContext implements SqlContext
         }
         return Collections.unmodifiableMap(queries);
     }
-
     
     public String getContextName()
     {
@@ -222,7 +224,13 @@ class ClassPathSqlContext implements SqlContext
         // for last, process the tags from main file
         Map<String, Sql> readStatements = xmlStatementMain.build(sqlDialect);
         for (Entry<String, Sql> entry : readStatements.entrySet())
+        {
             add(entry.getKey(), entry.getValue());
+            if (entry.getValue().isSelectable() && entry.getValue().asSelectable().hasCache())
+            {
+                cacheManager.add(entry.getKey(), entry.getValue().asSelectable().getCache());
+            }
+        }
     }
     
     /**
@@ -253,7 +261,13 @@ class ClassPathSqlContext implements SqlContext
         }
         Map<String, Sql> readStatements = xmlStatement.build(sqlDialect);
         for (Entry<String, Sql> entry : readStatements.entrySet())
+        {
             add(entry.getKey(), entry.getValue());
+            if (entry.getValue().isSelectable() && entry.getValue().asSelectable().hasCache())
+            {
+                cacheManager.add(entry.getKey(), entry.getValue().asSelectable().getCache());
+            }
+        }
     }
     
     /**
@@ -342,29 +356,51 @@ class ClassPathSqlContext implements SqlContext
         }
         
         @Override
-        public String getTagName() { return null; }
+        public String getTagName()
+        {
+            return null;
+        }
         
         @Override
-        public SqlType getSqlType() { return SqlType.UNKNOWN; }
+        public SqlType getSqlType()
+        {
+            return SqlType.UNKNOWN;
+        }
         
         @Override
-        public boolean isSelectable() { return false; }
+        public boolean isSelectable()
+        {
+            return false;
+        }
         
         @Override
-        public boolean isInsertable() { return false; }
+        public boolean isInsertable()
+        {
+            return false;
+        }
         
         @Override
-        public boolean isUpdateable() { return false; }
+        public boolean isUpdateable()
+        {
+            return false;
+        }
         
         @Override
-        public boolean isDeletable() { return false; }
+        public boolean isDeletable()
+        {
+            return false;
+        }
         
         @Override
-        public String getPackage() { return ""; }
-
+        public String getPackage()
+        {
+            return "";
+        }
+        
         @Override
-        public void setPackage(String name) {}
-        ;
+        public void setPackage(String name)
+        {
+        };
     }
-
+    
 }

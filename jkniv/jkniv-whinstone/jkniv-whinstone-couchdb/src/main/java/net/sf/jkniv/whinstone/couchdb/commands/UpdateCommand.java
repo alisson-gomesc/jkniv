@@ -109,6 +109,7 @@ import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 public class UpdateCommand extends AbstractCommand implements CouchCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateCommand.class);
+    private static final Logger LOGSQL = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
     private Queryable           queryable;
     private HttpBuilder         httpBuilder;
     
@@ -140,6 +141,10 @@ public class UpdateCommand extends AbstractCommand implements CouchCommand
             
             // FIXME supports header request for PUT commands -> Headers: "If-Match", "X-Couch-Full-Commit"
             httpBuilder.setHeader(http);
+            if(LOGSQL.isInfoEnabled())
+            {
+                LOGSQL.info("\nHTTP PUT {}\n{}", url, body);
+            }
             response = httpclient.execute(http);
             json = EntityUtils.toString(response.getEntity());
             int statusCode = response.getStatusLine().getStatusCode();

@@ -48,6 +48,7 @@ public class SqlScalarTest extends BaseJdbc
         Number seq = repositoryDerby.scalar(q);
         assertThat(seq, notNullValue());
         assertThat(seq.intValue(), is(Integer.MIN_VALUE));
+        assertThat(q.isScalar(), is(true));
     }
     
     @Test
@@ -57,6 +58,7 @@ public class SqlScalarTest extends BaseJdbc
         Number number = repositoryDerby.scalar(q);
         assertThat(number, notNullValue());
         assertThat(number, instanceOf(Number.class));
+        assertThat(q.isScalar(), is(true));
     }
     
     @Test
@@ -66,6 +68,7 @@ public class SqlScalarTest extends BaseJdbc
         Number number = repositoryDerby.scalar(q);
         assertThat(number, notNullValue());
         assertThat(number, instanceOf(Integer.class));
+        assertThat(q.isScalar(), is(true));
     }
     
     @Test
@@ -75,6 +78,7 @@ public class SqlScalarTest extends BaseJdbc
         Number number = repositoryDerby.scalar(q);
         assertThat(number, notNullValue());
         assertThat(number, instanceOf(Integer.class));
+        assertThat(q.isScalar(), is(true));
     }
     
     @Test
@@ -84,6 +88,7 @@ public class SqlScalarTest extends BaseJdbc
         Number number = repositoryDerby.scalar(q);
         assertThat(number, notNullValue());
         assertThat(number, instanceOf(Long.class));
+        assertThat(q.isScalar(), is(true));
     }
     
     @Test
@@ -93,6 +98,7 @@ public class SqlScalarTest extends BaseJdbc
         Number number = repositoryDerby.scalar(q);
         assertThat(number, notNullValue());
         assertThat(number, instanceOf(Double.class));
+        assertThat(q.isScalar(), is(true));
     }
     
     @Test
@@ -102,6 +108,7 @@ public class SqlScalarTest extends BaseJdbc
         Number number = repositoryDerby.scalar(q);
         assertThat(number, notNullValue());
         assertThat(number, instanceOf(BigDecimal.class));
+        assertThat(q.isScalar(), is(true));
     }
     
     @Test
@@ -111,6 +118,7 @@ public class SqlScalarTest extends BaseJdbc
         String s = repositoryDerby.scalar(q);
         assertThat(s, notNullValue());
         assertThat(s, instanceOf(String.class));
+        assertThat(q.isScalar(), is(true));
     }
     
     @Test
@@ -120,6 +128,7 @@ public class SqlScalarTest extends BaseJdbc
         String s = repositoryDerby.scalar(q);
         assertThat(s, notNullValue());
         assertThat(s, instanceOf(String.class));
+        assertThat(q.isScalar(), is(true));
     }
     
     @Test
@@ -129,6 +138,7 @@ public class SqlScalarTest extends BaseJdbc
         Date d = repositoryDerby.scalar(q);
         assertThat(d, notNullValue());
         assertThat(d, instanceOf(Date.class));
+        assertThat(q.isScalar(), is(true));
     }
     
     @Test
@@ -138,6 +148,7 @@ public class SqlScalarTest extends BaseJdbc
         Date d = repositoryDerby.scalar(q);
         assertThat(d, notNullValue());
         assertThat(d, instanceOf(Date.class));
+        assertThat(q.isScalar(), is(true));
     }
     
     @Test
@@ -147,6 +158,7 @@ public class SqlScalarTest extends BaseJdbc
         Date d = repositoryDerby.scalar(q);
         assertThat(d, notNullValue());
         assertThat(d, instanceOf(Date.class));
+        assertThat(q.isScalar(), is(true));
     }
     
     @Test
@@ -157,6 +169,7 @@ public class SqlScalarTest extends BaseJdbc
         String s = repositoryDerby.scalar(q);
         assertThat(s, notNullValue());
         assertThat(s, instanceOf(String.class));
+        assertThat(q.isScalar(), is(true));
     }
     
     @Test
@@ -167,5 +180,6 @@ public class SqlScalarTest extends BaseJdbc
         String s = repositoryDerby.scalar(q);
         assertThat(s, notNullValue());
         assertThat(s, instanceOf(String.class));
+        assertThat(q.isScalar(), is(true));
     }
 }

@@ -4,7 +4,7 @@ DELETE FROM COLOR;
 
 INSERT INTO AUTHOR (ID, NAME) VALUES (1, 'Friedrich Nietzsche');
 INSERT INTO AUTHOR (ID, NAME) VALUES (2, 'Martin Fowler');
-INSERT INTO AUTHOR (ID, NAME) VALUES (3, 'Carlos Drummond de Andrade');
+INSERT INTO AUTHOR (ID, NAME) VALUES (3, 'Carlos Drummond');
 INSERT INTO AUTHOR (ID, NAME) VALUES (4, 'Franz Kafka');
 INSERT INTO AUTHOR (ID, NAME) VALUES (5, 'Albert Camus');
 

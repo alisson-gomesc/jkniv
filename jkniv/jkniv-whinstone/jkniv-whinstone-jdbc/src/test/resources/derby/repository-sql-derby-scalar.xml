@@ -48,5 +48,13 @@
   <select id="getScalarTimestamp" type="NATIVE">
   SELECT MY_TIMESTAMP FROM MY_TYPES where ID = 1
   </select>
+  <select id="getScalarAuthorName" type="NATIVE">
+  SELECT NAME, ID from AUTHOR
+   <if test="id != null">
+    where ID = 1
+   </if>
+  </select>
+  
+  
 
 </statements>

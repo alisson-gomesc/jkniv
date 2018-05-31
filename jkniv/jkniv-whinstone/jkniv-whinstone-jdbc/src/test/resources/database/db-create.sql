@@ -1,8 +1,8 @@
 
+--DROP SCHEMA derbwhinstone;
 
-
-CREATE SCHEMA derbwhinstone;
-SET SCHEMA derbwhinstone;
+--CREATE SCHEMA derbwhinstone;
+--SET SCHEMA derbwhinstone;
 
 
 CREATE SEQUENCE SEQ_AUTHOR_ID;

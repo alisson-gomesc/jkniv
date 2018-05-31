@@ -19,5 +19,11 @@
  <select id="GetNameBookByName2" type="JPQL" returnType="com.acme.domain.orm.Book">
   select b.name from Book b where b.name = :name
  </select>
+  <select id="getScalarAuthorName" type="NATIVE" returnType="com.acme.domain.noorm.Author">
+  SELECT a.name from JPA_AUTHOR a
+   <if test="id != null">
+    where a.id = 1
+   </if>
+  </select>
 
  </statements>

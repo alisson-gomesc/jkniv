@@ -99,7 +99,7 @@ public class GroupingByTest extends BaseJdbc
         assertThat(author1.getBooks().get(1).getName(), is("The Stranger"));
         
         assertThat(author2.getId(), is(3L));
-        assertThat(author2.getName(), is("Carlos Drummond de Andrade"));
+        assertThat(author2.getName(), is("Carlos Drummond"));
         assertThat(author2.getBooks().size(), is(5));
         assertThat(author2.getBooks().get(0).getName(), is("A Lição do Amigo"));
         assertThat(author2.getBooks().get(1).getName(), is("Alguma Poesia"));

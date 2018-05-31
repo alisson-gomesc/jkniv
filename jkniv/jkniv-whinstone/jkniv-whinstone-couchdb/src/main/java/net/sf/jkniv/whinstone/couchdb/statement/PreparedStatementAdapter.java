@@ -249,8 +249,10 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Strin
         
     }
     
+    
     @SuppressWarnings(
     { "rawtypes", "unchecked" })
+    @Override
     public List<T> rows()
     {
         bindParams();
@@ -272,72 +274,6 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Strin
         {
             handlerException.handle(e);
         }
-        
-//        try
-//        {
-//            CloseableHttpClient httpclient = HttpClients.createDefault();
-//            
-//            response = httpclient.execute(this.request);
-//            String json = EntityUtils.toString(response.getEntity());
-//            //LOG.debug(response.getStatusLine().toString());
-//            int statusCode = response.getStatusLine().getStatusCode();
-//            if (statusCode == DbCommand.HTTP_OK)
-//            {
-//                // FIXME
-//                ///rs = session.execute(bound);
-//                //JdbcColumn<Row>[] columns = getJdbcColumns(rs.getColumnDefinitions());
-//                //setResultRow(columns);
-//                //
-//                //Transformable<T> transformable = resultRow.getTransformable();
-////                if (!groupingBy.isEmpty())
-////                {
-////                    grouping = new GroupingBy(groupingBy, returnType, transformable);
-////                }
-//                rsParser = new ObjectResultSetParser(resultRow, grouping);
-//                list = rsParser.parser(json);
-//            }
-//            else if (statusCode == DbCommand.HTTP_NO_CONTENT || 
-//                     statusCode == DbCommand.HTTP_NOT_MODIFIED || 
-//                     statusCode == DbCommand.HTTP_RESET_CONTENT)
-//            {
-//                // 204 No Content, 304 Not Modified, 205 Reset Content
-//                LOG.info(response.getStatusLine().toString());
-//            }
-//            else
-//            {
-//                LOG.error("{} -> {} ",response.getStatusLine().toString(), json);
-//                throw new RepositoryException(response.getStatusLine().toString());
-//            }
-//        }
-//        catch (SQLException e)
-//        {
-//            handlerException.handle(e, e.getMessage());
-//        }
-//        catch (ClientProtocolException e)
-//        {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//        catch (IOException e)
-//        {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//        finally 
-//        {
-//            if(response != null)
-//            {
-//                try
-//                {
-//                    response.close();
-//                }
-//                catch (IOException e)
-//                {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
-//            }
-//        }        
         return list;
     }
     

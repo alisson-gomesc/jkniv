@@ -85,7 +85,7 @@ public class FindCommand extends AbstractCommand implements CouchCommand
                 
                 answer = JsonMapper.mapper(json, FindAnswer.class);
                 if (answer.getWarning() != null)
-                    LOG.warn(answer.getWarning());
+                    LOG.warn("Query [{}] warnning message: {}", queryable.getName(), answer.getWarning());
                 
                 if (returnType != null)
                 {

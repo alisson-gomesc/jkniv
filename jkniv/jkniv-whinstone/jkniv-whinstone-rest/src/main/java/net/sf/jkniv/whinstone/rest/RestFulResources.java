@@ -20,7 +20,6 @@
 package net.sf.jkniv.whinstone.rest;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -47,7 +45,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
@@ -305,7 +302,7 @@ public class RestFulResources extends BaseResource
         Map<String,Object> params = marshallToMap(ui.getQueryParameters());
         if (isNotEmpty(body))
         {
-            Map<String,Object> bodyParams = new ObjectMapper().readValue(body, HashMap.class);
+            Map<String,Object> bodyParams = JsonMapper.mapper(body, HashMap.class);
             params.putAll(bodyParams);
         }
         Queryable queryable = buildQueryable(q, params);
@@ -337,7 +334,7 @@ public class RestFulResources extends BaseResource
         marshallToProxy(proxy, ui.getQueryParameters());
         if (isNotEmpty(body))
         {
-            Map<String,Object> bodyParams = new ObjectMapper().readValue(body, HashMap.class);
+            Map<String,Object> bodyParams = JsonMapper.mapper(body, HashMap.class);
             proxy.merge(bodyParams);
         }
         Queryable queryable = buildQueryable(q, proxy.getInstance());
@@ -345,59 +342,6 @@ public class RestFulResources extends BaseResource
         return buildSimpleResponse(rowsAffected);
     }
 
-
-    /*
-     * {@code PUT} HTTP verb to process the update requests. 
-     * <ul>
-     *  <li> <p><code>HTTP 200 OK</code>: content updated, one or more rows affected</p> </li>
-     *  <li> <p><code>HTTP 204 No Content</code>: Update change nothing, zero rows affected</p> </li>
-     *  <li> <p><code>HTTP 409 Conflict</code>: Conflict to update rows, zero rows affected</p> </li>
-     * </ul>
-     * @param q queryable name
-     * @param m model name (qualified or short name)
-     * @param formParams request form information
-     * @return <code>HTTP 200 OK</code>, <code>HTTP 204 No Content</code> or <code>HTTP 409 Conflict</code> with
-     * number of rows affected by update command.
-     *
-    @PUT
-    @Path("update/{q}/{m}")
-    public Response update(@PathParam("q") String q, 
-                           @PathParam("m") String m,
-                           MultivaluedMap<String, String> formParams) 
-    {
-        Class<?> clazz = modelTypes.getType(m);
-        Queryable queryable = buildQueryable(q, clazz, formParams);
-        Integer rowsAffected = getRepository().update(queryable);
-        return buildSimpleResponse(rowsAffected);
-    }
-    */
-
-    /*
-     * {@code PUT} HTTP verb to process the update requests. 
-     * <ul>
-     *  <li> <p><code>HTTP 200 OK</code>: content updated, one or more rows affected</p> </li>
-     *  <li> <p><code>HTTP 204 No Content</code>: Update change nothing, zero rows affected</p> </li>
-     *  <li> <p><code>HTTP 409 Conflict</code>: Conflict to update rows, zero rows affected</p> </li>
-     * </ul>
-     * @param q queryable name
-     * @param body request information using json
-     * @return <code>HTTP 200 OK</code>, <code>HTTP 204 No Content</code> or <code>HTTP 409 Conflict</code> with
-     * number of rows affected by update command.
-     * @throws JsonParseException  for parsing problems
-     * @throws JsonMappingException for mapping of content problems
-     * @throws IOException for  interrupted I/O operations problems
-     *
-    @PUT
-    @Path("update/{q}")
-    public Response update(@PathParam("q") String q, 
-                           String body) throws JsonParseException, JsonMappingException, IOException 
-    {
-        Map<String,Object> params = new ObjectMapper().readValue(body, HashMap.class);
-        Queryable queryable = QueryFactory.newInstance(q, params);
-        Integer rowsAffected = getRepository().update(queryable);
-        return buildSimpleResponse(rowsAffected);
-    }
-    */
     //HTTP 201 Created
     //HTTP 409 Conflict
     @PUT
@@ -444,7 +388,7 @@ public class RestFulResources extends BaseResource
         List<Map<String, Object>> params = null;
         if (isNotEmpty(body))
         {
-            params = new ObjectMapper().readValue(body, new TypeReference<List<Map<String, Object>>>(){});
+            params = JsonMapper.mapper(body, new TypeReference<List<Map<String, Object>>>(){});
         }
         if (params == null || params.isEmpty())
             throw new UnsupportedOperationException("List of data is mandatory to HTTP updateAll request");

@@ -128,11 +128,11 @@ public class TTLCachePolicy implements CachePolicy
     {
         return this.sizeof;
     }
-    
+
     @Override
     public String toString()
     {
-        return "TTLCachePolicy [ttl=" + ttl + ", limit=" + limit + ", sizeof=" + sizeof + "]";
+        return "TTLCachePolicy [ttl=" + ttl + ", tti=" + tti + ", limit=" + limit + ", sizeof=" + sizeof + "]";
     }
     
 }

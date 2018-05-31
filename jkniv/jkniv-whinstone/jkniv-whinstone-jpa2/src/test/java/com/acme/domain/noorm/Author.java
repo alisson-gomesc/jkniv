@@ -44,6 +44,12 @@ public class Author implements Serializable
         super();
         this.books = new ArrayList<Book>();
     }
+    
+    public Author(String name)
+    {
+        this();
+        this.name = name;
+    }
 
     
     public Author(Number id, String name, Number bookId, String bookName, String bookIsbn)

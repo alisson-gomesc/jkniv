@@ -59,7 +59,7 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
  * @author Alisson Gomes
  *
  */
-public class RepositoryCouchDb implements Repository
+class RepositoryCouchDb implements Repository
 {
     private static final Logger               LOG                = LoggerFactory.getLogger(RepositoryCouchDb.class);
     private static final Assertable           notNull            = AssertsFactory.getNotNull();
@@ -294,7 +294,11 @@ public class RepositoryCouchDb implements Repository
         if (!queryable.isBoundSql())
             queryable.bind(selectable);
         
-        Cacheable.Entry entry = selectable.getCache().getEntry(queryable);
+        Cacheable.Entry entry = null;
+        
+        if(!queryable.isCacheIgnore())
+            entry = selectable.getCache().getEntry(queryable);
+        
         if (entry == null)
         {
             Command command = adapterConn.asSelectCommand(queryable, overloadResultRow);

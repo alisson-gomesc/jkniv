@@ -17,14 +17,14 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.couchdb.commands;
+package net.sf.jkniv.whinstone.rest;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -35,7 +35,7 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 class JsonMapper
 {
     private static HandlerException handlerException;
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static ObjectMapper mapper;
 
     static
     {
@@ -46,6 +46,8 @@ class JsonMapper
         handlerException.config(JsonMappingException.class, "Error to deserialization content [%s]");
         handlerException.config(UnsupportedEncodingException.class, "Error at json content encoding unsupported [%s]");
         handlerException.config(IOException.class, "Error from I/O json content [%s]");
+        mapper = new ObjectMapper();
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);// FIXME design to pass jackson properties
     }
     
     private JsonMapper()
@@ -65,6 +67,20 @@ class JsonMapper
         try
         {
             return mapper.readValue(content, valueType);
+        }
+        catch (Exception e)
+        {
+            // JsonParseException | JsonMappingException | IOException
+            handlerException.handle(e);
+        }
+        return null;
+    }
+    
+    public static <T> T mapper(String content, TypeReference valueTypeRef)
+    {
+        try
+        {
+            return mapper.readValue(content, valueTypeRef);
         }
         catch (Exception e)
         {

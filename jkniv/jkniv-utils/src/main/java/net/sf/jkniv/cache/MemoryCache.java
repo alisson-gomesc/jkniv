@@ -111,7 +111,7 @@ public class MemoryCache<K, V> implements Cacheable<K, V>
         Cacheable.Entry<V> entry = this.cache.get(key);
         if (entry == null || !policy.isAlive(entry.getTimestamp().getTime()))
         {
-            System.out.println("cache data expire");
+            System.out.println("\ncache data ["+entry+"] expire with ["+this+"]");
             return null;
         }
         return entry.getValue();
@@ -144,6 +144,15 @@ public class MemoryCache<K, V> implements Cacheable<K, V>
         return this.cache.size();
     }
     
+    @Override
+    public String toString()
+    {
+        return "MemoryCache [name=" + name + ", policy=" + policy + ", cacheSize=" + cache.size() + "]";
+    }
+
+
+
+
     static class Entry<V> implements Cacheable.Entry<V>
     {
         final Date timestamp;

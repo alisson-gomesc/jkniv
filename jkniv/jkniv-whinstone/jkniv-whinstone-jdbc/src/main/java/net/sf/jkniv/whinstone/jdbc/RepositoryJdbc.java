@@ -243,7 +243,7 @@ class RepositoryJdbc implements Repository
         List<T> list = currentWork().select(queryable, null, null);
         T ret = null;
         if (list.size() > 1)
-            handlerException.throwMessage("No unique result for query [%s]", queryable.getName());// TODO design exception throw NoUniqueObjectException
+            throw new NonUniqueResultException("No unique result for query ["+queryable.getName()+"]");
         
         else if (list.size() == 1)
             ret = list.get(0);
@@ -279,7 +279,7 @@ class RepositoryJdbc implements Repository
         List<T> list = currentWork().select(queryable, returnType, resultRow);
         T ret = null;
         if (list.size() > 1)
-            handlerException.throwMessage("No unique result for query [%s]", queryable.getName());// TODO design exception throw NoUniqueResultException
+            throw new NonUniqueResultException("No unique result for query ["+queryable.getName()+"]");
         
         else if (list.size() == 1)
             ret = list.get(0);
@@ -312,7 +312,7 @@ class RepositoryJdbc implements Repository
         List<T> list = currentWork().select(queryable, returnType);
         T ret = null;
         if (list.size() > 1)
-            handlerException.throwMessage("No unique result for query [%s]", queryName);// TODO design exception throw NoUniqueResultException
+            throw new NonUniqueResultException("No unique result for query ["+queryable.getName()+"]");
         
         else if (list.size() == 1)
             ret = list.get(0);

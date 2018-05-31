@@ -81,6 +81,8 @@ class QueryName implements Queryable
     protected int        countParams;
     private boolean      boundSql;
     private boolean      boundParams;
+    private boolean      cached;
+    private boolean      cacheIgnore;
     
     /**
      * Creates a Query object parameterized starting at first row and retrieve all rows, isolation default, no timeout and online (no batch).
@@ -124,6 +126,8 @@ class QueryName implements Queryable
         this.batch = false;
         this.boundSql = false;
         this.boundParams = false;
+        this.cached = false;
+        this.cacheIgnore = false;
         sizeOfParams();
     }
     
@@ -664,4 +668,29 @@ class QueryName implements Queryable
         return "QueryName [name=" + name + ", offset=" + offset + ", max=" + max + ", timeout=" + timeout + ", batch="
                 + batch + ", scalar=" + scalar + ", paramType=" + paramType + "]";
     }
+
+    @Override
+    public void cacheIgnore()
+    {
+        this.cacheIgnore = true;
+    }
+
+    @Override
+    public boolean isCacheIgnore()
+    {
+        return this.cacheIgnore;
+    }
+
+    @Override
+    public void cached()
+    {
+        this.cached = true;        
+    }
+
+    @Override
+    public boolean isCached()
+    {
+        return this.cached;        
+    }
+
 }

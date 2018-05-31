@@ -40,8 +40,6 @@ import org.slf4j.LoggerFactory;
 public class CacheManager<K, V>
 {
     private static final Logger            LOG                 = LoggerFactory.getLogger(CacheManager.class);
-    private static final int               WAIT_TIME_TO_CANCEL = 3;
-    private static final TimeUnit          TIME                = TimeUnit.HOURS;
     private final ScheduledExecutorService scheduler           = Executors.newScheduledThreadPool(1);
     private final ConcurrentMap<String, Cacheable<K,V>> caches;
     private ScheduledFuture<?> poolScheduler; 

@@ -19,21 +19,16 @@
  */
 package net.sf.jkniv.whinstone.rest;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.json.stream.JsonGenerationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig.Feature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +36,6 @@ import net.sf.jkniv.reflect.beans.MethodName;
 import net.sf.jkniv.reflect.beans.MethodNameFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
-import net.sf.jkniv.sqlegance.QueryNotFoundException;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.whinstone.QueryFactory;
@@ -99,7 +93,7 @@ public class BaseResource
     {
         Response response = null;
         if (resource != null)
-            response = Response.ok().entity(jsonContent(resource)).build();
+            response = Response.ok().entity(JsonMapper.mapper(resource)).build();
         else
             response = Response.status(Status.NO_CONTENT).build();
         return response;
@@ -112,7 +106,7 @@ public class BaseResource
         if (resources.isEmpty())
             response = Response.status(Status.NO_CONTENT).build();
         else
-            response = Response.ok().entity(jsonContent(resources)).build();
+            response = Response.ok().entity(JsonMapper.mapper(resources)).build();
         
         return response;
     }
@@ -122,11 +116,11 @@ public class BaseResource
         Map<String, Number> content = new HashMap<>(1);
         content.put("rows", rowsAffected);
         if (rowsAffected.intValue() > 0)
-            return Response.ok().entity(jsonContent(content)).build();
+            return Response.ok().entity(JsonMapper.mapper(content)).build();
         else if (rowsAffected.intValue() == 0)
-            return Response.noContent().entity(jsonContent(content)).build();
+            return Response.noContent().entity(JsonMapper.mapper(content)).build();
         else
-            return Response.status(Status.CONFLICT).entity(jsonContent(content)).build();
+            return Response.status(Status.CONFLICT).entity(JsonMapper.mapper(content)).build();
     }
     
     protected Response ok()
@@ -211,33 +205,5 @@ public class BaseResource
         if (page > 1)
             q.setOffset((page - 1) * MAX);
         return q;
-    }
-    
-    private String jsonContent(Object content)
-    {
-        String json = null;
-        try
-        {
-            ObjectMapper objectMapper = new ObjectMapper();
-            //objectMapper.configure(Feature.WRITE_DATES_AS_TIMESTAMPS , false);
-            objectMapper.disable(Feature.WRITE_DATES_AS_TIMESTAMPS);// FIXME design to pass jackson properties
-            json = new ObjectMapper().writeValueAsString(content);
-        }
-        catch (JsonGenerationException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch (JsonMappingException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch (IOException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return json;
-    }
+    }    
 }

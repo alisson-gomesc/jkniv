@@ -68,7 +68,7 @@
   <jdbc:initialize-database data-source="dataSourceOra" enabled="true"
     ignore-failures="DROPS">
     <jdbc:script location="classpath:database/ora/db-drop.sql"  execution="DESTROY" encoding="UTF-8" />
-    <!--      
+    <!--
     -->
     <jdbc:script location="classpath:database/ora/db-create.sql" execution="INIT" encoding="UTF-8" />
     <jdbc:script location="classpath:database/ora/db-load.sql" execution="INIT" encoding="UTF-8" />
@@ -82,13 +82,6 @@
     <jdbc:script location="classpath:database/postgresql/db-create.sql" execution="INIT" encoding="UTF-8" />
     <jdbc:script location="classpath:database/postgresql/db-load.sql" execution="INIT" encoding="UTF-8" />
   </jdbc:initialize-database>
-  <!-- 
-  <jdbc:initialize-database data-source="dataSourceCassandra"
-    enabled="true" ignore-failures="DROPS">
-    <jdbc:script location="classpath:database/cassandra/db-drop.sql" execution="DESTROY" encoding="UTF-8" />
-    <jdbc:script location="classpath:database/cassandra/db-create.sql" execution="INIT" encoding="UTF-8" />
-  </jdbc:initialize-database>
-   -->
 
   <bean id="propertyDerby" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
     <property name="properties">

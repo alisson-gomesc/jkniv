@@ -36,11 +36,6 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-mapper-asl</artifactId>
-      <version>1.9.13</version>
-    </dependency>
     <!--  \/\/ DATABASE CONFIG \/\/  -->
     <dependency>
       <groupId>org.apache.derby</groupId>
@@ -184,12 +179,6 @@
       <groupId>org.jfree</groupId>
       <artifactId>jcommon</artifactId>
       <version>1.0.23</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-core-asl</artifactId>
-      <version>1.9.13</version>
       <scope>test</scope>
     </dependency>
     <dependency>

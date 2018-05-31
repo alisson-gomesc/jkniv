@@ -118,6 +118,20 @@ public class QueryFactory
     }
 
     /**
+     * Build a new {@code Queryable} object
+     * @param name query name
+     * @param clazz return type that overload return type from XML
+     * @param <T> type of return type 
+     * @return Queryable object with parameters and unlimited result and specific return type
+     */
+    public static <T> Queryable of(String name, Class<T> clazz)
+    {
+        QueryName q = new QueryName(name);
+        q.setReturnType(clazz);
+        return q;
+    }
+    
+    /**
      * Clone {@code queryable} object with a return type if no {@code null}
      * @param queryable query name
      * @param returnType type of return that overload return type from XML
@@ -131,10 +145,18 @@ public class QueryFactory
     public static <T> Queryable clone(Queryable queryable, Class<T> returnType)
     {
         QueryName q = new QueryName(queryable.getName(), queryable.getParams(), queryable.getOffset(), queryable.getMax());
-        if (q instanceof QueryName)
-            q.setReturnType(returnType);
+
+        q.setReturnType(returnType);
+        
+        if(queryable.isCacheIgnore())
+            q.cacheIgnore();
+        
+        if(queryable.isScalar())
+            q.scalar();
+        
         return q;
     }
+    
     /**
      * 
      * @param name query name
