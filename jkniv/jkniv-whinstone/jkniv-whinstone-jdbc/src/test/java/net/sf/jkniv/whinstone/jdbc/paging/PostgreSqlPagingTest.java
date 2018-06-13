@@ -37,7 +37,6 @@ import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatAuthor;
 
 import static net.sf.jkniv.whinstone.jdbc.RepositoryJdbcInstanceTest.TOTAL_BOOKS;
 
-//@Ignore("Windows service posgresql CRASH")
 public class PostgreSqlPagingTest extends BaseJdbc
 {
     private static final int SIZE_PAGE = 5;

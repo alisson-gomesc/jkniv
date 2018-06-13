@@ -26,25 +26,32 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import net.sf.jkniv.cache.CacheManager;
+import net.sf.jkniv.cache.CachePolicy;
 import net.sf.jkniv.cache.Cacheable;
+import net.sf.jkniv.cache.TTLCachePolicy;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.QueryNotFoundException;
+import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.xml.AbstractSqlTag;
 import net.sf.jkniv.sqlegance.builder.xml.IncludeTag;
 import net.sf.jkniv.sqlegance.builder.xml.SelectColumnsTag;
+import net.sf.jkniv.sqlegance.builder.xml.SqlTag;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 
 /**
@@ -58,7 +65,7 @@ class ClassPathSqlContext implements SqlContext
 {
     private static final Logger                   LOG = LoggerFactory.getLogger(ClassPathSqlContext.class);
     private final Map<String, Sql>                statements;
-    private final Map<String, SelectColumnsTag>   selectColumns;                                           // TODO implements select-columns    
+    //private final Map<String, SelectColumnsTag>   selectColumns;// TODO implements select-columns    
     private final String                          mainResourceName;
     private final RepositoryConfig                repositoryConfig;
     private final boolean                         shortnameEnable;
@@ -67,7 +74,7 @@ class ClassPathSqlContext implements SqlContext
     /** XMLs and yours includes */
     private final Map<String, List<XmlStatement>> resources;
     
-    private final CacheManager                    cacheManager;
+    private CacheManager                    cacheManager;
     
     public ClassPathSqlContext(String resourceName)
     {
@@ -84,9 +91,8 @@ class ClassPathSqlContext implements SqlContext
         long initial = System.currentTimeMillis();
         this.mainResourceName = resourceName;
         this.statements = new HashMap<String, Sql>();
-        this.selectColumns = new HashMap<String, SelectColumnsTag>();
+        //this.selectColumns = new HashMap<String, SelectColumnsTag>();
         this.resources = new HashMap<String, List<XmlStatement>>();
-        this.cacheManager = new CacheManager();
         
         XmlStatement xmlStatementMain = preLoad(this.mainResourceName);
         
@@ -108,7 +114,7 @@ class ClassPathSqlContext implements SqlContext
             ReloadableXmlResource reloadable = new ReloadableXmlResource();
             reloadable.pooling(this);
         }
-        this.selectColumns.clear();
+        //this.selectColumns.clear();
         LOG.info("{} SQL was loaded at {} ms", statements.size(), (System.currentTimeMillis() - initial));
     }
     
@@ -223,12 +229,19 @@ class ClassPathSqlContext implements SqlContext
         }
         // for last, process the tags from main file
         Map<String, Sql> readStatements = xmlStatementMain.build(sqlDialect);
+        configCacheManager(xmlStatementMain);
         for (Entry<String, Sql> entry : readStatements.entrySet())
-        {
             add(entry.getKey(), entry.getValue());
-            if (entry.getValue().isSelectable() && entry.getValue().asSelectable().hasCache())
+        
+        if (cacheManager != null)
+        {
+            for (Entry<String, Sql> entry : this.statements.entrySet())
             {
-                cacheManager.add(entry.getKey(), entry.getValue().asSelectable().getCache());
+                if (entry.getValue().isSelectable() && entry.getValue().asSelectable().hasCache())
+                {
+                    Selectable selectable = entry.getValue().asSelectable();
+                    cacheManager.add(entry.getKey(), selectable.getCacheName(), selectable.getCache());
+                }
             }
         }
     }
@@ -260,14 +273,65 @@ class ClassPathSqlContext implements SqlContext
             }
         }
         Map<String, Sql> readStatements = xmlStatement.build(sqlDialect);
+        configCacheManager(xmlStatement);
         for (Entry<String, Sql> entry : readStatements.entrySet())
-        {
             add(entry.getKey(), entry.getValue());
-            if (entry.getValue().isSelectable() && entry.getValue().asSelectable().hasCache())
+    }
+    
+    private void configCacheManager(XmlStatement xmlStatement)
+    {
+        if (cacheManager != null)
+            throw new RepositoryException("There is already a configured cache manager "+cacheManager+", just one for SqlContext");
+            
+        NodeList nodes = xmlStatement.evaluateXpath(XmlStatement.ROOT_NODE+"/cache-manager");
+        if (nodes != null)
+        {
+            for (int i = 0; i < nodes.getLength(); i++)
             {
-                cacheManager.add(entry.getKey(), entry.getValue().asSelectable().getCache());
+                Node node = nodes.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE)
+                {
+                    Element element = (Element) node;
+                    long initalDelay =  longValueOf(element.getAttribute("delay"), CachePolicy.DEFAULT_INITIALDELAY);
+                    long period = longValueOf(element.getAttribute("period"), CachePolicy.DEFAULT_PERIOD);                    
+                    long ttl =  longValueOf(element.getAttribute("ttl"), CachePolicy.DEFAULT_TTL);
+                    long tti = longValueOf(element.getAttribute("tti"), CachePolicy.DEFAULT_TTI);
+                    long size = longValueOf(element.getAttribute("size"), CachePolicy.DEFAULT_SIZE);
+                    String sizeof = element.getAttribute("sizeof");
+
+                    CachePolicy policy = new TTLCachePolicy(ttl, tti, TimeUnit.SECONDS, size, sizeof);
+                    this.cacheManager = new CacheManager(initalDelay, period, policy);
+                    LOG.info("cache manager ttl[{}] tti[{}] size[{}] sizeOf[{}]", ttl, tti, size, sizeof);
+                    NodeList policyNodes = element.getChildNodes();
+                    for (int j = 0; j < policyNodes.getLength(); j++)
+                    {
+                        Node nodePolicy = policyNodes.item(j);
+                        if (nodePolicy.getNodeType() == Node.ELEMENT_NODE)
+                        {
+                            Element elementPolicy = (Element) nodePolicy;
+                            String policyName =  elementPolicy.getAttribute("name");
+                            ttl =  longValueOf(elementPolicy.getAttribute("ttl"), CachePolicy.DEFAULT_TTL);
+                            tti = longValueOf(elementPolicy.getAttribute("tti"), CachePolicy.DEFAULT_TTI);
+                            size = longValueOf(elementPolicy.getAttribute("size"), CachePolicy.DEFAULT_SIZE);
+                            sizeof = element.getAttribute("sizeof");
+                            CachePolicy newPolicy = new TTLCachePolicy(ttl, tti, TimeUnit.SECONDS, size, sizeof);
+                            this.cacheManager.add(policyName, newPolicy);
+                        }
+                    }
+                }
             }
         }
+    }
+    
+    private long longValueOf(String value, long defaultValue)
+    {
+        long v = defaultValue;
+        try
+        {
+            v = Long.valueOf(value);
+        }
+        catch (NumberFormatException nfe) { /* default value */ }
+        return v;
     }
     
     /**

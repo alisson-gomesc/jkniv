@@ -32,10 +32,11 @@ import io.restassured.http.ContentType;
 
 public class ServiceApiTest extends EmbeddedJetyServerTest
 {
-    @Test @Ignore
+    @Test 
     public void whenWhinstoneRunningData()
     {
         given()
+        .baseUri(super.uri)
           .contentType(ContentType.JSON)
         .expect()
           .statusCode(200)

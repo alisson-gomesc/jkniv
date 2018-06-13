@@ -38,18 +38,19 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
+//@Ignore
 public class EmbeddedJetyServerTest
 {
     private static Server server;
     private static URI serverUri;
-
+    protected static String uri;
     @BeforeClass
     public static void startJetty() throws Exception
     {
         server = new Server();
         ServerConnector connector = new ServerConnector(server);
-        connector.setPort(8080); // auto-bind to available port
+        //connector.setPort(8080);
+        connector.setPort(0);// auto-bind to available port
         server.addConnector(connector);
 
         ServletContextHandler context = configContext();
@@ -66,7 +67,7 @@ public class EmbeddedJetyServerTest
             host = "localhost";
         }
         int port = connector.getLocalPort();
-        String uri = String.format("http://%s:%d/",host,port);
+        uri = String.format("http://%s:%d/",host,port);
         serverUri = new URI(uri);
         System.out.println("server started "+uri);
     }
@@ -117,7 +118,7 @@ public class EmbeddedJetyServerTest
         }
     }
 
-    @Test
+    @Test @Ignore("Cannot start because RestFulResources.sqlContextName must be null to be setted")
     public void whenStartServer() throws Exception
     {
         // Test GET
@@ -126,7 +127,7 @@ public class EmbeddedJetyServerTest
         assertThat("Response Code", http.getResponseCode(), is(HttpStatus.OK_200));
     }
     
-    @Test
+    @Test  @Ignore("Cannot start because RestFulResources.sqlContextName must be null to be setted")
     public void whenWhinstonePing() throws Exception
     {
         // Test GET

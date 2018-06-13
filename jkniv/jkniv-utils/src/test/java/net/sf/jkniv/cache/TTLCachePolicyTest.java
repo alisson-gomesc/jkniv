@@ -85,4 +85,36 @@ public class TTLCachePolicyTest
         assertThat(policy.isAlive(timestamp), is(true));
     }
 
+    @Test
+    public void whenCachePolicyInitialSizeAndSizeof()
+    {
+        CachePolicy policy0 = new TTLCachePolicy(20,10,150,"512");
+        assertThat(policy0.size(), is(150L));
+        assertThat(policy0.sizeof(), is(512L));
+
+        CachePolicy policy1 = new TTLCachePolicy(20,10,100,"2m");
+        assertThat(policy1.size(), is(100L));
+        assertThat(policy1.sizeof(), is(2L*1024L*1024L));
+
+        CachePolicy policy = new TTLCachePolicy(20,10,200,"2M");
+        assertThat(policy.size(), is(200L));
+        assertThat(policy.sizeof(), is(2L*1024L*1024L));
+
+        CachePolicy policy2 = new TTLCachePolicy(20,10,2000,"2g");
+        assertThat(policy2.size(), is(2000L));
+        assertThat(policy2.sizeof(), is(2L*1024L*1024L*1024L));
+
+        CachePolicy policy4 = new TTLCachePolicy(20,10,500,"2G");
+        assertThat(policy4.size(), is(500L));
+        assertThat(policy4.sizeof(), is(2L*1024L*1024L*1024L));
+    }
+
+    @Test
+    public void whenCachePolicyInitWith2GB()
+    {
+        CachePolicy policy = new TTLCachePolicy(20,10,100,"2G");
+        assertThat(policy.size(), is(100L));
+        assertThat(policy.sizeof(), is(2L*1024L*1024L*1024L));
+    }
+
 }

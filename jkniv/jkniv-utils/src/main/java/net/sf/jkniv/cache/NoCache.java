@@ -50,6 +50,11 @@ public class NoCache<K, V> implements Cacheable<K, V>
     }
 
     @Override
+    public void setPolicy(CachePolicy policy)
+    {
+    }
+    
+    @Override
     public V put(K key, V object)
     {
         return null;

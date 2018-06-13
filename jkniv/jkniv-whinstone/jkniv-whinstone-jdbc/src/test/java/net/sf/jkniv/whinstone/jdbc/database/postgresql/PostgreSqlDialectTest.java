@@ -34,7 +34,6 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.jdbc.dialect.PostgreSqlDialect;
 import net.sf.jkniv.whinstone.jdbc.dialect.SqlDialectAbstractTest;
 
-//@Ignore("Windows service posgresql CRASH")
 public class PostgreSqlDialectTest extends SqlDialectAbstractTest
 {
     /** select name from author LIMIT 50 OFFSET 10 */

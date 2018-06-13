@@ -102,6 +102,16 @@ public class HttpBuilder
         return this.hostContext + "_design/";
     }
     
+    /**
+     * Return the HTTP POST for _find request.
+     * <p>
+     * <code>
+     * http://{host}:{port}/{schema}/_find/
+     * </code>
+     * 
+     * @param bodyStr body from HTTP POST request
+     * @return URL follow the pattern http://{host}:{port}/{schema}/_find/ with {@code bodyStr} as body content 
+     */
     public HttpPost newFind(String bodyStr)
     {
         HttpPost httpPost = null;
@@ -120,6 +130,15 @@ public class HttpBuilder
         return httpPost;
     }
     
+    /**
+     * Return the HTTP POST for _find request.
+     * <p>
+     * <code>
+     * http://{host}:{port}/{schema}/_find/
+     * </code>
+     * 
+     * @return URL follow the pattern http://{host}:{port}/{schema}/_find/ without body content
+     */
     public HttpPost newFind()
     {
         HttpPost http = null;

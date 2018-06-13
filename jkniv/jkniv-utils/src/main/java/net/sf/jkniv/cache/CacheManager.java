@@ -19,10 +19,9 @@
  */
 package net.sf.jkniv.cache;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -32,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Class to manager the Caches and your entries.
+ * Manager the live of cache entries.
  * 
  * @author Alisson Gomes
  * @since 0.6.0
@@ -41,17 +40,25 @@ public class CacheManager<K, V>
 {
     private static final Logger            LOG                 = LoggerFactory.getLogger(CacheManager.class);
     private final ScheduledExecutorService scheduler           = Executors.newScheduledThreadPool(1);
-    private final ConcurrentMap<String, Cacheable<K,V>> caches;
+    private final Map<String, Cacheable<K,V>> caches;
+    private final Map<String, CachePolicy> policies;
     private ScheduledFuture<?> poolScheduler; 
-    private final long initialDelay;
+    private final long delay;
     private final long period;
+    private final CachePolicy policy;
     
+    /**
+     * Create a new cache manager with 5 seconds for initial delay to first execution
+     * and 5 minutes for period between successive executions.
+     */
     public CacheManager()
     {
-        this(5L, 5L);
+        this(5L, TimeUnit.MINUTES.toSeconds(5L));
     }
 
     /**
+     * Create a new cache manager with 5 seconds for initial delay to first execution
+     * and configurable parameter for {@code period} to between successive executions.
      * @param period the period between successive executions
      */
     public CacheManager(long period)
@@ -60,34 +67,71 @@ public class CacheManager<K, V>
     }
 
     /**
-     * @param initialDelay the time to delay first execution
-     * @param period the period between successive executions
+     * Create a new cache manager with configurable {@code initialDelay} and {@code period}.
+     * @param initialDelay seconds to the time to delay first execution
+     * @param period seconds to the period between successive executions
      */
     public CacheManager(long initialDelay, long period)
     {
-        this.initialDelay = initialDelay;
+        this(initialDelay, period, new TTLCachePolicy(CachePolicy.DEFAULT_TTL, CachePolicy.DEFAULT_TTI, TimeUnit.MINUTES));
+    }
+    
+
+    /**
+     * Create a new cache manager with configurable {@code initialDelay} and {@code period}.
+     * @param delay seconds to the time to delay first execution
+     * @param period seconds to the period between successive executions
+     * @param policy default policy for cache entries {@link #add(String, Cacheable)}
+     */
+    public CacheManager(long delay, long period, CachePolicy policy)
+    {
+        this.delay = delay;
         this.period = period;
-        this.caches = new ConcurrentHashMap<String, Cacheable<K, V>>();
+        this.caches = new HashMap<String, Cacheable<K, V>>();
+        this.policies = new HashMap<String, CachePolicy>();
+        this.policy = policy;
     }
 
-    
+    public CachePolicy add(String key, CachePolicy policy)
+    {
+        return this.policies.put(key, policy);
+    }
+
     public Cacheable<K, V> add(String key, Cacheable<K, V> cache)
     {
         return this.caches.put(key, cache);
     }
+
+    public Cacheable<K, V> add(String key, String policyName, Cacheable<K, V> cache)
+    {
+        CachePolicy policy = this.policies.get(policyName);
+        if (policy == null)
+            policy = this.policy;
+        
+        cache.setPolicy(policy);
+        return this.caches.put(key, cache);
+    }
+
     
+    public Cacheable<K, V> add(String key)
+    {
+        Cacheable<K, V> cacheable = new MemoryCache<K, V>(this.policy, key);
+        this.caches.put(key, cacheable);
+        return cacheable;
+    }
+
     public void pooling()
     {
         final Runnable watching = new WatchCaches(caches);
-        this.poolScheduler = scheduler.scheduleAtFixedRate(watching, this.initialDelay, this.period, TimeUnit.SECONDS);
+        this.poolScheduler = scheduler.scheduleAtFixedRate(watching, this.delay, this.period, TimeUnit.SECONDS);
         LOG.info("Watching cacheable data");
     }
     
     public void cancel()
     {
         LOG.info("Canceling cacheable manager");
-        this.poolScheduler.cancel(true);
         this.clear();
+        this.poolScheduler.cancel(true);
     }
 
     private void clear()
@@ -123,7 +167,7 @@ public class CacheManager<K, V>
         @Override
         public void run()
         {
-            LOG.info("Running cleanup cache");
+            LOG.info("Manager [{}] caches", caches.size());
             Set<Map.Entry<String, Cacheable<K, V>>> entries = caches.entrySet();
             for (Map.Entry<String, Cacheable<K, V>> entry : entries)
             {

@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<xsd:schema xmlns="http://jkniv.sf.net/schema/sqlegance/statements" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  targetNamespace="http://jkniv.sf.net/schema/sqlegance/statements">
+<xsd:schema 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://jkniv.sf.net/schema/sqlegance/statements"
+  elementFormDefault="qualified">
+
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+<!-- 
+  <xsd:import namespace="http://jkniv.sf.net/schema/sqlegance/cache" schemaLocation="http://jkniv.sf.net/schema/sqlegance/sqlegance-cache.xsd"/>
+ -->
 
   <xsd:element name="statements">
     <xsd:complexType>
@@ -105,9 +113,9 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexType mixed="true">
-        <xsd:attribute name="strategy" use="optional" type="keyGeneratorType" />
-        <xsd:attribute name="columns" use="optional" type="xsd:string" />
-        <xsd:attribute name="properties" use="required" type="xsd:string" />
+      <xsd:attribute name="strategy" use="optional" type="keyGeneratorType" />
+      <xsd:attribute name="columns" use="optional" type="xsd:string" />
+      <xsd:attribute name="properties" use="required" type="xsd:string" />
     </xsd:complexType>
   </xsd:element>
 
@@ -277,7 +285,8 @@
   <xsd:element name="one-to-many">
     <xsd:annotation>
       <xsd:documentation>
-        This element may be used within an embeddable class contained within an entity class to specify a relationship to a collection of entities      
+        This element may be used within an embeddable class contained within an entity class
+        to specify a relationship to a collection of entities
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexType mixed="true">
@@ -287,9 +296,7 @@
     </xsd:complexType>
   </xsd:element>
 
-  <!-- 
-  <one-to-many property="books" typeOf="net.sf.jkniv.whinstone.jdbc.acme.domain.Book"/>
-   -->
+  <!-- <one-to-many property="books" typeOf="net.sf.jkniv.whinstone.jdbc.acme.domain.Book"/> -->
 
   <xsd:simpleType name="languageType">
     <xsd:annotation>
@@ -370,7 +377,7 @@
     <xsd:restriction base="xsd:token">
       <xsd:enumeration value="AUTO" />
       <xsd:enumeration value="SEQUENCE" />
-      <!--xsd:enumeration value="TABLE" /-->
+      <!--xsd:enumeration value="TABLE" / -->
     </xsd:restriction>
   </xsd:simpleType>
 

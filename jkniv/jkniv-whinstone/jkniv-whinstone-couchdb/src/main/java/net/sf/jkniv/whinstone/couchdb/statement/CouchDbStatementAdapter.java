@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.experimental.converters.SqlDateConverter;
+import net.sf.jkniv.reflect.BasicType;
 import net.sf.jkniv.sqlegance.KeyGeneratorType;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
@@ -47,7 +48,6 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     private final HandlerException   handlerException;
     private final SqlDateConverter   dtConverter;
     private int                      index, indexIN;
-    //private SqlLogger              sqlLogger;
     private Class<T>                 returnType;
     private ResultRow<T, String>     resultRow;
     private boolean                  scalar;
@@ -59,6 +59,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     private HttpBuilder              httpBuilder;
     private Map<String, Object>      params;
     private boolean                  boundParams;
+    private static BasicType         basicType = new BasicType();
     
     public CouchDbStatementAdapter(HttpBuilder httpBuilder, String body, ParamParser paramParser)//HttpRequestBase request)
     {
@@ -349,7 +350,14 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
             for (String k : params.keySet())
             {
                 Object v = params.get(k);
-                this.body = this.body.replaceFirst("\\?", String.valueOf("\"" + v + "\""));// FIXME stament bind type like Date, Double, Calendar, Float
+                if (v instanceof Number)
+                {
+                    this.body = this.body.replaceFirst("\\?", String.valueOf(v));// FIXME stament bind type like Date, Double, Calendar, Float
+                }
+                else
+                {
+                    this.body = this.body.replaceFirst("\\?", String.valueOf("\"" + v + "\""));// FIXME stament bind type like Date, Double, Calendar, Float
+                }
             }
         }
         this.boundParams = true;

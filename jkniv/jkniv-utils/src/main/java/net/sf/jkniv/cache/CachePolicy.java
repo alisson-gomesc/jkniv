@@ -19,11 +19,13 @@
  */
 package net.sf.jkniv.cache;
 
+import java.util.concurrent.TimeUnit;
+
 /*
 
-no expiry    - this means cache mappings will never expire,
-time-to-live - this means cache mappings will expire after a fixed duration following their creation,
-time-to-idle - this means cache mappings will expire after a fixed duration following the time they were last accessed.
+ no expiry    - this means cache mappings will never expire,
+ time-to-live - this means cache mappings will expire after a fixed duration following their creation,
+ time-to-idle - this means cache mappings will expire after a fixed duration following the time they were last accessed.
 
  */
 /**
@@ -34,6 +36,13 @@ time-to-idle - this means cache mappings will expire after a fixed duration foll
  */
 public interface CachePolicy
 {
+    static final long DEFAULT_TTL          = 60;
+    static final long DEFAULT_TTI          = -1;
+    static final long DEFAULT_SIZE         = 1000;
+    static final long DEFAULT_INITIALDELAY = TimeUnit.MINUTES.toSeconds(10L);
+    static final long DEFAULT_PERIOD       = TimeUnit.MINUTES.toSeconds(5L);
+    static final long DEFAULT_SIZEOF       = -1;
+    
     /**
      * Verify if cache is live indicating to discard the cache content.
      * @param miliseconds time from object stored
@@ -48,12 +57,12 @@ public interface CachePolicy
      * @return <b>true</b> when object is alive, <b>false</b> otherwise
      */
     boolean isAlive(long ttl, long tti);
-
+    
     /**
      * Returns the number of elements in cache.
      * @return the number of elements in cache.
      */
-    long limit();
+    long size();
     
     /**
      * Returns the limit size of objects in cache.

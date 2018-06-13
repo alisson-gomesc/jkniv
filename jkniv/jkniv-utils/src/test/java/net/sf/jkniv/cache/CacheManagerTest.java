@@ -33,18 +33,19 @@ import org.junit.Test;
 public class CacheManagerTest
 {
     
-    @Test @Ignore("TTI failuring")
+    @Test // @Ignore("TTI failuring")
     public void whenCacheManagerExpireWithTTLandTTI() throws InterruptedException
     {
-        //CacheManager<String, Integer> cacheManager = new CacheManager<String, Integer>();
-        CachePolicy policy = new TTLCachePolicy(3000L, 4000L, TimeUnit.MILLISECONDS);
+        final long TTL = 3000L, TTI=2000L;
+        CacheManager<String, Integer> cacheManager = new CacheManager<String, Integer>(3,3);
+        CachePolicy policy = new TTLCachePolicy(TTL, TTI, TimeUnit.MILLISECONDS);
         Cacheable<String, Integer> cache = new MemoryCache<String, Integer>(policy);
-        //cacheManager.pooling();
+        cacheManager.add("test", cache);
+        cacheManager.pooling();
         Integer v = 1;
         cache.put("A", v);
         cache.put("B", 2);
-        //cacheManager.add("test", cache);
-
+        long timestamp = System.currentTimeMillis();
         v = cache.get("A");
         assertThat(v, is(1));
         v = cache.get("B");
@@ -52,18 +53,26 @@ public class CacheManagerTest
         Thread.sleep(1000L);
         
         v = cache.get("A");
-        assertThat(v, is(1));
+        if( System.currentTimeMillis()-timestamp > TTL)// check if expired
+            assertThat(v, nullValue());
+        else
+            assertThat(v, is(1));
         Thread.sleep(1000L);
-        
+
         v = cache.get("A");
-        assertThat(v, is(1));
+        if( System.currentTimeMillis()-timestamp > TTL)// check if expired
+            assertThat(v, nullValue());
+        else
+            assertThat(v, is(1));
+            
         Thread.sleep(1000L);
-        
+
         v = cache.get("A");
         assertThat(v, nullValue());
         Thread.sleep(1200L);
         v = cache.get("B");
         assertThat(v, nullValue());
+        cacheManager.cancel();
     }
     
     @Test @Ignore

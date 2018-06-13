@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,7 +38,6 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.cassandra.result.CustomResultRow;
 
-//@Ignore("RepositoryJdbc doesn't supports Cassandra driver")
 public class CassandraRepositoryTest extends BaseJdbc
 {
     @Autowired
@@ -86,19 +86,17 @@ public class CassandraRepositoryTest extends BaseJdbc
     
     
     
-    @Test
+    @Test @Ignore("Why the test is commented")
     public void whenCassandraRepositoryExecuteRemoveListAddCommands()
     {
- 
         //remove();
         //assertThat(add(), is(true));
         //assertThat(select(), is(true));
         //assertThat(remove(), is(true));
-        
         //assertThat(list.size(), greaterThan(0));
     }
 
-    @Test
+    @Test 
     public void whenCassandraAdd()
     {
         int initialSize = select();

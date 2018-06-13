@@ -22,8 +22,11 @@ package net.sf.jkniv.sqlegance.builder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.XMLConstants;
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -118,27 +121,35 @@ class XmlValidator
         }
     }
 */
-    public static void validate(URL schemaFile, String resourceName)
+    public static void validate(URL[] schemaFiles, String resourceName)
     {
         StreamSource xmlFile = null;
         try
         {
             xmlFile = new StreamSource(DefaultClassLoader.getResourceAsStream(resourceName));
             SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = schemaFactory.newSchema(schemaFile);
+            //Schema schema = schemaFactory.newSchema(new Source[] { new StreamSource(schemaFiles[0])});//, new StreamSource(schemaFiles[1])});
+            
+            //Schema schema = schemaFactory.newSchema(XmlValidator.class.getResource(schemaFiles[0]));
+            Source source1 = new StreamSource(schemaFiles[0].toExternalForm());
+            Source source2 = new StreamSource(schemaFiles[1].toExternalForm());
+            Schema schema = schemaFactory.newSchema(new Source[] { source1, source2});
+            
             Validator validator = schema.newValidator();
             xmlFile.setSystemId(resourceName);
             validator.validate(xmlFile);
         }
         catch (SAXException e)
         {
+            List<URL> schemas = Arrays.asList(schemaFiles);
             throw new RepositoryException(
-                    "Fail validate [" + resourceName + "] against XSD=[" + schemaFile + "]. " + e.getMessage(), e);
+                    "Fail validate [" + resourceName + "] against XSD=[" + schemas + "]. " + e.getMessage(), e);
         }
         catch (IOException e)
         {
+            List<URL> schemas = Arrays.asList(schemaFiles);
             throw new RepositoryException(
-                    "Fail validate [" + resourceName + "] against XSD=[" + schemaFile + "]. " + e.getMessage(), e);
+                    "Fail validate [" + resourceName + "] against XSD=[" + schemas + "]. " + e.getMessage(), e);
         }
         finally
         {

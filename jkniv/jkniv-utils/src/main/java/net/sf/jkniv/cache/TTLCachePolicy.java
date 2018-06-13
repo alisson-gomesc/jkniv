@@ -21,11 +21,17 @@ package net.sf.jkniv.cache;
 
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.jkniv.asserts.Assertable;
+import net.sf.jkniv.asserts.AssertsFactory;
+
 /*
 
-no expiry    - this means cache mappings will never expire,
-time-to-live - this means cache mappings will expire after a fixed duration following their creation,
-time-to-idle - this means cache mappings will expire after a fixed duration following the time they were last accessed.
+ no expiry    - this means cache mappings will never expire,
+ time-to-live - this means cache mappings will expire after a fixed duration following their creation,
+ time-to-idle - this means cache mappings will expire after a fixed duration following the time they were last accessed.
 
  */
 /**
@@ -36,10 +42,21 @@ time-to-idle - this means cache mappings will expire after a fixed duration foll
  */
 public class TTLCachePolicy implements CachePolicy
 {
-    //private long timestamp;
+    private static final transient Logger LOG = LoggerFactory.getLogger(TTLCachePolicy.class);
+    private static final transient Assertable notNull = AssertsFactory.getNotNull();
+
+    private final static long KB_FACTOR = 1000;
+    private final static long KIB_FACTOR = 1024;
+    private final static long MB_FACTOR = 1000 * KB_FACTOR;
+    private final static long MIB_FACTOR = 1024 * KIB_FACTOR;
+    private final static long GB_FACTOR = 1000 * MB_FACTOR;
+    private final static long GIB_FACTOR = 1024 * MIB_FACTOR;
+    
+    
+        //private long timestamp;
     private long ttl;   // time-to-live
     private long tti;   // time-to-idle
-    private long limit;
+    private long size;
     private long sizeof;
     
     /**
@@ -48,7 +65,7 @@ public class TTLCachePolicy implements CachePolicy
      */
     public TTLCachePolicy(long ttl)
     {
-        this(ttl, -1L);
+        this(ttl, DEFAULT_TTI);
     }
     
     /**
@@ -65,11 +82,39 @@ public class TTLCachePolicy implements CachePolicy
      * Build a policy with TTL and TTI as parameter to keep the objects alive in cache
      * @param ttl time-to-live in seconds
      * @param tti time-to-idle in seconds
+     * @param unit time unit for TTL and TTI
      */
     public TTLCachePolicy(long ttl, long tti, TimeUnit unit)
     {
+        this(ttl, tti, unit, DEFAULT_SIZE, DEFAULT_SIZEOF+"");
+    }
+
+    /**
+     * Build a policy with TTL and TTI as parameter to keep the objects alive in cache
+     * @param ttl time-to-live in seconds
+     * @param tti time-to-idle in seconds
+     * @param size limit for number of object
+     * @param sizeof limit for size for sum of objects
+     */
+    public TTLCachePolicy(long ttl, long tti, long size, String sizeof)
+    {
+        this(ttl, tti, TimeUnit.SECONDS, size, sizeof);
+    }
+    /**
+     * Build a policy with TTL and TTI as parameter to keep the objects alive in cache
+     * @param ttl time-to-live in seconds
+     * @param tti time-to-idle in seconds
+     * @param unit time unit for TTL and TTI
+     * @param size limit for number of object
+     * @param sizeof limit for size for sum of objects
+     */
+    public TTLCachePolicy(long ttl, long tti, TimeUnit unit, long size, String sizeof)
+    {
+        notNull.verify(unit, sizeof);
         this.ttl = unit.toMillis(ttl);
         this.tti = unit.toMillis(tti);
+        this.size = size;
+        this.sizeof = toBytes(sizeof);
     }
 
     @Override
@@ -100,26 +145,25 @@ public class TTLCachePolicy implements CachePolicy
     
     private boolean expireTTL(long ttl)
     {
-        System.out.printf("\n %d - %d = %b", (ttl + this.ttl), System.currentTimeMillis(), ((ttl + this.ttl) <= System.currentTimeMillis()));
-        return ((ttl + this.ttl) <= System.currentTimeMillis());
+        boolean ret = ((ttl + this.ttl) <= System.currentTimeMillis());
+        if(LOG.isDebugEnabled())
+            LOG.debug("Cache Expire TTL[{}] timestamp data [{}] current [{}] resting = {} => {}", (ttl + this.ttl), ttl, System.currentTimeMillis(), (System.currentTimeMillis()-(ttl + this.ttl)), ret);
+        return ret;
     }
     
     private boolean expireTTI(long tti)
     {
-        return ((tti + this.tti) <= System.currentTimeMillis());
+        boolean ret = ((tti + this.tti) <= System.currentTimeMillis());
+        if(LOG.isDebugEnabled())
+            LOG.debug("Cache Expire TTI[{}] timestamp data [{}] current [{}] resting = {} => {}", (tti + this.tti), tti, System.currentTimeMillis(), (System.currentTimeMillis()-(tti + this.tti)), ret);
+        return ret;
     }
-    /*
-     * 0---------5-----------10--------15
-     * ......4......................14...
-     * 
-     *      
-     */
     
     // FIXME implements limit from CachePolicy
     @Override
-    public long limit()
+    public long size()
     {
-        return this.limit;
+        return this.size;
     }
     
     // FIXME implements sizeof from CachePolicy
@@ -132,7 +176,29 @@ public class TTLCachePolicy implements CachePolicy
     @Override
     public String toString()
     {
-        return "TTLCachePolicy [ttl=" + ttl + ", tti=" + tti + ", limit=" + limit + ", sizeof=" + sizeof + "]";
+        return "TTLCachePolicy [ttl=" + ttl + ", tti=" + tti + ", size=" + size + ", sizeof=" + sizeof + "]";
     }
     
+
+    /**
+     * 
+     * @param sizeof <size>[g|G|m|M|k|K]
+     * @return
+     */
+    private long toBytes(String sizeof) 
+    {
+        long bytes = -1L; // without sizeof limits
+        String sizeofNormalized = (sizeof != null ? sizeof.toLowerCase() : "");
+        String sizeofNumber = (sizeof.length() > 1 ? sizeof.substring(0, sizeof.length()-1) : "");
+        if (sizeofNormalized.endsWith("k"))
+            bytes = KIB_FACTOR * Long.valueOf(sizeofNumber);
+        else if (sizeofNormalized.endsWith("m"))
+            bytes = MIB_FACTOR * Long.valueOf(sizeofNumber);
+        else if (sizeofNormalized.endsWith("g"))
+            bytes = GIB_FACTOR * Long.valueOf(sizeofNumber);
+        else if (sizeofNormalized.length() > 0)
+            bytes = Long.valueOf(sizeofNormalized);
+        
+        return bytes;
+    }
 }

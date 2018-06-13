@@ -17,48 +17,35 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.database.cassandra;
+package net.sf.jkniv.whinstone.couchdb;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.instanceOf;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
-import net.sf.jkniv.whinstone.jdbc.BaseJdbc;
 
-
-@Ignore("RepositoryJdbc doesn't supports Cassandra driver")
-public class CassandraRepositoryTest extends BaseJdbc
+public class CouchDbRepositoryFindClauseINTest extends BaseJdbc
 {
-    @Autowired
-    Repository repositoryCas;
-    Object[] params = {"k001",new Date(), "CAR001",20.683940,-88.567740,2};
-            
-    @Test
-    public void whenSimplePagingQueryWorks()
-    {
-        Queryable q = getQuery("simpleInsert", params);
-        repositoryCas.add(q);
-    }
     
-    @Test
-    public void whenPagingWithParamsQueryWorks()
+    @Test @Ignore("Test copy of another scenary")
+    public void whenCouchDbListWithFixedFind()
     {
-        Queryable q1 = getQuery("simpleInsert", params);
-        Queryable q2 = getQuery("simpleSelect");
+        Repository repositoryDb = getRepository();
+        Queryable q = getQuery("authorsBR");
         
-        repositoryCas.add(q1);
-        
-        List<Map> list = repositoryCas.list(q2);
+        List<Map> list = repositoryDb.list(q);
         assertThat(list.size(), greaterThan(0));
+        assertThat(list.get(0), instanceOf(Map.class));
+        System.out.println(list.get(0));
     }
     
+
 }

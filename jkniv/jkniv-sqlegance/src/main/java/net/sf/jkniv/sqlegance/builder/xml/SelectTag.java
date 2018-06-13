@@ -201,6 +201,12 @@ class SelectTag extends AbstractSqlTag implements Selectable
     }
 
     @Override
+    public String getCacheName()
+    {
+        return this.cacheName;
+    }
+
+    @Override
     public <K,V> Cacheable<K,V> getCache()
     {
         return this.cache;

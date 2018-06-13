@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<xsd:schema xmlns="http://jkniv.sf.net/schema/sqlegance/statements" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  targetNamespace="http://jkniv.sf.net/schema/sqlegance/statements">
+<xsd:schema 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:cache="http://jkniv.sf.net/schema/sqlegance/cache"
+  targetNamespace="http://jkniv.sf.net/schema/sqlegance/statements"
+  elementFormDefault="qualified">
+
+  <xsd:import namespace="http://jkniv.sf.net/schema/sqlegance/cache" schemaLocation="http://jkniv.sf.net/schema/sqlegance/sqlegance-cache.xsd"/>
 
   <xsd:element name="statements">
     <xsd:complexType>

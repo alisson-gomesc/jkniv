@@ -44,7 +44,7 @@ public class ApacheHttpClientTest
         assertThat(answer, not(is("Unauthorized")));
     }
 
-    @Test @Ignore("Use CouchDbAuthenticate")
+    @Test //@Ignore("Use CouchDbAuthenticate")
     public void whenAuthenticate()
     {
         String uri = "http://127.0.0.1:5984/_session";

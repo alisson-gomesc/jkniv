@@ -38,6 +38,8 @@ public interface Selectable extends Sql
     
     boolean hasCache();
     
+    String getCacheName();
+    
     <K,V> Cacheable<K,V> getCache();
     
 }

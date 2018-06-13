@@ -30,5 +30,20 @@
     }
   </select>
   
+  <select id="booksFromYear" returnType="net.sf.jkniv.whinstone.couchdb.model.orm.Author">
+    {
+     "selector": {"books": {"published" : :year } },
+     "fields": ["_id", "_rev", "name", "nationality"]
+    }
+  </select>
+  
+
+  <select id="authorsUsingArray" returnType="net.sf.jkniv.whinstone.couchdb.model.orm.Author">
+  <description>Seleciona todos os autores atraves de book collection (nao funciona a consulta, consertar!) </description>
+    {
+     "selector": {"books" : { "$elemMatch": {  "$eq": { "isbn": "978-1503250888" } } } }
+    }
+  </select>
+    
 
 </statements>

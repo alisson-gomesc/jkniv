@@ -37,10 +37,7 @@ public class CassandraClusterTest extends BaseJdbc
     @Test @Ignore("cluste another enviroment")
     public void whenRun()
     {
-        
         List<Map> list = repository.list(super.getQuery("all"));
         assertThat(list.isEmpty(), is(false));
-        
-        
     }
 }

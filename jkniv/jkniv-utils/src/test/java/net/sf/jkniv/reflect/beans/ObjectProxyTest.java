@@ -19,6 +19,11 @@
  */
 package net.sf.jkniv.reflect.beans;
 
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.CoreMatchers.*;
+
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -51,12 +56,14 @@ public class ObjectProxyTest
         Assert.assertFalse(bean.hasInstance());
     }
     
-    @Test(expected = NullPointerException.class)
-    @Ignore(value = "A null instance can be exists because now a scalar value could be generated")
-    public void whenHavenotInstanceThrowException()
+    @Test//(expected = NullPointerException.class)
+    //@Ignore(value = "A null instance can be exists because now a scalar value could be generated")
+    //public void whenHavenotInstanceThrowException()
+    public void whenGetInstanceIsNull()
     {
         ObjectProxy<Book> bean = new DefaultObjectProxy<Book>(Book.class);
-        bean.getInstance();
+        Book b = bean.getInstance();
+        assertThat(b, nullValue());
     }
     
     @Test

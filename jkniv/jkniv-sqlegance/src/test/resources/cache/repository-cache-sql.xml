@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <statements 
   xmlns="http://jkniv.sf.net/schema/sqlegance/statements" 
   xmlns:cache="http://jkniv.sf.net/schema/sqlegance/cache"
@@ -7,8 +7,15 @@
   xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
        http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd
        http://jkniv.sf.net/schema/sqlegance/cache
-       http://jkniv.sf.net/schema/sqlegance/sqlegance-cache.xs">
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-cache.xsd">
 
+
+  <cache-manager delay="120" period="600"  ttl="300" tti="120" size="10000" sizeof="5M">
+    <cache:policy name="cache1" ttl="900" tti="300" size="15000" sizeof="2M"/>
+    <cache:policy name="cache2" ttl="700" tti="250" size="1000" sizeof="1M"/>
+    <cache:policy name="cache3" />
+  </cache-manager>
+  
   <select id="usersInCache" cache="user-cache">
     select id, name from users
   </select>

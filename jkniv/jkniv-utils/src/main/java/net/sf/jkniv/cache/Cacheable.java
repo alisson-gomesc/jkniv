@@ -48,6 +48,12 @@ public interface Cacheable<K, V>
     CachePolicy getPolicy();
     
     /**
+     * Policy to control the cache data
+     * @param policy that maintenance the capacity and expire time of data
+     */
+    void setPolicy(CachePolicy policy);
+    
+    /**
      * Associates the specified value with the specified key in this cache
      * If the cache previously contained a mapping for the key, the old value 
      * is replaced by the specified value.

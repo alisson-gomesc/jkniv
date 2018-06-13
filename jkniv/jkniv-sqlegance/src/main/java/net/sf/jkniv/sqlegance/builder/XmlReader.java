@@ -27,6 +27,7 @@ import java.util.Date;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -288,14 +289,19 @@ class XmlReader
         }
     }
     
-    private URL getXsdUrl()
+    private URL[] getXsdUrl()
     {
-        String xsd = schemaXsd;
+        String mainSchema = schemaXsd;
+        String cacheSchema = "/net/sf/jkniv/sqlegance/builder/xml/sqlegance-cache.xsd";
         if (this.version != null && !"".equals(version.trim()))
-            xsd = xsd.replaceAll(".xsd", "-" + version + ".xsd");// sample sqlegance-sql.xsd -> sqlegance-sql-0.6.xsd
-            
-        URL schemaFile = getClass().getResource(xsd);
-        return schemaFile;
+        {
+            mainSchema = mainSchema.replaceAll(".xsd", "-" + version + ".xsd");// sample sqlegance-sql.xsd -> sqlegance-sql-0.6.xsd
+            cacheSchema = "/net/sf/jkniv/sqlegance/builder/xml/sqlegance-cache-" + version + ".xsd";
+        }   
+        //URL schemaFile = getClass().getResource(mainSchema);
+        URL schema1 = getClass().getResource(mainSchema);
+        URL schema2 = getClass().getResource(cacheSchema);
+        return new URL[]{schema1, schema2};//, cacheSchema};
     }
     
     private void setVersion()

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -64,6 +65,19 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
         List<Author> list = repositoryDb.list(q);
         assertThat(list.size(), greaterThan(0));
         assertThat(list.get(0), instanceOf(Author.class));
+        System.out.println(list.get(0));
+    }
+    
+    @Test @Ignore("doesn't work")
+    public void whenCouchDbListBooksFromNestedProperty()
+    {
+        Repository repositoryDb = getRepository();
+        Queryable q = QueryFactory.of("booksFromYear", "year", 1886L);
+        
+        List<Author> list = repositoryDb.list(q);
+        assertThat(list.size(), is(1));
+        assertThat(list.get(0), instanceOf(Author.class));
+        assertThat(list.get(0).getBooks().get(0).getPublished(), is(1886L));
         System.out.println(list.get(0));
     }
     

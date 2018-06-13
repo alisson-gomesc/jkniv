@@ -87,6 +87,14 @@ public class MemoryCache<K, V> implements Cacheable<K, V>
         return policy;
     }
     
+
+    @Override
+    public void setPolicy(CachePolicy policy)
+    {
+        this.policy = policy;
+    }
+    
+    
     /* (non-Javadoc)
      * @see net.sf.jkniv.cache.Cacheable#put(java.lang.String, T)
      */
