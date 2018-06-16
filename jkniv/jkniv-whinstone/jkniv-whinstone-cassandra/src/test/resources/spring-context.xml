@@ -19,7 +19,7 @@
   <!--  
   <tx:annotation-driven transaction-manager="transactionManager" />
   -->
-  <context:component-scan base-package="net.sf.jkniv.whinstone.jdbc" />
+  <context:component-scan base-package="net.sf.jkniv.whinstone.cassandra" />
 
 
   <bean id="dataSourceCas" class="org.apache.commons.dbcp.BasicDataSource"
@@ -34,6 +34,7 @@
     enabled="true" ignore-failures="DROPS">
     <jdbc:script location="classpath:database/cassandra/db-drop.sql" execution="DESTROY" encoding="UTF-8" />
     <jdbc:script location="classpath:database/cassandra/db-create.sql" execution="INIT" encoding="UTF-8" />
+    <jdbc:script location="classpath:database/cassandra/db-load.sql" execution="INIT" encoding="UTF-8" />
   </jdbc:initialize-database>
   
     <bean name="repositoryCas" class="net.sf.jkniv.whinstone.jdbc.RepositoryJdbc"

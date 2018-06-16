@@ -1,384 +1,144 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<xsd:schema 
-  xmlns="http://jkniv.sf.net/schema/sqlegance/statements" 
-  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  xmlns:cache="http://jkniv.sf.net/schema/sqlegance/cache"
-  targetNamespace="http://jkniv.sf.net/schema/sqlegance/statements"
-  elementFormDefault="qualified">
+<xsd:schema xmlns="http://jkniv.sf.net/schema/sqlegance/cache" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://jkniv.sf.net/schema/sqlegance/cache" elementFormDefault="qualified"
+  attributeFormDefault="unqualified">
 
-  <xsd:import namespace="http://jkniv.sf.net/schema/sqlegance/cache" schemaLocation="http://jkniv.sf.net/schema/sqlegance/sqlegance-cache.xsd"/>
-
-  <xsd:element name="statements">
-    <xsd:complexType>
-      <xsd:sequence>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element maxOccurs="unbounded" ref="package" />
-          <xsd:element maxOccurs="unbounded" ref="include" />
-          <xsd:element maxOccurs="unbounded" ref="select" />
-          <xsd:element maxOccurs="unbounded" ref="insert" />
-          <xsd:element maxOccurs="unbounded" ref="update" />
-          <xsd:element maxOccurs="unbounded" ref="delete" />
-          <xsd:element maxOccurs="unbounded" ref="procedure" />
-        </xsd:choice>
-      </xsd:sequence>
-      <xsd:attribute name="context" use="optional" type="xsd:string" />
-      <xsd:attribute name="version" use="optional" type="versionType" />
-    </xsd:complexType>
+  <xsd:element name="cache-manager" type="cacheManagerType">
   </xsd:element>
+  <xsd:complexType name="cacheManagerType">
+    <xsd:sequence>
+      <xsd:element name="policy" minOccurs="1" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:annotation>
+            <xsd:documentation>
+              Configuration of a cache policy.
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:sequence>
+            <xsd:element name="description" type="xsd:string" minOccurs="0">
+              <xsd:annotation>
+                <xsd:documentation>
+                  Description of this cache unit.
+                </xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="properties" minOccurs="0">
+              <xsd:annotation>
+                <xsd:documentation>
+                  A list of standard and strategies implementations configurable.
+                </xsd:documentation>
+              </xsd:annotation>
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element name="property" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                      <xsd:documentation>
+                        A name-value pair.
+                      </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                      <xsd:attribute name="name" type="xsd:string" use="required" />
+                      <xsd:attribute name="value" type="xsd:string" use="required" />
+                    </xsd:complexType>
+                  </xsd:element>
+                </xsd:sequence>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
 
-  <xsd:element name="package">
-    <xsd:complexType>
-      <xsd:choice maxOccurs="unbounded">
-        <xsd:element maxOccurs="unbounded" ref="select" />
-        <xsd:element maxOccurs="unbounded" ref="insert" />
-        <xsd:element maxOccurs="unbounded" ref="update" />
-        <xsd:element maxOccurs="unbounded" ref="delete" />
-        <xsd:element maxOccurs="unbounded" ref="procedure" />
-      </xsd:choice>
-      <xsd:attribute name="name" use="required" />
-    </xsd:complexType>
-  </xsd:element>
+          <xsd:attribute name="name" type="xsd:string" use="required">
+            <xsd:annotation>
+              <xsd:documentation>
+                Name used in code to reference this cache unit.
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
 
-  <xsd:element name="include">
-    <xsd:complexType>
-      <xsd:attribute name="href" use="required" />
-    </xsd:complexType>
-  </xsd:element>
-  <xsd:element name="select">
-    <xsd:complexType mixed="true">
-      <xsd:sequence>
-        <xsd:element ref="description" minOccurs="0" />
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element ref="one-to-many" />
-          <xsd:element ref="if" />
-          <xsd:element maxOccurs="1" ref="where" />
-          <xsd:element ref="choose" />
-        </xsd:choice>
-      </xsd:sequence>
-      <xsd:attribute name="id" use="required" type="xsd:string" />
-      <xsd:attribute name="type" use="optional" type="languageType" />
-      <xsd:attribute name="isolation" use="optional" type="transactionIsolation" />
-      <xsd:attribute name="hint" use="optional" type="xsd:string" />
-      <xsd:attribute name="timeout" use="optional" type="xsd:int" />
-      <xsd:attribute name="cache" use="optional" type="xsd:string" />
-      <xsd:attribute name="batch" use="optional" type="xsd:boolean" />
-      <xsd:attribute name="resultSetType" use="optional" type="resultSetType" />
-      <xsd:attribute name="resultSetConcurrency" use="optional" type="resultSetConcurrency" />
-      <xsd:attribute name="resultSetHoldability" use="optional" type="resultSetHoldability" />
-      <xsd:attribute name="validation" use="optional" type="validation" />
-      <xsd:attribute name="returnType" use="optional" type="xsd:string" />
-      <xsd:attribute name="groupBy" use="optional" type="xsd:string" />
-    </xsd:complexType>
-  </xsd:element>
+          <xsd:attribute name="ttl" type="xsd:integer" use="optional">
+            <xsd:annotation>
+              <xsd:documentation>
+                Time-to-live from objects in seconds.
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
 
-  <xsd:element name="where">
-    <xsd:complexType>
-      <xsd:sequence>
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element ref="if" />
-          <xsd:element ref="choose" />
-        </xsd:choice>
-      </xsd:sequence>
-    </xsd:complexType>
-  </xsd:element>
+          <xsd:attribute name="tti" type="xsd:integer" use="optional">
+            <xsd:annotation>
+              <xsd:documentation>
+                Time-to-idle from objects in seconds.
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
 
-  <xsd:element name="insert">
-    <xsd:complexType mixed="true">
-      <xsd:sequence>
-        <xsd:element ref="description" minOccurs="0" />
-        <xsd:element ref="autoGeneratedKey" minOccurs="0" maxOccurs="1" />
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element ref="if" />
-          <xsd:element ref="choose" />
-        </xsd:choice>
-      </xsd:sequence>
-      <xsd:attribute name="id" use="required" type="xsd:string" />
-      <xsd:attribute name="type" use="optional" type="languageType" />
-      <xsd:attribute name="isolation" use="optional" type="transactionIsolation" />
-      <xsd:attribute name="hint" use="optional" type="xsd:string" />
-      <xsd:attribute name="timeout" use="optional" type="xsd:int" />
-      <xsd:attribute name="batch" use="optional" type="xsd:boolean" />
-      <xsd:attribute name="validation" use="optional" type="validation" />
-    </xsd:complexType>
-  </xsd:element>
+          <xsd:attribute name="size" type="xsd:integer" use="optional">
+            <xsd:annotation>
+              <xsd:documentation>
+                number of object in this cache policy
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
 
-  <xsd:element name="autoGeneratedKey">
-    <xsd:annotation>
-      <xsd:documentation>
-        Indicate whether auto-generated keys should be returned.
-        A comma separated list of
-        property names or property indexes if multiple generated columns are expected
-      </xsd:documentation>
-    </xsd:annotation>
-    <xsd:complexType mixed="true">
-        <xsd:attribute name="strategy" use="optional" type="keyGeneratorType" />
-        <xsd:attribute name="columns" use="optional" type="xsd:string" />
-        <xsd:attribute name="properties" use="required" type="xsd:string" />
-    </xsd:complexType>
-  </xsd:element>
+          <xsd:attribute name="sizeof" type="xsd:string" use="optional">
+            <xsd:annotation>
+              <xsd:documentation><![CDATA[
+                  size of all objects in this cache policy. Format:
+                  <size>[g|G|m|M|k|K]
+                ]]></xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+
+    <xsd:attribute name="delay" type="xsd:integer" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          The time to delay first execution
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="period" type="xsd:integer" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          the period between successive executions in seconds.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
 
 
-  <xsd:element name="update">
-    <xsd:complexType mixed="true">
-      <xsd:sequence>
-        <xsd:element ref="description" minOccurs="0" />
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element minOccurs="0" maxOccurs="unbounded" ref="set" />
-          <xsd:element ref="if" />
-          <xsd:element maxOccurs="1" ref="where" />
-          <xsd:element ref="choose" />
-        </xsd:choice>
-      </xsd:sequence>
-      <xsd:attribute name="id" use="required" type="xsd:string" />
-      <xsd:attribute name="type" use="optional" type="languageType" />
-      <xsd:attribute name="isolation" use="optional" type="transactionIsolation" />
-      <xsd:attribute name="hint" use="optional" type="xsd:string" />
-      <xsd:attribute name="timeout" use="optional" type="xsd:int" />
-      <xsd:attribute name="batch" use="optional" type="xsd:boolean" />
-      <xsd:attribute name="validation" use="optional" type="validation" />
-    </xsd:complexType>
-  </xsd:element>
+    <xsd:attribute name="ttl" type="xsd:integer" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Time-to-live from objects in seconds.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
 
-  <xsd:element name="set">
-    <xsd:complexType>
-      <xsd:sequence>
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element maxOccurs="unbounded" ref="if" />
-          <xsd:element ref="choose" />
-        </xsd:choice>
-      </xsd:sequence>
-    </xsd:complexType>
-  </xsd:element>
+    <xsd:attribute name="tti" type="xsd:integer" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Time-to-idle from objects in seconds.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
 
-  <xsd:element name="delete">
-    <xsd:complexType mixed="true">
-      <xsd:sequence>
-        <xsd:element ref="description" minOccurs="0" />
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element ref="if" />
-          <xsd:element maxOccurs="1" ref="where" />
-          <xsd:element ref="choose" />
-        </xsd:choice>
-      </xsd:sequence>
-      <xsd:attribute name="id" use="required" type="xsd:string" />
-      <xsd:attribute name="type" use="optional" type="languageType" />
-      <xsd:attribute name="isolation" use="optional" type="transactionIsolation" />
-      <xsd:attribute name="hint" use="optional" type="xsd:string" />
-      <xsd:attribute name="timeout" use="optional" type="xsd:int" />
-      <xsd:attribute name="batch" use="optional" type="xsd:boolean" />
-      <xsd:attribute name="validation" use="optional" type="validation" />
-    </xsd:complexType>
-  </xsd:element>
+    <xsd:attribute name="size" type="xsd:integer" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          number of object in this cache policy
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
 
-  <xsd:element name="procedure">
-    <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element ref="description" minOccurs="0" />
-        <xsd:element maxOccurs="unbounded" ref="parameter" />
-      </xsd:sequence>
-      <xsd:attribute name="id" use="required" type="xsd:string" />
-      <xsd:attribute name="spname" use="required" type="xsd:NCName" />
-      <xsd:attribute name="isolation" use="optional" type="transactionIsolation" />
-      <xsd:attribute name="hint" use="optional" type="xsd:string" />
-      <xsd:attribute name="timeout" use="optional" type="xsd:int" />
-      <xsd:attribute name="batch" use="optional" type="xsd:boolean" />
-    </xsd:complexType>
-  </xsd:element>
+    <xsd:attribute name="sizeof" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
+            size of all objects in this cache policy. Format:
+            <size>[g|G|m|M|k|K]
+          ]]></xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
 
-  <xsd:element name="parameter">
-    <xsd:complexType>
-      <xsd:attribute name="mode" use="required">
-        <xsd:simpleType>
-          <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="IN"></xsd:enumeration>
-            <xsd:enumeration value="OUT"></xsd:enumeration>
-            <xsd:enumeration value="INOUT"></xsd:enumeration>
-          </xsd:restriction>
-        </xsd:simpleType>
-      </xsd:attribute>
-
-      <xsd:attribute name="property" use="required" type="xsd:string" />
-      <xsd:attribute name="sqlType">
-        <xsd:simpleType>
-          <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="ARRAY"></xsd:enumeration>
-            <xsd:enumeration value="BIGINT"></xsd:enumeration>
-            <xsd:enumeration value="BINARY"></xsd:enumeration>
-            <xsd:enumeration value="BIT"></xsd:enumeration>
-            <xsd:enumeration value="BLOB"></xsd:enumeration>
-            <xsd:enumeration value="BOOLEAN"></xsd:enumeration>
-            <xsd:enumeration value="CHAR"></xsd:enumeration>
-            <xsd:enumeration value="CLOB"></xsd:enumeration>
-            <xsd:enumeration value="DATALINK"></xsd:enumeration>
-            <xsd:enumeration value="DATE"></xsd:enumeration>
-            <xsd:enumeration value="DECIMAL"></xsd:enumeration>
-            <xsd:enumeration value="DISTINCT"></xsd:enumeration>
-            <xsd:enumeration value="DOUBLE"></xsd:enumeration>
-            <xsd:enumeration value="FLOAT"></xsd:enumeration>
-            <xsd:enumeration value="INTEGER"></xsd:enumeration>
-            <xsd:enumeration value="JAVA_OBJECT"></xsd:enumeration>
-            <xsd:enumeration value="LONGNVARCHAR"></xsd:enumeration>
-            <xsd:enumeration value="LONGVARBINARY"></xsd:enumeration>
-            <xsd:enumeration value="LONGVARCHAR"></xsd:enumeration>
-            <xsd:enumeration value="NCHAR"></xsd:enumeration>
-            <xsd:enumeration value="NCLOB"></xsd:enumeration>
-            <xsd:enumeration value="NULL"></xsd:enumeration>
-            <xsd:enumeration value="NUMERIC"></xsd:enumeration>
-            <xsd:enumeration value="NVARCHAR"></xsd:enumeration>
-            <xsd:enumeration value="OTHER"></xsd:enumeration>
-            <xsd:enumeration value="REAL"></xsd:enumeration>
-            <xsd:enumeration value="REF"></xsd:enumeration>
-            <xsd:enumeration value="ROWID"></xsd:enumeration>
-            <xsd:enumeration value="SMALLINT"></xsd:enumeration>
-            <xsd:enumeration value="SQLXML"></xsd:enumeration>
-            <xsd:enumeration value="STRUCT"></xsd:enumeration>
-            <xsd:enumeration value="TIMESTAMP"></xsd:enumeration>
-            <xsd:enumeration value="TINYINT "></xsd:enumeration>
-            <xsd:enumeration value="VARBINARY"></xsd:enumeration>
-            <xsd:enumeration value="VARCHAR"></xsd:enumeration>
-          </xsd:restriction>
-        </xsd:simpleType>
-      </xsd:attribute>
-      <xsd:attribute name="typeName" type="xsd:string" />
-    </xsd:complexType>
-  </xsd:element>
-
-  <xsd:element name="if">
-    <xsd:complexType mixed="true">
-      <xsd:attribute name="test" use="required" />
-    </xsd:complexType>
-  </xsd:element>
-
-  <xsd:element name="when">
-    <xsd:complexType mixed="true">
-      <xsd:attribute name="test" use="required" />
-    </xsd:complexType>
-  </xsd:element>
-  <xsd:element name="otherwise">
-  </xsd:element>
-
-  <xsd:element name="choose">
-    <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element maxOccurs="unbounded" ref="when" />
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element maxOccurs="1" ref="otherwise" />
-        </xsd:choice>
-      </xsd:sequence>
-    </xsd:complexType>
-  </xsd:element>
-  <xsd:element name="description">
-    <xsd:annotation>
-      <xsd:documentation>
-        Contains informative text describing the purpose of the enclosing element.
-        Used
-        primarily for user documentation of XML bean definition documents.
-      </xsd:documentation>
-    </xsd:annotation>
-    <xsd:complexType mixed="true">
-      <xsd:choice minOccurs="0" maxOccurs="unbounded" />
-    </xsd:complexType>
-  </xsd:element>
-
-  <xsd:element name="one-to-many">
-    <xsd:annotation>
-      <xsd:documentation>
-        This element may be used within an embeddable class contained within an entity class to specify a relationship to a collection of entities      
-      </xsd:documentation>
-    </xsd:annotation>
-    <xsd:complexType mixed="true">
-      <xsd:attribute name="property" use="required" type="xsd:string" />
-      <xsd:attribute name="typeOf" use="required" type="xsd:NCName" />
-      <xsd:attribute name="impl" use="optional" type="xsd:NCName" />
-    </xsd:complexType>
-  </xsd:element>
-
-  <!-- 
-  <one-to-many property="books" typeOf="net.sf.jkniv.whinstone.jdbc.acme.domain.Book"/>
-   -->
-
-  <xsd:simpleType name="languageType">
-    <xsd:annotation>
-      <xsd:documentation>
-        Determine the language used for the queries, default is NATIVE
-      </xsd:documentation>
-    </xsd:annotation>
-    <xsd:restriction base="xsd:string">
-      <xsd:enumeration value="JPQL"></xsd:enumeration>
-      <xsd:enumeration value="HQL"></xsd:enumeration>
-      <xsd:enumeration value="NATIVE"></xsd:enumeration>
-      <xsd:enumeration value="CRITERIA"></xsd:enumeration>
-      <xsd:enumeration value="STORED"></xsd:enumeration>
-      <xsd:enumeration value="VIEW"></xsd:enumeration>
-    </xsd:restriction>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="transactionIsolation">
-    <xsd:restriction base="xsd:string">
-      <xsd:enumeration value="DEFAULT"></xsd:enumeration>
-      <xsd:enumeration value="NONE"></xsd:enumeration>
-      <xsd:enumeration value="READ_UNCOMMITTED"></xsd:enumeration>
-      <xsd:enumeration value="READ_COMMITTED"></xsd:enumeration>
-      <xsd:enumeration value="REPEATABLE_READ"></xsd:enumeration>
-      <xsd:enumeration value="SERIALIZABLE"></xsd:enumeration>
-    </xsd:restriction>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="resultSetType">
-    <xsd:restriction base="xsd:string">
-      <xsd:enumeration value="DEFAULT"></xsd:enumeration>
-      <xsd:enumeration value="TYPE_FORWARD_ONLY"></xsd:enumeration>
-      <xsd:enumeration value="TYPE_SCROLL_SENSITIVE"></xsd:enumeration>
-      <xsd:enumeration value="TYPE_SCROLL_INSENSITIVE"></xsd:enumeration>
-    </xsd:restriction>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="resultSetConcurrency">
-    <xsd:restriction base="xsd:string">
-      <xsd:enumeration value="DEFAULT"></xsd:enumeration>
-      <xsd:enumeration value="CONCUR_READ_ONLY"></xsd:enumeration>
-      <xsd:enumeration value="CONCUR_UPDATABLE"></xsd:enumeration>
-    </xsd:restriction>
-  </xsd:simpleType>
-  <xsd:simpleType name="resultSetHoldability">
-    <xsd:restriction base="xsd:string">
-      <xsd:enumeration value="DEFAULT"></xsd:enumeration>
-      <xsd:enumeration value="HOLD_CURSORS_OVER_COMMIT"></xsd:enumeration>
-      <xsd:enumeration value="CLOSE_CURSORS_AT_COMMIT"></xsd:enumeration>
-    </xsd:restriction>
-  </xsd:simpleType>
-  <xsd:simpleType name="validation">
-    <xsd:restriction base="xsd:string">
-      <xsd:enumeration value="NONE"></xsd:enumeration>
-      <xsd:enumeration value="ALL"></xsd:enumeration>
-      <xsd:enumeration value="GET"></xsd:enumeration>
-      <xsd:enumeration value="LIST"></xsd:enumeration>
-      <xsd:enumeration value="SELECT"></xsd:enumeration>
-      <xsd:enumeration value="SCALAR"></xsd:enumeration>
-      <xsd:enumeration value="ADD"></xsd:enumeration>
-      <xsd:enumeration value="UPDATE"></xsd:enumeration>
-      <xsd:enumeration value="ENRICH"></xsd:enumeration>
-      <xsd:enumeration value="REMOVE"></xsd:enumeration>
-    </xsd:restriction>
-  </xsd:simpleType>
-  <xsd:simpleType name="versionType">
-    <xsd:restriction base="xsd:token">
-      <xsd:pattern value="[0-9]+(\.[0-9]+)*" />
-    </xsd:restriction>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="keyGeneratorType">
-    <xsd:annotation>
-      <xsd:documentation>
-        public enum KeyGeneratorType {AUTO, SEQUENCE };
-      </xsd:documentation>
-    </xsd:annotation>
-    <xsd:restriction base="xsd:token">
-      <xsd:enumeration value="AUTO" />
-      <xsd:enumeration value="SEQUENCE" />
-      <!--xsd:enumeration value="TABLE" /-->
-    </xsd:restriction>
-  </xsd:simpleType>
-
+  </xsd:complexType>
 </xsd:schema>
-

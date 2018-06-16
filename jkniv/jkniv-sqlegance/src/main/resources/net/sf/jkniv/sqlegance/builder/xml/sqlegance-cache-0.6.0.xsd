@@ -1,144 +1,144 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <xsd:schema xmlns="http://jkniv.sf.net/schema/sqlegance/cache" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  targetNamespace="http://jkniv.sf.net/schema/sqlegance/cache" elementFormDefault="qualified">
-  <!-- <xsd:import namespace="http://jkniv.sf.net/schema/sqlegance/statements" schemaLocation="http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd"/> -->
+  targetNamespace="http://jkniv.sf.net/schema/sqlegance/cache" elementFormDefault="qualified"
+  attributeFormDefault="unqualified">
 
-  <xsd:element name="cache-manager">
-    <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element name="policy" minOccurs="1" maxOccurs="unbounded">
-          <xsd:complexType>
+  <xsd:element name="cache-manager" type="cacheManagerType">
+  </xsd:element>
+  <xsd:complexType name="cacheManagerType">
+    <xsd:sequence>
+      <xsd:element name="policy" minOccurs="1" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:annotation>
+            <xsd:documentation>
+              Configuration of a cache policy.
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:sequence>
+            <xsd:element name="description" type="xsd:string" minOccurs="0">
+              <xsd:annotation>
+                <xsd:documentation>
+                  Description of this cache unit.
+                </xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="properties" minOccurs="0">
+              <xsd:annotation>
+                <xsd:documentation>
+                  A list of standard and strategies implementations configurable.
+                </xsd:documentation>
+              </xsd:annotation>
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element name="property" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                      <xsd:documentation>
+                        A name-value pair.
+                      </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                      <xsd:attribute name="name" type="xsd:string" use="required" />
+                      <xsd:attribute name="value" type="xsd:string" use="required" />
+                    </xsd:complexType>
+                  </xsd:element>
+                </xsd:sequence>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+
+          <xsd:attribute name="name" type="xsd:string" use="required">
             <xsd:annotation>
               <xsd:documentation>
-                Configuration of a cache policy.
+                Name used in code to reference this cache unit.
               </xsd:documentation>
             </xsd:annotation>
-            <xsd:sequence>
-              <xsd:element name="description" type="xsd:string" minOccurs="0">
-                <xsd:annotation>
-                  <xsd:documentation>
-                    Description of this cache unit.
-                  </xsd:documentation>
-                </xsd:annotation>
-              </xsd:element>
-              <xsd:element name="properties" minOccurs="0">
-                <xsd:annotation>
-                  <xsd:documentation>
-                    A list of standard and strategies implementations configurable.
-                  </xsd:documentation>
-                </xsd:annotation>
-                <xsd:complexType>
-                  <xsd:sequence>
-                    <xsd:element name="property" minOccurs="0" maxOccurs="unbounded">
-                      <xsd:annotation>
-                        <xsd:documentation>
-                          A name-value pair.
-                        </xsd:documentation>
-                      </xsd:annotation>
-                      <xsd:complexType>
-                        <xsd:attribute name="name" type="xsd:string" use="required" />
-                        <xsd:attribute name="value" type="xsd:string" use="required" />
-                      </xsd:complexType>
-                    </xsd:element>
-                  </xsd:sequence>
-                </xsd:complexType>
-              </xsd:element>
-            </xsd:sequence>
+          </xsd:attribute>
 
-            <xsd:attribute name="name" type="xsd:string" use="required">
-              <xsd:annotation>
-                <xsd:documentation>
-                  Name used in code to reference this cache unit.
-                </xsd:documentation>
-              </xsd:annotation>
-            </xsd:attribute>
+          <xsd:attribute name="ttl" type="xsd:integer" use="optional">
+            <xsd:annotation>
+              <xsd:documentation>
+                Time-to-live from objects in seconds.
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
 
-            <xsd:attribute name="ttl" type="xsd:integer" use="optional">
-              <xsd:annotation>
-                <xsd:documentation>
-                  Time-to-live from objects in seconds.
-                </xsd:documentation>
-              </xsd:annotation>
-            </xsd:attribute>
+          <xsd:attribute name="tti" type="xsd:integer" use="optional">
+            <xsd:annotation>
+              <xsd:documentation>
+                Time-to-idle from objects in seconds.
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
 
-            <xsd:attribute name="tti" type="xsd:integer" use="optional">
-              <xsd:annotation>
-                <xsd:documentation>
-                  Time-to-idle from objects in seconds.
-                </xsd:documentation>
-              </xsd:annotation>
-            </xsd:attribute>
+          <xsd:attribute name="size" type="xsd:integer" use="optional">
+            <xsd:annotation>
+              <xsd:documentation>
+                number of object in this cache policy
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
 
-            <xsd:attribute name="size" type="xsd:integer" use="optional">
-              <xsd:annotation>
-                <xsd:documentation>
-                  number of object in this cache policy
-                </xsd:documentation>
-              </xsd:annotation>
-            </xsd:attribute>
-
-            <xsd:attribute name="sizeof" type="xsd:string" use="optional">
-              <xsd:annotation>
-                <xsd:documentation><![CDATA[
+          <xsd:attribute name="sizeof" type="xsd:string" use="optional">
+            <xsd:annotation>
+              <xsd:documentation><![CDATA[
                   size of all objects in this cache policy. Format:
                   <size>[g|G|m|M|k|K]
                 ]]></xsd:documentation>
-              </xsd:annotation>
-            </xsd:attribute>
+            </xsd:annotation>
+          </xsd:attribute>
 
-          </xsd:complexType>
-        </xsd:element>
-      </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
 
-      <xsd:attribute name="delay" type="xsd:integer" use="optional">
-        <xsd:annotation>
-          <xsd:documentation>
-            The time to delay first execution
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
-      <xsd:attribute name="period" type="xsd:integer" use="optional">
-        <xsd:annotation>
-          <xsd:documentation>
-            the period between successive executions in seconds.
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
+    <xsd:attribute name="delay" type="xsd:integer" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          The time to delay first execution
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="period" type="xsd:integer" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          the period between successive executions in seconds.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
 
-      
-      <xsd:attribute name="ttl" type="xsd:integer" use="optional">
-        <xsd:annotation>
-          <xsd:documentation>
-            Time-to-live from objects in seconds.
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
 
-      <xsd:attribute name="tti" type="xsd:integer" use="optional">
-        <xsd:annotation>
-          <xsd:documentation>
-            Time-to-idle from objects in seconds.
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
+    <xsd:attribute name="ttl" type="xsd:integer" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Time-to-live from objects in seconds.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
 
-      <xsd:attribute name="size" type="xsd:integer" use="optional">
-        <xsd:annotation>
-          <xsd:documentation>
-            number of object in this cache policy
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
+    <xsd:attribute name="tti" type="xsd:integer" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Time-to-idle from objects in seconds.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
 
-      <xsd:attribute name="sizeof" type="xsd:string" use="optional">
-        <xsd:annotation>
-          <xsd:documentation><![CDATA[
+    <xsd:attribute name="size" type="xsd:integer" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          number of object in this cache policy
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="sizeof" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
             size of all objects in this cache policy. Format:
             <size>[g|G|m|M|k|K]
           ]]></xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
-      
-    </xsd:complexType>
-  </xsd:element>
+      </xsd:annotation>
+    </xsd:attribute>
+
+  </xsd:complexType>
 </xsd:schema>

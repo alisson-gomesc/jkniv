@@ -13,17 +13,21 @@
   select * from TRACKABLE_DATA
   </select>
 
-  <insert type="NATIVE" id="removeAll">
+  <insert id="removeAll">
     delete from dev_data_3t.TEST_DATA
   </insert>
 
-  <insert type="NATIVE" id="simpleInsert">
+  <insert id="simpleInsert">
     INSERT INTO dev_data_3t.TEST_DATA (my_key,evt_date,object_id, lat, lng, warn)
     values (?,?,?,?,?,?)
   </insert>
 
-  <select type="NATIVE" id="simpleSelect" returnType="java.util.HashMap">
+  <select id="simpleSelect" returnType="java.util.HashMap">
     select my_key,evt_date,object_id,lat, lng, warn from dev_data_3t.TEST_DATA
+  </select>
+
+  <select id="selectClauseIN">
+    select * from COLOR where name in (:in:names)
   </select>
 
 </statements>

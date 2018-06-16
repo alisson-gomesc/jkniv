@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,21 +39,25 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.cassandra.result.CustomResultRow;
 
-public class CassandraRepositoryUpdateTest extends BaseJdbc
+public class CassandraRepositoryInsertTest extends BaseJdbc
 {
     @Autowired
     Repository repository;
+    Object[]   params =
+    { "k001", new Date(), "CAR001", 20.000001F, -88.000001F, 2 };
     // (my_key,evt_date,object_id, lat, lng, warn)
     
 
-    @Test
-    public void whenCassandraUpsert()
+    @Test 
+    public void whenCassandraAdd()
     {
         int initialSize = select();
-        Object[]   params = { "CAR001", 20.000001F, -88.000001F, 2, "k002", new Date() };        
+        
+        params[3] = new Float( ((Float)params[3]).floatValue()+0.000001F);  
+        params[4] = new Float( ((Float)params[4]).floatValue()+0.000001F); 
         Repository repositoryCas = getRepository();
-        Queryable q = QueryFactory.ofArray("simpleUpsert",params);
-        repositoryCas.update(q);
+        Queryable q = QueryFactory.ofArray("simpleInsert",params);
+        repositoryCas.add(q);
         int newSize = select();
 
         assertThat(initialSize+1, is(newSize));

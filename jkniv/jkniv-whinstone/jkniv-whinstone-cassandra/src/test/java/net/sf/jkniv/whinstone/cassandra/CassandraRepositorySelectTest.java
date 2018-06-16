@@ -24,6 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.instanceOf;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +40,8 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.cassandra.result.CustomResultRow;
 
-public class CassandraRepositoryTest extends BaseJdbc
+@SuppressWarnings("rawtypes")
+public class CassandraRepositorySelectTest extends BaseJdbc
 {
     @Autowired
     Repository repository;
@@ -71,6 +73,21 @@ public class CassandraRepositoryTest extends BaseJdbc
         assertThat(list.get(0), instanceOf(TreeMap.class));
     }
     
+    
+
+    @Test
+    public void whenCassandraListUsingClauseIN()
+    {
+        Repository repositoryCas = getRepository();
+        Queryable q = QueryFactory.of("selectClauseIN", "names", Arrays.asList("blue","white"));
+        
+        List<Map> list = repositoryCas.list(q);
+        assertThat(list.size(), is(6));
+        assertThat(list.get(0), instanceOf(Map.class));
+    }
+    
+    
+    
     @Test
     public void whenCassandraListSpecificResultRow()
     {
@@ -84,54 +101,5 @@ public class CassandraRepositoryTest extends BaseJdbc
         assertThat((Boolean)list.get(0).get("JUNIT"), is(Boolean.TRUE));
         assertThat(list.get(0).get("0"), instanceOf(String.class));
     }
-    
-    
-    
-    @Test @Ignore("Why the test is commented")
-    public void whenCassandraRepositoryExecuteRemoveListAddCommands()
-    {
-        //remove();
-        //assertThat(add(), is(true));
-        //assertThat(select(), is(true));
-        //assertThat(remove(), is(true));
-        //assertThat(list.size(), greaterThan(0));
-    }
-
-    @Test 
-    public void whenCassandraAdd()
-    {
-        int initialSize = select();
         
-        params[3] = new Float( ((Float)params[3]).floatValue()+0.000001F);  
-        params[4] = new Float( ((Float)params[4]).floatValue()+0.000001F); 
-        Repository repositoryCas = getRepository();
-        Queryable q = QueryFactory.ofArray("simpleInsert",params);
-        repositoryCas.add(q);
-        int newSize = select();
-
-        assertThat(initialSize+1, is(newSize));
-    }
-    
-    private boolean remove()
-    {
-        Queryable q = QueryFactory.of("removeAll");
-        repository = getRepository();
-        int rows = repository.remove(q);
-        return (rows > 0 ? true : false);
-    }
-    
-    private boolean add()
-    {
-        Queryable q = QueryFactory.of("simpleInsert", params);
-        int rows = repository.add(q);
-        return (rows > 0 ? true : false);
-    }
-    
-    private int select()
-    {
-        Queryable q = QueryFactory.of("simpleSelect");
-        List<Map> list = getRepository().list(q);
-        return list.size();
-    }
-    
 }

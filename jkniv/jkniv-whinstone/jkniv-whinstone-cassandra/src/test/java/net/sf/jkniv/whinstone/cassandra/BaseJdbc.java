@@ -26,6 +26,7 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 
+// Embedded cassandra test http://www.baeldung.com/spring-data-cassandra-tutorial
 public class BaseJdbc //extends BaseSpringJUnit4
 {
     protected static final String url = "127.0.0.1";
@@ -44,26 +45,10 @@ public class BaseJdbc //extends BaseSpringJUnit4
         config.put(RepositoryProperty.JDBC_DRIVER.key(), driver);
     }
     
+    
     protected Repository getRepository()
     {
         return new RepositoryCassandra(config);
     }
-
-    protected Queryable getQuery(String name)
-    {
-        Queryable q = QueryFactory.of(name);
-        return q;
-    }
     
-    protected Queryable getQuery(String name, Object params)
-    {
-        Queryable q = QueryFactory.of(name,params);
-        return q;
-    }    
-    
-    protected Queryable getQuery(String name, Object params, int offset, int max)
-    {
-        Queryable q = QueryFactory.of(name, params, offset, max);
-        return q;
-    }
 }

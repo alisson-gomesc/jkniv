@@ -135,70 +135,52 @@ class RepositoryCassandra implements Repository
         this.adapterConn = new CassandraSessionFactory(sqlContext.getRepositoryConfig().getProperties()).open();
     }
     
-//    private void openConnection()
-//    {
-//        if (cluster != null)
-//            return;
-//        
-//        cluster = Cluster.builder().addContactPoints(server_ip).build();
-//        
-//        final Metadata metadata = cluster.getMetadata();
-//        String msg = String.format("Connected to cluster: %s", metadata.getClusterName());
-//        System.out.println(msg);
-//        System.out.println("List of hosts");
-//        for (final Host host : metadata.getAllHosts())
-//        {
-//            msg = String.format("Datacenter: %s; Host: %s; Rack: %s", host.getDatacenter(), host.getAddress(),
-//                    host.getRack());
-//            System.out.println(msg);
-//        }
-//        session = cluster.connect(keyspace);
-//    }
-    
-//    private PreparedStatement getPreparedStatement(String statement)
-//    {
-//        return session.prepare(statement);
-//    }
-    
     @Override
     public <T> T get(Queryable queryable)
     {
+     // TODO implements Repository.get(Queryable)
         throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
     }
     
     @Override
     public <T> T get(Queryable queryable, Class<T> returnType)
     {
+        // TODO implements Repository.get(Queryable, Class)
         throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
     }
     
     @Override
     public <T, R> T get(Queryable queryable, ResultRow<T, R> resultRow)
     {
+     // TODO implements Repository.get(Queryable, ResultoRow)
         throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
     }
     
     @Override
     public <T> T get(T object)
     {
+     // TODO implements Repository.get(T)
         throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
     }
     
     @Override
     public <T> T get(Class<T> returnType, Object object)
     {
+     // TODO implements Repository.get(Class, Object)
         throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
     }
     
     @Override
     public <T> T scalar(Queryable queryable)
     {
+     // TODO implements Repository.scalar(Queryable)
         throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
     }
     
     @Override
     public boolean enrich(Queryable queryable)
     {
+        // TODO implements Repository.enrich(Queryable)
         throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
     }
     
@@ -287,140 +269,6 @@ class RepositoryCassandra implements Repository
         return list;
     }
     
-    @SuppressWarnings("unchecked")
-    private <T, R> List<T> ___list___(Queryable queryable, Class<T> overloadReturnType, ResultRow<T, R> overloadResultRow)
-    {
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as list command", queryable);
-        
-        List<T> list = Collections.emptyList();
-        Class<T> returnType = (Class<T>) Map.class;
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.SELECT);
-        Selectable select = isql.asSelectable();
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-
-        if (overloadReturnType != null)
-            returnType = overloadReturnType;
-        else if (isql.getReturnTypeAsClass() != null)
-            returnType = (Class<T>) isql.getReturnTypeAsClass();
-
-        StatementAdapter<T, R> stmt = adapterConn.newStatement(queryable);
-        queryable.bind(stmt).on();
-        
-        stmt
-        .returnType(returnType)
-        .resultRow(overloadResultRow)
-        .oneToManies(select.getOneToMany())
-        .groupingBy(select.getGroupByAsList());
-    
-        if(queryable.isScalar())
-            stmt.scalar();
-        
-        list = stmt.rows();
-
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
-        
-        return list;
-        
-    }
-
-    //@Override
-    //@SuppressWarnings("unchecked")
-    public <T, R> List<T> __list__(Queryable queryable, ResultRow<T, R> overloadResultRow)
-    {
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as list command", queryable);
-        
-        Selectable isql = sqlContext.getQuery(queryable.getName()).asSelectable();
-        checkSqlType(isql, SqlType.SELECT);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        String sql = isql.getSql(queryable.getParams());
-        String[] paramsNames = isql.getParamParser().find(sql);
-        String positionalSql = isql.getParamParser().replaceForQuestionMark(sql, queryable.getParams());
-        Object[] params = queryable.values(paramsNames);
-        Session session = null;
-        PreparedStatement stmt = session .prepare(positionalSql);
-        BoundStatement bound = stmt.bind(params);
-        ResultSetParser<T, R> rsParser = null;
-        ResultRow<T, R> rsRowParser = null;
-        Groupable<T, ?> grouping = new NoGroupingBy<T, T>();
-        Transformable<?> transformable = null;
-        ResultSet rs = session.execute(bound);
-        JdbcColumn<Row>[] columns = getJdbcColumns(rs.getColumnDefinitions());
-        Class<T> returnType = (Class<T>) Map.class;
-        
-        if (isql.getReturnTypeAsClass() != null)
-            returnType = (Class<T>)isql.getReturnTypeAsClass();
-
-        List<T> list = Collections.emptyList();
-        if (overloadResultRow != null)
-        {
-            overloadResultRow.setColumns((JdbcColumn<R>[]) columns);
-            rsRowParser = overloadResultRow;
-        }
-        else
-        {
-            if (queryable.isScalar())
-            {
-                rsRowParser = new ScalarResultRow(columns);
-            }
-            else if (Map.class.isAssignableFrom(returnType))
-            {
-                rsRowParser = new MapResultRow(returnType, columns);
-                //transformable = new MapTransform();
-            }
-            else if (Number.class.isAssignableFrom(returnType)) // FIXME implements for date, calendar, boolean improve design
-            {
-                rsRowParser = new NumberResultRow(returnType, columns);
-            }
-            else if (String.class.isAssignableFrom(returnType))
-            {
-                rsRowParser = new StringResultRow(columns);
-            }
-            else if (isql.getOneToMany().isEmpty())
-            {
-                rsRowParser = new FlatObjectResultRow(returnType, columns);
-            }
-            else
-            {
-                rsRowParser = new PojoResultRow(returnType, columns, isql.getOneToMany());
-            }
-        }
-        
-        transformable = rsRowParser.getTransformable();
-        List<String> groupingBy = isql.getGroupByAsList();
-        if (!groupingBy.isEmpty())
-        {
-            grouping = new GroupingBy(groupingBy, returnType, transformable);
-        }
-        rsParser = new ObjectResultSetParser(rsRowParser, grouping);
-        try
-        {
-            list = rsParser.parser((R) rs);
-        }
-        catch (SQLException e)
-        {
-            handlerException.handle(e);
-        }
-        
-        //  List<T> list = currentWork().select(queryable, isql, returnType, resultRow);
-        
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(),
-                    queryable.getTotal());
-        
-        return list;
-        
-    }
-    
     @Override
     public int add(Queryable queryable)
     {
@@ -447,6 +295,7 @@ class RepositoryCassandra implements Repository
     @Override
     public <T> T add(T entity)
     {
+        // TODO implements Repository.add(T)
         throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
     }
     
@@ -474,12 +323,14 @@ class RepositoryCassandra implements Repository
     @Override
     public <T> T update(T entity)
     {
+        // TODO implements Repository.update(T)
         throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
     }
     
     @Override
     public int remove(Queryable queryable)
     {
+        // TODO implements Repository.remove(Queryable)
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as remove command", queryable);
 
@@ -499,12 +350,14 @@ class RepositoryCassandra implements Repository
     @Override
     public <T> int remove(T entity)
     {
+        // TODO implements Repository.remove(T)
         throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
     }
     
     @Override
     public void flush()
     {
+     // TODO implements Repository.flush()
         throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
     }
     
@@ -518,6 +371,7 @@ class RepositoryCassandra implements Repository
     @Override
     public Transactional getTransaction()
     {
+        // TODO implements Repository.getTransaction()
         throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
     }
     
@@ -539,30 +393,6 @@ class RepositoryCassandra implements Repository
         if (isql.getSqlType() != expected)
             throw new IllegalArgumentException("Cannot execute sql [" + isql.getName() + "] as ["
                     + isql.getSqlType() + "], exptected is " + expected);
-    }
-
-    /**
-     * Summarize the columns from SQL result in binary data or not.
-     * @param metadata  object that contains information about the types and properties of the columns in a <code>ResultSet</code> 
-     * @return Array of columns with name and index
-     */
-    @SuppressWarnings("unchecked")
-    private JdbcColumn<Row>[] getJdbcColumns(ColumnDefinitions metadata)
-    {
-        JdbcColumn<Row>[] columns = new JdbcColumn[metadata.size()];
-        
-        for (int i = 0; i < columns.length; i++)
-        {
-            //int columnNumber = i + 1;
-            
-            String columnName = metadata.getName(i);//getColumnName(metadata, columnNumber);
-            int columnType = metadata.getType(i).getName().ordinal(); //metadata.getColumnType(columnNumber);
-            //boolean binaryData = false;
-            //if (columnType == Types.CLOB || columnType == Types.BLOB)
-            //    binaryData = true;
-            columns[i] = new CassandraColumn(i, columnName, columnType);
-        }
-        return columns;
     }
 
     private Properties lookup(String remaining)

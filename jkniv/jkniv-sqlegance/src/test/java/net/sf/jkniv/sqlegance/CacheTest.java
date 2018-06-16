@@ -39,7 +39,6 @@ import net.sf.jkniv.sqlegance.statement.ResultSetType;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 
-@Ignore("Xml element cache:manager doesn't work")
 public class CacheTest
 {
     private static SqlContext context1;
