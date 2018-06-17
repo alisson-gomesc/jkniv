@@ -1,13 +1,13 @@
 ----------------------------------------------------------------
-Wed Jun 13 16:56:31 BRT 2018:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0163-fab8-9539-000000e82b28 
-on database directory memory:C:\dev\wks\wks-jkniv-git\jkniv\jkniv-whinstone\jkniv-whinstone-rest\derbwhinstone with class loader sun.misc.Launcher$AppClassLoader@eb017e 
+Sun Jun 17 00:10:52 BRT 2018:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0164-0bb9-54e7-00000f421918 
+on database directory memory:C:\dev\wks\wks-jkniv-git\jkniv\jkniv-whinstone\jkniv-whinstone-rest\derbwhinstone with class loader sun.misc.Launcher$AppClassLoader@232204a1 
 Loaded from file:/C:/dev/lib/.repository/org/apache/derby/derby/10.12.1.1/derby-10.12.1.1.jar
 java.vendor=Oracle Corporation
-java.runtime.version=1.7.0_80-b15
+java.runtime.version=1.8.0_162-b12
 user.dir=C:\dev\wks\wks-jkniv-git\jkniv\jkniv-whinstone\jkniv-whinstone-rest
 os.name=Windows 8.1
-os.arch=x86
+os.arch=amd64
 os.version=6.3
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''

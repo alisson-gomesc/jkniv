@@ -9,7 +9,7 @@
         value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%-5p] %C.%M - %m%n" />
     </layout>
   </appender>
-  <logger name="net.sf.jkniv.sqlegance" additivity="false">
+  <logger name="net.sf.jkniv" additivity="false">
     <level value="debug" />
     <appender-ref ref="console" />
   </logger>

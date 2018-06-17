@@ -124,7 +124,7 @@ public class CacheManager<K, V>
     {
         final Runnable watching = new WatchCaches(caches);
         this.poolScheduler = scheduler.scheduleAtFixedRate(watching, this.delay, this.period, TimeUnit.SECONDS);
-        LOG.info("Watching cacheable data");
+        LOG.info("Watching cacheable data for [{}] caches", size());
     }
     
     public void cancel()
@@ -145,7 +145,11 @@ public class CacheManager<K, V>
         caches.clear();
     }
 
-    public long size()
+    /**
+     * Returns the total of elements in all cache entries in this manager. 
+     * @return the sum of all cache elements in this manager 
+     */
+    public long total()
     {
         long size = 0L;
         for (Map.Entry<String, Cacheable<K, V>> entry : caches.entrySet())
@@ -153,6 +157,15 @@ public class CacheManager<K, V>
             size += entry.getValue().size();
         }
         return size;
+    }
+    
+    /**
+     * Returns the number of caches in this manager
+     * @return the number of cache.
+     */
+    public int size()
+    {
+        return this.caches.size();
     }
 
     class WatchCaches implements Runnable

@@ -70,4 +70,12 @@ public interface SqlContext
     RepositoryConfig getRepositoryConfig();
     
     SqlDialect getSqlDialect();
+
+    /**
+     * Closes this SQL context.
+     * After close the SQL context the access to SQL is lost and 
+     * retrieve a SQL {@code QueryNotFoundException} is throw.  
+     */
+    void close();
+
 }

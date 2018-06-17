@@ -86,9 +86,19 @@ public interface Cacheable<K, V>
     
     Cacheable.Entry<V> remove(K key);
 
+    /**
+     * Removes all of the mappings from this map (optional operation). 
+     * The map will be empty after this call returns.
+     */
     void clear();
     
-    int size();
+    /**
+     * Returns the number of key-value mappings in this map. 
+     * If the cache contains more than Integer.MAX_VALUE elements, returns Integer.MAX_VALUE.
+     * 
+     * @return the number of elements in this cache
+     */
+    long size();
     
     /**
      * A cache entry (key-value pair).  The <tt>Cacheable.getEntry</tt> method returns

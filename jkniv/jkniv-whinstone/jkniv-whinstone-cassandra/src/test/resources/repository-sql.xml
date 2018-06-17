@@ -30,4 +30,8 @@
     select * from COLOR where name in (:in:names)
   </select>
 
+  <select id="vehicles" returnType="net.sf.jkniv.whinstone.cassandra.model.Vehicle">
+  select plate, name, color, alarms from VEHICLE
+  </select>
+
 </statements>

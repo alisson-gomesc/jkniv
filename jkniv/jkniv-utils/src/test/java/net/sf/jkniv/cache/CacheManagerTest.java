@@ -75,7 +75,7 @@ public class CacheManagerTest
         cacheManager.cancel();
     }
     
-    @Test @Ignore
+    @Test
     public void whenCacheManagerExpireWithTTLAndClean() throws InterruptedException
     {
         CacheManager<String, Integer> cacheManager = new CacheManager<String, Integer>();
@@ -85,21 +85,22 @@ public class CacheManagerTest
         Integer v = 1;
         cache.put("A", v);
         cacheManager.add("test", cache);
-
-        v = cache.get("A");
-        assertThat(v, is(1));
-        Thread.sleep(1000L);
-        assertThat(cacheManager.size(), is(1L));
+        assertThat(cacheManager.size(), is(1));
         
         v = cache.get("A");
         assertThat(v, is(1));
         Thread.sleep(1000L);
-        assertThat(cacheManager.size(), is(1L));
+        assertThat(cacheManager.total(), is(1L));
+        
+        v = cache.get("A");
+        assertThat(v, is(1));
+        Thread.sleep(1000L);
+        assertThat(cacheManager.total(), is(1L));
         
         v = cache.get("A");
         assertThat(v, is(1));
         Thread.sleep(3500L);
-        assertThat(cacheManager.size(), is(0L));
+        assertThat(cacheManager.total(), is(0L));
         
         v = cache.get("A");
         assertThat(v, nullValue());

@@ -609,6 +609,7 @@ class RepositoryJpa implements RepositoryJpaExtend
     {
         // FIXME implements Repository.close()
         cachePersistenceInfo.clear();
+        sqlContext.close();
     }
     
     /**

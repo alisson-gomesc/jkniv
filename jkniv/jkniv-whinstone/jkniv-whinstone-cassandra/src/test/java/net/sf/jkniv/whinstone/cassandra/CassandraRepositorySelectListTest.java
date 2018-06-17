@@ -38,16 +38,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
+import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
 import net.sf.jkniv.whinstone.cassandra.result.CustomResultRow;
 
 @SuppressWarnings("rawtypes")
-public class CassandraRepositorySelectTest extends BaseJdbc
+public class CassandraRepositorySelectListTest extends BaseJdbc
 {
     @Autowired
     Repository repository;
     Object[]   params =
     { "k001", new Date(), "CAR001", 20.000001F, -88.000001F, 2 };
-    // (my_key,evt_date,object_id, lat, lng, warn)
     
     @Test
     public void whenCassandraListDefault()
@@ -73,21 +73,6 @@ public class CassandraRepositorySelectTest extends BaseJdbc
         assertThat(list.get(0), instanceOf(TreeMap.class));
     }
     
-    
-
-    @Test
-    public void whenCassandraListUsingClauseIN()
-    {
-        Repository repositoryCas = getRepository();
-        Queryable q = QueryFactory.of("selectClauseIN", "names", Arrays.asList("blue","white"));
-        
-        List<Map> list = repositoryCas.list(q);
-        assertThat(list.size(), is(6));
-        assertThat(list.get(0), instanceOf(Map.class));
-    }
-    
-    
-    
     @Test
     public void whenCassandraListSpecificResultRow()
     {
@@ -101,5 +86,33 @@ public class CassandraRepositorySelectTest extends BaseJdbc
         assertThat((Boolean)list.get(0).get("JUNIT"), is(Boolean.TRUE));
         assertThat(list.get(0).get("0"), instanceOf(String.class));
     }
+
+    @Test
+    public void whenSelectColumnAsListData()
+    {
+        Repository repositoryCas = getRepository();
+        Queryable q = QueryFactory.of("vehicles");
         
+        List<Vehicle> list = repositoryCas.list(q);
+        assertThat(list.size(), is(3));
+        assertThat(list.get(0), instanceOf(Vehicle.class));
+        
+        assertThat(list.get(0).getPlate(), is("OMN7176"));
+        assertThat(list.get(0).getName(), is("bugatti"));
+        assertThat(list.get(0).getColor(), is("white"));
+        assertThat(list.get(0).getAlarms().size(), is(2));
+        assertThat(list.get(0).getAlarms().get(0), is("anchor"));
+        assertThat(list.get(0).getAlarms().get(1), is("over_speed"));
+
+        assertThat(list.get(1).getPlate(), is("OMN7001"));
+        assertThat(list.get(1).getName(), is("mustang"));
+        assertThat(list.get(1).getColor(), is("blue"));
+        assertThat(list.get(1).getAlarms().size(), is(0));
+
+        assertThat(list.get(2).getPlate(), is("OMN7000"));
+        assertThat(list.get(2).getName(), is("fusca"));
+        assertThat(list.get(2).getColor(), is("white"));
+        assertThat(list.get(2).getAlarms().size(), is(1));
+        assertThat(list.get(2).getAlarms().get(0), is("anchor"));
+    }
 }
