@@ -243,6 +243,8 @@ class ClassPathSqlContext implements SqlContext
                     cacheManager.add(entry.getKey(), selectable.getCacheName(), selectable.getCache());
                 }
             }
+            if(cacheManager.size() > 0)
+                cacheManager.pooling();
         }
     }
     
@@ -402,6 +404,19 @@ class ClassPathSqlContext implements SqlContext
     public SqlDialect getSqlDialect()
     {
         return this.sqlDialect;
+    }
+    
+    @Override
+    public void close()
+    {
+        if(LOG.isDebugEnabled())
+        {
+            LOG.debug("clean up [{}] statements from [{}] resources [{}]", this.statements.size(), this.resources.size(), this.resources);
+        }
+        this.resources.clear();
+        this.statements.clear();
+        if(cacheManager != null)
+            cacheManager.cancel();
     }
     
     private boolean isEmpty(String value)

@@ -17,38 +17,31 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.cassandra.commands;
+package net.sf.jkniv.whinstone.cassandra;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.instanceOf;
 
-import net.sf.jkniv.whinstone.Command;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.junit.Ignore;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.cassandra.statement.CassandraStatementAdapter;
+import net.sf.jkniv.whinstone.Repository;
+import net.sf.jkniv.whinstone.cassandra.result.CustomResultRow;
 
-@SuppressWarnings("unchecked")
-public class SelectCommand implements Command
+@SuppressWarnings("rawtypes")
+public class CassandraRepositorySelectGetTest extends BaseJdbc
 {
-    private static final Logger LOG = LoggerFactory.getLogger(SelectCommand.class);
-    //private String body;
-    private CassandraStatementAdapter<?, String> stmt;
-    private Queryable queryable;
-
-    
-    public SelectCommand(CassandraStatementAdapter<?, String> stmt, Queryable queryable)
-    {
-        super();
-        this.queryable = queryable;
-        this.stmt = stmt;
-        //stmt.rows();
-    }
-
-    @Override
-    public <T> T execute()
-    {
-        T list = (T) stmt.rows();
-      return list;
-    }
-    
-    
+        
 }

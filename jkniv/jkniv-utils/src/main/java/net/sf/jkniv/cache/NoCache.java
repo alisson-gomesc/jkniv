@@ -90,7 +90,7 @@ public class NoCache<K, V> implements Cacheable<K, V>
     }
     
     @Override
-    public int size()
+    public long size()
     {
         return 0;
     }

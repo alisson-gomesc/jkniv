@@ -588,6 +588,7 @@ class RepositoryJdbc implements Repository
     public void close()
     {
         SessionFactory.clear();
+        sqlContext.close();
     }
     
     private void defineQueryNameStrategy()

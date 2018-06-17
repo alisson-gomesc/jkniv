@@ -1,4 +1,5 @@
 DELETE FROM COLOR;
+DELETE FROM VEHICLE;
 
 INSERT INTO COLOR (NAME, PRIORITY, CODE) VALUES ('blue', 'HIGH', 100);
 INSERT INTO COLOR (NAME, PRIORITY, CODE) VALUES ('blue', 'NORMAL', 101);
@@ -9,3 +10,8 @@ INSERT INTO COLOR (NAME, PRIORITY, CODE) VALUES ('black', 'LOW', 202);
 INSERT INTO COLOR (NAME, PRIORITY, CODE) VALUES ('white', 'HIGH', 300);
 INSERT INTO COLOR (NAME, PRIORITY, CODE) VALUES ('white', 'NORMAL', 301);
 INSERT INTO COLOR (NAME, PRIORITY, CODE) VALUES ('white', 'LOW', 302);
+
+
+INSERT INTO VEHICLE(plate, name, color, alarms) VALUES ('OMN7176', 'bugatti', 'white', ['anchor','over_speed']);
+INSERT INTO VEHICLE(plate, name, color, alarms) VALUES ('OMN7000', 'fusca', 'white', ['anchor']);
+INSERT INTO VEHICLE(plate, name, color) VALUES ('OMN7001', 'mustang', 'blue');

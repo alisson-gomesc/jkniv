@@ -147,7 +147,7 @@ public class MemoryCache<K, V> implements Cacheable<K, V>
     }
     
     @Override
-    public int size()
+    public long size()
     {
         return this.cache.size();
     }

@@ -23,6 +23,7 @@ import java.util.List;
 
 import net.sf.jkniv.sqlegance.NonUniqueResultException;
 import net.sf.jkniv.sqlegance.QueryNotFoundException;
+import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
 /**
@@ -237,6 +238,11 @@ public interface Repository
     
     Transactional getTransaction();
     
+    /**
+     * Close the connection with the database.
+     * After close the repository any query cannot be executed against the database 
+     * then all subsequent access to the repository throw a {@code RepositoryException} 
+     */
     void close();
     
     boolean containsQuery(String name);

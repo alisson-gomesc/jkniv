@@ -123,6 +123,12 @@ public class CouchDbSqlContext implements SqlContext
         return sqlContext.getPackageStartWith(packageName);
     }
 
+    @Override
+    public void close()
+    {
+        sqlContext.close();
+    }
+    
     public static boolean isAllDocs(String name)
     {
         return ALL_DOCS_QUERY.equals(name);

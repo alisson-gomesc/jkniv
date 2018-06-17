@@ -386,6 +386,7 @@ class RepositoryCassandra implements Repository
         {
             LOG.warn("Error to try close Cassandra session/cluster [{}]", adapterConn, e);
         }
+        sqlContext.close();
     }
     
     private void checkSqlType(Sql isql, SqlType expected)
