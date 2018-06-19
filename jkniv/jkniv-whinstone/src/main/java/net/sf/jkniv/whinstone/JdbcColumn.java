@@ -40,6 +40,8 @@ public interface JdbcColumn<R>
     
     int getIndex();
     
+    int getJdbcType();
+    
     boolean isBinary();
 
     boolean isClob();

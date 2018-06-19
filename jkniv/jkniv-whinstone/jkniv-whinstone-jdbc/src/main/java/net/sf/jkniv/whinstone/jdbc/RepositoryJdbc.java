@@ -201,29 +201,6 @@ class RepositoryJdbc implements Repository
     {
         return SessionFactory.currentWork(connectionFactory, this.repositoryConfig);
     }
-    /*
-     * Start an unit of work for this thread
-     *
-    private Work currentWork()
-    {
-        Map<RepositoryConfig, Work> mapWork = works.get();
-        Work work = null;
-        if (mapWork == null)
-        {
-            mapWork = new HashMap<RepositoryConfig, Work>();
-            works.set(mapWork);
-        }
-        if (mapWork.isEmpty() || !mapWork.containsKey(repositoryConfig))
-        {
-            work = new UnitOfWork(jdbcConnection);
-            LOG.trace("Start new unit of work [{}]", work.getName());
-            mapWork.put(repositoryConfig, work);
-        }
-        else
-            work = mapWork.get(repositoryConfig);
-        return work;
-    }
-    */
     
     /*
      * (non-Javadoc)

@@ -43,6 +43,7 @@ import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
+import net.sf.jkniv.sqlegance.NonUniqueResultException;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
 import net.sf.jkniv.whinstone.BoundException;
 import net.sf.jkniv.whinstone.Command;
@@ -230,7 +231,7 @@ class RepositoryCouchDb implements Repository
         
         T ret = null;
         if (list.size() > 1)
-            handlerException.throwMessage("No unique result for query [%s]", queryable.getName());// TODO design exception throw NoUniqueResultException
+            throw new NonUniqueResultException("No unique result for query ["+queryable.getName()+"]");
             
         else if (list.size() == 1)
             ret = list.get(0);

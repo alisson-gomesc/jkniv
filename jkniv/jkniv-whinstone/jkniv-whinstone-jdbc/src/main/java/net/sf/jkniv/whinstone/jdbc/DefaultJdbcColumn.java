@@ -140,6 +140,13 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
         return rs.getBytes(columnIndex);
     }
     
+    @Override
+    public int getJdbcType()
+    {
+        return this.jdbcType;
+    }
+
+    
     /**
      * Append prefix <code>set<code> to attributeColumnName and capitalize it.
      * @param attributeColumnName attribute name to capitalize with <code>set</code> prefix

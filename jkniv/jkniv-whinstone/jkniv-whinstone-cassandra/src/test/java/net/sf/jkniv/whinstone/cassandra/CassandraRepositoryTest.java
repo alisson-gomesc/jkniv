@@ -87,7 +87,7 @@ public class CassandraRepositoryTest extends BaseJdbc
     
     
     
-    @Test @Ignore("Why the test is commented")
+    @Test @Ignore("Why the test is commented?")
     public void whenCassandraRepositoryExecuteRemoveListAddCommands()
     {
         //remove();

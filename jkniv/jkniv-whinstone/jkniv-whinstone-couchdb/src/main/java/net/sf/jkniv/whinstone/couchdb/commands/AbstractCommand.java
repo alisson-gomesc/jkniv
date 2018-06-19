@@ -64,6 +64,7 @@ public abstract class AbstractCommand implements CouchCommand
     
     public AbstractCommand(String url, String body)
     {
+        // TODO design exception message to handler exception
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
         this.url = url;
         this.body = body;

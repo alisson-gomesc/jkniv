@@ -22,6 +22,7 @@ package net.sf.jkniv.whinstone.cassandra;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.instanceOf;
 
 import java.util.Arrays;
@@ -94,7 +95,7 @@ public class CassandraRepositorySelectListTest extends BaseJdbc
         Queryable q = QueryFactory.of("vehicles");
         
         List<Vehicle> list = repositoryCas.list(q);
-        assertThat(list.size(), is(3));
+        assertThat(list.size(), greaterThanOrEqualTo(3));
         assertThat(list.get(0), instanceOf(Vehicle.class));
         
         assertThat(list.get(0).getPlate(), is("OMN7176"));

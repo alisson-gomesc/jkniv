@@ -390,6 +390,10 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
                 setInternalValue((Enum<?>) value);
             else if (value instanceof Byte)
                 setInternalValue((Byte) value);
+            else if (value instanceof List)
+                setInternalValue((List) value);
+            else if (value instanceof Map)
+                setInternalValue((Map) value);            
             else
             {
                 //setValue(value);
@@ -477,7 +481,17 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         // FIXME design converter to allow save ordinal value or other value from enum
         bound.setString(currentIndex(), value.name());
     }
-    
+
+    private void setInternalValue(List<?> value) throws SQLException
+    {
+        bound.setList(currentIndex(), value);
+    }
+
+    private void setInternalValue(Map<?,?> value) throws SQLException
+    {
+        bound.setMap(currentIndex(), value);
+    }
+
     private void setInternalValue(Object[] paramsIN) throws SQLException
     {
         int j = 0;

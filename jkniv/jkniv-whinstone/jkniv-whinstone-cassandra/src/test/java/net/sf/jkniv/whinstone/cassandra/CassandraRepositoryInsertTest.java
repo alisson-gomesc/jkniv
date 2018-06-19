@@ -23,7 +23,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
+import static org.hamcrest.Matchers.*;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
+import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
 import net.sf.jkniv.whinstone.cassandra.result.CustomResultRow;
 
 public class CassandraRepositoryInsertTest extends BaseJdbc
@@ -61,6 +66,30 @@ public class CassandraRepositoryInsertTest extends BaseJdbc
         int newSize = select();
 
         assertThat(initialSize+1, is(newSize));
+    }
+    
+
+    @Test 
+    public void whenCassandraAddWithListColumn()
+    {
+        Vehicle vehicle = new Vehicle();
+        vehicle.setPlate("ABC0101");
+        vehicle.setName("ABC0101");
+        vehicle.setColor("white");
+        vehicle.setAlarms(Arrays.asList("SPEED","PANIC"));
+        Repository repositoryCas = getRepository();
+        Queryable q = QueryFactory.of("vehicle", vehicle);
+        repositoryCas.add(q);
+        
+        
+        Queryable query = QueryFactory.of("selectVehicle", vehicle);
+        
+        Vehicle v = repositoryCas.get(query);
+
+        assertThat(v, instanceOf(Vehicle.class));
+        assertThat(v.getPlate(), is(vehicle.getPlate()));
+        assertThat(v.getAlarms().size(), is(2));
+        assertThat( v.getAlarms(),  hasItems("SPEED","PANIC"));
     }
     
     private int select()

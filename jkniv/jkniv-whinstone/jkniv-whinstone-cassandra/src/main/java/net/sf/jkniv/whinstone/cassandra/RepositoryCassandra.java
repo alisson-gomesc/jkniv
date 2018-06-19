@@ -138,22 +138,19 @@ class RepositoryCassandra implements Repository
     @Override
     public <T> T get(Queryable queryable)
     {
-     // TODO implements Repository.get(Queryable)
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        return get(queryable, null, null);
     }
     
     @Override
     public <T> T get(Queryable queryable, Class<T> returnType)
     {
-        // TODO implements Repository.get(Queryable, Class)
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        return get(queryable, returnType, null);
     }
     
     @Override
     public <T, R> T get(Queryable queryable, ResultRow<T, R> resultRow)
     {
-     // TODO implements Repository.get(Queryable, ResultoRow)
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        return get(queryable, null, resultRow);
     }
     
     @Override
@@ -168,6 +165,29 @@ class RepositoryCassandra implements Repository
     {
      // TODO implements Repository.get(Class, Object)
         throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+    }
+    
+    
+    private <T, R> T get(Queryable q, Class<T> returnType, ResultRow<T, R> resultRow)
+    {
+        notNull.verify(q);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as get command", q);
+        
+        List<T> list = list(q, returnType, resultRow);
+        
+        T ret = null;
+        if (list.size() > 1)
+            handlerException.throwMessage("No unique result for query [%s]", q.getName());// TODO design exception throw NoUniqueResultException
+            
+        else if (list.size() == 1)
+            ret = list.get(0);
+        
+        if (isDebugEnabled)
+            LOG.debug("Executed [{}] query, {}/{} rows fetched", q.getName(), list.size(),
+                    q.getTotal());
+        
+        return ret;
     }
     
     @Override
@@ -242,26 +262,6 @@ class RepositoryCassandra implements Repository
             list = (List<T>) entry.getValue();
             q.cached();
         }
-//
-//        if (overloadReturnType != null)
-//            returnType = overloadReturnType;
-//        else if (selectable.getReturnTypeAsClass() != null)
-//            returnType = (Class<T>) selectable.getReturnTypeAsClass();
-//
-//        StatementAdapter<T, R> stmt = adapterConn.newStatement(queryable);
-//        queryable.bind(stmt).on();
-//        
-//        stmt
-//        .returnType(returnType)
-//        .resultRow(overloadResultRow)
-//        .oneToManies(selectable.getOneToMany())
-//        .groupingBy(selectable.getGroupByAsList());
-//    
-//        if(queryable.isScalar())
-//            stmt.scalar();
-//        
-//        list = stmt.rows();
-
         q.setTotal(queryable.getTotal());
         if (isDebugEnabled)
             LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());

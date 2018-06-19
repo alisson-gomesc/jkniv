@@ -122,6 +122,13 @@ public class CouchDbColumn implements JdbcColumn<String>
     }
     
     @Override
+    public int getJdbcType()
+    {
+        return this.jdbcType;
+    }
+
+    
+    @Override
     public Object getValue(String row) throws SQLException
     {
         return row;

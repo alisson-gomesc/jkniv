@@ -75,7 +75,7 @@ public class CacheManagerTest
         cacheManager.cancel();
     }
     
-    @Test
+    @Test @Ignore
     public void whenCacheManagerExpireWithTTLAndClean() throws InterruptedException
     {
         CacheManager<String, Integer> cacheManager = new CacheManager<String, Integer>();

@@ -66,6 +66,7 @@ public class FindCommand extends AbstractCommand implements CouchCommand
         Class returnType = null;
         FindAnswer answer = null;
         List list = Collections.emptyList();
+        Object currentRow = null;
         try
         {
             CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -92,9 +93,11 @@ public class FindCommand extends AbstractCommand implements CouchCommand
                 if (returnType != null)
                 {
                     list = new ArrayList();
+                    
                     // FIXME overload performance, writer better deserialization using jackson
                     for(Object row : answer.getDocs())
                     {
+                        currentRow = row;
                         list.add(JsonMapper.mapper((Map)row, returnType));
                     }
                 }
@@ -114,6 +117,8 @@ public class FindCommand extends AbstractCommand implements CouchCommand
         }
         catch (Exception e) // ClientProtocolException | JsonParseException | JsonMappingException | IOException
         {
+            if (currentRow != null)
+                LOG.error("Error to process current row {}", currentRow, e);
             handlerException.handle(e);
         }
         finally

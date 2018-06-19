@@ -72,7 +72,7 @@ public class FlatObjectResultRow<T> implements ResultRow<T, Row>
         ObjectProxy<T> proxy = ObjectProxyFactory.newProxy(returnType);
         for (JdbcColumn<Row> column : columns)
             setValueOf(column, rs, proxy);
-        
+        // list jdbcType = 22
         return proxy.getInstance();
     }
     

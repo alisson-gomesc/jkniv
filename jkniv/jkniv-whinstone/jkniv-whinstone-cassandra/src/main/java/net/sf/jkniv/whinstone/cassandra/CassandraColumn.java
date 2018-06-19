@@ -22,6 +22,7 @@ package net.sf.jkniv.whinstone.cassandra;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import com.datastax.driver.core.DataType;
@@ -140,6 +141,13 @@ public class CassandraColumn implements JdbcColumn<Row>
     public Object getBytes(Row row) throws SQLException
     {
         return row.getBytes(columnIndex);
+    }
+    
+    
+    @Override
+    public int getJdbcType()
+    {
+        return this.jdbcType;
     }
     
     /**
