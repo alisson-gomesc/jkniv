@@ -62,15 +62,15 @@ public class BaseResource
     
     public BaseResource()
     {
-        if (sqlContextName == null)
-            sqlContextName = "/repository-sql.xml";
-        
         if (repositories.isEmpty())
             initRepositories();
     }
     
     static void initRepositories()
     {
+        if (sqlContextName == null)
+            sqlContextName = "/repository-sql.xml";
+
         RepositoryService service = RepositoryService.getInstance();
         String[] contexts = sqlContextName.split(",");
         for (String ctxName : contexts)

@@ -116,18 +116,25 @@ public class MemoryCache<K, V> implements Cacheable<K, V>
     @Override
     public V get(K key)
     {
-        Cacheable.Entry<V> entry = this.cache.get(key);
-        if (entry == null || !policy.isAlive(entry.getTimestamp().getTime()))
-        {
-            System.out.println("\ncache data ["+entry+"] expire with ["+this+"]");
+        Cacheable.Entry<V> entry = getEntry(key);
+        if (entry == null )
             return null;
-        }
+        
         return entry.getValue();
     }
     
     public Cacheable.Entry<V> getEntry(K key)
     {
-        return this.cache.get(key);
+        Cacheable.Entry<V> entry = this.cache.get(key);
+        if (entry == null )
+            return null;
+        
+        if (policy.isAlive(entry.getTimestamp().getTime(), entry.getLastAccess().getTime()))
+            return entry;
+        
+
+        this.cache.remove(key);
+        return null;
     }
     
     public Set<Map.Entry<K, Cacheable.Entry<V>>> entrySet()
@@ -166,14 +173,17 @@ public class MemoryCache<K, V> implements Cacheable<K, V>
         final Date timestamp;
         Date       lastAccess;
         V          value;
+        int hits;
         
         public Entry(V value)
         {
             this.timestamp = new Date();
             this.lastAccess = new Date();
             this.value = value;
+            this.hits = 0;
         }
         
+        @Override
         public final Date getTimestamp()
         {
             return timestamp;
@@ -185,11 +195,20 @@ public class MemoryCache<K, V> implements Cacheable<K, V>
             return this.lastAccess;
         }
         
+        @Override
         public final V getValue()
         {
             this.lastAccess = new Date();
+            hits++;
             return value;
         }
+        
+        @Override
+        public int hits()
+        {
+            return this.hits;
+        }
+        
     }
     
 }

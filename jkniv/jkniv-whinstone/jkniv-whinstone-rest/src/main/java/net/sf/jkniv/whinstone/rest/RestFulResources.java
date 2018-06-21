@@ -103,7 +103,7 @@ public class RestFulResources extends BaseResource
     static void registrySqlContext(String name)
     {
         notNull.verify(name);
-        isNull.verify(RestFulResources.sqlContextName); // cannot change sql context file
+        //isNull.verify(RestFulResources.sqlContextName); // cannot change sql context file
         RestFulResources.sqlContextName = name;
     }
     

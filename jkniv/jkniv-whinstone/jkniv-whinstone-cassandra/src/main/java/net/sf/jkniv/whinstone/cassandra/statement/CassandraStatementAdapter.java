@@ -392,10 +392,15 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
                 setInternalValue((Byte) value);
             else if (value instanceof List)
                 setInternalValue((List) value);
+            else if (value instanceof Set)
+                setInternalValue((Set) value);            
             else if (value instanceof Map)
                 setInternalValue((Map) value);            
             else
             {
+                LOG.warn("CANNOT Set SQL Parameter from index [{}] with value of [{}] type of [{}]", (index+indexIN), 
+                        value, (value == null ? "NULL" : value.getClass()));
+
                 //setValue(value);
             }
         }
@@ -492,6 +497,11 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         bound.setMap(currentIndex(), value);
     }
 
+    private void setInternalValue(Set<?> value) throws SQLException
+    {
+        bound.setSet(currentIndex(), value);
+    }
+
     private void setInternalValue(Object[] paramsIN) throws SQLException
     {
         int j = 0;
@@ -551,7 +561,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     private void log(String name, Object value)
     {
         if (LOG.isDebugEnabled())
-            LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index, name,
+            LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", (index+indexIN), name,
                     MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
@@ -559,7 +569,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     {
         String name = String.valueOf(index+indexIN);
         if (LOG.isDebugEnabled())
-            LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index, name,
+            LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", (index+indexIN), name,
                     MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     

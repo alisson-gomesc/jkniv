@@ -140,6 +140,7 @@ public class TTLCachePolicy implements CachePolicy
 
         if (expireTTI(tti))
             return false;
+        
         return true;
     }
     

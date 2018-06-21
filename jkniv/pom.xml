@@ -3,7 +3,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sf.jkniv</groupId>
-  <version>0.6.0.M27</version>
+  <version>0.6.0.M28</version>
   <packaging>pom</packaging>
   <name>jkniv</name>
   <artifactId>jkniv</artifactId>
@@ -64,6 +64,36 @@
     <dependency>
       <groupId>net.sf.jkniv</groupId>
       <artifactId>jkniv-whinstone</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.jkniv</groupId>
+      <artifactId>jkniv-whinstone-cassandra</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.jkniv</groupId>
+      <artifactId>jkniv-whinstone-couchdb</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.jkniv</groupId>
+      <artifactId>jkniv-whinstone-fluent</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.jkniv</groupId>
+      <artifactId>jkniv-whinstone-jdbc</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.jkniv</groupId>
+      <artifactId>jkniv-whinstone-jpa2</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.jkniv</groupId>
+      <artifactId>jkniv-whinstone-rest</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

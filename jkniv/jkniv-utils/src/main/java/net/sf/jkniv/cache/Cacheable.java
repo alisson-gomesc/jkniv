@@ -126,6 +126,12 @@ public interface Cacheable<K, V>
          *         {@code null} if this cache contains no entry
          */
         V getValue();
+        
+        /**
+         * how many times this entry was reach
+         * @return quantity of times hit this entry
+         */
+        int hits();
     }
     
 }

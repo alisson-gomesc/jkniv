@@ -49,13 +49,15 @@ public class CouchDbRepositoryCacheTest extends BaseJdbc
         Repository repositoryDb = getRepository();
         Queryable q = getQuery("authorBRInCache");
         
-        List<Map> list = repositoryDb.list(q);
-        assertThat(list.size(), greaterThan(0));
-        assertThat(list.get(0), instanceOf(Map.class));
-        System.out.println(list.get(0));
+        List<Map> list1 = repositoryDb.list(q);
+        assertThat(list1.size(), greaterThan(0));
+        assertThat(list1.get(0), instanceOf(Map.class));
+        assertThat(q.isCached(), is(false));
         
-        list = repositoryDb.list(q);
-
+        List<Map> list2 = repositoryDb.list(q);
+        assertThat(q.isCached(), is(true));
+        assertThat(list1.size(), is(list2.size()));
+        
     }
     
 

@@ -309,10 +309,11 @@ class RepositoryCouchDb implements Repository
         }
         else
         {
-            if (LOG.isInfoEnabled())
-                LOG.info("{} object(s) was returned from cache [{}] using query [{}] since {}", list.size(),
-                        selectable.getCache().getName(), selectable.getName(), entry.getTimestamp());
+            q.cached();
             list = (List<T>) entry.getValue();
+            if (LOG.isInfoEnabled())
+                LOG.info("{} object(s) was returned from [{}] cache using query [{}] since {} reach [{}] times", list.size(),
+                        selectable.getCache().getName(), selectable.getName(), entry.getTimestamp(), entry.hits());
         }
         q.setTotal(queryable.getTotal());
         if (isDebugEnabled)
