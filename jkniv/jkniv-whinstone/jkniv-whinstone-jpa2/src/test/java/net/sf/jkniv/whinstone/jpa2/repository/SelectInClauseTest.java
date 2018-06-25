@@ -17,13 +17,11 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.dml;
+package net.sf.jkniv.whinstone.jpa2.repository;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.sql.SQLException;
-import java.sql.SQLSyntaxErrorException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -31,105 +29,124 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import com.acme.domain.flat.AuthorFlat;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
-import net.sf.jkniv.whinstone.jdbc.BaseJdbc;
-import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatAuthor;
-import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook;
+import net.sf.jkniv.whinstone.jpa2.BaseTest;
 
-public class SqlSelectInClauseTest extends BaseJdbc
+public class SelectInClauseTest extends BaseTest
 {
     @Rule
     public ExpectedException catcher = ExpectedException.none();  
+    private final String a = "Albert Camus", b = "Franz Kafka", c = "Martin Fowler";
 
-    @Autowired
-    Repository repositoryDerby;
     
     @Test
     public void whenSelectRecordsUsingInClauseWithArray()
     {
-        String[] params =
-        { "Albert Camus", "Franz Kafka", "Martin Fowler" };
+        Repository repository = getRepository();
+        String[] params = { a, b, c };
         Queryable q = QueryFactory.ofArray("getBooksFromAuthorUsingIN", params);
-        List<FlatAuthor> list = repositoryDerby.list(q);
+        List<AuthorFlat> list = repository.list(q);
         assertThat(list.size(), is(9));
     }
 
     @Test
     public void whenSelectRecordsUsingINAnotherParam()
     {
+        Repository repository = getRepository();
         Queryable q = QueryFactory.of("getBooksUsingINAnotherParam", 
                 "authors", new String[]{ "Albert Camus", "Franz Kafka", "Martin Fowler" },
                 "name", "%The%");
         
-        List<FlatAuthor> list = repositoryDerby.list(q);
+        List<AuthorFlat> list = repository.list(q);
         assertThat(list.size(), is(4));
     }
 
     @Test
     public void whenSelectRecordsUsingINAnotherParamAfterIN()
     {
+        Repository repository = getRepository();
         Queryable q = QueryFactory.of("getBooksUsingINAnotherParamAfterIN", 
                 "authors", new String[]{ "Albert Camus", "Franz Kafka", "Martin Fowler" },
-                "name", "%The%", "isbn", "978-1612931036");
+                "name", "%The%", 
+                "isbn", "978-1612931036");
         
-        List<FlatAuthor> list = repositoryDerby.list(q);
+        List<AuthorFlat> list = repository.list(q);
         assertThat(list.size(), is(1));
     }
 
-    
-    
-    @Test
-    public void whenSelectRecordsUsingInClauseWithCollections()
+    @Test @Ignore("Fix clause IN with List")
+    public void whenSelectRecordsUsingInClauseWithList()
     {
-        String a = "Albert Camus", b = "Franz Kafka", c = "Martin Fowler";
-        List<FlatAuthor> result = null;
+        Repository repository = getRepository();
+        List<AuthorFlat> result = null;
         Queryable q = null;
-        
-        String[] array =
-        { a, b, c };
-        
-        q = QueryFactory.ofArray("getBooksFromAuthorUsingIN", array);
-        result = repositoryDerby.list(q);
-        assertThat(result.size(), is(9));
-        
+                
         List<String> list = new ArrayList<String>();
         list.add(a);
         list.add(b);
         list.add(c);
         q = QueryFactory.of("getBooksFromAuthorUsingIN", list);
-        result = repositoryDerby.list(q);
+        result = repository.list(q);
         assertThat(result.size(), is(9));
+    }
+
+    @Test @Ignore("Fix clause IN with LinkedList")
+    public void whenSelectRecordsUsingInClauseWithLinkedList()
+    {
+        Repository repository = getRepository();
+        List<AuthorFlat> result = null;
+        Queryable q = null;
+        
         
         LinkedList<String> linkedList = new LinkedList<String>();
         linkedList.add(a);
         linkedList.add(b);
         linkedList.add(c);
         q = QueryFactory.of("getBooksFromAuthorUsingIN", linkedList);
-        result = repositoryDerby.list(q);
+        result = repository.list(q);
         assertThat(result.size(), is(9));
+    }
+    
+    @Test @Ignore("Fix clause IN with Vector")
+    public void whenSelectRecordsUsingInClauseWithVector()
+    {
+        Repository repository = getRepository();
+        List<AuthorFlat> result = null;
+        Queryable q = null;
         
         Vector<String> vector = new Vector<String>();
         vector.add(a);
         vector.add(b);
         vector.add(c);
         q = QueryFactory.of("getBooksFromAuthorUsingIN", vector);
-        result = repositoryDerby.list(q);
+        result = repository.list(q);
         assertThat(result.size(), is(9));
+    }
+    
+    @Test
+    public void whenSelectRecordsUsingInClauseWithMap()
+    {
+        Repository repository = getRepository();
+        List<AuthorFlat> result = null;
+        Queryable q = null;
+        String[] array = { a, b, c };
         
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("a", "A");
         map.put("authors", array);
         map.put("c", "A");
         q = QueryFactory.of("getBooksFromAuthorUsingIN", map);
-        result = repositoryDerby.list(q);
+        result = repository.list(q);
         assertThat(result.size(), is(9));
         
     }
@@ -137,15 +154,16 @@ public class SqlSelectInClauseTest extends BaseJdbc
     @Test
     public void whenSelectRecordsUsingInClauseWithWrongParameterType()
     {
+        Repository repository = getRepository();
         catcher.expect(RepositoryException.class);
-        catcher.expectMessage("Cannot prepare statement [Syntax error: Encountered \":\" at line 5, column 6.]");
+        catcher.expectMessage("Cannot set parameter [in:authors] from IN clause with NULL");
         
         Map<String, String> map = new HashMap<String, String>();
         map.put("a", "A");
         map.put("b", "A");
         map.put("c", "A");
         Queryable q = QueryFactory.of("getBooksFromAuthorUsingIN", map);
-        List<FlatBook> result = repositoryDerby.list(q);
+        List<AuthorFlat> result = repository.list(q);
     }
     
 }

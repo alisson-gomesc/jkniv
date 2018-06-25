@@ -352,7 +352,13 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         int j = 0;
         for (; j < paramsIN.length; j++)
             bindInternal(paramsIN[j]);
+        //indexIN = indexIN + j;
+        /*
+        int j = 0;
+        for (; j < paramsIN.length; j++)
+            stmt.setObject(index+indexIN + j, paramsIN[j]);
         indexIN = indexIN + j;
+         */
     }
     
     /*******************************************************************************/
@@ -502,21 +508,19 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         bound.setSet(currentIndex(), value);
     }
 
-    private void setInternalValue(Object[] paramsIN) throws SQLException
-    {
-        int j = 0;
-        for (; j < paramsIN.length; j++)
-        {
-            bind(paramsIN[j]);
-            indexIN = indexIN + j;
-        }
-        //    stmt.setObject(currentIndex() + j, paramsIN[j]);
-        indexIN = indexIN + j;
-    }
+//    private void setInternalValue(Object[] paramsIN) throws SQLException
+//    {
+//        int j = 0;
+//        for (; j < paramsIN.length; j++)
+//        {
+//            bind(paramsIN[j]);
+//            indexIN = indexIN + j;
+//        }
+//    }
 
     private int currentIndex()
     {
-        return ( index++ +indexIN);
+        return ( index++ + (indexIN));
     }
 
     

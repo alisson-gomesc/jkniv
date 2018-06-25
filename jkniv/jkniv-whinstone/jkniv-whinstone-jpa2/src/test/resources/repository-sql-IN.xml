@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+ context="derby" 
+ xmlns="http://jkniv.sf.net/schema/sqlegance/statements" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+
+   <select id="getBooksFromAuthorUsingIN" returnType="com.acme.domain.flat.AuthorFlat">
+     select a.name as authorName, b.NAME as bookName 
+     from JPA_BOOK b
+     inner join JPA_AUTHOR a on a.ID = b.AUTHOR_ID
+     where a.name in (:in:authors)
+   </select>
+
+
+  <select id="getBooksUsingINAnotherParam" returnType="com.acme.domain.flat.AuthorFlat">
+     select a.name as authorName, b.NAME as bookName 
+     from JPA_BOOK b
+     inner join JPA_AUTHOR a on a.ID = b.AUTHOR_ID
+    where  
+     b.name like :name and
+     a.name in (:in:authors)
+  </select>
+
+  <select id="getBooksUsingINAnotherParamAfterIN" returnType="com.acme.domain.flat.AuthorFlat">
+     select a.name as authorName, b.NAME as bookName 
+     from JPA_BOOK b
+     inner join JPA_AUTHOR a on a.ID = b.AUTHOR_ID
+    where  
+     b.name like :name and
+     a.name in (:in:authors) and
+     isbn = :isbn
+  </select>
+
+</statements>

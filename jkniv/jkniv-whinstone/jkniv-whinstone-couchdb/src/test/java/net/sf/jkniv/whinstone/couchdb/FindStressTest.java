@@ -45,7 +45,7 @@ import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
 
 public class FindStressTest extends BaseJdbc
 {
-    final int LOOP = 500;
+    final int LOOP = 100;
     @Test
     public void whenCouchDbListWithFixedFind()
     {

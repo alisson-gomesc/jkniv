@@ -43,13 +43,42 @@ import net.sf.jkniv.whinstone.cassandra.result.CustomResultRow;
 @SuppressWarnings("rawtypes")
 public class CassandraRepositorySelectINClauseTest extends BaseJdbc
 {
-    @Autowired
-    Repository repository;
+    //@Autowired
+    //Repository repository;
     Object[]   params =
     { "k001", new Date(), "CAR001", 20.000001F, -88.000001F, 2 };
-    // (my_key,evt_date,object_id, lat, lng, warn)
 
-    
+
+    @Test
+    public void whenSelectRecordsUsingInClauseWithArray()
+    {
+        Repository repository = getRepository();
+        String[] params = { "OMN7000", "OMN7001" };
+        Queryable q = QueryFactory.ofArray("getVehiclesUsingIN", params);
+        List<Map> list = repository.list(q);
+        assertThat(list.size(), is(2));
+    }
+
+    @Test
+    public void whenSelectVehiclesUsingINAnotherParam()
+    {
+        Repository repository = getRepository();
+        String[] params = { "OMN7000", "OMN7001" };
+        Queryable q = QueryFactory.of("getVehiclesUsingINAnotherParam", "plates", params, "name", "fusca");
+        List<Map> list = repository.list(q);
+        assertThat(list.size(), is(1));
+    }
+
+    @Test
+    public void whenSelectVehiclesUsingINAnotherParamAfterIN()
+    {
+        Repository repository = getRepository();
+        String[] params = { "OMN7000", "OMN7001" };
+        Queryable q = QueryFactory.of("getVehiclesUsingINAnotherParamAfterIN", "plates", params, "name", "fusca");
+        List<Map> list = repository.list(q);
+        assertThat(list.size(), is(1));
+    }
+
     @Test
     public void whenCassandraListUsingClauseIN()
     {

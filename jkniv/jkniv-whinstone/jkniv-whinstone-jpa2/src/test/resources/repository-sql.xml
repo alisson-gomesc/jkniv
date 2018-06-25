@@ -12,6 +12,7 @@
   <include href="/repository-sql-groupingby.xml" />
   <include href="/repository-sql-onetomany.xml" />
   <include href="/repository-sql-constraints.xml" />
+  <include href="/repository-sql-IN.xml" />
 
   <select id="Book#get" type="JPQL" returnType="com.acme.domain.orm.Book">
     from Book b

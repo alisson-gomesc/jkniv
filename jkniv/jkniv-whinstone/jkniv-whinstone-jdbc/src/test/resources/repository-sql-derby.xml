@@ -16,6 +16,7 @@
   <include href="/derby/repository-sql-derby-onetomany.xml" />
   <include href="/derby/repository-sql-derby-onecolumn.xml"/>
   <include href="/derby/repository-sql-derby-validation.xml"/>
+  <include href="/derby/repository-sql-derby-IN.xml"/>
 
   <select id="listBooksNoSpecificType" type="NATIVE">
     select b.ID as id, b.ISBN as isbn, b.NAME as name
@@ -74,14 +75,6 @@
     from
     BOOK b
     inner join AUTHOR a on a.ID = b.AUTHOR_ID
-  </select>
-
-  <select id="getBooksFromAuthorUsingIN" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook">
-    select b.ID as id, b.ISBN as isbn,
-    b.NAME as name, a.name as author
-    from BOOK b inner join AUTHOR a on a.ID = b.AUTHOR_ID
-    where a.name in
-    (:in:authors)
   </select>
 
   <select id="FlatBook#get" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook">

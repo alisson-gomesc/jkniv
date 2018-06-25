@@ -8,6 +8,7 @@
   
   
   <include href="/repository-sql-update.xml"/>
+  <include href="/repository-sql-IN.xml" />
   
   <select id="all" returnType="net.sf.jkniv.whinstone.cassandra.model.MxtData">
   select * from TRACKABLE_DATA
