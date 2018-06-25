@@ -12,7 +12,7 @@ It's implementation from Repository pattern:
 
 The project `jkniv-whinstone` define the repository contract between you service layer and the database with the interface `net.sf.jkniv.whinstone.Repository`. There are four repository flavors: 
 
-- `jkniv-whinstone-jdbc` repository contract using directly jdbc access.
+- `jkniv-whinstone-jdbc` encapsulate the JDBC access with a simple repository contract.
 - `jkniv-whinstone-jpa2` encapsulate JPA access with a simple repository contract.
 - `jkniv-whinstone-cassandra` encapsulate cassandra access with a simple repository contract.
 - `jkniv-whinstone-couchdb` encapsulate http api to access with a simple repository contract.
@@ -35,6 +35,34 @@ The steps to start are:
 
 No annotations, no mapping (except if you want to use JPA), easily to test. The power of the database query language is yours and `whinstone` gives to you **the plain java objects with automatic bind to input parameters and result set output**, reducing a boilerplate of code to set JDBC parameters and resultset *getters*.
 
+
+It's very seductive write a query and someone (framework) translate to my specific database like HQL, JPQL, jOOQ DSL, etc. But there is the trap from Least Common Multiple that could hug that framework. It's probable that a lot of extra java code is necessary to do the same without the **native** query from your database.
+
+The `whinstone` approach keep the power of database query language and you java code become more maintainable naturally.
+
+These queries make the same for Cassandra NoSQL and a SQL with PARTITION BY:
+
+    // cassandra query (Partition key -> acct_id, event, evt_date)
+    SELECT acct_id, event, evt_date, tag_code FROM TRACKABLE_DATA PER PARTITION LIMIT 1;
+
+
+    // SQL with PARTITION BY
+    SELECT * FROM 
+     (SELECT acct_id, event, evt_date, tag_code, 
+      row_number() OVER (PARTITION BY acct_id, event, evt_date ORDER BY acct_id, event, evt_date desc) rnum
+      FROM TRACKABLE_DATA) tablerank  
+    WHERE tablerank.rnum = 1
+
+
+    // Java code, naturally simple
+    Queryable query = QueryFactory.of("events");
+    List<Event> events = repository.list(query);
+    
+
+You can use the best of your database without waste time to learn new framework query language, DSL or anything else.
+
+
+    
 ### Requirements
 
 `jkniv-whinstone-jdbc`, `jkniv-whinstone-jpa2`, `jkniv-whinstone-cassandra` and `jkniv-whinstone-couchdb` binaries requires JDK level 6.0 or above.

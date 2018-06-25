@@ -28,10 +28,10 @@
     </head>
     <breadcrumbs>
       <item name="jkniv" href="http://jkniv.sourceforge.net/index.html" />
-      <item name="sqlegance" href="http://jkniv.sourceforge.net/jkniv-sqlegance/index.html" />
-      <item name="whinstone" href="http://jkniv.sourceforge.net/jkniv-whinstone/index.html" />
+      <item name="jkniv-sqlegance" href="http://jkniv.sourceforge.net/jkniv-sqlegance/index.html" />
+      <item name="jkniv-whinstone" href="http://jkniv.sourceforge.net/jkniv-whinstone/index.html" />
+      <item name="jkniv-jaas" href="http://jkniv.sourceforge.net/jkniv-jaas/index.html" />
       <item name="camel-sap-jco3" href="http://jkniv.sourceforge.net/jkniv-camel-sap-jco3/index.html" />
-      <item name="jaas-glassfish" href="http://jkniv.sourceforge.net/jkniv-jaas/index.html" />
     </breadcrumbs>
 
     <menu name="jkniv">
