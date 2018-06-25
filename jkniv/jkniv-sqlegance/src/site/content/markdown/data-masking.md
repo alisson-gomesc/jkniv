@@ -7,5 +7,7 @@ SQLegance provide an interface to setting which attributes with sensible data sh
 
 The default attributes masked are: `password`,`passwd`, `pwd`
 
-New attributes can be added invoking the method `addAttrName(String)` from `SimpleDataMasking` class or a new implementation can  provider implementing the `DataMasking` interface, see [Repository Config](repository-config.md) to know how to configure new implementations.
+New attributes can be added invoking the method `addAttrName(String)` from `SimpleDataMasking` class or a new implementation can  provider implementing the `DataMasking` interface, see <a href="repository-config.html">Repository Config</a> to know how to configure new implementations.
+
+
 

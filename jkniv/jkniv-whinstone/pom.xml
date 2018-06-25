@@ -92,15 +92,9 @@
     <developerConnection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/whinstone</developerConnection>
     <url>http://jkniv.svn.sourceforge.net/viewvc/jkniv/trunk/tags/release-jkniv-0.6.0/whinstone</url>
   </scm>
-  <distributionManagement>
-    <site>
-      <id>sourceforge.net</id>
-      <url>scp://shell.sourceforge.net/home/project-web/jkniv/htdocs/SQLegance</url>
-    </site>
-    <!--repository> 
-      <id>nexus</id> 
-      <name>Central Repository</name> 
-      <url>http://server:8080/m2repository/content/repositories/releases/</url> 
-      </repository -->
-  </distributionManagement>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>https://jkniv-io.atlassian.net/projects/JKNIVWHIN/</url>
+  </issueManagement>
+  
 </project>

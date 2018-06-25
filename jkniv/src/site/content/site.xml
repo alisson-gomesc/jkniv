@@ -29,12 +29,9 @@
     <breadcrumbs>
       <item name="jkniv" href="http://jkniv.sourceforge.net/index.html" />
       <item name="sqlegance" href="http://jkniv.sourceforge.net/jkniv-sqlegance/index.html" />
-      <item name="whinstone-jdbc" href="http://jkniv.sourceforge.net/jkniv-whinstone-jdbc/index.html" />
-      <item name="whinstone-jpa2" href="http://jkniv.sourceforge.net/jkniv-whinstone-jpa2/index.html" />
-      <item name="whinstone-couchdb" href="http://jkniv.sourceforge.net/jkniv-whinstone-couchdb/index.html" />
-      <item name="whinstone-cassandra" href="http://jkniv.sourceforge.net/jkniv-whinstone-cassandra/index.html" />
+      <item name="whinstone" href="http://jkniv.sourceforge.net/jkniv-whinstone/index.html" />
       <item name="camel-sap-jco3" href="http://jkniv.sourceforge.net/jkniv-camel-sap-jco3/index.html" />
-      <item name="jaas-glassfish" href="http://jkniv.sourceforge.net/jkniv-jaas-glassfish/index.html" />
+      <item name="jaas-glassfish" href="http://jkniv.sourceforge.net/jkniv-jaas/index.html" />
     </breadcrumbs>
 
     <menu name="jkniv">

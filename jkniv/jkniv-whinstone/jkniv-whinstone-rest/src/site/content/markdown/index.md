@@ -5,15 +5,12 @@ Title: Introduction
 ## What is whinstone-rest
 
 
-Whinstone-jpa2 is a implementation of  <a href="http://martinfowler.com/eaaCatalog/repository.html">Repository pattern</a> using JPA2, Hibernate and SQLegance.
+`jkniv-whinston-rest` allow access the XML queries using HTTP verbs.
 
-# Why Whinstone
-
-Whinstone allow the developers worry just with implementation of view, controller and business layers. While Whinstone encapsulate all data access with the Repository pattern keeping the secure coding of SQL Injection, paginated queries and others good design practices.
-
-The Whinstone it's a final implementation of repository pattern, where the interface is defined at <a href="jkniv.sourceforge.net/apidocs/net/sf/jkniv/sqlegance/Repository.html">net.sf.jkniv.sqlegance.Repository</a> (SQLegance project), using some other frameworks.
 
 ### Requirements dependencies
+
+`jkniv-whinstone-rest`require JDK 1.7 or high.
 
 ### Full configuration whinstone-rest (web.xml)
 
@@ -35,16 +32,23 @@ The Whinstone it's a final implementation of repository pattern, where the inter
     <context-param>
      <description>Sql context file</description>
      <param-name>fullname.sqlContext</param-name>
-     <param-value>/repository-sql.xml</param-value>
+     <param-value>/repository-sql-finance.xml, /repository-sql-humanresources.xml</param-value>
     </context-param>
-    <listener>  
-     <listener-class>net.sf.jkniv.whinstone.rs.RegistryLoaderListener</listener-class>
+    <listener>
+     <listener-class>net.sf.jkniv.whinstone.rest.RegistryLoaderListener</listener-class>
     </listener>
  
 
 
 ## URL patterns
 
-http://host:port/context/api/rs/[repository-method]/[queryname]/?
+    http://[host]:[port]/[context]/<jersey-base-url>/<sqlegance-context>/<repository-method>/<queryname>/?
+
+Example:
+
+    http://localhost:8080/myapp/api/finance/list/user?
+
+
+
 
 

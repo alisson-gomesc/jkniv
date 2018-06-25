@@ -42,6 +42,7 @@ import net.sf.jkniv.sqlegance.DefaultClassLoader;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.RepositoryType;
+import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.whinstone.RepositoryService;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
@@ -52,7 +53,7 @@ import net.sf.jkniv.whinstone.couchdb.jndi.JndiCreator;
 public class BaseJdbc extends BaseSpringJUnit4
 {
     private static final Logger LOG           = LoggerFactory.getLogger(BaseJdbc.class);
-    public  static final Properties config;
+    public  static final Properties config, configDb3t;
     private static final String URL           = "http://127.0.0.1:5984";
     private static final String SCHEMA        = "whinstone-author";
     private static final String USER          = "admin";
@@ -64,10 +65,16 @@ public class BaseJdbc extends BaseSpringJUnit4
     static 
     {
         config = new Properties();
+        configDb3t = new Properties();
         config.setProperty(RepositoryProperty.JDBC_URL.key(), URL);
-        config.setProperty(RepositoryProperty.JDBC_SCHEMA.key(), SCHEMA);
+        config.setProperty(RepositoryProperty.JDBC_SCHEMA.key(), "whinstone-author");
         config.setProperty(RepositoryProperty.JDBC_USER.key(), USER);
         config.setProperty(RepositoryProperty.JDBC_PASSWORD.key(), PASSWD);
+
+        configDb3t.setProperty(RepositoryProperty.JDBC_URL.key(), URL);
+        configDb3t.setProperty(RepositoryProperty.JDBC_SCHEMA.key(), "db3t-user-origin");
+        configDb3t.setProperty(RepositoryProperty.JDBC_USER.key(), USER);
+        configDb3t.setProperty(RepositoryProperty.JDBC_PASSWORD.key(), PASSWD);
     }
 
     
@@ -137,7 +144,12 @@ public class BaseJdbc extends BaseSpringJUnit4
     {
         return RepositoryService.getInstance().lookup(RepositoryType.COUCHDB).newInstance(config);
     }
-    
+
+    protected static Repository getRepositoryDb3t()
+    {
+        return RepositoryService.getInstance().lookup(RepositoryType.COUCHDB).newInstance(configDb3t, SqlContextFactory.newInstance("/repository-sql-db3t.xml"));
+    }
+
     protected Queryable getQuery(String name)
     {
         Queryable q = QueryFactory.of(name);

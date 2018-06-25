@@ -10,7 +10,7 @@ It's implementation from Repository pattern:
 
 >Mediates between the domain and data mapping layers using a collection-like interface for accessing domain objects.
 
-The project `jkniv-sqlegance` keeps the interface `net.sf.jkniv.sqlegance.Repository` and the whinstone umbrella project implements that at four flavors: 
+The project `jkniv-whinstone` define the repository contract between you service layer and the database with the interface `net.sf.jkniv.whinstone.Repository`. There are four repository flavors: 
 
 - `jkniv-whinstone-jdbc` repository contract using directly jdbc access.
 - `jkniv-whinstone-jpa2` encapsulate JPA access with a simple repository contract.
@@ -33,7 +33,7 @@ The steps to start are:
 2. write your SQL queries
 3. run forest run...
 
-No annotations, no mapping (except if you want to use JPA), easily to test. The power of the database query language is yours and whinstone give to you **yours plain java objects with automatic bind to input parameters and result set output**.
+No annotations, no mapping (except if you want to use JPA), easily to test. The power of the database query language is yours and `whinstone` gives to you **the plain java objects with automatic bind to input parameters and result set output**, reducing a boilerplate of code to set JDBC parameters and resultset *getters*.
 
 ### Requirements
 
@@ -44,12 +44,12 @@ No annotations, no mapping (except if you want to use JPA), easily to test. The 
 
 The `Repository` interface have a simple set of methods to manipulate the data from/to database.
 
-- `get`: retrieve data from data source as only object
-- `list`: retrieve data from data source as list of objects
-- `add`: add an object or collection to the data source
-- `update`: update an object or collection to the data source
-- `remove`: delete an object or collection to the data source
-- `enrich`: use the queryable object to retrieve data from data source and append the query result to object param from queryable. 
+- `get`: retrieve only one row data from repository.
+- `list`: retrieve a set of rows data from repository.
+- `add`: add an object or collection of data to repository.
+- `update`: update an object or collection of data to repository.
+- `remove`: delete an object or collection of data from repository.
+- `enrich`: use the `queryable` object to retrieve data from repository and append the result to object parameter from `queryable`. 
 - `scalar`: retrieve a scalar value
 
 The library is 100% protected against [SQL injection](https://www.owasp.org/index.php/SQL_Injection "OWASP SQL injection") because all statements are [PreparedStatement](https://docs.oracle.com/javase/6/docs/api/java/sql/PreparedStatement.html "PreparedStatement"), except to couchdb that access it's over HTTP protocol.
@@ -64,34 +64,6 @@ The library is 100% protected against [SQL injection](https://www.owasp.org/inde
 | JPA                |   yes (0.6.0)  | no             | no                  | no                |
 | JDBC               |   yes (0.6.0)  | yes  (0.6.0)   | no                  | no                |
 | Spring transaction |   yes (0.6.0)  | yes  (0.6.0)   | no                  | no                |
-
-
-
-    +-------------------------------+----------------------------------------------+
-    |         Web Layer             |            Repository Layer                  |
-    +-------------------------------+----------------------------------------------+
-    |                               .                                              |
-    |                               .                                   +-----+    |
-    |                               .     +----------------------+      |  j  |    |
-    |                               .     | jkniv-whinstone-jdbc |<-----|  k  |    |
-    |                               .     +----------------------+      |  n  |    |
-    |                               .                                   |  i  |    |
-    |                               .     +----------------------+      |  v  |    |
-    | +------------------------+    .     | jkniv-whinstone-jpa  |<-----|  '  |    |
-    | | jkniv-whinstone-rest   |<---|     +----------------------+      |  s  |    |
-    | +------------------------+    .                                   |  q  |    |
-    |                               .    +-----------------------+      |  l  |    |
-    |                               .    |jkniv-whinstone-couchdb|<-----|  e  |    |
-    |                               .    +-----------------------+      |  g  |    |
-    |                               .                                   |  a  |    |
-    |                               .  +-------------------------+      |  n  |    |
-    |                               .  |jkniv-whinstone-cassandra|<-----|  c  |    |     
-    |                               .  +-------------------------+      |  e  |    |
-    |                               .                                   +-----+    |
-    |                               .                                              |
-    |                               .                                              |
-    |                               .                                              |
-    +------------------------------------------------------------------------------+
 
 
 

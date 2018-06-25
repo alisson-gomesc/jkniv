@@ -27,20 +27,14 @@ import net.sf.jkniv.whinstone.couchdb.BaseJdbc;
 
 public class JndiCreator
 {
+    
     public static void bind()
     {
-        bind("java:comp/env/props/couchdb");
-    }
-    
-    public static void bind(String jndiName)
-    {
+        final SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
+        builder.bind("java:comp/env/props/couchdb", BaseJdbc.config);
+        builder.bind("java:comp/env/props/db3t", BaseJdbc.configDb3t);
         try
         {
-            //BasicDataSource datasource = new BasicDataSource();
-            //datasource.setUrl("jdbc:derby:memory:whinstone");
-            //datasource.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
-            final SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
-            builder.bind(jndiName, BaseJdbc.config);
             builder.activate();
         }
         catch (NamingException ex)

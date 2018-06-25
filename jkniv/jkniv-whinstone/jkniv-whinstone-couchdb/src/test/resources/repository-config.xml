@@ -10,4 +10,11 @@
     <description>Jndi for properties file</description>
     <jndi-data-source>java:comp/env/props/couchdb</jndi-data-source>
   </repository>
+
+  <repository name="couchdb-db3t">
+    <description>Jndi for properties file</description>
+    <jndi-data-source>java:comp/env/props/db3t</jndi-data-source>
+  </repository>
+  
+  
 </repository-config>

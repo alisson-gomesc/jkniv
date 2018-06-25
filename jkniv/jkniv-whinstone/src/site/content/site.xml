@@ -30,15 +30,16 @@
       ]]>
     </head>
     <menu name="jkniv-whinstone" inherit="top">
-      <item
-        name="Introduction"
-        href="index.html" />
-      <item
-          name="Javadoc"
-          href="http://jkniv.sourceforge.net/apidocs/whinstone/index.html" />
-      <item
-        name="Donwload"
-        href="https://sourceforge.net/projects/jkniv/files/whinstone-jpa2/" />
+      <item name="Introduction" href="index.html" />
+      <item name="Cache" href="cache.html" />
+      <item name="Whinstone for JDBC"
+            href="http://jkniv.sourceforge.net/jkniv-whinstone-jdbc/index.html" />
+      <item name="Whinstone for JPA2"
+            href="http://jkniv.sourceforge.net/jkniv-whinstone-jpa2/index.html" />
+      <item name="Whinstone for CouchDB"
+            href="http://jkniv.sourceforge.net/jkniv-whinstone-couchdb/index.html" />
+      <item name="Whinstone for Cassandra"
+            href="http://jkniv.sourceforge.net/jkniv-whinstone-cassandra/index.html" />
     </menu>
   </body>
 </project>

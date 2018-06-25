@@ -9,16 +9,16 @@
   </appender>
 
   <logger name="jkniv.whinstone.couchdb.SQL" additivity="false">
-    <level value="trace" />
+    <level value="warn" />
     <appender-ref ref="console" />
   </logger>
   <logger name="net.sf.jkniv.whinstone.couchdb" additivity="false">
-    <level value="trace" />
+    <level value="info" />
     <appender-ref ref="console" />
   </logger>
 
   <root>
-    <level value="warn" />
+    <level value="error" />
     <appender-ref ref="console" />
   </root>
 

@@ -38,8 +38,3 @@ This create link between `repository-sql.xml` (previous version to 0.6.0 is `Sql
 
 When a context attribute isn't defined the first repository config name is default.
  
-TODO doc
-- Data Masking
-- Debug SQL
-- SQL Dialect
-- Query name strategy
