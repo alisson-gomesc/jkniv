@@ -46,7 +46,8 @@ import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
 public class FindStressTest extends BaseJdbc
 {
     final int LOOP = 100;
-    @Test
+
+    @Test @Ignore("Needs pre load data")
     public void whenCouchDbListWithFixedFind()
     {
         Repository repositoryDb = getRepositoryDb3t();

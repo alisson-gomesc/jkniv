@@ -19,9 +19,12 @@
  */
 package net.sf.jkniv.cache;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -46,6 +49,8 @@ public class MemoryCache<K, V> implements Cacheable<K, V>
     private String                               name;
     private CachePolicy                          policy;
     private ConcurrentMap<K, Cacheable.Entry<V>> cache;
+    private Cacheable.Entry<V> minorHit;
+    private K keyMinorHit;
     
     public MemoryCache()
     {
@@ -103,6 +108,18 @@ public class MemoryCache<K, V> implements Cacheable<K, V>
     {
         notNull.verify(key, object);
         Cacheable.Entry<V> entry = new MemoryCache.Entry<V>(object);
+        if (this.cache.size() >= policy.size())
+        {
+            if (this.keyMinorHit != null)
+                remove(this.keyMinorHit);
+            else
+            {
+                remove(this.cache.keySet().iterator().next());
+            }
+            this.keyMinorHit = key;
+            this.minorHit = entry;
+        }
+        
         Cacheable.Entry<V> old = this.cache.put(key, entry);
         if (old != null)
             return old.getValue();
@@ -126,15 +143,28 @@ public class MemoryCache<K, V> implements Cacheable<K, V>
     public Cacheable.Entry<V> getEntry(K key)
     {
         Cacheable.Entry<V> entry = this.cache.get(key);
+        
         if (entry == null )
             return null;
+
+        markMinorHit(entry);
         
         if (policy.isAlive(entry.getTimestamp().getTime(), entry.getLastAccess().getTime()))
             return entry;
         
-
         this.cache.remove(key);
         return null;
+    }
+    
+    private void markMinorHit(Cacheable.Entry<V> entry)
+    {
+        if (minorHit == null)
+            minorHit = entry;
+        else
+        {
+            if(minorHit.hits() > entry.hits())
+                minorHit = entry;
+        }
     }
     
     public Set<Map.Entry<K, Cacheable.Entry<V>>> entrySet()
@@ -151,6 +181,7 @@ public class MemoryCache<K, V> implements Cacheable<K, V>
     public void clear()
     {
         this.cache.clear();
+        this.minorHit = null;
     }
     
     @Override
@@ -164,8 +195,6 @@ public class MemoryCache<K, V> implements Cacheable<K, V>
     {
         return "MemoryCache [name=" + name + ", policy=" + policy + ", cacheSize=" + cache.size() + "]";
     }
-
-
 
 
     static class Entry<V> implements Cacheable.Entry<V>

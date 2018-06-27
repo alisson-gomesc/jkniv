@@ -22,6 +22,9 @@ package net.sf.jkniv.cache;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -95,4 +98,24 @@ public class MemoryCacheTest
         assertThat(value, nullValue());
     }
 
+    
+    @Test
+    public void whenMemoryCacheRespectMaxSize() throws InterruptedException
+    {
+        CachePolicy policy = new TTLCachePolicy(600L, 600L, 10, "1m");
+        Cacheable<String, String> cache = new MemoryCache<String, String>(policy);
+        for (int i = 0; i<20; i++)
+        {
+            cache.put("A"+i, ""+i);
+        }
+        assertThat(cache.size(), is(10L));
+        
+        Set<Map.Entry<String, Cacheable.Entry<String>>> entrySet = cache.entrySet();
+        for (Map.Entry<String, Cacheable.Entry<String>> cacheableEntry : entrySet)
+        {
+            Cacheable.Entry<String> value = cacheableEntry.getValue();
+            System.out.println("k="+cacheableEntry.getKey() +", v="+value.getValue());
+        }
+    }
+    
 }
