@@ -150,9 +150,6 @@ class QueryName implements Queryable
             return null;
         
         Object o = null;
-        //        if (params == null)
-        //            throw new ParameterNotFoundException(
-        //                    "Query with parameter ["+name+"] is wrong, cannot found value with null instance from Queryable.params");
         try
         {
             o = PropertyUtils.getProperty(params, name);
