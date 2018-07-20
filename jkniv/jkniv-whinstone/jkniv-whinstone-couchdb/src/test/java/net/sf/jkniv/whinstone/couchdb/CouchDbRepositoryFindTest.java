@@ -95,5 +95,15 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
         assertThat(list.get(0), instanceOf(Map.class));
         System.out.println(list.get(0));
     }
-    
+
+    @Test
+    public void whenCouchDbListUsingLikeTwoFieldsSameParam()
+    {
+        Repository repositoryDb = getRepository();        
+        List<Map> list = repositoryDb.list(QueryFactory.of("authorsUsingLike", "name", "(?i)ka"));
+        assertThat(list.size(), is(2));
+        assertThat(list.get(0), instanceOf(Map.class));
+        System.out.println(list.get(0));
+    }
+
 }

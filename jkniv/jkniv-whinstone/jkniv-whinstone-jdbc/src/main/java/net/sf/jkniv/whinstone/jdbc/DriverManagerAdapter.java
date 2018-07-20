@@ -24,6 +24,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import net.sf.jkniv.reflect.ReflectionUtils;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
@@ -42,6 +43,8 @@ public class DriverManagerAdapter extends AbstractJdbcAdapter
         this.defaultIsolation = Isolation.DEFAULT;
         this.driver = props.getProperty(RepositoryProperty.JDBC_DRIVER.key());
         this.url = props.getProperty(RepositoryProperty.JDBC_URL.key());
+        if (driver != null)
+            register();
     }
     
     /**
@@ -63,10 +66,6 @@ public class DriverManagerAdapter extends AbstractJdbcAdapter
     public ConnectionAdapter open(Isolation isolation)
     {
         ConnectionAdapter adapter = null;
-        // TODO application must manually load any JDBC drivers prior to version 4.0
-        //if (driver != null && !drivers.contains(driver))
-        //    JdbcUtils.registerDriver(driver);
-        
         try
         {
             LOG.debug("Getting Connection from DriverManager");
@@ -81,4 +80,16 @@ public class DriverManagerAdapter extends AbstractJdbcAdapter
         }
         return adapter;
     }    
+    
+    private void register()
+    {
+        try
+        {
+            Class.forName(driver);
+        }
+        catch (ClassNotFoundException e)
+        {
+            new net.sf.jkniv.reflect.ReflectionException("ClassNotFoundException for register ["+driver+"]", e);
+        }
+    }
 }

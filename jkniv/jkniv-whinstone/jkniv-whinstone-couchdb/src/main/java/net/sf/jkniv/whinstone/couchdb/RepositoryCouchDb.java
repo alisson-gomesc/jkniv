@@ -294,7 +294,7 @@ class RepositoryCouchDb implements Repository
 
         if (!queryable.isBoundSql())
             queryable.bind(selectable);
-        
+
         Cacheable.Entry entry = null;
         
         if(!queryable.isCacheIgnore())

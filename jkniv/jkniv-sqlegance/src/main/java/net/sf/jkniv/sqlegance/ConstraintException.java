@@ -19,6 +19,7 @@
  */
 package net.sf.jkniv.sqlegance;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -32,10 +33,22 @@ public class ConstraintException extends RepositoryException
     private static final long serialVersionUID = -1607171467309827392L;
 
     private final Map<String, String> violations;
-    
+
     /**
      * Constructor for ConstraintException without message detail
-     * @param violations violated constraints from model
+     * @param param the name of parameter with error
+     * @param message the user message
+     */
+    public ConstraintException(String param, String message)
+    {
+        super();
+        this.violations = new HashMap<String, String>();
+        this.violations.put(param, message);
+    }
+
+    /**
+     * Constructor for ConstraintException with a set of messages
+     * @param violations violated constraints from model, with pair of values field and message
      */
     public ConstraintException(Map<String, String> violations)
     {

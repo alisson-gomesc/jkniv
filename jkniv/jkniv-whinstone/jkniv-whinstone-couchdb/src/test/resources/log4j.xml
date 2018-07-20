@@ -9,7 +9,7 @@
   </appender>
 
   <logger name="jkniv.whinstone.couchdb.SQL" additivity="false">
-    <level value="warn" />
+    <level value="debug" />
     <appender-ref ref="console" />
   </logger>
   <logger name="net.sf.jkniv.whinstone.couchdb" additivity="false">

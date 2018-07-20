@@ -56,9 +56,6 @@ class JsonMapper
     
     public static ObjectMapper newMapper()
     {
-        //ObjectMapper mapper = new ObjectMapper();
-        // FIXME design jackson json properties config
-        //mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper;
     }
     
@@ -94,9 +91,7 @@ class JsonMapper
     {
         try
         {
-            //final ObjectMapper mapper = new ObjectMapper(); // jackson's objectmapper
             return mapper.convertValue(content, valueType);
-            //return newMapper().readValue(content, valueType);
         }
         catch (Exception e)
         {

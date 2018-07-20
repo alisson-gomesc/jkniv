@@ -101,29 +101,14 @@ public class CouchDbSynchViewDesign
                     views.put(name, view);
                 }
                 if (map)
-                    view.setMapfun(sql.getSql());
+                    view.setMap(sql.getSql());
                 else
-                    view.setRedfun(sql.getSql());
+                    view.setReduce(sql.getSql());
             }
             command.add(views.values());
-            command.closeBody();
             command.execute();
             //LOG.info("Updating view _design with view [{}]", sql.getName());
         }
         LOG.info("Host [{}] had [{}] views design updated", httpBuilder.getHostContext(), queries.size());
     }
-    
-    //    private void update(Sql view)
-    //    {
-    //        LOG.debug("\n{}", view.getSql());
-    //        try
-    //        {
-    //            new DesignCommand(httpBuilder, view).execute();
-    //        }
-    //        catch(RepositoryException e)
-    //        {
-    //            LOG.error("Cannot create or update the view [{}]", view.getName(), e);
-    //        }
-    //    }
-    
 }

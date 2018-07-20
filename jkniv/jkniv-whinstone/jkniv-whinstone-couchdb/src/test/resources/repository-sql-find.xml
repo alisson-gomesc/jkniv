@@ -22,6 +22,19 @@
     }
   </select>
   
+  <select id="authorsUsingLike">  
+  {
+      "selector": {
+        <if test="name != null">
+         "$or": [ { 
+             "name":  { "$regex": :name } },
+             { "nationality":  { "$regex": :name } 
+          } ]
+        </if>
+      },
+      "limit": 10000
+    }
+  </select>
 
   <select id="authorsBRTyped" returnType="net.sf.jkniv.whinstone.couchdb.model.orm.Author">
     {

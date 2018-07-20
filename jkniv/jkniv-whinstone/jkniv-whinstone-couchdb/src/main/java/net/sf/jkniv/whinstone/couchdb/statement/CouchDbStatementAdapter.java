@@ -4,13 +4,14 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,8 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     private static final Logger      LOG     = LoggerFactory.getLogger(CouchDbStatementAdapter.class);
     private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
     private static final DataMasking MASKING = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getDataMasking();
+    protected static final String  REGEX_QUESTION_MARK = "[\\?]+";    //"\\?";
+    protected static final Pattern PATTERN_QUESTION = Pattern.compile(REGEX_QUESTION_MARK, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private final HandlerException   handlerException;
     private final SqlDateConverter   dtConverter;
     private int                      index, indexIN;
@@ -57,7 +60,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     private String                   body;
     private ParamParser              paramParser;
     private HttpBuilder              httpBuilder;
-    private Map<String, Object>      params;
+    private List<Object>             params;
     private boolean                  boundParams;
     private static BasicType         basicType = new BasicType();
     
@@ -66,7 +69,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
         this.httpBuilder = httpBuilder;
         this.body = body;
         this.paramParser = paramParser;
-        this.params = new LinkedHashMap<String, Object>();
+        this.params = new ArrayList<Object>();
         this.boundParams = false;
         this.dtConverter = new SqlDateConverter();
         this.oneToManies = Collections.emptySet();
@@ -140,7 +143,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     @Override
     public StatementAdapter<T, String> bind(String name, Object value)
     {
-        this.params.put(name, value);
+        this.params.add(value);
         currentIndex();//increment index
         return this;
         /*
@@ -165,7 +168,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     @Override
     public StatementAdapter<T, String> bind(Object value)
     {
-        this.params.put(String.valueOf(currentIndex()), value);
+        this.params.add(value);
         return this;
         /*
         log(value);
@@ -201,7 +204,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     {
         for (Object v : values)
         {
-            this.params.put(String.valueOf(currentIndex()), v);
+            this.params.add(v);
         }
         return this;
         //this.bound = stmt.bind(values);
@@ -216,7 +219,6 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
         // TODO implements batch https://docs.datastax.com/en/drivers/python/3.2/api/cassandra/query.html
         // TODO implements batch https://docs.datastax.com/en/cql/3.3/cql/cql_using/useBatch.html
         // TODO implements batch https://docs.datastax.com/en/cql/3.3/cql/cql_using/useBatchGoodExample.html
-        
     }
     
     @SuppressWarnings(
@@ -224,92 +226,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     public List<T> rows()
     {
         bindParams();
-        List<T> list = Collections.emptyList();
-        /*
-        //ResultSet rs = new StringResultRow<String>();
-        ResultSetParser<T, String> rsParser = null;
-        Groupable<T, ?> grouping = new NoGroupingBy<T, T>();
-        FindAnswer answer = new FindAnswer();
-        String json = new PostCommand(httpBuilder.newFind(), body).execute();
-        ObjectMapper mapper = new ObjectMapper();
-        try
-        {
-            answer = mapper.readValue(json, FindAnswer.class);
-            if (answer.getWarning() != null)
-                LOG.warn(answer.getWarning());
-            list = (List<T>) answer.getDocs();
-        }
-        catch (Exception e) // JsonParseException | JsonMappingException | IOException
-        {
-            handlerException.handle(e);
-        }
-        */
-        //        try
-        //        {
-        //            CloseableHttpClient httpclient = HttpClients.createDefault();
-        //            
-        //            response = httpclient.execute(this.request);
-        //            String json = EntityUtils.toString(response.getEntity());
-        //            //LOG.debug(response.getStatusLine().toString());
-        //            int statusCode = response.getStatusLine().getStatusCode();
-        //            if (statusCode == DbCommand.HTTP_OK)
-        //            {
-        //                // FIXME
-        //                ///rs = session.execute(bound);
-        //                //JdbcColumn<Row>[] columns = getJdbcColumns(rs.getColumnDefinitions());
-        //                //setResultRow(columns);
-        //                //
-        //                //Transformable<T> transformable = resultRow.getTransformable();
-        ////                if (!groupingBy.isEmpty())
-        ////                {
-        ////                    grouping = new GroupingBy(groupingBy, returnType, transformable);
-        ////                }
-        //                rsParser = new ObjectResultSetParser(resultRow, grouping);
-        //                list = rsParser.parser(json);
-        //            }
-        //            else if (statusCode == DbCommand.HTTP_NO_CONTENT || 
-        //                     statusCode == DbCommand.HTTP_NOT_MODIFIED || 
-        //                     statusCode == DbCommand.HTTP_RESET_CONTENT)
-        //            {
-        //                // 204 No Content, 304 Not Modified, 205 Reset Content
-        //                LOG.info(response.getStatusLine().toString());
-        //            }
-        //            else
-        //            {
-        //                LOG.error("{} -> {} ",response.getStatusLine().toString(), json);
-        //                throw new RepositoryException(response.getStatusLine().toString());
-        //            }
-        //        }
-        //        catch (SQLException e)
-        //        {
-        //            handlerException.handle(e, e.getMessage());
-        //        }
-        //        catch (ClientProtocolException e)
-        //        {
-        //            // TODO Auto-generated catch block
-        //            e.printStackTrace();
-        //        }
-        //        catch (IOException e)
-        //        {
-        //            // TODO Auto-generated catch block
-        //            e.printStackTrace();
-        //        }
-        //        finally 
-        //        {
-        //            if(response != null)
-        //            {
-        //                try
-        //                {
-        //                    response.close();
-        //                }
-        //                catch (IOException e)
-        //                {
-        //                    // TODO Auto-generated catch block
-        //                    e.printStackTrace();
-        //                }
-        //            }
-        //        }        
-        return list;
+        return Collections.emptyList();
     }
     
     public ResultSetParser<T, String> generatedKeys()
@@ -334,151 +251,41 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
         indexIN = 0;
         return before;
     }
-    
-    private void setValueIN(Object[] paramsIN) throws SQLException
-    {
-        int j = 0;
-        for (; j < paramsIN.length; j++)
-            __bindInternal__(paramsIN[j]);
-        indexIN = indexIN + j;
-    }
-    
+        
     private void bindParams()
     {
+        StringBuilder json = new StringBuilder();
         if (!boundParams)
         {
-            for (String k : params.keySet())
+            Matcher matcherQuestion = PATTERN_QUESTION.matcher(this.body);
+            int i = 0;
+            int start = 0, endBody = this.body.length();
+            while (matcherQuestion.find())
             {
-                Object v = params.get(k);
-                if (v instanceof Number)
-                {
-                    this.body = this.body.replaceFirst("\\?", String.valueOf(v));// FIXME stament bind type like Date, Double, Calendar, Float
-                }
-                else
-                {
-                    this.body = this.body.replaceFirst("\\?", String.valueOf("\"" + v + "\""));// FIXME stament bind type like Date, Double, Calendar, Float
-                }
+                json.append(body.substring(start, matcherQuestion.start()));
+                json.append(quotesJson(params.get(i++)));
+                //System.out.printf("group[%s] [%d,%d]\n", matcherQuestion.group(), matcherQuestion.start(), matcherQuestion.end());
+                params.add(i++, body.subSequence(matcherQuestion.start(), matcherQuestion.end()).toString());
+                start = matcherQuestion.end();
             }
+            json.append(body.substring(start, endBody));
+            //System.out.printf("%s\n", json);
+            this.body = json.toString();
         }
         this.boundParams = true;
     }
     
+    private String quotesJson(Object value)
+    {
+        String ret  = String.valueOf("\"" + value + "\"");
+        if (value instanceof Number)
+            ret = String.valueOf(value);// FIXME stament bind type like Date, Double, Calendar, Float
+        
+        return ret;
+    }
+    
     /*******************************************************************************/
     
-    private StatementAdapter<T, String> __bindInternal__(Object value)
-    {
-        try
-        {
-            if (value == null)
-                setToNull();
-            else if (value instanceof String)
-                setInternalValue((String) value);
-            else if (value instanceof Integer)
-                setInternalValue((Integer) value);
-            else if (value instanceof Long)
-                setInternalValue((Long) value);
-            else if (value instanceof Double)
-                setInternalValue((Double) value);
-            else if (value instanceof Float)
-                setInternalValue((Float) value);
-            else if (value instanceof Boolean)
-                setInternalValue((Boolean) value);
-            else if (value instanceof BigDecimal)
-                setInternalValue((BigDecimal) value);
-            else if (value instanceof BigInteger)
-                setInternalValue((BigInteger) value);
-            else if (value instanceof Short)
-                setInternalValue((Short) value);
-            else if (value instanceof Date)
-                setInternalValue((Date) value);
-            else if (value instanceof java.util.Calendar)
-                setInternalValue((Calendar) value);
-            else if (Enum.class.isInstance(value))
-                setInternalValue((Enum<?>) value);
-            else if (value instanceof Byte)
-                setInternalValue((Byte) value);
-            else
-            {
-                //setValue(value);
-            }
-        }
-        catch (SQLException e)
-        {
-            this.handlerException.handle(e);
-        }
-        return this;
-    }
-    
-    private void setInternalValue(Calendar value)
-    {
-        //bound.setTimestamp(currentIndex(), value.getTime());
-    }
-    
-    private void setInternalValue(Date value)
-    {
-        //bound.setTimestamp(currentIndex(), value);
-    }
-    
-    private void setInternalValue(Integer value)
-    {
-        //bound.setInt(currentIndex(), value);
-    }
-    
-    private void setInternalValue(Long value)
-    {
-        //bound.setLong(currentIndex(), value);
-    }
-    
-    private void setInternalValue(Float value)
-    {
-        //bound.setFloat(currentIndex(), value);
-    }
-    
-    private void setInternalValue(Double value)
-    {
-        //bound.setDouble(currentIndex(), value);
-    }
-    
-    private void setInternalValue(Short value)
-    {
-        //bound.setShort(currentIndex(), value);
-    }
-    
-    private void setInternalValue(Boolean value)
-    {
-        //bound.setBool(currentIndex(), value);
-    }
-    
-    private void setInternalValue(Byte value)
-    {
-        //bound.setByte(currentIndex(), value);
-    }
-    
-    private void setInternalValue(BigDecimal value)
-    {
-        //bound.setDecimal(currentIndex(), value);
-    }
-    
-    private void setInternalValue(BigInteger value)
-    {
-        //bound.setVarint(currentIndex(), value);
-    }
-    
-    private void setInternalValue(String value)
-    {
-        //bound.setString(currentIndex(), value);
-    }
-    
-    private void setToNull()
-    {
-        //bound.setToNull(currentIndex());
-    }
-    
-    private void setInternalValue(Enum<?> value) throws SQLException
-    {
-        // FIXME design converter to allow save ordinal value or other value from enum
-        //bound.setString(currentIndex(), value.name());
-    }
     
     /**
      * return the index and increment the next value
@@ -488,44 +295,6 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     private int currentIndex()
     {
         return (index++ + indexIN);
-    }
-    
-    /*******************************************************************************/
-    
-    @SuppressWarnings(
-    { "unchecked", "rawtypes" })
-    private void setResultRow(JdbcColumn<String>[] columns)
-    {
-        if (resultRow != null)
-        {
-            resultRow.setColumns(columns);
-            return;
-        }
-        
-        if (scalar)
-        {
-            resultRow = new ScalarResultRow(columns);
-        }
-        //        else if (Map.class.isAssignableFrom(returnType))
-        //        {
-        //            resultRow = new MapResultRow(returnType, columns, sqlLogger);
-        //        }
-        //        else if (Number.class.isAssignableFrom(returnType)) // FIXME implements for date, calendar, boolean improve design
-        //        {
-        //            resultRow = new NumberResultRow(returnType, columns, sqlLogger);
-        //        }
-        else if (String.class.isAssignableFrom(returnType))
-        {
-            resultRow = new StringResultRow(columns);
-        }
-        //        else if (oneToManies.isEmpty())
-        //        {
-        //            resultRow = new FlatObjectResultRow(returnType, columns, sqlLogger);
-        //        }
-        else
-        {
-            resultRow = new PojoResultRow(returnType, columns, oneToManies);
-        }
     }
     
     private void log(String name, Object value)

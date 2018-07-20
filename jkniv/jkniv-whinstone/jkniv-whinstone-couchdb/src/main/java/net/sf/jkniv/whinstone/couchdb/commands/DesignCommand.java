@@ -22,13 +22,10 @@ package net.sf.jkniv.whinstone.couchdb.commands;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -40,83 +37,57 @@ import org.slf4j.LoggerFactory;
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.Sql;
-import net.sf.jkniv.whinstone.ResultSetParser;
-import net.sf.jkniv.whinstone.classification.Groupable;
-import net.sf.jkniv.whinstone.classification.NoGroupingBy;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
-import net.sf.jkniv.whinstone.couchdb.statement.CouchDbStatementAdapter;
-import net.sf.jkniv.whinstone.couchdb.statement.FindAnswer;
 
-public class DesignCommand  extends AbstractCommand implements CouchCommand
+public class DesignCommand extends AbstractCommand implements CouchCommand
 {
-    private static final Logger LOG = LoggerFactory.getLogger(DesignCommand.class);
+    private static final Logger     LOG     = LoggerFactory.getLogger(DesignCommand.class);
     private static final Assertable notNull = AssertsFactory.getNotNull();
-    private final HttpBuilder httpBuilder;
-    private final String docsName;
-    private int count;
-    private StringBuilder body;
-    //private final Sql sql;
-    //private final static String JSON_VIEWS_TEMPLATE = "{ \"views\": { #name : {} }";
+    private final HttpBuilder       httpBuilder;
+    private final String            docsName;
+    private StringBuilder           body;
+    private DocumentDesign          documentDesign;
     
     public DesignCommand(HttpBuilder httpBuilder, String docs)
     {
         super();
-        this.docsName= docs;
+        this.docsName = docs;
         this.httpBuilder = httpBuilder;
         this.body = new StringBuilder("{ \"views\": {");
-        //this.body = sql.getSql();
-        //this.sql = sql;
         this.method = HttpMethod.PUT;
-        this.count = 0;
+        this.documentDesign = new DocumentDesign();
     }
     
     public void add(Collection<ViewFunction> views)
     {
-        for(ViewFunction view : views)
-            add(view);
+        for (ViewFunction view : views)
+           this.documentDesign.add(view);
+        /* \/\/ JSON SAMPLE \/\/ */
+        /*
+            "all": {
+              "map": "function(doc) { emit(doc.title, doc) }",
+              "reduce": "function(key, values){ return sum(values); }"
+            }
+        */
+        /* /\/\ JSON SAMPLE /\/\ */
+        //String name = view.getMapfun().getName().substring(4);
     }
     
-    private void add(ViewFunction view) 
-    {
-        if (count > 0)
-            this.body.append(",");
-/* \/\/ JSON SAMPLE \/\/ */
-/*
-    "all": {
-      "map": "function(doc) { emit(doc.title, doc) }",
-      "reduce": "function(key, values){ return sum(values); }"
-    }
-*/
-/* /\/\ JSON SAMPLE /\/\ */
-        //String name = view.getMapfun().getName().substring(4);
-        this.body.append("\"").append(view.getName()).append("\": {");      // "all: {
-        this.body.append("\"map\":");                             // "map": 
-        this.body.append("\"").append(view.getMapfun()).append("\""); // "function(doc) { emit(doc.title, doc) }"
-        if (view.hasReduce())
-        {
-            this.body.append(",");
-            this.body.append("\"reduce\":");                      // "reduce":
-            this.body.append("\"").append(view.getRedfun()).append("\"");
-        }
-        this.body.append("}");
-        count++;
-    }
-
-    public void closeBody() 
-    {
-        this.body.append("} }");
-    }
-
     @Override
     public <T> T execute()
     {
         String json = null;
         CloseableHttpResponse response = null;
+        DocumentDesign docDesign = getViewer();
         try
         {
+            if (docDesign != null)
+            {
+                documentDesign.setId(docDesign.getId());
+                documentDesign.setRev(docDesign.getRev());
+            }
             CloseableHttpClient httpclient = HttpClients.createDefault();
-            HttpPut httpPut = new HttpPut(httpBuilder.getHostContext()+docsName);
+            HttpPut httpPut = new HttpPut(httpBuilder.getHostContext() + docsName);
             httpBuilder.setHeader(httpPut);
             httpPut.setEntity(getEntity());
             LOG.debug(httpPut.getURI().toString());
@@ -164,46 +135,74 @@ public class DesignCommand  extends AbstractCommand implements CouchCommand
         }
         return null;
     }
-
+    
+    private DocumentDesign getViewer()
+    {
+        String json = null;
+        CloseableHttpResponse response = null;
+        DocumentDesign docDesign = null;
+        try
+        {
+            CloseableHttpClient httpclient = HttpClients.createDefault();
+            
+            HttpGet httpGet = new HttpGet(httpBuilder.getHostContext() + docsName);
+            httpBuilder.setHeader(httpGet);
+            LOG.debug(httpGet.getURI().toString());
+            response = httpclient.execute(httpGet);
+            json = EntityUtils.toString(response.getEntity());
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HTTP_OK)
+            {
+                docDesign = JsonMapper.mapper(json, DocumentDesign.class);
+                LOG.info("Views from design {} are replaced", docsName);
+            }
+        }
+        catch (Exception e) // ClientProtocolException | JsonParseException | JsonMappingException | IOException
+        {
+            handlerException.handle(e);
+        }
+        return docDesign;
+    }
+    
     @Override
     public String getBody()
     {
         return this.body.toString();
     }
-
+    
     @Override
     public HttpMethod asPut()
     {
         this.method = HttpMethod.PUT;
         return this.method;
     }
-
+    
     @Override
     public HttpMethod asPost()
     {
         throw new RepositoryException("Design Command cannot be executed as POST method");
-
+        
     }
-
+    
     @Override
     public HttpMethod asDelete()
     {
         throw new RepositoryException("Design Command cannot be executed as DELETE method");
     }
-
+    
     @Override
     public HttpMethod asGet()
     {
         throw new RepositoryException("Design Command cannot be executed as GET method");
     }
-
+    
     @Override
     protected HttpEntity getEntity()
     {
-        HttpEntity entity = null; 
+        HttpEntity entity = null;
         try
         {
-            entity = new StringEntity(body.toString());
+            entity = new StringEntity(JsonMapper.mapper(documentDesign));
         }
         catch (UnsupportedEncodingException e)
         {

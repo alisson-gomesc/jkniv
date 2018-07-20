@@ -122,6 +122,7 @@ public class CacheManager<K, V>
 
     public void pooling()
     {
+        //[jkniv-cache-man]
         final Runnable watching = new WatchCaches(caches);
         this.poolScheduler = scheduler.scheduleAtFixedRate(watching, this.delay, this.period, TimeUnit.SECONDS);
         LOG.info("Watching cacheable data for [{}] caches", size());

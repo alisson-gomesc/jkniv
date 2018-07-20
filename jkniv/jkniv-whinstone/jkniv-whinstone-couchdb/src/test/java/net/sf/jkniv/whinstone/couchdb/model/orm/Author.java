@@ -27,6 +27,7 @@ public class Author {
     @JsonProperty("books")
     private List<Book> books = null;
 
+    private Integer born;
 
     @JsonProperty("_id")
     public String getId() {
@@ -57,6 +58,18 @@ public class Author {
         this.name = name;
     }
 
+    @JsonProperty("born")
+    public Integer getBorn()
+    {
+        return born;
+    }
+    
+    @JsonProperty("born")
+    public void setBorn(Integer born)
+    {
+        this.born = born;
+    }
+    
     @JsonProperty("nationality")
     public String getNationality() {
         return nationality;

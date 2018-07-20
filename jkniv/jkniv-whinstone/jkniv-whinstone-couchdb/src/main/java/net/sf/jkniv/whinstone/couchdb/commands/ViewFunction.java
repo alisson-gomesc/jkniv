@@ -19,15 +19,32 @@
  */
 package net.sf.jkniv.whinstone.couchdb.commands;
 
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+/**
+ * Represent a view function from CouchDB
+ * 
+ * @author Alisson Gomes 
+ *
+ */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 class ViewFunction
 {
-    private final String name;
-    private String mapfun;
-    private String redfun;
-    
-    public ViewFunction(String name)
+    @JsonIgnore
+    private String name;
+    private String map;
+    private String reduce;
+   
+    public ViewFunction()
     {
         super();
+    }
+    public ViewFunction(String name)
+    {
+        this();
         this.name = name;
     }
 
@@ -37,29 +54,31 @@ class ViewFunction
         return name;
     }
     
-    public void setMapfun(String mapfun)
+    public void setMap(String map)
     {
-        this.mapfun = mapfun.replaceAll("\n", "").replaceAll("\"", "'");
+        //this.mapfun = mapfun.replaceAll("\n", "").replaceAll("\"", "'").replaceAll("\\{", "\\{ \\\r");
+        this.map = map.replaceAll("\"", "'");
     }
     
-    public String getMapfun()
+    public String getMap()
     {
-        return mapfun;
+       return "// saved by jkniv "+new Date()+"\n" + map; 
+        //return  mapfun;
     }
 
-    public void setRedfun(String redfun)
+    public void setReduce(String reduce)
     {
-        this.redfun = redfun.replaceAll("\n", "").replaceAll("\"", "'");
+        this.reduce = reduce.replaceAll("\"", "'");
     }
     
-    public String getRedfun()
+    public String getReduce()
     {
-        return redfun;
+        return reduce;
     }
     
     public boolean hasReduce()
     {
-        return (redfun != null);
+        return (reduce != null && reduce.trim().length() > 0);
     }
     
 }
