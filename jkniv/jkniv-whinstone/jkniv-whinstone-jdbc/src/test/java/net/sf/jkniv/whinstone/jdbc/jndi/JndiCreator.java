@@ -26,10 +26,15 @@ import javax.naming.NamingException;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.mock.jndi.SimpleNamingContextBuilder;
 
+import net.sf.jkniv.sqlegance.RepositoryType;
+import net.sf.jkniv.whinstone.Repository;
+import net.sf.jkniv.whinstone.RepositoryService;
+
 public class JndiCreator
 {
     public static void bind()
     {
+        Repository repository = RepositoryService.getInstance().lookup(RepositoryType.JDBC).newInstance(new Properties());
         bind("java:comp/env/jdbc/whinstone");
     }
     

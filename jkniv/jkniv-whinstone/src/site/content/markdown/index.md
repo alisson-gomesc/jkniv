@@ -25,7 +25,7 @@ The High-level design:
 
 ## Oh nooo more one database framework!
 
-The whinstone repository interface it's simple and very ease to use, it establish a contract for the Repository pattern, with the advantage that you can programmer use differents databases (Oracle, PostgreSQL, etc) or APIs (JDBC, JPA) the same way. The learning curve to use jkniv-whinstone is very low because you don't need to learning another query language like Criteria, JOOQL etc, understand a simple API with automatic binding and coding faster.
+The whinstone repository interface it's simple and very ease to use, it establish a contract for the Repository pattern, with the advantage that you can programmer using different databases (Oracle, PostgreSQL, etc) or APIs (JDBC, JPA) the same way. The learning curve to use `jkniv-whinstone` is very low because you don't need to learning another query language like Criteria, JOOQL etc, understand a simple API with automatic binding and coding faster.
 
 The steps to start are:
 

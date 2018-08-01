@@ -51,7 +51,6 @@ public class RepositoryJdbcInstanceTest extends BaseSpringJUnit4
     public static void setUpJndiResources()
     {
         JndiCreator.bind();
-        JndiCreator.bind();
     }
     
     @Test
