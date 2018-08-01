@@ -1,7 +1,9 @@
 Title: Stored Procedure
 
+<!--
 https://docs.oracle.com/cd/B28359_01/appdev.111/b28843/tdddg_procedures.htm
 https://blog.jooq.org/2017/12/15/how-to-fetch-oracle-dbms_output-from-jdbc/
+-->
 
 Whinstone JDBC Stored Procedure
 --------------------
@@ -41,7 +43,7 @@ Declare the call to stored in XML file:
     
 Java code to call the stored `STHELLOSTORED`:
 
-    Queryable q = QueryFactory.newInstance("helloStored");
-    repositoryOra.update(q);
+    Queryable q = QueryFactory.of("helloStored");
+    repository.update(q);
     
     

@@ -41,7 +41,7 @@ import net.sf.jkniv.sqlegance.Updateable;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 
-/**
+/*
  * <pre>
  * 
  * http://docs.couchdb.org/en/2.0.0/api/document/common.html

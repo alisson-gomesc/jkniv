@@ -26,11 +26,13 @@
 
   <body>
     <head><![CDATA[
-      <meta name="keywords" content="SQLegance, mybatis, ibatis, SQL, Java, framework, jdbc" />
+      <meta name="keywords" content="jkniv, sqlegance, mybatis, ibatis, SQL, Java, framework, jdbc" />
       ]]>
     </head>
     <menu name="jkniv-whinstone" inherit="top">
       <item name="Introduction" href="index.html" />
+      <item name="Architecture" href="arch.html" />
+      <item name="Querying" href="querying.html" />
       <item name="Cache" href="cache.html" />
       <item name="Whinstone for JDBC"
             href="http://jkniv.sourceforge.net/jkniv-whinstone-jdbc/index.html" />
@@ -40,6 +42,7 @@
             href="http://jkniv.sourceforge.net/jkniv-whinstone-couchdb/index.html" />
       <item name="Whinstone for Cassandra"
             href="http://jkniv.sourceforge.net/jkniv-whinstone-cassandra/index.html" />
+      <item name="Download" href="download.html" />
     </menu>
   </body>
 </project>

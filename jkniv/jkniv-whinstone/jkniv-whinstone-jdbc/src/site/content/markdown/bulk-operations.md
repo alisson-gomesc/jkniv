@@ -18,8 +18,8 @@ So when the parameters are a collection of data that needs to be executed by the
     
     
     Collection<Book> params = getBooks();
-    Queryable queryable = QueryFactory.newInstance("Book#update", params);
-    int rowsAffected = repositoryDerby.update(queryable);
+    Queryable queryable = QueryFactory.of("Book#update", params);
+    int rowsAffected = repository.update(queryable);
     
 
 `rowsAffected` receive the sum of records changed by `Book#update` for each Book in collection.

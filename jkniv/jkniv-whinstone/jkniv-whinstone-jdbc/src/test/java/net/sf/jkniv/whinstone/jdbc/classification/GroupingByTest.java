@@ -83,6 +83,19 @@ public class GroupingByTest extends BaseJdbc
     {
         Queryable q = QueryFactory.of("oneToManyBooksFromAuthors");
         List<Author> authors = repositoryDerby.list(q);
+        assetOneToMany(authors);
+    }
+    
+    @Test
+    public void whenGroupingForOneToManyWithourOrderBy()
+    {
+        Queryable q = QueryFactory.of("oneToManyBooksFromAuthorsWithourOrderBy");
+        List<Author> authors = repositoryDerby.list(q);
+        assetOneToMany(authors);
+    }    
+
+    private void assetOneToMany(List<Author> authors)
+    {
         Iterator<Author> it = authors.iterator();
         
         Author author1 = it.next();
@@ -125,8 +138,6 @@ public class GroupingByTest extends BaseJdbc
         assertThat(author5.getBooks().get(1).getName(), is("Domain-Specific Languages (Addison-Wesley Signature Series"));
         assertThat(author5.getBooks().get(2).getName(), is("NoSQL Distilled: A Brief Guide to the Emerging World of Polyglot Persistence"));
         assertThat(author5.getBooks().get(3).getName(), is("Patterns of Enterprise Application Architecture"));
-        assertThat(author5.getBooks().get(4).getName(), is("Refactoring: Ruby Edition: Ruby Edition"));
-        
+        assertThat(author5.getBooks().get(4).getName(), is("Refactoring: Ruby Edition: Ruby Edition"));        
     }
-    
 }

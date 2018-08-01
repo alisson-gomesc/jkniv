@@ -53,7 +53,13 @@ public class SqlSelectTest extends BaseJdbc
 
     @Autowired
     Repository repositoryDerby;
-    
+
+    @Test
+    public void timestamp()
+    {
+        System.out.println(System.currentTimeMillis());
+    }
+
     @Test
     public void whenSelectWrongClassType()
     {

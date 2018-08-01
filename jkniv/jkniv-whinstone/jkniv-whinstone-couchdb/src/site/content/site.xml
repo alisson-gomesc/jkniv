@@ -35,10 +35,9 @@
     </breadcrumbs>
     <menu name="whinstone jdbc" inherit="top">
       <item name="Introduction" href="index.html" />
-      <item name="How-to Config Datasource" href="config-datasource.html" />
       <item name="Transaction" href="transaction.html" />
       <item name="Javadoc" href="api-docs/index.html" />
-      <item name="Donwload" href="https://sourceforge.net/projects/jkniv/files/jkniv-whinstone/jdbc/" />
+      <item name="Donwload" href="https://sourceforge.net/projects/jkniv/files/jkniv-whinstone/couchdb/" />
      </menu>
   </body>
 </project>
