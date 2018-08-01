@@ -133,7 +133,7 @@ public class BaseJdbc extends BaseSpringJUnit4
             HttpPut http = new HttpPut(URL + "/" + SCHEMA + "/" + id++);
             httpBuilder.setHeader(http);
             InputStream is = DefaultClassLoader.getResourceAsStream("/database/" + f);
-            String json = isToString(is);
+            String json = streamToString(is);
             PutCommand command = new PutCommand(http, json);
             command.execute();
         }
@@ -168,7 +168,7 @@ public class BaseJdbc extends BaseSpringJUnit4
         return q;
     }
     
-    private static String isToString(InputStream is)
+    private static String streamToString(InputStream is)
     {
         int ch;
         StringBuilder sb = new StringBuilder();

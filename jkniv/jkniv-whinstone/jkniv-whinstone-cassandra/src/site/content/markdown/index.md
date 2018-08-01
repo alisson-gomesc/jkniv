@@ -13,7 +13,7 @@ A documentation will be prepared to 0.6.0 release.
 
 ### Requirements dependencies
 
-`jkniv-whinstone-cassandra`require JDK 1.6 or high.
+`jkniv-whinstone-cassandra` require JDK 1.6 or high.
 
 
 ### Relationships type supported

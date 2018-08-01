@@ -35,7 +35,6 @@
     </breadcrumbs>
     <menu name="whinstone jdbc" inherit="top">
       <item name="Introduction" href="index.html" />
-      <item name="How-to Config Datasource" href="config-datasource.html" />
       <item name="Transaction" href="transaction.html" />
       <item name="Bulk Operations" href="bulk-operations.html" />
       <item name="Stored Procedures" href="stored.html" />

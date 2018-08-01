@@ -13,5 +13,13 @@
     inner join BOOK b on b.AUTHOR_ID = a.ID
     order by a.name, b.name
   </select>
+
+  <select id="oneToManyBooksFromAuthorsWithourOrderBy" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.Author" groupBy="id">
+   <one-to-many property="books" typeOf="net.sf.jkniv.whinstone.jdbc.acme.domain.Book"/>
+    select a.id as id, a.name as name
+    ,b.ID as "books.id", b.ISBN as "books.isbn", b.NAME as "books.name"
+    from AUTHOR a 
+    inner join BOOK b on b.AUTHOR_ID = a.ID
+  </select>
  
 </statements>

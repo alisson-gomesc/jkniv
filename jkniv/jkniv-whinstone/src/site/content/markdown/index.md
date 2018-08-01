@@ -10,7 +10,7 @@ It's implementation from Repository pattern:
 
 >Mediates between the domain and data mapping layers using a collection-like interface for accessing domain objects.
 
-The project `jkniv-whinstone` define the repository contract between you service layer and the database with the interface `net.sf.jkniv.whinstone.Repository`. There are four repository flavors: 
+The project `jkniv-whinstone` define the repository contract between you service layer and the database through the interface `net.sf.jkniv.whinstone.Repository`. There are four repository flavors: 
 
 - `jkniv-whinstone-jdbc` encapsulate the JDBC access with a simple repository contract.
 - `jkniv-whinstone-jpa2` encapsulate JPA access with a simple repository contract.
@@ -25,7 +25,7 @@ The High-level design:
 
 ## Oh nooo more one database framework!
 
-The whinstone repository interface it's simple and very ease to use, it establish the contract for the Repository pattern, with the advantage that you can programmer for your database the same way. The learning curve to use jkniv-whinstone is very low because you just needs to know the query language for your database.
+The whinstone repository interface it's simple and very ease to use, it establish a contract for the Repository pattern, with the advantage that you can programmer use differents databases (Oracle, PostgreSQL, etc) or APIs (JDBC, JPA) the same way. The learning curve to use jkniv-whinstone is very low because you don't need to learning another query language like Criteria, JOOQL etc, understand a simple API with automatic binding and coding faster.
 
 The steps to start are:
 
@@ -40,7 +40,7 @@ It's very seductive write a query and someone (framework) translate to my specif
 
 The `whinstone` approach keep the power of database query language and you java code become more maintainable naturally.
 
-These queries make the same for Cassandra NoSQL and a SQL with PARTITION BY:
+These queries make the same for NoSQL Cassandra and a Relation Database SQL with PARTITION BY:
 
     // cassandra query (Partition key -> acct_id, event, evt_date)
     SELECT acct_id, event, evt_date, tag_code FROM TRACKABLE_DATA PER PARTITION LIMIT 1;

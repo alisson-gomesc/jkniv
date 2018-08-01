@@ -24,7 +24,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
 
-class RequestParams
+public class RequestParams
 {
     private String connection;    // Connection: keep-alive
     private String cookieSession; // Cookie: AuthSession=YWRtaW46NUFCN0Y1Qzc6SQD7rM4vjA42_xp5ngAXYojGCEI
