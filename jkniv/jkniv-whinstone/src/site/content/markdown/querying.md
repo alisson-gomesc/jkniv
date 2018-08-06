@@ -208,10 +208,13 @@ Java code:
 - `(7)`: if a RepositoryException is threw a rollback is executed.
 
 OK, java looks like more readable. Of course `Collection<Map>` could be replace to `Collection<Sale>` for a better design.
+<<<<<<< HEAD
 
 
 
 
+=======
+>>>>>>> branch 'master' of https://github.com/alisson-gomesc/jkniv.git
 
 [1]: http://jkniv.sourceforge.net/jkniv-sqlegance/index.html "SQL is handler by XML files"
 [2]: https://docs.oracle.com/javase/tutorial/jdbc/basics/prepared.html "Overview of Prepared Statements"
