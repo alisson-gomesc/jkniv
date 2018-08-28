@@ -26,14 +26,15 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.http.Consts;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.couchdb.statement.QueryParam;
+import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 
 public class HttpBuilder
 {
@@ -117,7 +118,7 @@ public class HttpBuilder
         HttpPost httpPost = null;
         try
         {
-            StringEntity body = new StringEntity(bodyStr);
+            StringEntity body = new StringEntity(bodyStr, Consts.UTF_8); // TODO config charset for HTTP body
             String fullUrl = this.hostContext + "_find";
             httpPost = new HttpPost(fullUrl);
             requestParams.setHeader(httpPost);

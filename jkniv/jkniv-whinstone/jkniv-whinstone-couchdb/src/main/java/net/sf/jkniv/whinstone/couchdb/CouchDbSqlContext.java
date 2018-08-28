@@ -34,6 +34,7 @@ import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.xml.TagFactory;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
+import net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect;
 
 public class CouchDbSqlContext implements SqlContext
 {

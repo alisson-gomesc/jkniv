@@ -11,7 +11,7 @@
     ,b.ID as "books.id", b.ISBN as "books.isbn", b.NAME as "books.name"
     from AUTHOR a 
     inner join BOOK b on b.AUTHOR_ID = a.ID
-    order by a.name, b.name
+    order by a.id, b.name
   </select>
 
   <select id="oneToManyBooksFromAuthorsWithourOrderBy" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.Author" groupBy="id">
@@ -20,6 +20,7 @@
     ,b.ID as "books.id", b.ISBN as "books.isbn", b.NAME as "books.name"
     from AUTHOR a 
     inner join BOOK b on b.AUTHOR_ID = a.ID
+    order by a.id, b.name
   </select>
  
 </statements>

@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPut;
@@ -188,14 +189,7 @@ public class BaseJdbc extends BaseSpringJUnit4
     private static HttpEntity toBody(String body)
     {
         HttpEntity entity = null;
-        try
-        {
-            entity = new StringEntity(body);
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            throw new RepositoryException("Cannot build encoding unsupported\n" + body);
-        }
+        entity = new StringEntity(body, Consts.UTF_8); // TODO config charset for HTTP body
         return entity;
     }
     

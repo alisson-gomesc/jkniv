@@ -86,7 +86,7 @@ public abstract class AbstractCommand implements CouchCommand
     protected HttpEntity getEntity()
     {
         HttpEntity entity = null;
-        entity = new StringEntity(body, Consts.UTF_8);
+        entity = new StringEntity(body, Consts.UTF_8); // TODO config charset for HTTP body 
         return entity;
     }
     

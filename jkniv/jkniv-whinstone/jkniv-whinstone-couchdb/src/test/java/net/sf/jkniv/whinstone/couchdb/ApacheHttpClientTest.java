@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
+import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpResponse;
@@ -108,7 +109,7 @@ public class ApacheHttpClientTest
             HttpPost httpPost = new HttpPost(uri);
             httpPost.addHeader("Content-Type" , "application/x-www-form-urlencoded; charset=UTF-8");
 
-            StringEntity xmlEntity = new StringEntity("name=admin&password=admin");
+            StringEntity xmlEntity = new StringEntity("name=admin&password=admin", Consts.UTF_8); // TODO config charset for HTTP body
             httpPost.setEntity(xmlEntity);
             
             HttpResponse response = httpclient.execute(httpPost);

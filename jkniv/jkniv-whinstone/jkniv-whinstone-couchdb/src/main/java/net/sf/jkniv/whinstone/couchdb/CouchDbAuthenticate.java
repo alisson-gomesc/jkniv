@@ -27,6 +27,7 @@ import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.client.ClientProtocolException;
@@ -95,7 +96,7 @@ public class CouchDbAuthenticate
             
             HttpPost httpPost = new HttpPost(uri.build());
             httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-            StringEntity xmlEntity = new StringEntity("name=" + username + "&password=" + password);
+            StringEntity xmlEntity = new StringEntity("name=" + username + "&password=" + password, Consts.UTF_8); // TODO config charset for HTTP body
             httpPost.setEntity(xmlEntity);
             
             response = httpclient.execute(httpPost);

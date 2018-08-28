@@ -42,7 +42,7 @@ public class Author implements Serializable
     
     public Author()
     {
-        //this.books = new ArrayList<Book>();
+        this.books = new ArrayList<Book>();
     }
 
     public Author(List<Book> books)

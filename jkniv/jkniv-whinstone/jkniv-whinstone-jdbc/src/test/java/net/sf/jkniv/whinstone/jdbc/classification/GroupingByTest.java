@@ -105,39 +105,41 @@ public class GroupingByTest extends BaseJdbc
         Author author5 = it.next();
 
         assertThat(authors.size(), is(5));
-        assertThat(author1.getId(), is(5L));
-        assertThat(author1.getName(), is("Albert Camus"));
-        assertThat(author1.getBooks().size(), is(2));
-        assertThat(author1.getBooks().get(0).getName(), is("The Rebel: An Essay on Man in Revolt"));
-        assertThat(author1.getBooks().get(1).getName(), is("The Stranger"));
-        
-        assertThat(author2.getId(), is(3L));
-        assertThat(author2.getName(), is("Carlos Drummond"));
-        assertThat(author2.getBooks().size(), is(5));
-        assertThat(author2.getBooks().get(0).getName(), is("A Lição do Amigo"));
-        assertThat(author2.getBooks().get(1).getName(), is("Alguma Poesia"));
-        assertThat(author2.getBooks().get(2).getName(), is("Claro Enigma"));
-        assertThat(author2.getBooks().get(3).getName(), is("José"));
-        assertThat(author2.getBooks().get(4).getName(), is("Sentimento do Mundo"));
-        
-        assertThat(author3.getId(), is(4L));
-        assertThat(author3.getName(), is("Franz Kafka"));
-        assertThat(author3.getBooks().size(), is(2));
-        assertThat(author3.getBooks().get(0).getName(), is("The Metamorphosis"));
-        assertThat(author3.getBooks().get(1).getName(), is("The Trial"));
-        
-        assertThat(author4.getId(), is(1L));
-        assertThat(author4.getName(), is("Friedrich Nietzsche"));
-        assertThat(author4.getBooks().size(), is(1));
-        assertThat(author4.getBooks().get(0).getName(), is("Beyond Good and Evil"));
+                        
+        assertThat(author1.getId(), is(1L));
+        assertThat(author1.getName(), is("Friedrich Nietzsche"));
+        assertThat(author1.getBooks().size(), is(1));
+        assertThat(author1.getBooks().get(0).getName(), is("Beyond Good and Evil"));
 
-        assertThat(author5.getId(), is(2L));
-        assertThat(author5.getName(), is("Martin Fowler"));
-        assertThat(author5.getBooks().size(), is(5));
-        assertThat(author5.getBooks().get(0).getName(), is("Analysis Patterns: Reusable Object Models"));
-        assertThat(author5.getBooks().get(1).getName(), is("Domain-Specific Languages (Addison-Wesley Signature Series"));
-        assertThat(author5.getBooks().get(2).getName(), is("NoSQL Distilled: A Brief Guide to the Emerging World of Polyglot Persistence"));
-        assertThat(author5.getBooks().get(3).getName(), is("Patterns of Enterprise Application Architecture"));
-        assertThat(author5.getBooks().get(4).getName(), is("Refactoring: Ruby Edition: Ruby Edition"));        
+        assertThat(author2.getId(), is(2L));
+        assertThat(author2.getName(), is("Martin Fowler"));
+        assertThat(author2.getBooks().size(), is(5));
+        assertThat(author2.getBooks().get(0).getName(), is("Analysis Patterns: Reusable Object Models"));
+        assertThat(author2.getBooks().get(1).getName(), is("Domain-Specific Languages (Addison-Wesley Signature Series"));
+        assertThat(author2.getBooks().get(2).getName(), is("NoSQL Distilled: A Brief Guide to the Emerging World of Polyglot Persistence"));
+        assertThat(author2.getBooks().get(3).getName(), is("Patterns of Enterprise Application Architecture"));
+        assertThat(author2.getBooks().get(4).getName(), is("Refactoring: Ruby Edition: Ruby Edition"));        
+        
+        assertThat(author3.getId(), is(3L));
+        assertThat(author3.getName(), is("Carlos Drummond"));
+        assertThat(author3.getBooks().size(), is(5));
+        assertThat(author3.getBooks().get(0).getName(), is("A Lição do Amigo"));
+        assertThat(author3.getBooks().get(1).getName(), is("Alguma Poesia"));
+        assertThat(author3.getBooks().get(2).getName(), is("Claro Enigma"));
+        assertThat(author3.getBooks().get(3).getName(), is("José"));
+        assertThat(author3.getBooks().get(4).getName(), is("Sentimento do Mundo"));
+        
+        assertThat(author4.getId(), is(4L));
+        assertThat(author4.getName(), is("Franz Kafka"));
+        assertThat(author4.getBooks().size(), is(2));
+        assertThat(author4.getBooks().get(0).getName(), is("The Metamorphosis"));
+        assertThat(author4.getBooks().get(1).getName(), is("The Trial"));
+
+        assertThat(author5.getId(), is(5L));
+        assertThat(author5.getName(), is("Albert Camus"));
+        assertThat(author5.getBooks().size(), is(2));
+        assertThat(author5.getBooks().get(0).getName(), is("The Rebel: An Essay on Man in Revolt"));
+        assertThat(author5.getBooks().get(1).getName(), is("The Stranger"));
+
     }
 }

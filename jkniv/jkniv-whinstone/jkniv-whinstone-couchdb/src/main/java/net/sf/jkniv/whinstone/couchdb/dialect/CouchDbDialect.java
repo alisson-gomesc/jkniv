@@ -1,4 +1,4 @@
-package net.sf.jkniv.whinstone.couchdb;
+package net.sf.jkniv.whinstone.couchdb.dialect;
 
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 

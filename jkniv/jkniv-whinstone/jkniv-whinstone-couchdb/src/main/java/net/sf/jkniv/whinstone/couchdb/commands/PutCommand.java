@@ -22,6 +22,7 @@ package net.sf.jkniv.whinstone.couchdb.commands;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.http.Consts;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPut;
@@ -49,15 +50,8 @@ public class PutCommand implements DbCommand
     {
         this.body = body;
         this.put = put;
-        try
-        {
-            StringEntity ebody = new StringEntity(body);
-            this.put.setEntity(ebody);
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            throw new RepositoryException("Cannot build new URI ["+this.put.getURI()+"] encoding unsupported\n"+body);
-        }
+        StringEntity ebody = new StringEntity(body, Consts.UTF_8); // TODO config charset for HTTP body
+        this.put.setEntity(ebody);
     }
     
     @Override
