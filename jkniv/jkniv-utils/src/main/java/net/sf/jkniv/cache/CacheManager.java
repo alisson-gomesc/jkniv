@@ -132,7 +132,8 @@ public class CacheManager<K, V>
     {
         LOG.info("Canceling cacheable manager");
         this.clear();
-        this.poolScheduler.cancel(true);
+        if(this.poolScheduler != null)
+            this.poolScheduler.cancel(true);
     }
 
     private void clear()
