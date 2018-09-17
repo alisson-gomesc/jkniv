@@ -31,6 +31,11 @@ To configure the connection properties in XML, a file with name `repository-conf
 
 This XML file represents the same configuration when a Properties class was used.
 
+    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <repository-config 
+      xmlns="http://jkniv.sf.net/schema/sqlegance/config" 
+      xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/config http://jkniv.sf.net/schema/sqlegance/sqlegance-config.xsd">
+      
     <repository name="myconfig">
       <description>My properties connection fo Oracle XE</description>
       <properties>
@@ -41,7 +46,7 @@ This XML file represents the same configuration when a Properties class was used
       </properties>
     </repository>
 
-So, next the java code is used to lookup the Repository façade.
+So, the java code is used to lookup the Repository façade.
 
     Repository repository = RepositoryService.getInstance().lookup(RepositoryType.JDBC).newInstance();
 
@@ -49,6 +54,11 @@ So, next the java code is used to lookup the Repository façade.
 
 Using JNDI, the Repository façade can access a JDBC connection pool by looking up the DataSource that configures it.
 
+    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <repository-config 
+      xmlns="http://jkniv.sf.net/schema/sqlegance/config" 
+      xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/config http://jkniv.sf.net/schema/sqlegance/sqlegance-config.xsd">
+      
     <repository name="myconfig">
       <description>My properties connection fo Oracle XE</description>
       <jndi-data-source>java:comp/env/jdbc/myOracle</jndi-data-source>
@@ -56,7 +66,7 @@ Using JNDI, the Repository façade can access a JDBC connection pool by looking 
 
 In the above example, `java:comp/env/jdbc/myOracle` is the name by which the pool is referenced in the container.
 
-So, next the java code is used to lookup the Repository façade.
+So, the java code is used to lookup the Repository façade.
 
     Repository repository = RepositoryService.getInstance().lookup(RepositoryType.JDBC).newInstance();
 
@@ -64,7 +74,7 @@ So, next the java code is used to lookup the Repository façade.
 ### repository-config.xml file
 
 
-A `repository-config.xml` is like a `persistence.xml` for JPA that define one or more persistence unit. The `repository-config.xml` file is located in root classpath. It may be used to specify the connection properties to `Repository` façade and another parameters.
+A `repository-config.xml` is like a `persistence.xml` for JPA that define one or more persistence unit. The `repository-config.xml` file is located in root classpath. It may be used to specify the connection properties to `Repository` façade and other parameters.
 
 
 |Property                                | Description       |
@@ -78,7 +88,7 @@ A `repository-config.xml` is like a `persistence.xml` for JPA that define one or
 | jkniv.repository.jdbc.dialect          | Database dialect for LIMIT statement, default is `net.sf.jkniv.sqlegance.dialect.AnsiDialect`.
 | jkniv.repository.data_masking          | Mask sensible data in log, default is `net.sf.jkniv.sqlegance.logger.SimpleDataMasking`.
 | jkniv.repository.short_name_enable     | allow find query name using simple name, example: `query.finance.balance` could be lookup as `balance`, default is `false`. 
-| jkniv.repository.reloadable_xml_enable | for reloading query files based on timestamp changes, default is `false`, running for 3 hours, after that doesn't reload.
+| jkniv.repository.reloadable_xml_enable | for reloading query files based on timestamp changes, default is `false`, running for 3 hours, after that doesn't reload anymore. Used for development environment.
 | jkniv.repository.jdbc_adapter_factory  | Adapter for Connection manager in `jkniv-whinstone-jdbc`, implementations: `net.sf.jkniv.whinstone.jdbc.DriverManagerAdapter`, `net.sf.jkniv.whinstone.jdbc.DataSourceAdapter` and `net.sf.jkniv.whinstone.jdbc.SpringDataSourceAdapter`, default is `DriverManagerAdapter`.
 | jkniv.repository.show_config           | Print the DatabaseMetaData in log, default is `false`
 

@@ -62,12 +62,7 @@ public class DB2EnableMYSDialect extends AnsiDialect
     {
         super();
     }
-    
-//    public DB2EnableMYSDialect(Queryable queryable)
-//    {
-//        super(queryable);
-//    }
-    
+        
     @Override
     public boolean supportsLimit()
     {

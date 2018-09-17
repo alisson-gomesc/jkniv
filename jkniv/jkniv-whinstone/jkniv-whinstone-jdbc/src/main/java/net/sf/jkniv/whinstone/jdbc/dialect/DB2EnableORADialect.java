@@ -68,11 +68,6 @@ public class DB2EnableORADialect extends AnsiDialect
         super();
     }
     
-//    public DB2EnableORADialect(Queryable queryable)
-//    {
-//        super(queryable);
-//    }
-    
     /**
      * Support LIMIT using rownum. Native clause not exists.
      */

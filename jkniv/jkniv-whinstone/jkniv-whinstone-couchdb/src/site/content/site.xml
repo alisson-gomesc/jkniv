@@ -33,9 +33,10 @@
       <item name="jkniv-jaas" href="http://jkniv.sourceforge.net/jkniv-jaas/index.html" />
       <item name="camel-sap-jco3" href="http://jkniv.sourceforge.net/jkniv-camel-sap-jco3/index.html" />
     </breadcrumbs>
-    <menu name="whinstone jdbc" inherit="top">
+    <menu name="whinstone CouchDb" inherit="top">
       <item name="Introduction" href="index.html" />
       <item name="Transaction" href="transaction.html" />
+      <item name="Logging" href="logging.html" />
       <item name="Javadoc" href="api-docs/index.html" />
       <item name="Donwload" href="https://sourceforge.net/projects/jkniv/files/jkniv-whinstone/couchdb/" />
      </menu>

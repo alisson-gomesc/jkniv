@@ -4,11 +4,16 @@ import java.util.Iterator;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.jkniv.sqlegance.RepositoryConfigException;
 import net.sf.jkniv.sqlegance.RepositoryType;
 import net.sf.jkniv.whinstone.spi.RepositoryFactory;
 
 public class RepositoryService
 {
+    private static final Logger LOG = LoggerFactory.getLogger(RepositoryService.class);
     private static RepositoryService         service;
     private ServiceLoader<RepositoryFactory> loader;
     
@@ -31,9 +36,7 @@ public class RepositoryService
     
     public RepositoryFactory lookup(String type)
     {
-        //RepositoryType typed = RepositoryType.get(type);
         RepositoryFactory factory = null;
-        
         try
         {
             Iterator<RepositoryFactory> factories = loader.iterator();
@@ -46,9 +49,12 @@ public class RepositoryService
         }
         catch (ServiceConfigurationError serviceError)
         {
+            LOG.error("Unexpected error", serviceError);
             factory = null;
-            serviceError.printStackTrace();
         }
+        if (factory == null)
+            throw new RepositoryConfigException("RepositoryFactory for ["+type+"] type cannot be found, verify if jar file from repository it's set in classpath");
+        
         return factory;
     }
 }

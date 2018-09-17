@@ -106,4 +106,42 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
         System.out.println(list.get(0));
     }
 
+    @Test @Ignore("Use integer as paramter")
+    public void whenFindCommandUseIntegerAsParameter()
+    {
+    }
+
+    @Test @Ignore("Use float as paramter")
+    public void whenFindCommandUseFloatAsParameter()
+    {
+    }
+
+    @Test @Ignore("Use double as paramter")
+    public void whenFindCommandUseDoubleAsParameter()
+    {
+    }
+    
+    @Test @Ignore("Use long as paramter")
+    public void whenFindCommandUseLongAsParameter()
+    {
+    }
+
+    @Test @Ignore("Use date as paramter")
+    public void whenFindCommandUseDateAsParameter()
+    {
+    }
+    
+    @Test @Ignore("Use array of string as paramter")
+    public void whenFindCommandUseArrayOfStringAsParameter()
+    {
+    }
+
+    @Test @Ignore("Use array of integer as paramter")
+    public void whenFindCommandUseArrayOfIntegerAsParameter()
+    {
+    }
+    
+    
+
+
 }

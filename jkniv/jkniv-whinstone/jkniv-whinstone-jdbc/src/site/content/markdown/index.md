@@ -5,7 +5,7 @@ jkniv whinstone jdbc
 
 `jkniv-whinstone-jdbc` is a Java API for communicating with JDBC driver. 
 
-Using easily interface <a href="jkniv.sourceforge.net/apidocs/net/sf/jkniv/whinstone/Repository.html">net.sf.jkniv.whinstone.Repository</a>
+Using easily interface <a href="http://jkniv.sourceforge.net/api-docs/net/sf/jkniv/whinstone/Repository.html">net.sf.jkniv.whinstone.Repository</a>
 for reduce the boilerplate code for data access object.
 
 The Repository implementation for direct access JDBC™ API. 

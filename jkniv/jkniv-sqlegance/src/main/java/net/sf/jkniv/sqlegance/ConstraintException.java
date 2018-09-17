@@ -41,7 +41,7 @@ public class ConstraintException extends RepositoryException
      */
     public ConstraintException(String param, String message)
     {
-        super();
+        super(message);
         this.violations = new HashMap<String, String>();
         this.violations.put(param, message);
     }

@@ -44,11 +44,6 @@ public class IngresDialect extends AnsiDialect
         super();
     }
     
-//    public IngresDialect(Queryable queryable)
-//    {
-//        super(queryable);
-//    }
-    
     @Override
     public boolean supportsLimit()
     {

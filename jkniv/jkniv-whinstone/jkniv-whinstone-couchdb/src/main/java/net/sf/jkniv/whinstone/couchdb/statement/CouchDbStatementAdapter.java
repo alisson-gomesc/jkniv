@@ -31,6 +31,7 @@ import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.ResultSetParser;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
+import net.sf.jkniv.whinstone.couchdb.commands.JsonMapper;
 import net.sf.jkniv.whinstone.couchdb.result.PojoResultRow;
 import net.sf.jkniv.whinstone.couchdb.result.ScalarResultRow;
 import net.sf.jkniv.whinstone.couchdb.result.StringResultRow;
@@ -263,7 +264,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
             while (matcherQuestion.find())
             {
                 json.append(body.substring(start, matcherQuestion.start()));
-                json.append(quotesJson(params.get(i++)));
+                json.append(JsonMapper.mapper(params.get(i++)));
                 //System.out.printf("group[%s] [%d,%d]\n", matcherQuestion.group(), matcherQuestion.start(), matcherQuestion.end());
                 params.add(i++, body.subSequence(matcherQuestion.start(), matcherQuestion.end()).toString());
                 start = matcherQuestion.end();
@@ -275,15 +276,15 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
         this.boundParams = true;
     }
     
-    private String quotesJson(Object value)
-    {
-        String ret  = String.valueOf("\"" + value + "\"");
-        if (value instanceof Number)
-            ret = String.valueOf(value);// FIXME stament bind type like Date, Double, Calendar, Float
-        
-        return ret;
-    }
-    
+//    private String quotesJson(Object value)
+//    {
+//        String ret  = String.valueOf("\"" + value + "\"");
+//        if (value instanceof Number)
+//            ret = String.valueOf(value);// FFIXME stament bind type like Date, Double, Calendar, Float
+//        
+//        return ret;
+//    }
+//    
     /*******************************************************************************/
     
     
