@@ -4,7 +4,7 @@
   <parent>
     <groupId>net.sf.jkniv</groupId>
     <artifactId>jkniv</artifactId>
-    <version>0.6.0.M35</version>
+    <version>0.6.0.M36</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
   <artifactId>jkniv-whinstone-fluent</artifactId>
@@ -44,5 +44,4 @@
       <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
     </license>
   </licenses>
-
 </project>

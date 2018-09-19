@@ -3,7 +3,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sf.jkniv</groupId>
-  <version>0.6.0.M35</version>
+  <version>0.6.0.M36</version>
   <packaging>pom</packaging>
   <name>jkniv-extensions</name>
   <artifactId>jkniv-extensions</artifactId>
@@ -408,5 +408,4 @@
       <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
     </license>
   </licenses>
-
 </project>

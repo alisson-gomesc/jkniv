@@ -39,6 +39,8 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.cache.Cacheable;
 import net.sf.jkniv.exception.HandleableException;
+import net.sf.jkniv.reflect.beans.ObjectProxy;
+import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
@@ -130,9 +132,11 @@ class RepositoryCassandra implements Repository
             sqlContext.getRepositoryConfig().add(props);
 
         this.sqlContext = sqlContext;
+        this.repositoryConfig = this.sqlContext.getRepositoryConfig();
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
         this.adapterConn = new CassandraSessionFactory(sqlContext.getRepositoryConfig().getProperties()).open();
+        this.defineQueryNameStrategy();
     }
     
     @Override
@@ -154,10 +158,13 @@ class RepositoryCassandra implements Repository
     }
     
     @Override
-    public <T> T get(T object)
+    public <T> T get(T entity)
     {
-     // TODO implements Repository.get(T)
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(entity);
+        String queryName = this.strategyQueryName.toGetName(entity);
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        
+        return get(queryable, null, null);
     }
     
     @Override
@@ -207,35 +214,53 @@ class RepositoryCassandra implements Repository
     @Override
     public <T> List<T> list(Queryable queryable)
     {
-        return list(queryable, null, null);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as list command", queryable);
+
+        List<T> list = list(queryable, null, null);
+        if (isDebugEnabled)
+            LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
+
+        return list;
     }
     
     @Override
     public <T> List<T> list(Queryable queryable, Class<T> returnType)
     {
-        return list(queryable, returnType, null);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as list command", queryable);
+        
+        List<T> list = list(queryable, returnType, null);
+        
+        if (isDebugEnabled)
+            LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
+
+        return list;
     }
     
     @Override
     @SuppressWarnings("unchecked")
     public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
-        return list(queryable, null, overloadResultRow);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as list command", queryable);
+
+        List<T> list = list(queryable, null, overloadResultRow);
+        
+        if (isDebugEnabled)
+            LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
+
+        return list;
     }
     
     @SuppressWarnings("unchecked")
     private <T, R> List<T> list(Queryable q, Class<T> overloadReturnType, ResultRow<T, R> overloadResultRow)
     {
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as list command", q);
-        
         Queryable queryable = QueryFactory.clone(q, overloadReturnType);
         
         List<T> list = Collections.emptyList();
-        //Class<T> returnType = (Class<T>) Map.class;
         
         Selectable selectable = sqlContext.getQuery(queryable.getName()).asSelectable();
-        //checkSqlType(isql, SqlType.SELECT);
         
         selectable.getValidateType().assertValidate(queryable.getParams());
         
@@ -263,8 +288,6 @@ class RepositoryCassandra implements Repository
             q.cached();
         }
         q.setTotal(queryable.getTotal());
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
         
         return list;
     }
@@ -295,8 +318,27 @@ class RepositoryCassandra implements Repository
     @Override
     public <T> T add(T entity)
     {
-        // TODO implements Repository.add(T)
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(entity);
+        String queryName = this.strategyQueryName.toAddName(entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as add command", queryName);
+        
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        
+        Sql isql = sqlContext.getQuery(queryable.getName());
+        checkSqlType(isql, SqlType.INSERT);
+        if (!queryable.isBoundSql())
+            queryable.bind(isql);
+        
+        isql.getValidateType().assertValidate(queryable.getParams());
+
+        StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
+        queryable.bind(adapterStmt).on();
+        int affected = adapterStmt.execute();
+
+        if (isDebugEnabled)
+            LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
+        return entity;
     }
     
     @Override
@@ -330,28 +372,48 @@ class RepositoryCassandra implements Repository
     @Override
     public int remove(Queryable queryable)
     {
-        // TODO implements Repository.remove(Queryable)
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as remove command", queryable);
 
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.DELETE);
-        
+        if (!queryable.isBoundSql())
+            queryable.bind(isql);
+
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        int affected = 0;//currentWork().execute(queryable, isql);
+        StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
+        queryable.bind(adapterStmt).on();
+        int affected = adapterStmt.execute();
+
         if (isDebugEnabled)
             LOG.debug("{} records was affected by remove [{}] command", affected, queryable.getName());
         return affected;
-
-        //throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
     }
     
     @Override
     public <T> int remove(T entity)
     {
-        // TODO implements Repository.remove(T)
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(entity);
+        String queryName = this.strategyQueryName.toRemoveName(entity);
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as remove command", queryable);
+        
+        Sql isql = sqlContext.getQuery(queryable.getName());
+        checkSqlType(isql, SqlType.DELETE);
+        if (!queryable.isBoundSql())
+            queryable.bind(isql);
+
+        isql.getValidateType().assertValidate(queryable.getParams());
+        
+        StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
+        queryable.bind(adapterStmt).on();
+        int affected = adapterStmt.execute();
+
+        if (isDebugEnabled)
+            LOG.debug("{} records was affected by remove [{}] command", affected, queryable.getName());
+        return affected;
     }
     
     @Override
@@ -410,5 +472,12 @@ class RepositoryCassandra implements Repository
           //TODO exception design, must have ConfigurationException?
         }
         return prop;
+    }
+    
+    private void defineQueryNameStrategy()
+    {
+        String nameStrategy = repositoryConfig.getQueryNameStrategy();
+        ObjectProxy<? extends QueryNameStrategy> proxy = ObjectProxyFactory.newProxy(nameStrategy);
+        this.strategyQueryName = proxy.newInstance();
     }
 }

@@ -269,24 +269,15 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     
     public ResultSetParser<T, Row> generatedKeys()
     {
-        throw new UnsupportedOperationException("Not implemented yet!");
+        throw new UnsupportedOperationException("No implemented operation generatedKeys for RepositoryCassandra!");
     }
     
     public int execute()
     {
-        //        try
-        //        {
         session.execute(bound);
         
         
         return Statement.SUCCESS_NO_INFO; // FIXME design Statement.SUCCESS_NO_INFO
-        //return stmt.executeUpdate();
-        //        }
-        //        catch (SQLException e)
-        //        {
-        //            handlerException.handle(e, e.getMessage());
-        //        }
-        //        return 0;
     }
     
     @Override

@@ -38,10 +38,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
+import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
 import net.sf.jkniv.whinstone.cassandra.result.CustomResultRow;
 
 @SuppressWarnings("rawtypes")
 public class CassandraRepositorySelectGetTest extends BaseJdbc
 {
+    @Autowired
+    Repository repository;
+    private static final String PLATE = "OMN7176";
+    private static final String COLOR = "white";
+    
+    @Test
+    public void whenRepositoryOverloadReturnType()
+    {
+        Repository repositoryCas = getRepository();
+        Queryable q = QueryFactory.of("selectVehicle", "plate", PLATE);
         
+        Vehicle v = repositoryCas.get(q);
+        assertThat(v, instanceOf(Vehicle.class));
+        assertThat(v.getPlate(), is(PLATE));
+        assertThat(v.getColor(), is(COLOR));
+
+        Map<String, Object> map  = repositoryCas.get(q, Map.class);
+        assertThat(map, instanceOf(Map.class));
+        assertThat(map.get("plate").toString(), is(PLATE));
+        assertThat(map.get("color").toString(), is(COLOR));
+        assertThat(map, instanceOf(Map.class));
+        assertThat(map, instanceOf(HashMap.class));
+    }
+    
 }

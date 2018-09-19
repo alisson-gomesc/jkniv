@@ -20,6 +20,7 @@
 package net.sf.jkniv.whinstone.cassandra;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.instanceOf;
@@ -44,72 +45,56 @@ import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
 import net.sf.jkniv.whinstone.cassandra.result.CustomResultRow;
 
-public class CassandraRepositoryInsertTest extends BaseJdbc
+public class CassandraRepositoryDeleteTest extends BaseJdbc
 {
     @Autowired
     Repository repository;
-    Object[]   params =
-    { "k001", new Date(), "CAR001", 20.000001F, -88.000001F, 2 };
-    // (my_key,evt_date,object_id, lat, lng, warn)
     
     @Test
-    public void whenCassandraAdd()
-    {
-        int initialSize = select("simpleSelect");
-        
-        params[3] = new Float(((Float) params[3]).floatValue() + 0.000001F);
-        params[4] = new Float(((Float) params[4]).floatValue() + 0.000001F);
-        Repository repositoryCas = getRepository();
-        Queryable q = QueryFactory.ofArray("simpleInsert", params);
-        repositoryCas.add(q);
-        int newSize = select("simpleSelect");
-        
-        assertThat(initialSize + 1, is(newSize));
-    }
-    
-    @Test
-    public void whenCassandraAddEntity()
+    public void whenCassandraRemoveEntity()
     {
         Repository repositoryCas = getRepository();
         Vehicle v = new Vehicle();
         v.setName("Livina");
-        v.setPlate("AAA9999");
+        v.setPlate("DEL7778");
         v.setColor("red");
-        repositoryCas.remove(v);
-        int initialSize = select("all-vehicles");
+        
         repositoryCas.add(v);
-        int newSize = select("all-vehicles");
-        assertThat(initialSize + 1, is(newSize));
+        Vehicle v2 = repositoryCas.get(v);;
+        assertThat(v2.getPlate(), is(v.getPlate()));
+        
+        repositoryCas.remove(v);
+        
+        v2 = repositoryCas.get(v);;
+        
+        assertThat(v2, nullValue());
     }
-    
-    
+
     @Test
-    public void whenCassandraAddWithListColumn()
+    public void whenCassandraRemoveWithQueryable()
     {
-        Vehicle vehicle = new Vehicle();
-        vehicle.setPlate("AAA9998");
-        vehicle.setName("AAA9998");
-        vehicle.setColor("white");
-        vehicle.setAlarms(Arrays.asList("SPEED", "PANIC"));
         Repository repositoryCas = getRepository();
-        Queryable q = QueryFactory.of("vehicle", vehicle);
-        repositoryCas.add(q);
+        Vehicle v = new Vehicle();
+        v.setName("Livina");
+        v.setPlate("DEL7779");
+        v.setColor("red");
         
-        Queryable query = QueryFactory.of("selectVehicle", vehicle);
+        repositoryCas.add(v);
+        Vehicle v2 = repositoryCas.get(v);
+        assertThat(v2.getPlate(), is(v.getPlate()));
         
-        Vehicle v = repositoryCas.get(query);
+        repositoryCas.remove(QueryFactory.of("Vehicle#remove", "plate", v.getPlate()));
         
-        assertThat(v, instanceOf(Vehicle.class));
-        assertThat(v.getPlate(), is(vehicle.getPlate()));
-        assertThat(v.getAlarms().size(), is(2));
-        assertThat(v.getAlarms(), hasItems("SPEED", "PANIC"));
+        v2 = repositoryCas.get(v);;
+        
+        assertThat(v2, nullValue());
     }
+
     
     private int select(String select)
     {
         Queryable q = QueryFactory.of(select);
         List<Map> list = getRepository().list(q);
         return list.size();
-    }
-    
+    }    
 }

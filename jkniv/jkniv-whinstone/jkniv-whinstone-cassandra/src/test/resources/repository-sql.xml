@@ -22,6 +22,18 @@
     INSERT INTO dev_data_3t.TEST_DATA (my_key,evt_date,object_id, lat, lng, warn)
     values (?,?,?,?,?,?)
   </insert>
+
+  <insert id="Vehicle#add">
+   INSERT INTO VEHICLE(plate, name, color, alarms) VALUES (:plate, :name, :color, :alarms)
+  </insert>
+
+  <delete id="Vehicle#remove">
+   DELETE FROM VEHICLE where plate = :plate
+  </delete>
+
+  <select id="Vehicle#get" returnType="net.sf.jkniv.whinstone.cassandra.model.Vehicle">
+   SELECT plate, name, color, alarms FROM VEHICLE where plate = :plate
+  </select>
   
   <insert id="vehicle">
    INSERT INTO VEHICLE(plate, name, color, alarms) VALUES (:plate, :name, :color, :alarms)
@@ -35,6 +47,10 @@
     select my_key,evt_date,object_id,lat, lng, warn from dev_data_3t.TEST_DATA
   </select>
 
+  <select id="all-vehicles" returnType="java.util.HashMap">
+    select plate, name, color, alarms from VEHICLE
+  </select>
+
   <select id="selectClauseIN">
     select * from COLOR where name in (:in:names)
   </select>
@@ -42,5 +58,4 @@
   <select id="vehicles" returnType="net.sf.jkniv.whinstone.cassandra.model.Vehicle">
   select plate, name, color, alarms from VEHICLE
   </select>
-
 </statements>

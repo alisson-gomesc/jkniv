@@ -72,5 +72,18 @@ public class CouchDbRepositoryAddTest extends BaseJdbc
         assertThat(rows, is(1));
         System.out.println(author);
     }
-    
+
+    @Test
+    public void whenAddEntityDocument()
+    {
+        Repository repositoryDb = getRepository();
+        Author author = new Author();
+        author.setId("hi-id-001");
+        author.setName("Alisson Gomes");
+        author.setNationality("BR");
+        repositoryDb.add(author);
+        
+        assertThat(author.getId(), is("hi-id-001"));
+        System.out.println(author);
+    }
 }

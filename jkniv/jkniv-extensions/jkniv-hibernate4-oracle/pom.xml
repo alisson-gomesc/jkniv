@@ -8,7 +8,7 @@
   <parent>
     <groupId>net.sf.jkniv</groupId>
     <artifactId>jkniv-extensions</artifactId>
-    <version>0.6.0.M35</version>
+    <version>0.6.0.M36</version>
   </parent>
 
   <properties>
@@ -48,6 +48,5 @@
       <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
     </license>
   </licenses>
-
   <description>Extends hibernate4 for types at java.time package from jdk 1.8 in Oracle database</description>
 </project>
