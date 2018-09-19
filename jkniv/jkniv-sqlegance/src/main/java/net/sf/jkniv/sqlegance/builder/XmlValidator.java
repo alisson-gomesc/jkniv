@@ -133,8 +133,12 @@ class XmlValidator
             //Schema schema = schemaFactory.newSchema(XmlValidator.class.getResource(schemaFiles[0]));
             Source source1 = new StreamSource(schemaFiles[0].toExternalForm());
             Source source2 = new StreamSource(schemaFiles[1].toExternalForm());
-            Schema schema = schemaFactory.newSchema(new Source[] { source1, source2});
+            Schema schema = null;
             
+            if (resourceName.endsWith("repository-config.xml"))
+                schema = schemaFactory.newSchema(new Source[] { source1});
+            else
+                schema = schemaFactory.newSchema(new Source[] { source1, source2});
             Validator validator = schema.newValidator();
             xmlFile.setSystemId(resourceName);
             validator.validate(xmlFile);

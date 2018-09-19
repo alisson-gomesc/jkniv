@@ -22,6 +22,14 @@
     INSERT INTO dev_data_3t.TEST_DATA (my_key,evt_date,object_id, lat, lng, warn)
     values (?,?,?,?,?,?)
   </insert>
+
+  <insert id="Vehicle#add">
+   INSERT INTO VEHICLE(plate, name, color, alarms) VALUES (:plate, :name, :color, :alarms)
+  </insert>
+
+  <delete id="Vehicle#remove">
+   DELETE FROM VEHICLE where plate = :plate
+  </delete>
   
   <insert id="vehicle">
    INSERT INTO VEHICLE(plate, name, color, alarms) VALUES (:plate, :name, :color, :alarms)
@@ -33,6 +41,10 @@
 
   <select id="simpleSelect" returnType="java.util.HashMap">
     select my_key,evt_date,object_id,lat, lng, warn from dev_data_3t.TEST_DATA
+  </select>
+
+  <select id="all-vehicles" returnType="java.util.HashMap">
+    select plate, name, color, alarms from VEHICLE
   </select>
 
   <select id="selectClauseIN">

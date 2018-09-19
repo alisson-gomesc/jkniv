@@ -351,8 +351,6 @@ class RepositoryCouchDb implements Repository
         isql.getValidateType().assertValidate(queryable.getParams());
         
         Command command = adapterConn.asAddCommand(queryable);
-        //StatementAdapter<Number, String> adapterStmt = factoryConnection.newStatement(queryable);
-        //queryable.bind(adapterStmt).on();
         int affected = command.execute();
         
         if (isDebugEnabled)
@@ -376,8 +374,6 @@ class RepositoryCouchDb implements Repository
         isql.getValidateType().assertValidate(queryable.getParams());
         
         Command command = adapterConn.asAddCommand(queryable);
-        //StatementAdapter<Number, String> adapterStmt = factoryConnection.newStatement(queryable);
-        //queryable.bind(adapterStmt).on();
         int affected = command.execute();
         
         if (isDebugEnabled)
@@ -490,7 +486,7 @@ class RepositoryCouchDb implements Repository
     @Override
     public Transactional getTransaction()
     {
-        throw new UnsupportedOperationException("CouchDb Repository doesn't implement this method yet!");
+        throw new UnsupportedOperationException("CouchDb Repository doesn't supports transaction");
     }
     
     @Override
@@ -502,7 +498,7 @@ class RepositoryCouchDb implements Repository
         }
         catch (SQLException e)
         {
-            LOG.warn("Error to try close Cassandra session/cluster [{}]", adapterConn, e);
+            LOG.warn("Error to try close CouchDB session [{}]", adapterConn, e);
         }
         sqlContext.close();
     }
@@ -528,30 +524,5 @@ class RepositoryCouchDb implements Repository
             //TODO exception design, must have ConfigurationException?
         }
         return prop;
-    }
-    
-    //    /**
-    //     * Summarize the columns from SQL result in binary data or not.
-    //     * @param metadata  object that contains information about the types and properties of the columns in a <code>ResultSet</code> 
-    //     * @return Array of columns with name and index
-    //     */
-    //    @SuppressWarnings("unchecked")
-    //    private JdbcColumn<Row>[] getJdbcColumns(ColumnDefinitions metadata)
-    //    {
-    //        JdbcColumn<Row>[] columns = new JdbcColumn[metadata.size()];
-    //        
-    //        for (int i = 0; i < columns.length; i++)
-    //        {
-    //            //int columnNumber = i + 1;
-    //            
-    //            String columnName = metadata.getName(i);//getColumnName(metadata, columnNumber);
-    //            int columnType = metadata.getType(i).getName().ordinal(); //metadata.getColumnType(columnNumber);
-    //            //boolean binaryData = false;
-    //            //if (columnType == Types.CLOB || columnType == Types.BLOB)
-    //            //    binaryData = true;
-    //            columns[i] = new CouchDbColumn(i, columnName, columnType);
-    //        }
-    //        return columns;
-    //    }
-    
+    }    
 }

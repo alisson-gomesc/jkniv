@@ -39,6 +39,8 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.cache.Cacheable;
 import net.sf.jkniv.exception.HandleableException;
+import net.sf.jkniv.reflect.beans.ObjectProxy;
+import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
@@ -130,9 +132,11 @@ class RepositoryCassandra implements Repository
             sqlContext.getRepositoryConfig().add(props);
 
         this.sqlContext = sqlContext;
+        this.repositoryConfig = this.sqlContext.getRepositoryConfig();
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
         this.adapterConn = new CassandraSessionFactory(sqlContext.getRepositoryConfig().getProperties()).open();
+        this.defineQueryNameStrategy();
     }
     
     @Override
@@ -295,8 +299,27 @@ class RepositoryCassandra implements Repository
     @Override
     public <T> T add(T entity)
     {
-        // TODO implements Repository.add(T)
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(entity);
+        String queryName = this.strategyQueryName.toAddName(entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as add command", queryName);
+        
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        
+        Sql isql = sqlContext.getQuery(queryable.getName());
+        checkSqlType(isql, SqlType.INSERT);
+        if (!queryable.isBoundSql())
+            queryable.bind(isql);
+        
+        isql.getValidateType().assertValidate(queryable.getParams());
+
+        StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
+        queryable.bind(adapterStmt).on();
+        int affected = adapterStmt.execute();
+
+        if (isDebugEnabled)
+            LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
+        return entity;
     }
     
     @Override
@@ -330,28 +353,48 @@ class RepositoryCassandra implements Repository
     @Override
     public int remove(Queryable queryable)
     {
-        // TODO implements Repository.remove(Queryable)
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as remove command", queryable);
 
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.DELETE);
-        
+        if (!queryable.isBoundSql())
+            queryable.bind(isql);
+
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        int affected = 0;//currentWork().execute(queryable, isql);
+        StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
+        queryable.bind(adapterStmt).on();
+        int affected = adapterStmt.execute();
+
         if (isDebugEnabled)
             LOG.debug("{} records was affected by remove [{}] command", affected, queryable.getName());
         return affected;
-
-        //throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
     }
     
     @Override
     public <T> int remove(T entity)
     {
-        // TODO implements Repository.remove(T)
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(entity);
+        String queryName = this.strategyQueryName.toRemoveName(entity);
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as remove command", queryable);
+        
+        Sql isql = sqlContext.getQuery(queryable.getName());
+        checkSqlType(isql, SqlType.DELETE);
+        if (!queryable.isBoundSql())
+            queryable.bind(isql);
+
+        isql.getValidateType().assertValidate(queryable.getParams());
+        
+        StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
+        queryable.bind(adapterStmt).on();
+        int affected = adapterStmt.execute();
+
+        if (isDebugEnabled)
+            LOG.debug("{} records was affected by remove [{}] command", affected, queryable.getName());
+        return affected;
     }
     
     @Override
@@ -411,4 +454,12 @@ class RepositoryCassandra implements Repository
         }
         return prop;
     }
+    
+    private void defineQueryNameStrategy()
+    {
+        String nameStrategy = repositoryConfig.getQueryNameStrategy();
+        ObjectProxy<? extends QueryNameStrategy> proxy = ObjectProxyFactory.newProxy(nameStrategy);
+        this.strategyQueryName = proxy.newInstance();
+    }
+
 }
