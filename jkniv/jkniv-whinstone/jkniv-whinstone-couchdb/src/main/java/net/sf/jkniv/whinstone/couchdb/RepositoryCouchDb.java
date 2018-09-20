@@ -525,5 +525,4 @@ class RepositoryCouchDb implements Repository
         }
         return prop;
     }
-    
 }

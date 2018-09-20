@@ -82,7 +82,6 @@ public class CassandraRepositoryInsertTest extends BaseJdbc
         assertThat(initialSize + 1, is(newSize));
     }
     
-    
     @Test
     public void whenCassandraAddWithListColumn()
     {

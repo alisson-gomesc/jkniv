@@ -92,28 +92,29 @@ public class CassandraRepositorySelectListTest extends BaseJdbc
     public void whenSelectColumnAsListData()
     {
         Repository repositoryCas = getRepository();
-        Queryable q = QueryFactory.of("vehicles");
+        Queryable q = QueryFactory.of("vehicles", "plates", Arrays.asList("OMN7176","OMN7001","OMN7000"));
         
         List<Vehicle> list = repositoryCas.list(q);
         assertThat(list.size(), greaterThanOrEqualTo(3));
         assertThat(list.get(0), instanceOf(Vehicle.class));
-        
-        assertThat(list.get(0).getPlate(), is("OMN7176"));
-        assertThat(list.get(0).getName(), is("bugatti"));
-        assertThat(list.get(0).getColor(), is("white"));
-        assertThat(list.get(0).getAlarms().size(), is(2));
-        assertThat(list.get(0).getAlarms().get(0), is("anchor"));
-        assertThat(list.get(0).getAlarms().get(1), is("over_speed"));
 
-        assertThat(list.get(1).getPlate(), is("OMN7001"));
-        assertThat(list.get(1).getName(), is("mustang"));
-        assertThat(list.get(1).getColor(), is("blue"));
-        assertThat(list.get(1).getAlarms().size(), is(0));
+        int i = 0;
+        assertThat(list.get(i).getPlate(), is("OMN7000"));
+        assertThat(list.get(i).getName(), is("fusca"));
+        assertThat(list.get(i).getColor(), is("white"));
+        assertThat(list.get(i).getAlarms().size(), is(1));
+        assertThat(list.get(i).getAlarms().get(0), is("anchor"));
 
-        assertThat(list.get(2).getPlate(), is("OMN7000"));
-        assertThat(list.get(2).getName(), is("fusca"));
-        assertThat(list.get(2).getColor(), is("white"));
-        assertThat(list.get(2).getAlarms().size(), is(1));
-        assertThat(list.get(2).getAlarms().get(0), is("anchor"));
+        assertThat(list.get(++i).getPlate(), is("OMN7001"));
+        assertThat(list.get(i).getName(), is("mustang"));
+        assertThat(list.get(i).getColor(), is("blue"));
+        assertThat(list.get(i).getAlarms().size(), is(0));
+
+        assertThat(list.get(++i).getPlate(), is("OMN7176"));
+        assertThat(list.get(i).getName(), is("bugatti"));
+        assertThat(list.get(i).getColor(), is("white"));
+        assertThat(list.get(i).getAlarms().size(), is(2));
+        assertThat(list.get(i).getAlarms().get(0), is("anchor"));
+        assertThat(list.get(i).getAlarms().get(1), is("over_speed"));
     }
 }

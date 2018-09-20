@@ -57,5 +57,8 @@
 
   <select id="vehicles" returnType="net.sf.jkniv.whinstone.cassandra.model.Vehicle">
   select plate, name, color, alarms from VEHICLE
+  <if test="plates != null">
+    where plate in (:in:plates)
+  </if>
   </select>
 </statements>
