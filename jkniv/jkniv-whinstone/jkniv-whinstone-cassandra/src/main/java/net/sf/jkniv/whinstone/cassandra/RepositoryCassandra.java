@@ -480,4 +480,8 @@ class RepositoryCassandra implements Repository
         ObjectProxy<? extends QueryNameStrategy> proxy = ObjectProxyFactory.newProxy(nameStrategy);
         this.strategyQueryName = proxy.newInstance();
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> branch 'master' of https://github.com/alisson-gomesc/jkniv.git
 }

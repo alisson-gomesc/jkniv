@@ -524,6 +524,10 @@ class RepositoryCouchDb implements Repository
             //TODO exception design, must have ConfigurationException?
         }
         return prop;
+<<<<<<< HEAD
     }
     
+=======
+    }    
+>>>>>>> branch 'master' of https://github.com/alisson-gomesc/jkniv.git
 }

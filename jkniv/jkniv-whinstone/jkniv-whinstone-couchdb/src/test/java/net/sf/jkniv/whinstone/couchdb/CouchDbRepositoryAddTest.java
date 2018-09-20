@@ -86,4 +86,8 @@ public class CouchDbRepositoryAddTest extends BaseJdbc
         assertThat(author.getId(), is("hi-id-001"));
         System.out.println(author);
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> branch 'master' of https://github.com/alisson-gomesc/jkniv.git
 }

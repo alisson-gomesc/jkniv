@@ -30,10 +30,13 @@
   <delete id="Vehicle#remove">
    DELETE FROM VEHICLE where plate = :plate
   </delete>
+<<<<<<< HEAD
 
   <select id="Vehicle#get" returnType="net.sf.jkniv.whinstone.cassandra.model.Vehicle">
    SELECT plate, name, color, alarms FROM VEHICLE where plate = :plate
   </select>
+=======
+>>>>>>> branch 'master' of https://github.com/alisson-gomesc/jkniv.git
   
   <insert id="vehicle">
    INSERT INTO VEHICLE(plate, name, color, alarms) VALUES (:plate, :name, :color, :alarms)

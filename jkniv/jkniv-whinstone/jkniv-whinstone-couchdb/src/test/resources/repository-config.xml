@@ -18,4 +18,8 @@
     <jndi-data-source>java:comp/env/props/db3t</jndi-data-source>
   </repository>
 
+<<<<<<< HEAD
 </repository-config>
+=======
+</repository-config>
+>>>>>>> branch 'master' of https://github.com/alisson-gomesc/jkniv.git

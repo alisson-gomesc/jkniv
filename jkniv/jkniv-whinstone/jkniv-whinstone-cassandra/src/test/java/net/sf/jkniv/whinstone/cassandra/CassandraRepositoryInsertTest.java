@@ -73,6 +73,7 @@ public class CassandraRepositoryInsertTest extends BaseJdbc
         Repository repositoryCas = getRepository();
         Vehicle v = new Vehicle();
         v.setName("Livina");
+<<<<<<< HEAD
         v.setPlate("AAA9999");
         v.setColor("red");
         repositoryCas.remove(v);
@@ -82,6 +83,16 @@ public class CassandraRepositoryInsertTest extends BaseJdbc
         assertThat(initialSize + 1, is(newSize));
     }
     
+=======
+        v.setPlate("OMN7777");
+        v.setColor("red");
+        repositoryCas.remove(v);
+        int initialSize = select("all-vehicles");
+        repositoryCas.add(v);
+        int newSize = select("all-vehicles");
+        assertThat(initialSize + 1, is(newSize));
+    }
+>>>>>>> branch 'master' of https://github.com/alisson-gomesc/jkniv.git
     
     @Test
     public void whenCassandraAddWithListColumn()
