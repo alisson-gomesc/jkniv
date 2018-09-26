@@ -92,7 +92,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         //this.queryable = queryable;
         this.stmt = stmt;
         this.session = session;
-        this.bound = this.stmt.bind();
+        this.bound = stmt.bind();
         this.dtConverter = new SqlDateConverter();
         this.oneToManies = Collections.emptySet();
         this.groupingBy = Collections.emptyList();

@@ -29,13 +29,14 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 
-import net.sf.jkniv.sqlegance.Sql;
-import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.cassandra.commands.DeleteCommand;
+import net.sf.jkniv.whinstone.cassandra.commands.InsertCommand;
 import net.sf.jkniv.whinstone.cassandra.commands.SelectCommand;
+import net.sf.jkniv.whinstone.cassandra.commands.StatementCache;
 import net.sf.jkniv.whinstone.cassandra.commands.UpdateCommand;
 import net.sf.jkniv.whinstone.cassandra.statement.CassandraStatementAdapter;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
@@ -43,14 +44,15 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 public class CassandraConnectionAdapter implements ConnectionAdapter
 {
     private static final transient Logger  LOG = LoggerFactory.getLogger();
-
     private Session session;
     private Cluster cluster;
+    private StatementCache stmtCache;
     
     public CassandraConnectionAdapter(Cluster cluster, Session session)
     {
         this.cluster = cluster;
         this.session = session;
+        this.stmtCache = new StatementCache(session);
     }
     
     @Override
@@ -158,7 +160,7 @@ public class CassandraConnectionAdapter implements ConnectionAdapter
         if(LOG.isInfoEnabled())
             LOG.debug("Bind Native SQL\n{}",sql);
 
-        PreparedStatement stmtPrep = session.prepare(sql);
+        PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
         StatementAdapter<T, R> stmt = new CassandraStatementAdapter(this.session, stmtPrep);
         
         queryable.bind(stmt).on();
@@ -184,12 +186,11 @@ public class CassandraConnectionAdapter implements ConnectionAdapter
     public <T, R> Command asUpdateCommand(Queryable queryable)
     {
         UpdateCommand command = null;
-
         String sql = queryable.query();
         if(LOG.isInfoEnabled())
             LOG.debug("Bind Native SQL\n{}",sql);
 
-        PreparedStatement stmtPrep = session.prepare(sql);
+        PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
         CassandraStatementAdapter<Number, ResultSet> stmt = new CassandraStatementAdapter<Number, ResultSet>(this.session, stmtPrep);
         queryable.bind(stmt).on();
         command = new UpdateCommand((CassandraStatementAdapter) stmt, queryable);
@@ -199,15 +200,33 @@ public class CassandraConnectionAdapter implements ConnectionAdapter
     @Override
     public <T, R> Command asDeleteCommand(Queryable queryable)//, ResultRow<T, R> overloadResultRow)
     {
-        // FIXME UnsupportedOperationException
-        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
+        DeleteCommand command = null;
+
+        String sql = queryable.query();
+        if(LOG.isInfoEnabled())
+            LOG.debug("Bind Native SQL\n{}",sql);
+
+        PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
+        CassandraStatementAdapter<Number, ResultSet> stmt = new CassandraStatementAdapter<Number, ResultSet>(this.session, stmtPrep);
+        queryable.bind(stmt).on();
+        command = new DeleteCommand((CassandraStatementAdapter) stmt, queryable);
+        return command;
     }
     
     @Override
     public <T, R> Command asAddCommand(Queryable queryable)//, ResultRow<T, R> overloadResultRow)
     {
-        // FIXME UnsupportedOperationException
-        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
+        InsertCommand command = null;
+
+        String sql = queryable.query();
+        if(LOG.isInfoEnabled())
+            LOG.debug("Bind Native SQL\n{}",sql);
+
+        PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
+        CassandraStatementAdapter<Number, ResultSet> stmt = new CassandraStatementAdapter<Number, ResultSet>(this.session, stmtPrep);
+        queryable.bind(stmt).on();
+        command = new InsertCommand((CassandraStatementAdapter) stmt, queryable);
+        return command;
     }
     
 }

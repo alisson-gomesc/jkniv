@@ -92,27 +92,55 @@ public class CacheManager<K, V>
         this.policy = policy;
     }
 
-    public CachePolicy add(String key, CachePolicy policy)
+    /**
+     * Add new policy with specific name
+     * @param policyName name of policy
+     * @param policy policy to manager a cache
+     * @return the previous value associated with <code>policyName</code>, 
+     * or <code>null<code> if there was no mapping for <code>policyName</code>
+     */
+    public CachePolicy add(String policyName, CachePolicy policy)
     {
-        return this.policies.put(key, policy);
+        return this.policies.put(policyName, policy);
     }
 
+    /**
+     * Add a new cache for manager
+     * @param key cache identify 
+     * @param cache the managed cache
+     * @return the previous value associated with <code>key</code>, 
+     * or <code>null<code> if there was no mapping for <code>key</code>
+     */
     public Cacheable<K, V> add(String key, Cacheable<K, V> cache)
     {
         return this.caches.put(key, cache);
     }
 
+    /**
+     * Add a new cache for manager
+     * @param key cache identify
+     * @param policyName name of policy, the cache no exist a default cache is associated
+     * @param cache the managed cache
+     * @return the previous value associated with <code>key</code>, 
+     * or <code>null<code> if there was no mapping for <code>key</code>
+     */
     public Cacheable<K, V> add(String key, String policyName, Cacheable<K, V> cache)
     {
         CachePolicy policy = this.policies.get(policyName);
         if (policy == null)
+        {
+            LOG.warn("There is no a cache policy named [{}] associating default cache for [{}]", policyName, key);
             policy = this.policy;
-        
+        }
         cache.setPolicy(policy);
         return this.caches.put(key, cache);
     }
 
-    
+    /**
+     * Create a new Memory cache to be managed with a default policy
+     * @param key cache identify
+     * @return the new Cache created
+     */
     public Cacheable<K, V> add(String key)
     {
         Cacheable<K, V> cacheable = new MemoryCache<K, V>(this.policy, key);

@@ -32,7 +32,6 @@ import org.junit.Test;
 
 public class CacheManagerTest
 {
-    
     @Test // @Ignore("TTI failuring")
     public void whenCacheManagerExpireWithTTLandTTI() throws InterruptedException
     {

@@ -16,5 +16,10 @@
    where my_key=? and evt_date=? 
   </update>
 
+  <update id="Vehicle#update">
+   update VEHICLE set name = :name, color = :color, alarms = :alarms
+   where plate = :plate
+  </update>
+
 
 </statements>

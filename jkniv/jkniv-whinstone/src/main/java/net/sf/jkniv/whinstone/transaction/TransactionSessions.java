@@ -82,7 +82,7 @@ public class TransactionSessions
             transactionContext.put(contextName, new TransactionContext(contextName, conn));
         }
         else if (transactionContext.containsKey(contextName))
-            throw new TransactionException("Already exists a connection bind to context name [" + contextName + "] for this thread!");
+            throw new TransactionException("Already exists a connection bind to context name [" + contextName + "] for this thread. jkniv-whinstone-jdbc doesn't support multiple or nested transactions in same Thread!");
         
         return transactionContext.get(contextName);
     }

@@ -41,6 +41,7 @@ import net.sf.jkniv.cache.Cacheable;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.sqlegance.NonUniqueResultException;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
@@ -175,24 +176,24 @@ class RepositoryCassandra implements Repository
     }
     
     
-    private <T, R> T get(Queryable q, Class<T> returnType, ResultRow<T, R> resultRow)
+    private <T, R> T get(Queryable queryable, Class<T> returnType, ResultRow<T, R> resultRow)
     {
-        notNull.verify(q);
+        notNull.verify(queryable);
         if (isTraceEnabled)
-            LOG.trace("Executing [{}] as get command", q);
+            LOG.trace("Executing [{}] as get command", queryable);
         
-        List<T> list = list(q, returnType, resultRow);
+        List<T> list = list(queryable, returnType, resultRow);
         
         T ret = null;
         if (list.size() > 1)
-            handlerException.throwMessage("No unique result for query [%s]", q.getName());// TODO design exception throw NoUniqueResultException
+            throw new NonUniqueResultException("No unique result for query ["+queryable.getName()+"]");
             
         else if (list.size() == 1)
             ret = list.get(0);
         
         if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {}/{} rows fetched", q.getName(), list.size(),
-                    q.getTotal());
+            LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(),
+                    queryable.getTotal());
         
         return ret;
     }
@@ -306,9 +307,8 @@ class RepositoryCassandra implements Repository
         
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
-        queryable.bind(adapterStmt).on();
-        int affected = adapterStmt.execute();
+        Command command = adapterConn.asAddCommand(queryable);
+        int affected = command.execute();
 
         if (isDebugEnabled)
             LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
@@ -332,9 +332,8 @@ class RepositoryCassandra implements Repository
         
         isql.getValidateType().assertValidate(queryable.getParams());
 
-        StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
-        queryable.bind(adapterStmt).on();
-        int affected = adapterStmt.execute();
+        Command command = adapterConn.asAddCommand(queryable);
+        int affected = command.execute();
 
         if (isDebugEnabled)
             LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
@@ -365,8 +364,35 @@ class RepositoryCassandra implements Repository
     @Override
     public <T> T update(T entity)
     {
-        // TODO implements Repository.update(T)
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(entity);
+        String queryName = this.strategyQueryName.toUpdateName(entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as update command", queryName);
+
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        
+        Sql isql = sqlContext.getQuery(queryable.getName());
+        checkSqlType(isql, SqlType.UPDATE);
+        if (!queryable.isBoundSql())
+            queryable.bind(isql);
+        
+        isql.getValidateType().assertValidate(queryable.getParams());
+
+        Command command = adapterConn.asUpdateCommand(queryable);
+        int affected = command.execute();
+
+        if (affected > 1)
+        {
+            LOG.error(
+                    "{} records was affected by update command, the query [{}] must update the record using primary key or using unique columns",
+                    affected, queryable.getName());
+            handlerException
+                    .throwMessage("update(T) cannot update more one records, to update several objects use update(Query)");
+        }
+        if (isDebugEnabled)
+            LOG.debug("{} records was affected by update [{}] command", affected, queryable.getName());
+        
+        return entity;
     }
     
     @Override
@@ -382,9 +408,8 @@ class RepositoryCassandra implements Repository
 
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
-        queryable.bind(adapterStmt).on();
-        int affected = adapterStmt.execute();
+        Command command = adapterConn.asDeleteCommand(queryable);
+        int affected = command.execute();
 
         if (isDebugEnabled)
             LOG.debug("{} records was affected by remove [{}] command", affected, queryable.getName());
@@ -407,9 +432,8 @@ class RepositoryCassandra implements Repository
 
         isql.getValidateType().assertValidate(queryable.getParams());
         
-        StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
-        queryable.bind(adapterStmt).on();
-        int affected = adapterStmt.execute();
+        Command command = adapterConn.asDeleteCommand(queryable);
+        int affected = command.execute();
 
         if (isDebugEnabled)
             LOG.debug("{} records was affected by remove [{}] command", affected, queryable.getName());

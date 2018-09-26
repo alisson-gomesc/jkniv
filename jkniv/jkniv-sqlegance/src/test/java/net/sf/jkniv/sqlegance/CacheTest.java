@@ -52,7 +52,7 @@ public class CacheTest
     }
     
     @Test
-    public void whenCacheIsConfigured()
+    public void whenHasOneCacheConfigured()
     {
         Selectable sql = context1.getQuery("usersInCache").asSelectable();
         assertThat(sql.getCache().getName(), is("user-cache"));
@@ -70,7 +70,7 @@ public class CacheTest
     }
     
     @Test
-    public void whenCacheIsConfiguredXX()
+    public void whenOneQueryHasCacheAndAnotherNot()
     {
         Selectable sql1 = context2.getQuery("usersInCache").asSelectable();
         assertThat(sql1.getCache().getName(), is("user-cache"));

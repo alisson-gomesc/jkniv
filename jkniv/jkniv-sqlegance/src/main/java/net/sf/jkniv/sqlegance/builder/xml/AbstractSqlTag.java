@@ -664,7 +664,7 @@ public abstract class AbstractSqlTag implements SqlTag
         {
             classz = Class.forName(returnType);
         }
-        catch (ClassNotFoundException returnNULL) {  /* NULL type, returnType undefined */}
+        catch (ClassNotFoundException returnNULL) {  /* TODO ClassNotFoundException NULL type, returnType undefined */}
         return classz;
     }
     
