@@ -42,4 +42,10 @@ class StatementCache
     {
         this.cache.clear();
     }
+    
+    public long size()
+    {
+        return this.cache.size();
+    }
+
 }
