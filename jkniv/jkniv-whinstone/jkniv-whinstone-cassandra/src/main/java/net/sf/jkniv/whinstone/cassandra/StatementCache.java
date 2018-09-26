@@ -1,4 +1,4 @@
-package net.sf.jkniv.whinstone.cassandra.commands;
+package net.sf.jkniv.whinstone.cassandra;
 
 import java.util.concurrent.TimeUnit;
 
@@ -11,7 +11,7 @@ import net.sf.jkniv.cache.CachePolicy;
 import net.sf.jkniv.cache.Cacheable;
 import net.sf.jkniv.cache.TTLCachePolicy;
 
-public class StatementCache
+class StatementCache
 {
     private final CacheManager<String, PreparedStatement> manager;
     
@@ -36,5 +36,10 @@ public class StatementCache
             cache.put(cql, ps);
         }
         return ps;
+    }
+    
+    public void clear()
+    {
+        this.cache.clear();
     }
 }

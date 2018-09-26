@@ -36,7 +36,6 @@ import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.cassandra.commands.DeleteCommand;
 import net.sf.jkniv.whinstone.cassandra.commands.InsertCommand;
 import net.sf.jkniv.whinstone.cassandra.commands.SelectCommand;
-import net.sf.jkniv.whinstone.cassandra.commands.StatementCache;
 import net.sf.jkniv.whinstone.cassandra.commands.UpdateCommand;
 import net.sf.jkniv.whinstone.cassandra.statement.CassandraStatementAdapter;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
@@ -74,16 +73,17 @@ public class CassandraConnectionAdapter implements ConnectionAdapter
     public void close() throws SQLException
     {
         if (session != null && !session.isClosed())
-        {
             session.close();
             
-        }
         if (cluster != null && !cluster.isClosed())
-        {
             cluster.close();
-        }
+
+        if(stmtCache != null)
+            stmtCache.clear();
+        
         cluster = null;
         session = null;
+        stmtCache = null;
     }
     
     @Override
