@@ -311,8 +311,8 @@ class RepositoryCouchDb implements Repository
         {
             q.cached();
             list = (List<T>) entry.getValue();
-            if (LOG.isInfoEnabled())
-                LOG.info("{} object(s) was returned from [{}] cache using query [{}] since {} reach [{}] times", list.size(),
+            if (LOG.isDebugEnabled())
+                LOG.debug("{} object(s) was returned from [{}] cache using query [{}] since {} reach [{}] times", list.size(),
                         selectable.getCache().getName(), selectable.getName(), entry.getTimestamp(), entry.hits());
         }
         q.setTotal(queryable.getTotal());

@@ -97,7 +97,7 @@ public class CacheManager<K, V>
      * @param policyName name of policy
      * @param policy policy to manager a cache
      * @return the previous value associated with <code>policyName</code>, 
-     * or <code>null<code> if there was no mapping for <code>policyName</code>
+     * or <code>null</code> if there was no mapping for <code>policyName</code>
      */
     public CachePolicy add(String policyName, CachePolicy policy)
     {
@@ -109,7 +109,7 @@ public class CacheManager<K, V>
      * @param key cache identify 
      * @param cache the managed cache
      * @return the previous value associated with <code>key</code>, 
-     * or <code>null<code> if there was no mapping for <code>key</code>
+     * or <code>null</code> if there was no mapping for <code>key</code>
      */
     public Cacheable<K, V> add(String key, Cacheable<K, V> cache)
     {
@@ -122,7 +122,7 @@ public class CacheManager<K, V>
      * @param policyName name of policy, the cache no exist a default cache is associated
      * @param cache the managed cache
      * @return the previous value associated with <code>key</code>, 
-     * or <code>null<code> if there was no mapping for <code>key</code>
+     * or <code>null</code> if there was no mapping for <code>key</code>
      */
     public Cacheable<K, V> add(String key, String policyName, Cacheable<K, V> cache)
     {
@@ -210,22 +210,24 @@ public class CacheManager<K, V>
         @Override
         public void run()
         {
+            int i = 0;
             LOG.info("Manager [{}] caches", caches.size());
             Set<Map.Entry<String, Cacheable<K, V>>> entries = caches.entrySet();
             for (Map.Entry<String, Cacheable<K, V>> entry : entries)
             {
                 Cacheable<K, V> cacheable = entry.getValue();
                 Set<Map.Entry<K, Cacheable.Entry<V>>> entrySet = cacheable.entrySet();
-                
                 for (Map.Entry<K, Cacheable.Entry<V>> cacheableEntry : entrySet)
                 {
                     Cacheable.Entry<V> value = cacheableEntry.getValue();
                     if (!cacheable.getPolicy().isAlive(value.getTimestamp().getTime()))
                     {
                         cacheable.remove(cacheableEntry.getKey());
-                        LOG.info("Removing cache [{}]", cacheableEntry.getKey());
+                        LOG.debug("Removing cache [{}]", cacheableEntry.getKey());
+                        i++;
                     }
                 }
+                LOG.info("[{}] objects are removed from [{}] cache", i, cacheable.getName());            
             }
         }
     }

@@ -136,10 +136,6 @@ public class QueryFactory
      * @param queryable query name
      * @param returnType type of return that overload return type from XML
      * @param <T> type of return type 
-     * <p>
-     * 1o first param it's key name and 2o your value
-     * <p>
-     * 3o it's key 4o your value and so on.
      * @return Queryable object with parameters and unlimited result
      */
     public static <T> Queryable clone(Queryable queryable, Class<T> returnType)

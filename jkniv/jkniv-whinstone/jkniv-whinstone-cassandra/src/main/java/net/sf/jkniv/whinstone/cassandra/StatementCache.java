@@ -21,9 +21,9 @@ class StatementCache
     public StatementCache(Session session)
     {
         this.session = session;
-        CachePolicy policy = new TTLCachePolicy(10, 5, TimeUnit.MINUTES);
+        CachePolicy policy = new TTLCachePolicy(120, 5, TimeUnit.MINUTES);
         this.manager = new CacheManager<String, PreparedStatement>(TimeUnit.MINUTES.toSeconds(10), 
-                                                                   TimeUnit.MINUTES.toSeconds(5), policy);
+                                                                   TimeUnit.MINUTES.toSeconds(30), policy);
         this.cache = this.manager.add("cassandra-stmt");
     }
     
@@ -42,4 +42,10 @@ class StatementCache
     {
         this.cache.clear();
     }
+    
+    public long size()
+    {
+        return this.cache.size();
+    }
+
 }
