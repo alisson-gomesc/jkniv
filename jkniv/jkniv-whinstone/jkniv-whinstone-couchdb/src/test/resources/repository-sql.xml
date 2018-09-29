@@ -11,7 +11,8 @@
  <include href="/repository-sql-find.xml" />
  <include href="/repository-sql-views.xml" />
  <include href="/repository-sql-cache.xml" />
-  
+ <include href="/repository-sql-scalar.xml" />
+ 
    <select id="adminRoles" returnType="">
     {
      "selector": {"nationality": "BR" }

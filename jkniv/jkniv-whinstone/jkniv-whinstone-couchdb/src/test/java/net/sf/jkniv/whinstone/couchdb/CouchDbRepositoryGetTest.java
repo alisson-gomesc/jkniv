@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
@@ -136,4 +137,14 @@ public class CouchDbRepositoryGetTest extends BaseJdbc
         assertThat(ret, instanceOf(Author.class));
         assertThat(ret.getName(), is("Friedrich Nietzsche"));
     }
+    
+    @Test
+    public void whenGetNullReturn()
+    {
+        Repository repositoryDb = getRepository();
+        Queryable q = QueryFactory.of("authorName", "natio", "NO_EXIST");
+        Map map= repositoryDb.get(q);
+        assertThat(map, nullValue());        
+    }
+
 }

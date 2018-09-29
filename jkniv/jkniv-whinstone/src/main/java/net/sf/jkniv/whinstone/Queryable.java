@@ -282,10 +282,14 @@ public interface Queryable
     Class getReturnType();
     
     /**
-     * Specifies intentionally to no hit the cache values when configured
+     * Specifies intentionally to no retrieve the data from cache, the query must be hit the database
      */
     void cacheIgnore();
     
+    /**
+     * Verify was marked to ignore the cache.
+     * @return <code>true</code> when cache ignore was invoked, <code>false</code> otherwise.
+     */
     boolean isCacheIgnore();
     
     /**

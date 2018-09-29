@@ -362,8 +362,9 @@ class RepositoryJdbc implements Repository
         List<T> list = currentWork().select(queryable);
         if (list.size() == 1)
             result = list.get(0);
-        else if (list.size() > 1)// TODO test NonUniqueResultException for scalar method 
-            throw new NonUniqueResultException("Not a single result was generated, scalar function must return unique row and column!");
+        else if (list.size() > 1)// TODO test NonUniqueResultException for scalar method
+            throw new NonUniqueResultException("Query ["+queryable.getName()+"] no return scalar value, scalar function must return unique row and column");
+            //throw new NonUniqueResultException("Not a single result was generated, scalar function must return unique row and column!");
         
         if (isDebugEnabled)
             LOG.debug("Executed scalar query [{}] retrieving [{}] type of [{}]", queryable.getName(), result, (result !=null ? result.getClass().getName() : "NULL"));

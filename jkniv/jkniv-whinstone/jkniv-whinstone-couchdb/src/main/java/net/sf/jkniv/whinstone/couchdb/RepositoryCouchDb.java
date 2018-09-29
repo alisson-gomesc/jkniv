@@ -136,14 +136,7 @@ class RepositoryCouchDb implements Repository
     public <T> T get(Queryable queryable)
     {
         notNull.verify(queryable);
-        //if (isTraceEnabled)
-        //    LOG.trace("Executing [{}] as get command", queryable);
-        
         T ret = get(queryable, null, null);
-        
-        //if (isDebugEnabled)
-        //    LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
-        
         return ret;
     }
     
@@ -151,16 +144,28 @@ class RepositoryCouchDb implements Repository
     public <T> T get(Queryable queryable, Class<T> returnType)
     {
         notNull.verify(queryable, returnType);
-        //if (isTraceEnabled)
-        //    LOG.trace("Executing [{}] as get command with [{}] as return type", queryable, returnType);
-        
         T ret = get(queryable, returnType, null);
-        //if (isDebugEnabled)
-        //    LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
-        
         return ret;
     }
     
+    @Override
+    public <T> T get(T object)
+    {
+        notNull.verify(object);
+        Queryable queryable = QueryFactory.of("get", object);
+        T ret = (T) get(queryable, object.getClass(), null);
+        return ret;
+    }
+
+    @Override
+    public <T> T get(Class<T> returnType, Object object)
+    {
+        notNull.verify(object);
+        Queryable queryable = QueryFactory.of("get", object);
+        T ret = (T) get(queryable, returnType, null);
+        return ret;
+    }
+
     @Override
     public <T, R> T get(Queryable queryable, ResultRow<T, R> resultRow)
     {
@@ -178,75 +183,66 @@ class RepositoryCouchDb implements Repository
         //        
     }
     
-    @Override
-    public <T> T get(T object)
-    {
-        notNull.verify(object);
-        //if (isTraceEnabled)
-        //    LOG.trace("Executing as get command with object [{}]", object);
-        
-        Queryable queryable = QueryFactory.of("get", object);
-        T ret = (T) get(queryable, object.getClass(), null);
-        
-        //if (isDebugEnabled)
-        //    LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
-        
-        return ret;
-    }
-    
-    @Override
-    public <T> T get(Class<T> returnType, Object object)
-    {
-        notNull.verify(object);
-        //if (isTraceEnabled)
-        //    LOG.trace("Executing as get command with object [{}]", object);
-        
-        Queryable queryable = QueryFactory.of("get", object);
-        T ret = (T) get(queryable, returnType, null);
-        
-        //if (isDebugEnabled)
-        //    LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
-        
-        return ret;
-    }
-    
     private <T, R> T get(Queryable q, Class<T> returnType, ResultRow<T, R> resultRow)
     {
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as get command", q);
         
+        T ret = null;
         Queryable queryable = QueryFactory.clone(q, returnType);
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.SELECT);
-        isql.getValidateType().assertValidate(queryable.getParams());
-        
-        //queryable.setReturnType(returnType);
+        List<T> list = Collections.emptyList();
+        Selectable selectable = sqlContext.getQuery(queryable.getName()).asSelectable();
+        selectable.getValidateType().assertValidate(queryable.getParams());
         
         if (!queryable.isBoundSql())
-            queryable.bind(isql);
+            queryable.bind(selectable);
         
-        Command command = adapterConn.asSelectCommand(queryable, null);
-        List<T> list = command.execute();
+        Cacheable.Entry entry = null;
         
-        T ret = null;
-        if (list.size() > 1)
-            throw new NonUniqueResultException("No unique result for query ["+queryable.getName()+"]");
-            
-        else if (list.size() == 1)
+        if(!queryable.isCacheIgnore())
+            entry = selectable.getCache().getEntry(queryable);
+
+        if (entry == null)
+        {
+            Command command = adapterConn.asSelectCommand(queryable, null);
+            list = command.execute();
+            if (list.size() > 1)
+                throw new NonUniqueResultException("No unique result for query ["+queryable.getName()+"]");
+
+            if (selectable.hasCache() && !list.isEmpty())
+                selectable.getCache().put(queryable, list);
+        }
+        else
+        {
+            q.cached();
+            q.setTotal(queryable.getTotal());
+            list = (List<T>) entry.getValue();
+            if (LOG.isDebugEnabled())
+                LOG.debug("{} object(s) was returned from [{}] cache using query [{}] since {} reach [{}] times", list.size(),
+                        selectable.getCache().getName(), selectable.getName(), entry.getTimestamp(), entry.hits());
+        }
+        if (list.size() == 1)
             ret = list.get(0);
         
         if (isDebugEnabled)
             LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(),
                     queryable.getTotal());
-        
         return ret;
     }
     
     @Override
     public <T> T scalar(Queryable queryable)
     {
-        throw new UnsupportedOperationException("CouchDb Repository doesn't implement this method yet!");
+        notNull.verify(queryable);
+        T result = null;
+        Map map = get(queryable, Map.class, null);
+        if (map != null)
+        {
+            if(map.size() > 1)
+                throw new NonUniqueResultException("Query ["+queryable.getName()+"] no return scalar value, scalar function must return unique field");
+            result = (T)map.values().iterator().next();
+        }
+        return result;
     }
     
     @Override
@@ -282,16 +278,10 @@ class RepositoryCouchDb implements Repository
             LOG.trace("Executing [{}] as list command", q);
         
         Queryable queryable = QueryFactory.clone(q, overloadReturnType);
-        
         List<T> list = Collections.emptyList();
-        
         Selectable selectable = sqlContext.getQuery(queryable.getName()).asSelectable();
-        //checkSqlType(isql, SqlType.SELECT);
-        //Selectable selectable = isql.asSelectable();
         selectable.getValidateType().assertValidate(queryable.getParams());
         
-        //assignReturnType(queryable, overloadReturnType);
-
         if (!queryable.isBoundSql())
             queryable.bind(selectable);
 
@@ -322,20 +312,7 @@ class RepositoryCouchDb implements Repository
         return list;
         
     }
-    
-    private void assignReturnType(Queryable queryable, Class overloadReturnType)
-    {
-//        if (overloadReturnType != null)
-//        {
-//            if (!queryable.isBoundReturnType())
-//                queryable.setReturnType(overloadReturnType);
-//            else if (queryable.getReturnType().getName().equals(overloadReturnType.getName()))
-//                throw new BoundException("Queryable [" + queryable.getName() + "] " + "already bound a rerturn type ["
-//                        + queryable.getReturnType().getName() + "]" + " assigned, cannot assign ["
-//                        + overloadReturnType.getName() + "] for that");
-//        }        
-    }
-    
+        
     @Override
     public int add(Queryable queryable)
     {

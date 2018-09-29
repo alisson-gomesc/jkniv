@@ -21,6 +21,7 @@ package net.sf.jkniv.whinstone.couchdb;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 
@@ -54,7 +55,6 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
         assertThat(list.get(0), instanceOf(Map.class));
         System.out.println(list.get(0));
     }
-    
 
     @Test
     public void whenCouchDbListTypedObject()
@@ -106,6 +106,16 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
         System.out.println(list.get(0));
     }
 
+    @Test
+    public void whenListEmptyReturn()
+    {
+        Repository repositoryDb = getRepository();
+        Queryable q = QueryFactory.of("authorName", "natio", "NO_EXIST");
+        List<Map> list= repositoryDb.list(q);
+        assertThat(list, instanceOf(List.class));
+        assertThat(list.isEmpty(), is(true));
+    }
+    
     @Test @Ignore("Use integer as paramter")
     public void whenFindCommandUseIntegerAsParameter()
     {
