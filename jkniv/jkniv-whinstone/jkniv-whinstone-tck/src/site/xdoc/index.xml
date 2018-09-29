@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+  <properties>
+    <title>Introduction</title>
+    <author email="alisson_gomes@users.sourceforge.net">The jkniv Team</author>
+  </properties>
+  <body> 
+    <section name="Introduction">
+      <subsection name="What is Whinstone-jpa2">
+        <p>
+          Whinstone-jpa2 is a implementation of 
+          <a href="http://martinfowler.com/eaaCatalog/repository.html">Repository pattern</a> 
+          using JPA2, Hibernate and SQLegance.
+        </p>
+      </subsection>
+      <subsection name="Why Whinstone">
+        <p>
+          Whinstone allow the developers worry just with implementation of view, controller and business layers. 
+          While Whinstone encapsulate all data access with the Repository pattern keeping the secure coding 
+          of SQL Injection, paginated queries and others good design practices.
+        </p>
+        <p>      
+          The Whinstone it's a final implementation of repository pattern, where the interface is defined at
+          <a href="jkniv.sourceforge.net/apidocs/net/sf/jkniv/sqlegance/IRepository.html"><![CDATA[net.sf.jkniv.sqlegance.IRepository<T>]]></a> 
+          (SQLegance project), using some other frameworks.
+        </p>
+      </subsection>      
+      <subsection name="Simple Sample">
+        <p>
+          <source><![CDATA[
+package com.acme.whinstone.test;
+
+import net.sf.jkniv.whinstone.jpa2.AbstractRepository;
+import com.acme.domain.orm.Book;
+
+public class BookRepository extends AbstractRepository<Book>
+{
+    public BookRepository()
+    {
+    }
+}
+        ]]></source>
+      </p>
+      <p> 
+        <source><![CDATA[
+package com.acme.business;
+
+import com.acme.domain.orm.Book;
+
+import net.sf.jkniv.sqlegance.IQuery;
+import net.sf.jkniv.sqlegance.Query;
+import net.sf.jkniv.sqlegance.IRepository;
+
+public class BookBusiness
+{
+    private IRepository<Parameter> repositoryBook;
+
+    public BookBusiness(BookRepository repositoryBook)
+    {
+        this.repositoryBook = repositoryBook;
+    }
+    
+    public Book get(String isbn)
+    {
+        Book b = new Book();
+        b.setIsbn(isbn);
+        IQuery q = new Query("jpql.getBook", b);
+        return repositoryBook.get(q);
+    }
+        ]]></source>
+      </p>
+     </subsection> 
+     <subsection name="Road map">
+       <p>
+         TODO list:
+       </p>
+         <ul>
+           <li>Add support to Stored Procedures</li>
+           <li>Add support more one datasources</li>
+           <li>Add implementation from other frameworks and technologies like JDBC, XML files, etc.</li>
+           <li>Add support to read values of java embedded objects, like: <code>book.author.name</code>. 
+           Now just support one object, like: <code>author.name</code></li>
+         </ul>
+     </subsection>
+      
+     <subsection name="Translations">
+        <p>Help me to translate this document!</p>
+        <!--ul class="i18n">
+          <li class="zh"><a href="./zh/index.html">简体中文 (Simplified Chinese)</a></li>
+          <li class="en"><a href="./getting-started.html">English</a></li>
+          <li class="es"><a href="./es/index.html">Español</a></li>
+          <li class="ja"><a href="./ja/index.html">日本語 (Japanese)</a></li>
+          <li class="ko"><a href="./ko/index.html">한국어 (Korean)</a></li>
+        </ul-->
+        <p>Do you want to read about Whinstone in your own native language? Send me e-mail providing text with your
+        mother tongue documentation!</p>
+      </subsection>
+    </section>
+
+    <section name="Transaction Management">
+    
+      <subsection name="JEE Transaction"/>
+      
+      <subsection name="Spring Framework Transaction"/>
+    
+      <subsection name="Whinstone Transaction"/>
+    </section>
+    
+    <section name="Unit test">
+      <subsection name="Spring test and JUnit"/>
+    </section>
+  </body>
+
+</document>

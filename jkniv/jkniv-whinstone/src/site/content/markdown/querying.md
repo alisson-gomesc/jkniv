@@ -16,14 +16,14 @@ Bind with POJO:
 
     public class Book {
       private Long   id;
-      private String name;
       private String isbn;
+      private String name;
       // getters and setters REQUIRED
     }
 
 The attribute and columns name are the same, match! More important are the getters and the setters. 
 
-**Note:** `jkniv-whinstone` **doesn't broken the encapsulation from objects, always the bind is through the getter and setters methods**.
+**Note:** `jkniv-whinstone` **doesn't broken the objects encapsulation, always the bind is through the getter and setters methods**.
 
 
 But, not always the column have the same attribute name, then columns alias must be used to bind with the attribute. That means that you use Snake Case (snake_case) to bind with Camel Case (camelCase).
@@ -77,7 +77,7 @@ To populate the `Book` with relationship One-to-One the alias must be between qu
     left  join address ad on ad.id = a.address_id
 
 
-**Note:** all bind happen using JavaBeans Conventions `get`/`set`/`is` methods, encapsulation is safe. A default constructor is required too (the exception it's for JPA native queries where the bind happen into Constructor).
+**Note:** all bind happen using JavaBeans Conventions `get`/`set`/`is` methods, encapsulation is safe. A default constructor is required too (the exception it's for JPA native queries where the bind **for native queries** happen into Constructor).
 
 ### One-to-Many Relationship
 
@@ -208,13 +208,6 @@ Java code:
 - `(7)`: if a RepositoryException is threw a rollback is executed.
 
 OK, java looks like more readable. Of course `Collection<Map>` could be replace to `Collection<Sale>` for a better design.
-<<<<<<< HEAD
-
-
-
-
-=======
->>>>>>> branch 'master' of https://github.com/alisson-gomesc/jkniv.git
 
 [1]: http://jkniv.sourceforge.net/jkniv-sqlegance/index.html "SQL is handler by XML files"
 [2]: https://docs.oracle.com/javase/tutorial/jdbc/basics/prepared.html "Overview of Prepared Statements"

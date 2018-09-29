@@ -7,17 +7,25 @@
     <version>0.6.0.M36</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
-  <artifactId>jkniv-whinstone-fluent</artifactId>
-  <url>http://jkniv.sourceforge.net/Whinstone</url>
-  <name>jkniv-whinstone-fluent</name>
+  <artifactId>jkniv-whinstone-tck</artifactId>
+  <url>http://jkniv.sourceforge.net/jkniv-whinstone/</url>
+  <name>jkniv-whinstone-tck</name>
   <dependencies>
     <dependency>
      <groupId>net.sf.jkniv</groupId>
-     <artifactId>jkniv-sqlegance</artifactId>
+     <artifactId>jkniv-whinstone-jpa2</artifactId>
     </dependency>
     <dependency>
      <groupId>net.sf.jkniv</groupId>
-     <artifactId>jkniv-whinstone</artifactId>
+     <artifactId>jkniv-whinstone-jdbc</artifactId>
+    </dependency>
+    <dependency>
+     <groupId>net.sf.jkniv</groupId>
+     <artifactId>jkniv-whinstone-couchdb</artifactId>
+    </dependency>
+    <dependency>
+     <groupId>net.sf.jkniv</groupId>
+     <artifactId>jkniv-whinstone-cassandra</artifactId>
     </dependency>
   </dependencies>
   <build>
@@ -33,10 +41,15 @@
       </plugin>
     </plugins>
   </build>
+  <scm>
+    <connection>scm:git:git://github.com/alisson-gomesc/jkniv</connection>
+    <url>https://github.com/alisson-gomesc/jkniv.git</url>
+  </scm>
   <licenses>
     <license>
       <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1</name>
       <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
     </license>
   </licenses>
+  <description>Tool Compatibility Kit (TCK) is a suite of tests that at least nominally checks a particular alleged implementation of a Repository pattern.</description>
 </project>

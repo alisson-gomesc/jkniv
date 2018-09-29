@@ -66,7 +66,7 @@ Using JNDI, the Repository façade can access a JDBC connection pool by looking 
 
 In the above example, `java:comp/env/jdbc/myOracle` is the name by which the pool is referenced in the container.
 
-So, the java code is used to lookup the Repository façade.
+So, the same java code is used to lookup the Repository façade.
 
     Repository repository = RepositoryService.getInstance().lookup(RepositoryType.JDBC).newInstance();
 
@@ -84,11 +84,11 @@ A `repository-config.xml` is like a `persistence.xml` for JPA that define one or
 | url                                    | JDBC URL to connect in database.
 | driver                                 | JDBC Drive class.
 | schema                                 | Database schema, used for Couchdb.
-| jkniv.repository.query_namestrategy    | , default is `net.sf.jkniv.sqlegance.HashQueryNameStrategy`.
+| jkniv.repository.query_namestrategy    | default is `net.sf.jkniv.sqlegance.HashQueryNameStrategy`.
 | jkniv.repository.jdbc.dialect          | Database dialect for LIMIT statement, default is `net.sf.jkniv.sqlegance.dialect.AnsiDialect`.
 | jkniv.repository.data_masking          | Mask sensible data in log, default is `net.sf.jkniv.sqlegance.logger.SimpleDataMasking`.
 | jkniv.repository.short_name_enable     | allow find query name using simple name, example: `query.finance.balance` could be lookup as `balance`, default is `false`. 
-| jkniv.repository.reloadable_xml_enable | for reloading query files based on timestamp changes, default is `false`, running for 3 hours, after that doesn't reload anymore. Used for development environment.
+| jkniv.repository.reloadable_xml_enable | for reloading query files based on timestamp changes, default is `false`. When enable `true` running for 3 hours, after that doesn't reload anymore. Used for development environment.
 | jkniv.repository.jdbc_adapter_factory  | Adapter for Connection manager in `jkniv-whinstone-jdbc`, implementations: `net.sf.jkniv.whinstone.jdbc.DriverManagerAdapter`, `net.sf.jkniv.whinstone.jdbc.DataSourceAdapter` and `net.sf.jkniv.whinstone.jdbc.SpringDataSourceAdapter`, default is `DriverManagerAdapter`.
 | jkniv.repository.show_config           | Print the DatabaseMetaData in log, default is `false`
 

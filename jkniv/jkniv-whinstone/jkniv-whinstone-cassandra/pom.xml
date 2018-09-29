@@ -76,11 +76,6 @@
     </plugins>
   </build>
   
-  <scm>
-    <connection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/jkniv-whinstone/jkniv-whinstone-cassandra</connection>
-    <developerConnection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/jkniv-whinstone/jkniv-whinstone-cassandra</developerConnection>
-    <url>https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/jkniv-whinstone/jkniv-whinstone-cassandra</url>
-  </scm>
   <licenses>
     <license>
       <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1</name>

@@ -99,14 +99,7 @@
         </configuration>
       </plugin>
     </plugins>
-  </build>
-  
-  <scm>
-    <connection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/jkniv-whinstone/jkniv-whinstone-jdbc</connection>
-    <developerConnection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/jkniv-whinstone/jkniv-whinstone-jdbc</developerConnection>
-    <url>https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/jkniv-whinstone/jkniv-whinstone-jdbc</url>
-  </scm>
-  <licenses>
+  </build>  <licenses>
     <license>
       <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1</name>
       <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>

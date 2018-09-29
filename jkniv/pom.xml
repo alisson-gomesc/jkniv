@@ -364,6 +364,14 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.7.1</version>
+        <configuration>
+          <templateFile>${basedir}/src/site/site.vm</templateFile>
+        </configuration>
+      </plugin>
       <!-- 
       <plugin>
           <groupId>org.apache.maven.plugins</groupId> 
@@ -601,9 +609,8 @@
     </developer>
   </developers>
   <scm>
-    <connection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/release-jkniv-0.6.0</connection>
-    <developerConnection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0</developerConnection>
-    <url>http://sourceforge.net/p/jkniv/code/HEAD/tree/trunk/release-jkniv-0.6.0</url>
+    <connection>scm:git:git://github.com/alisson-gomesc/jkniv</connection>
+    <url>https://github.com/alisson-gomesc/jkniv.git</url>
   </scm>
   <licenses>
     <license>

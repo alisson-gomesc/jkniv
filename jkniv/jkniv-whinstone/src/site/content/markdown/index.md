@@ -14,8 +14,8 @@ The project `jkniv-whinstone` define the repository contract between you service
 
 - `jkniv-whinstone-jdbc` encapsulate the JDBC access with a simple repository contract.
 - `jkniv-whinstone-jpa2` encapsulate JPA access with a simple repository contract.
-- `jkniv-whinstone-cassandra` encapsulate cassandra access with a simple repository contract.
-- `jkniv-whinstone-couchdb` encapsulate http api to access with a simple repository contract.
+- `jkniv-whinstone-cassandra` encapsulate Apache Cassandra protocol to access with a simple repository contract.
+- `jkniv-whinstone-couchdb` encapsulate HTTP API from CouchDB to access with a simple repository contract.
 
 The High-level design:
 
@@ -33,7 +33,7 @@ The steps to start are:
 2. write your SQL queries
 3. run forest run...
 
-No annotations, no mapping (except if you want to use JPA), easily to test. The power of the database query language is yours and `whinstone` gives to you **the plain java objects with automatic bind to input parameters and result set output**, reducing a boilerplate of code to set JDBC parameters and resultset *getters*.
+No annotations, no mapping (except if you want to use JPA), easily to test. The power of the database query language is yours and `whinstone` gives to you **the plain java objects with automatic bind to input parameters and result set output**, reducing a boilerplate of code to set JDBC parameters and ResultSet *getters*.
 
 
 It's very seductive write a query and someone (framework) translate to my specific database like HQL, JPQL, jOOQ DSL, etc. But there is the trap from Least Common Multiple that could hug that framework. It's probable that a lot of extra java code is necessary to do the same without the **native** query from your database.

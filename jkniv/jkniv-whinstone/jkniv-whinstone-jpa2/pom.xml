@@ -98,13 +98,7 @@
         </configuration>
       </plugin>
     </plugins>
-  </build>
-  
-  <scm>
-    <connection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/trunk/SQLegance</connection>
-    <developerConnection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/trunk/SQLegance</developerConnection>
-    <url>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/trunk/SQLegance</url>
-  </scm>
+  </build>  
   <licenses>
     <license>
       <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1</name>

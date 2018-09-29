@@ -87,11 +87,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <spring.version>4.2.5.RELEASE</spring.version>
   </properties>
-  <scm>
-    <connection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/whinstone</connection>
-    <developerConnection>scm:svn:https://svn.code.sf.net/p/jkniv/code/trunk/jkniv/tags/release-jkniv-0.6.0/whinstone</developerConnection>
-    <url>http://jkniv.svn.sourceforge.net/viewvc/jkniv/trunk/tags/release-jkniv-0.6.0/whinstone</url>
-  </scm>
   <issueManagement>
     <system>JIRA</system>
     <url>https://jkniv-io.atlassian.net/projects/JKNIVWHIN/</url>
