@@ -62,13 +62,13 @@ public class CouchDbRepositoryAddTest extends BaseJdbc
     {
         Repository repositoryDb = getRepository();
         Author author = new Author();
-        author.setId("hi-id-001");
+        author.setId("001");
         author.setName("Alisson Gomes");
         author.setNationality("BR");
         Queryable q = getQuery("add", author);
         int rows = repositoryDb.add(q);
         
-        assertThat(author.getId(), is(repositoryDb.get(Author.class,"hi-id-001").getId()));        
+        assertThat(author.getId(), is(repositoryDb.get(Author.class,"001").getId()));        
         assertThat(rows, is(1));
     }
 
@@ -77,11 +77,11 @@ public class CouchDbRepositoryAddTest extends BaseJdbc
     {
         Repository repositoryDb = getRepository();
         Author author = new Author();
-        author.setId("hi-id-002");
-        author.setName("John Lennon");
-        author.setNationality("GB");
+        author.setId("002");
+        author.setName("Nostradamus");
+        author.setNationality("FR");
         repositoryDb.add(author);
         
-        assertThat(author.getId(), is(repositoryDb.get(Author.class,"hi-id-002").getId()));
+        assertThat(author.getId(), is(repositoryDb.get(Author.class,"002").getId()));
     }
 }

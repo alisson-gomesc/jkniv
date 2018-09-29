@@ -49,7 +49,7 @@ public class QueryableConstraintsTest  extends BaseJdbc
     public void whenScalarReturnMoreOnRow()
     {
         catcher.expect(NonUniqueResultException.class);
-        catcher.expectMessage("Not a single result was generated, scalar function must return unique row and column!");
+        catcher.expectMessage("Query [getScalarAuthorName] no return scalar value, scalar function must return unique row and column");
 
         Queryable q = QueryFactory.of("getScalarAuthorName");
         repositoryDerby.scalar(q);
