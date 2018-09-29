@@ -51,5 +51,5 @@
       <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
     </license>
   </licenses>
-  <description>Tool Compatibility Kit (TCK) is a suite of tests that at least nominally checks a particular alleged implementation of a Repository pattern.</description>
+  <description>Test Compatibility Kit (TCK) is a suite of tests that at least nominally checks a particular alleged implementation of a Repository pattern.</description>
 </project>

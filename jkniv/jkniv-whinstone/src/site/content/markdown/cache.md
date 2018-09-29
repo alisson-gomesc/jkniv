@@ -9,7 +9,7 @@ Sample the same query running 500 times:
     Chronometer [ Without Cache: 40564 ms, total=500]
     Chronometer [    With Cache:   237 ms, total=500]
     
-The cache keep the result in memory and the repository don't hit the database again, the `whinstone` don't take any control over the cache data, so if some update or delete operation occurs over the data in database the cache will not be receive any notification or invalidation about that. The use of cache is highly dependent from design patterns of application and/or data nature.
+The cache keep the result in memory and the repository don't hit the database again, the `whinstone` don't take any control over the cache data, so if some update or delete operation occurs over the data in database the cache will not be receive any notification or invalidation about that. The use of cache is highly dependent from design patterns of applications.
 
 
     
@@ -74,7 +74,7 @@ But the `ttl`, `tti`, `size` and `sizeof` are the same.
 **Note**: **size** and **sizeof** until version 0.6.0 it's pendant for implementation!
 
 
-How to no exist synchronization between the cache and the repository, so to help design the use of cache for applications you can instruct programmatically the `Queryable` object to no make use from cache, just call the method `Queryable.cacheIgnore()` the `whinstone` will hit the database again independently from cache. 
+There isn't synchronization between the cache and the repository, so to help design the use of cache for applications you can instruct programmatically the `Queryable` object to no make use from cache, just call the method `Queryable.cacheIgnore()` the `whinstone` will hit the database again independently from cache. 
  
  
      Queryable query = QueryFactory.of("session", "email", "someone@nohome.com");

@@ -8,7 +8,7 @@
   
    <select id="authorBRInCache" cache="authorsBR">
     {
-     "selector": {"nationality": "BR" }
+     "selector": {"nationality": :natio }
     }
   </select>
 
