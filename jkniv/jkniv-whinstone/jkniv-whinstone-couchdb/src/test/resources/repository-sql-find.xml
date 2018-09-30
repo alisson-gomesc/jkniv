@@ -42,6 +42,12 @@
      "fields": ["_id", "_rev", "name", "nationality"]
     }
   </select>
+
+  <select id="authorByName" returnType="net.sf.jkniv.whinstone.couchdb.model.orm.Author">
+    {
+     "selector": {"name": :name }
+    }
+  </select>
   
   <select id="booksFromYear" returnType="net.sf.jkniv.whinstone.couchdb.model.orm.Author">
     {

@@ -35,6 +35,8 @@ import net.sf.jkniv.cache.Cacheable;
 import net.sf.jkniv.cache.MemoryCache;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
+import net.sf.jkniv.reflect.beans.ObjectProxy;
+import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.NonUniqueResultException;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
 import net.sf.jkniv.sqlegance.RepositoryException;
@@ -248,7 +250,16 @@ class RepositoryCouchDb implements Repository
     @Override
     public boolean enrich(Queryable queryable)
     {
-        throw new UnsupportedOperationException("CouchDb Repository doesn't implement this method yet!");
+        notNull.verify(queryable, queryable.getParams());
+        boolean enriched = false;
+        Object o = get(queryable);
+        if(o != null)
+        {
+            ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(queryable.getParams());
+            proxy.merge(o);
+            enriched = true;
+        }
+        return enriched;
     }
     
     @Override

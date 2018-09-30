@@ -64,8 +64,10 @@ public class ObjectProxyCollectionTest
     {
         Author authorEmpty = new Author();
         Author author = new Author();
-        Book b1 = new Book(1001L, "Book 1", "ISBN-1", "John"), b2 = new Book(1002L, "Book 2", "ISBN-2", "John"),
-                b3 = new Book(1003L, "Book 3", "ISBN-3", "John"), b4 = new Book(1004L, "Book 4", "ISBN-4", "John");
+        Book b1 = new Book(1001L, "Book 1", "ISBN-1", "John"), 
+             b2 = new Book(1002L, "Book 2", "ISBN-2", "John"),
+             b3 = new Book(1003L, "Book 3", "ISBN-3", "John"), 
+             b4 = new Book(1004L, "Book 4", "ISBN-4", "John");
         List<Book> books = new ArrayList<Book>(), books2 = new ArrayList<Book>();
         books.add(b3);
         books.add(b4);

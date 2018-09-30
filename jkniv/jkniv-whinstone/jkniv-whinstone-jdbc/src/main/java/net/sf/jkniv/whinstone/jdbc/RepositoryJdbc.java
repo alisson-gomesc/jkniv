@@ -202,10 +202,7 @@ class RepositoryJdbc implements Repository
         return SessionFactory.currentWork(connectionFactory, this.repositoryConfig);
     }
     
-    /*
-     * (non-Javadoc)
-     * @see net.sf.jkniv.sqlegance.Repository#get(net.sf.jkniv.sqlegance.Queryable)
-     */
+    @Override
     public <T> T get(Queryable queryable)
     {
         notNull.verify(queryable);
@@ -231,11 +228,13 @@ class RepositoryJdbc implements Repository
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public <T, R> T get(Queryable queryable, ResultRow<T, R> resultRow)
     {
         return get(queryable, null, (ResultRow<T, ResultSet>) resultRow);
     }
 
+    @Override
     public <T> T get(Queryable queryable, Class<T> returnType)
     {
         return get(queryable, returnType, null);
@@ -267,11 +266,13 @@ class RepositoryJdbc implements Repository
         return ret;
     }
     
+    @Override
     public <T> T get(T entity)
     {
         return get(null, entity);
     }
     
+    @Override
     public <T> T get(Class<T> returnType, Object entity)
     {
         notNull.verify(entity);
@@ -300,21 +301,20 @@ class RepositoryJdbc implements Repository
         return ret;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see net.sf.jkniv.sqlegance.Repository#list(net.sf.jkniv.sqlegance.Queryable)
-     */
+    @Override
     public <T> List<T> list(Queryable queryable)
     {
         return list(queryable, null, null);
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> resultRow)
     {
         return list(queryable, null, (ResultRow<T, ResultSet>) resultRow);
     }
 
+    @Override
     public <T> List<T> list(Queryable queryable, Class<T> returnType)
     {
         return list(queryable, returnType, null);
@@ -340,10 +340,7 @@ class RepositoryJdbc implements Repository
     }
     
     
-    /*
-     * (non-Javadoc)
-     * @see net.sf.jkniv.sqlegance.Repository#count(net.sf.jkniv.sqlegance.Queryable)
-     */
+    @Override
     public <T> T scalar(Queryable queryable)
     {
         notNull.verify(queryable);
@@ -371,11 +368,7 @@ class RepositoryJdbc implements Repository
         return result;
     }
     
-
-    /*
-     * (non-Javadoc)
-     * @see net.sf.jkniv.sqlegance.Repository#add(net.sf.jkniv.sqlegance.Queryable)
-     */
+    @Override
     public int add(Queryable queryable)
     {
         notNull.verify(queryable);
@@ -395,6 +388,7 @@ class RepositoryJdbc implements Repository
         return affected;
     }
     
+    @Override
     public <T> T add(T entity)
     {
         notNull.verify(entity);
@@ -417,12 +411,13 @@ class RepositoryJdbc implements Repository
         return entity;
     }
     
+    @Override
     public boolean enrich(Queryable queryable) // FIXME test enrich method 
     {
         notNull.verify(queryable, queryable.getParams());
         boolean enriched = false;
-        List<Object> list = list(queryable);
-        for(Object o : list)
+        Object o = get(queryable);
+        if(o != null)
         {
             ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(queryable.getParams());
             proxy.merge(o);
@@ -431,10 +426,7 @@ class RepositoryJdbc implements Repository
         return enriched;
     }
     
-    /*
-     * (non-Javadoc)
-     * @see net.sf.jkniv.sqlegance.Repository#update(net.sf.jkniv.sqlegance.Queryable)
-     */
+    @Override
     public int update(Queryable queryable)
     {
         notNull.verify(queryable);
@@ -454,6 +446,7 @@ class RepositoryJdbc implements Repository
         return affected;
     }
     
+    @Override
     public <T> T update(T entity)
     {
         notNull.verify(entity);
@@ -486,10 +479,7 @@ class RepositoryJdbc implements Repository
         return entity;
     }
     
-    /*
-     * (non-Javadoc)
-     * @see net.sf.jkniv.sqlegance.Repository#remove(net.sf.jkniv.sqlegance.Queryable)
-     */
+    @Override
     public int remove(Queryable queryable)
     {
         notNull.verify(queryable);
@@ -509,6 +499,7 @@ class RepositoryJdbc implements Repository
         return affected;
     }
     
+    @Override
     public <T> int remove(T entity)
     {
         notNull.verify(entity);
@@ -541,10 +532,7 @@ class RepositoryJdbc implements Repository
         return affected;
     }
     
-    /*
-     * (non-Javadoc)
-     * @see net.sf.jkniv.sqlegance.Repository#flush()
-     */
+    @Override
     public void flush()
     {
         // TODO flush implementation
@@ -557,12 +545,13 @@ class RepositoryJdbc implements Repository
         return sqlContext.containsQuery(name);
     }
 
-    
+    @Override
     public Transactional getTransaction()
     {
         return currentWork().getTransaction();
     }
     
+    @Override
     public void close()
     {
         SessionFactory.clear();
