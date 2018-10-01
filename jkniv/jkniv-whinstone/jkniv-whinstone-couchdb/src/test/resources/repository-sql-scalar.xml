@@ -15,7 +15,7 @@
   
   <select id="authorNameIds">
     {
-     "selector": {"nationality": :natio },
+     "selector": {"nationality": :nationality },
      "fields": ["_id", "_rev", "name"]
     }
   </select>

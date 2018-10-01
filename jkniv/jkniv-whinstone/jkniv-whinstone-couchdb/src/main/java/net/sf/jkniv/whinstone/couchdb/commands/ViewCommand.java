@@ -91,9 +91,14 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
                     for(Map map : answer.getRows())
                     {
                         Map content = (Map) map.get("value"); 
-                        //ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(returnType);
                         //list.add(proxy.from(r));
-                        list.add(JsonMapper.mapper(content, returnType));
+                        Object o =JsonMapper.mapper(content, returnType);
+                        list.add(o);
+                        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(o);
+                        if (proxy.hasMethod("setId"))
+                            proxy.invoke("setId", map.get("id"));
+                        if (proxy.hasMethod("setKey"))
+                            proxy.invoke("setKey", map.get("key"));
                     }
                 }
                 else
