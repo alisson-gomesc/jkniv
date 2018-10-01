@@ -110,7 +110,7 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
     public void whenListEmptyReturn()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = QueryFactory.of("authorName", "natio", "NO_EXIST");
+        Queryable q = QueryFactory.of("authorName", "nationality", "NO_EXIST");
         List<Map> list= repositoryDb.list(q);
         assertThat(list, instanceOf(List.class));
         assertThat(list.isEmpty(), is(true));

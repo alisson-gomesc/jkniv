@@ -20,18 +20,15 @@
 package net.sf.jkniv.whinstone.cassandra;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.instanceOf;
 
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -68,4 +65,30 @@ public class CassandraRepositorySelectGetTest extends BaseJdbc
         assertThat(map, instanceOf(HashMap.class));
     }
     
+    @Test
+    public void whenGetWithParamOfMapReturnEntity()
+    {
+        Repository repositoryDb = getRepository();
+        Vehicle vehicle = new Vehicle("OMN7176");
+        Vehicle ret = repositoryDb.get(Vehicle.class, vehicle);
+        assertThat(ret, notNullValue());
+        assertThat(ret, instanceOf(Vehicle.class));
+        assertThat(ret.getName(), is("bugatti"));
+        assertThat(ret.getPlate(), is("OMN7176"));
+        assertThat(ret.getColor(), is("white"));
+    }
+
+    @Test
+    public void whenCassandraListSpecificResultRow()
+    {
+        Repository repositoryCas = getRepository();
+        Queryable q = QueryFactory.of("selectVehicle", new Vehicle("OMN7176"));
+        
+        Map map  = repositoryCas.get(q, new CustomResultRow<Map>());
+        assertThat(map, instanceOf(Map.class));
+        assertThat(map, instanceOf(HashMap.class));
+        assertThat((Boolean)map.get("JUNIT"), is(Boolean.TRUE));
+        assertThat(map.get("0"), instanceOf(String.class));
+    }
+
 }

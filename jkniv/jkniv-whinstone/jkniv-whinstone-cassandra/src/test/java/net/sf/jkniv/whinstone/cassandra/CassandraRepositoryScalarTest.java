@@ -17,13 +17,12 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.couchdb;
+package net.sf.jkniv.whinstone.cassandra;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
-
-import java.util.Map;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,9 +32,8 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
-import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 
-public class CouchDbRepositoryScalarTest extends BaseJdbc
+public class CassandraRepositoryScalarTest extends BaseJdbc
 {
     @Rule
     public ExpectedException catcher = ExpectedException.none();  
@@ -44,20 +42,19 @@ public class CouchDbRepositoryScalarTest extends BaseJdbc
     public void whenScalarReturnOnField()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = QueryFactory.of("authorName", "nationality", "GB");
-        
+        Queryable q = QueryFactory.of("vehiclesScalarValue", "plate", "OMN7176");
         String name = repositoryDb.scalar(q);
         assertThat(name, instanceOf(String.class));
-        assertThat(name, is("Martin Fowler"));
+        assertThat(name, is("bugatti"));
     }
 
     @Test
     public void whenScalarReturnNonUniqueResult()
     {
         catcher.expect(RepositoryException.class);
-        catcher.expectMessage("No unique result for query [authorName]");
+        catcher.expectMessage("Query [Vehicle#get] no return scalar value, scalar function must return unique row and column");
         Repository repositoryDb = getRepository();
-        Queryable q = QueryFactory.of("authorName", "nationality", "DE");
+        Queryable q = QueryFactory.of("Vehicle#get", "plate", "OMN7176");
         repositoryDb.scalar(q);
     }
 
@@ -65,9 +62,9 @@ public class CouchDbRepositoryScalarTest extends BaseJdbc
     public void whenScalarReturnNonUniqueField()
     {
         catcher.expect(RepositoryException.class);
-        catcher.expectMessage("Query [authorNameIds] no return scalar value, scalar function must return unique field");
+        catcher.expectMessage("Query [Vehicle#get] no return scalar value, scalar function must return unique row and column");
         Repository repositoryDb = getRepository();
-        Queryable q = QueryFactory.of("authorNameIds", "nationality", "GB");
+        Queryable q = QueryFactory.of("Vehicle#get", "plate", "OMN7176");
         repositoryDb.scalar(q);
     }
 
@@ -75,7 +72,7 @@ public class CouchDbRepositoryScalarTest extends BaseJdbc
     public void whenScalarNullReturn()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = QueryFactory.of("authorName", "nationality", "NO_EXIST");
+        Queryable q = QueryFactory.of("Vehicle#get", "plate", "NO_EXIST");
         String name = repositoryDb.scalar(q);
         assertThat(name, nullValue());        
     }

@@ -142,7 +142,7 @@ public class CouchDbRepositoryGetTest extends BaseJdbc
     public void whenGetNullReturn()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = QueryFactory.of("authorName", "natio", "NO_EXIST");
+        Queryable q = QueryFactory.of("authorName", "nationality", "NO_EXIST");
         Map map= repositoryDb.get(q);
         assertThat(map, nullValue());        
     }

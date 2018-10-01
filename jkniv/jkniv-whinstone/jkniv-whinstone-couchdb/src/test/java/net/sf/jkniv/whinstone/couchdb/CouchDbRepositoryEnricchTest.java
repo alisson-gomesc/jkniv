@@ -29,6 +29,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import net.sf.jkniv.sqlegance.NonUniqueResultException;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
@@ -45,7 +46,6 @@ public class CouchDbRepositoryEnricchTest extends BaseJdbc
     {
         Repository repositoryDb = getRepository();
         Queryable q1 = QueryFactory.of("authorByName", "name", "Friedrich Nietzsche");
-        
         
         Author nietzsche = repositoryDb.get(q1);
         assertThat(nietzsche.getName(), is("Friedrich Nietzsche"));
@@ -69,4 +69,19 @@ public class CouchDbRepositoryEnricchTest extends BaseJdbc
         assertThat(nietzsche.getBooks().get(1).getIsbn(), is("978-8520004678"));
         assertThat(nietzsche.getBooks().get(1).getPublished(), is(1867L));        
     }
+    
+    @Test
+    public void whenScalarReturnNonUniqueResult()
+    {
+        catcher.expect(NonUniqueResultException.class);
+        catcher.expectMessage("No unique result for query [authorName]");
+        Repository repositoryDb = getRepository();
+        Queryable q1 = QueryFactory.of("authorByName", "name", "Friedrich Nietzsche");
+        Author nietzsche = repositoryDb.get(q1);
+
+        nietzsche.setName("Karl Marx");
+        Queryable q2 = QueryFactory.of("authorName", nietzsche);
+        boolean enriched = repositoryDb.enrich(q2);
+    }
+
 }

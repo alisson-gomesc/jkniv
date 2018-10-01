@@ -12,7 +12,13 @@ public class Vehicle
     public Vehicle()
     {
     }
-    
+
+    public Vehicle(String plate)
+    {
+        this();
+        this.plate = plate;
+    }
+
     public String getName()
     {
         return name;

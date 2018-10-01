@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.whinstone.cassandra;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import net.sf.jkniv.sqlegance.RepositoryProperty;
@@ -50,5 +52,29 @@ public class BaseJdbc //extends BaseSpringJUnit4
     {
         return new RepositoryCassandra(config);
     }
-    
+
+    protected Map<String, Object> asParams(Object... args)
+    {
+        Map<String, Object> params = new HashMap<String, Object>();
+        int i = 1;
+        String key = null;
+        Object value = null;
+        for (Object o : args)
+        {
+            if (i % 2 == 1)
+            {
+                key = o.toString();
+            }
+            else
+            {
+                value = o;
+                params.put(key, value);
+                key = null;
+                value = null;
+            }
+            i++;
+        }
+        return params;
+    }
+
 }

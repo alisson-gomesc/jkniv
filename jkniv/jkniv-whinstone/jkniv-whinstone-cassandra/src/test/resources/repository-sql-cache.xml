@@ -6,18 +6,8 @@
   xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
        http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
   
-  <select id="authorName">
-    {
-     "selector": {"nationality": :nationality },
-     "fields": ["name"]
-    }
-  </select>
-  
-  <select id="authorNameIds">
-    {
-     "selector": {"nationality": :natio },
-     "fields": ["_id", "_rev", "name"]
-    }
+  <select id="selectVehicleInCache" returnType="net.sf.jkniv.whinstone.cassandra.model.Vehicle" cache="cached">
+   select plate, name, color, alarms from VEHICLE where plate in (:in:plates)
   </select>
 
 </statements>

@@ -22,7 +22,6 @@
     ALLOW FILTERING
   </select>
 
-
   <select id="getVehiclesUsingINAnotherParamAfterIN">
     select plate, name, color, alarms 
     from VEHICLE 
@@ -32,5 +31,9 @@
     ALLOW FILTERING
   </select>
 
+  <select id="vehiclesInNames" returnType="net.sf.jkniv.whinstone.cassandra.model.Vehicle">
+    select plate, name, color, alarms from VEHICLE
+    where name in (:in:names) ALLOW FILTERING
+  </select>
 
 </statements>

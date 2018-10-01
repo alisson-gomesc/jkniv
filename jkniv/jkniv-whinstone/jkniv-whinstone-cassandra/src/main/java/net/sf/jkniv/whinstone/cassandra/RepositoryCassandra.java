@@ -89,11 +89,6 @@ class RepositoryCassandra implements Repository
     private RepositoryConfig    repositoryConfig;
     private SqlContext          sqlContext;
     private ConnectionAdapter   adapterConn;
-    // configuration Application settings
-    //private static String       server_ip = "127.0.0.1";
-    //private static String       keyspace  = "dev_data_3t";
-    
-    
     private boolean             isTraceEnabled;
     private boolean             isDebugEnabled;
     
@@ -164,15 +159,16 @@ class RepositoryCassandra implements Repository
         notNull.verify(entity);
         String queryName = this.strategyQueryName.toGetName(entity);
         Queryable queryable = QueryFactory.of(queryName, entity);
-        
         return get(queryable, null, null);
     }
     
     @Override
-    public <T> T get(Class<T> returnType, Object object)
+    public <T> T get(Class<T> returnType, Object entity)
     {
-     // TODO implements Repository.get(Class, Object)
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(returnType, entity);
+        String queryName = this.strategyQueryName.toGetName(entity);
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        return get(queryable, returnType, null);
     }
     
     
@@ -201,15 +197,31 @@ class RepositoryCassandra implements Repository
     @Override
     public <T> T scalar(Queryable queryable)
     {
-     // TODO implements Repository.scalar(Queryable)
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(queryable);
+        T result = null;
+        Map map = get(queryable, Map.class, null);
+        if (map != null)
+        {
+            if(map.size() > 1)
+                throw new NonUniqueResultException("Query ["+queryable.getName()+"] no return scalar value, scalar function must return unique row and column");
+            result = (T)map.values().iterator().next();
+        }
+        return result;
     }
     
     @Override
     public boolean enrich(Queryable queryable)
     {
-        // TODO implements Repository.enrich(Queryable)
-        throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
+        notNull.verify(queryable, queryable.getParams());
+        boolean enriched = false;
+        Object o = get(queryable);
+        if(o != null)
+        {
+            ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(queryable.getParams());
+            proxy.merge(o);
+            enriched = true;
+        }
+        return enriched;
     }
     
     @Override
@@ -217,7 +229,7 @@ class RepositoryCassandra implements Repository
     {
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as list command", queryable);
-
+        
         List<T> list = list(queryable, null, null);
         if (isDebugEnabled)
             LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
@@ -282,8 +294,8 @@ class RepositoryCassandra implements Repository
         }
         else
         {
-            if (LOG.isInfoEnabled())
-                LOG.info("{} object(s) was returned from cache [{}] using query [{}] since {}", list.size(),
+            if (LOG.isDebugEnabled())
+                LOG.debug("{} object(s) was returned from cache [{}] using query [{}] since {}", list.size(),
                         selectable.getCache().getName(), selectable.getName(), entry.getTimestamp());
             list = (List<T>) entry.getValue();
             q.cached();

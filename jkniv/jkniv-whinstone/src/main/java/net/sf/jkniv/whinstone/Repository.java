@@ -98,7 +98,7 @@ public interface Repository
      * @param returnType overload the returned type from XML file
      * @param object parameters from query to retrieve the object
      * @param <T> type of object returned
-     * @return Return the object {@code returnType}that matches with query. A null reference is
+     * @return Return the object {@code returnType} that matches with query. A null reference is
      *         returned if the query no match anyone object.
      * @throws QueryNotFoundException when not found the query name
      * @throws NonUniqueResultException when select or select with group by recovery more one objects
