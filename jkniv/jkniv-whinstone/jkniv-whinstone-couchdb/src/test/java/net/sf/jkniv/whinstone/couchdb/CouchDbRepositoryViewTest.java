@@ -19,31 +19,25 @@
  */
 package net.sf.jkniv.whinstone.couchdb;
 
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
-import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
-import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
+import net.sf.jkniv.whinstone.couchdb.model.orm.AuthorView;
 
 public class CouchDbRepositoryViewTest extends BaseJdbc
 {
-    
     @Test
     public void whenUseViewWithoutParams()
     {
@@ -51,6 +45,8 @@ public class CouchDbRepositoryViewTest extends BaseJdbc
         List<Map> list = repositoryDb.list(QueryFactory.of("docs/_view/natio"), Map.class);
         assertThat(list.size(), greaterThan(0));
         assertThat(list.get(0), instanceOf(Map.class));
+        assertThat(list.get(0).get("id"), notNullValue());
+        assertThat(list.get(0).get("key"), is(list.get(0).get("nationality")));
         System.out.println(list.get(0));
     }
 
@@ -58,9 +54,14 @@ public class CouchDbRepositoryViewTest extends BaseJdbc
     public void whenUseViewListWithReturnType()
     {
         Repository repositoryDb = getRepository();
-        List<Author> list = repositoryDb.list(QueryFactory.of("docs/_view/natio"));
+        List<AuthorView> list = repositoryDb.list(QueryFactory.of("docs/_view/natio"));
         assertThat(list.size(), greaterThan(0));
-        assertThat(list.get(0), instanceOf(Author.class));
+        assertThat(list.get(0), instanceOf(AuthorView.class));
+        for(AuthorView view : list)
+        {
+            assertThat(view.getId(), notNullValue());
+            assertThat(view.getKey(), is(view.getNationality()));
+        }
     }
 
 //    @Test
@@ -77,11 +78,10 @@ public class CouchDbRepositoryViewTest extends BaseJdbc
     {
         Repository repositoryDb = getRepository();
         Queryable q = getQuery("docs/_view/natio", asParams("startkey","DE","endkey","DE"));
-        
-        List<Author> list = repositoryDb.list(q);
+        List<AuthorView> list = repositoryDb.list(q);
         assertThat(list.size(), greaterThanOrEqualTo(3));
-        assertThat(list.get(0), instanceOf(Author.class));
-        System.out.println(list.get(0));
+        assertThat(list.get(0), instanceOf(AuthorView.class));
+        assertThat(list.get(0).getKey(), is("DE"));
     }
     
 }

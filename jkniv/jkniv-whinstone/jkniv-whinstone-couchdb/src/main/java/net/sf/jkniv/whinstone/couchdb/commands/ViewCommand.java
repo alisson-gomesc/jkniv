@@ -94,11 +94,19 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
                         //list.add(proxy.from(r));
                         Object o =JsonMapper.mapper(content, returnType);
                         list.add(o);
-                        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(o);
-                        if (proxy.hasMethod("setId"))
-                            proxy.invoke("setId", map.get("id"));
-                        if (proxy.hasMethod("setKey"))
-                            proxy.invoke("setKey", map.get("key"));
+                        if (o instanceof Map)
+                        {
+                            ((Map)o).put("id", map.get("id"));
+                            ((Map)o).put("key", map.get("key"));                            
+                        }
+                        else
+                        {
+                            ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(o);
+                            if (proxy.hasMethod("setId"))
+                                proxy.invoke("setId", map.get("id"));
+                            if (proxy.hasMethod("setKey"))
+                                proxy.invoke("setKey", map.get("key"));
+                        }
                     }
                 }
                 else
