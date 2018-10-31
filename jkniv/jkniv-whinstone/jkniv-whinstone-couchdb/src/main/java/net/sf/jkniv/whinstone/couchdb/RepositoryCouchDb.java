@@ -209,7 +209,7 @@ class RepositoryCouchDb implements Repository
             Command command = adapterConn.asSelectCommand(queryable, null);
             list = command.execute();
             if (list.size() > 1)
-                throw new NonUniqueResultException("No unique result for query ["+queryable.getName()+"]");
+                throw new NonUniqueResultException("No unique result for query ["+queryable.getName()+"] with params ["+queryable.getParams()+"]");
 
             if (selectable.hasCache() && !list.isEmpty())
                 selectable.getCache().put(queryable, list);

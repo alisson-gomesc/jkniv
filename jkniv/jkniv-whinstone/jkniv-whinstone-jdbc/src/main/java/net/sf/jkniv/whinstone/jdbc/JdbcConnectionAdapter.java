@@ -20,6 +20,7 @@ import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
 import net.sf.jkniv.sqlegance.statement.ResultSetType;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
+import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
@@ -142,11 +143,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
     public <T, R> StatementAdapter<T, R> newStatement(Queryable queryable)
     {
         PreparedStatement stmt = prepareStatement(queryable);
-        StatementAdapter<T, R> adapter = new net.sf.jkniv.whinstone.jdbc.statement.PreparedStatementAdapter(stmt);
-        
-        //AutoBindParams prepareParams = PrepareParamsFactory.newPrepareParams(adapter, queryable);
-        //prepareParams.parameterized(queryable.getParamsNames());
-        
+        StatementAdapter<T, R> adapter = new net.sf.jkniv.whinstone.jdbc.statement.PreparedStatementAdapter(stmt, queryable);        
         return adapter;
     }
     
@@ -158,18 +155,12 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
         try
         {
             stmt = conn.prepareStatement(sql);
-            adapter = new net.sf.jkniv.whinstone.jdbc.statement.PreparedStatementAdapter(stmt);
-            /*
-                StatementAdapterOld stmtAdapterCount = new PreparedStatementAdapterOld(stmtCount,stmtStrategy.getSqlLogger());
-                AutoBindParams prepareParamsCount = PrepareParamsFactory.newPrepareParams(stmtAdapterCount,isql.getParamParser(), sqlDialect.getQueryable());
-                prepareParamsCount.parameterized(sqlDialect.getParamsNames());
-                rsCount = stmtCount.executeQuery();
-             */
+            adapter = new net.sf.jkniv.whinstone.jdbc.statement.PreparedStatementAdapter(stmt, null);
         }
         catch (SQLException sqle)
         {
             throw new RepositoryException(
-                    "Cannot prepare statement to [" + sql + "]!", sqle);
+                    "Cannot prepare statement to [" + sql + "]", sqle);
         }
         return adapter;
     }

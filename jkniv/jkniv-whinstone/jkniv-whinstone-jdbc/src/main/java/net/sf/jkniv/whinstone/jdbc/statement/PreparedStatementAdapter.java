@@ -14,12 +14,14 @@ import java.util.Set;
 import org.slf4j.Logger;
 
 import net.sf.jkniv.exception.HandlerException;
+import net.sf.jkniv.experimental.TimerKeeper;
 import net.sf.jkniv.experimental.converters.SqlDateConverter;
 import net.sf.jkniv.sqlegance.KeyGeneratorType;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
+import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.ResultSetParser;
 import net.sf.jkniv.whinstone.classification.Groupable;
@@ -49,12 +51,12 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
     private Class<T>                returnType;
     private ResultRow<T, ResultSet> resultRow;
     private boolean                 scalar;
-    private Set<OneToMany>       oneToManies;
+    private Set<OneToMany>          oneToManies;
     private List<String>            groupingBy;
-    private KeyGeneratorType keyGeneratorType;
+    private KeyGeneratorType        keyGeneratorType;
+    private Queryable               queryable;
     
-    
-    public PreparedStatementAdapter(PreparedStatement stmt)
+    public PreparedStatementAdapter(PreparedStatement stmt, Queryable queryable)
     {
         this.stmt = stmt;
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
@@ -62,6 +64,7 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
         this.oneToManies = Collections.emptySet();
         this.groupingBy = Collections.emptyList();
         this.scalar = false;
+        this.queryable = queryable;
         this.reset();
     }
     
@@ -194,7 +197,10 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
         List<T> list = Collections.emptyList();
         try
         {
+            TimerKeeper.start();
             rs = stmt.executeQuery();
+            if(queryable != null)// TODO design improve for use sql stats
+                queryable.getDynamicSql().getStats().add(TimerKeeper.clear());
             
             JdbcColumn<ResultSet>[] columns = getJdbcColumns(rs.getMetaData());
             setResultRow(columns);
@@ -209,6 +215,8 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
         }
         catch (SQLException e)
         {
+            if(queryable != null) // TODO design improve for use sql stats
+                queryable.getDynamicSql().getStatsErrors().add(TimerKeeper.clear());
             handlerException.handle(e, e.getMessage());
         }
         return list;
@@ -221,15 +229,19 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
     
     public int execute()
     {
+        int ret = 0;
         try
         {
-            return stmt.executeUpdate();
+            TimerKeeper.start();
+            ret = stmt.executeUpdate();
+            queryable.getDynamicSql().getStats().add(TimerKeeper.clear());
         }
         catch (SQLException e)
         {
+            queryable.getDynamicSql().getStatsErrors().add(TimerKeeper.clear());
             handlerException.handle(e, e.getMessage());
         }
-        return 0;
+        return ret;
     }
     
     @Override

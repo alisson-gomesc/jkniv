@@ -32,6 +32,7 @@ import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.SqlType;
+import net.sf.jkniv.sqlegance.Statistical;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
 import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
@@ -51,7 +52,7 @@ class SelectTag extends AbstractSqlTag implements Selectable
     private Set<OneToMany>  oneToMany;
     private String          cacheName;
     private Cacheable       cache;
-    
+    private Statistical     statsPaging;
     /**
      * Build a new <code>select</code> tag from XML file.
      * 
@@ -108,6 +109,7 @@ class SelectTag extends AbstractSqlTag implements Selectable
         this.groupBy = groupBy;
         this.oneToMany = new HashSet<OneToMany>();
         this.cacheName = cacheName;
+        this.statsPaging = new SqlStats();
         if(cacheName != null && !"".equals(cacheName.trim()))
             this.cache = new MemoryCache(cacheName);
         else
@@ -120,6 +122,7 @@ class SelectTag extends AbstractSqlTag implements Selectable
         this.groupBy = "";
         this.cacheName = null;
         this.cache = NoCache.getInstance();
+        this.statsPaging = new SqlStats();
     }
     /**
      * Retrieve the tag name.
@@ -210,5 +213,11 @@ class SelectTag extends AbstractSqlTag implements Selectable
     public <K,V> Cacheable<K,V> getCache()
     {
         return this.cache;
+    }
+    
+    @Override
+    public Statistical getStatsPaging()
+    {
+        return this.statsPaging;
     }
 }

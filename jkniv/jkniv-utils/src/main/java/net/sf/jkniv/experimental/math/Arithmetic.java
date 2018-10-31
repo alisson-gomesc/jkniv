@@ -30,7 +30,7 @@ import net.sf.jkniv.asserts.AssertsFactory;
  * Even and odd numbers
  * Prime numbers
  */
-public class Arithmetic<T extends Number>
+class Arithmetic<T extends Number>
 {
     private T value;
     private static final MathContext defaultContext = new MathContext(3);

@@ -466,9 +466,6 @@ class QueryName implements Queryable
     {
         isNull.verify(new IllegalStateException("Cannot re-assign new Sql to queryable ["+this.name+"] object"), this.sql);
         notNull.verify(sql);
-//        if (this.sql != null)
-//            throw new IllegalStateException("Cannot re-assign new Sql to queryable object");
-        
         this.sql = sql;
         this.sqlText = sql.getSql(this.params);
         boolean pagingSelect = false;

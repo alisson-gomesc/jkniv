@@ -45,6 +45,7 @@ import net.sf.jkniv.sqlegance.Deletable;
 import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.Selectable;
+import net.sf.jkniv.sqlegance.Statistical;
 import net.sf.jkniv.sqlegance.Storable;
 import net.sf.jkniv.sqlegance.Updateable;
 import net.sf.jkniv.sqlegance.builder.xml.dynamic.ITextTag;
@@ -121,6 +122,8 @@ public abstract class AbstractSqlTag implements SqlTag
     
     //private ResultRow<?, ?> parserRow;
     private SqlDialect sqlDialect;
+    private Statistical stats;
+    private Statistical statsErrors;
     
     /**
      * Build a new SQL tag from XML file.
@@ -222,6 +225,8 @@ public abstract class AbstractSqlTag implements SqlTag
         this.timestamp = new Date();
         this.paramParser = ParamParserNoMark.emptyParser();
         this.returnTypeClass = forName(returnType);
+        this.stats =  new SqlStats();
+        this.statsErrors =  new SqlStats();
         Class<? extends Annotation> entityAnnotation = (Class<? extends Annotation>) forName("javax.persistence.Entity");
             if (returnTypeClass != null && entityAnnotation != null)
                 this.returnTypeManaged = returnTypeClass.isAnnotationPresent(entityAnnotation);
@@ -597,6 +602,18 @@ public abstract class AbstractSqlTag implements SqlTag
     public void setPackage(String name)
     {
         this.paket = name;
+    }
+    
+    @Override
+    public Statistical getStats()
+    {
+        return this.stats;
+    }
+    
+    @Override
+    public Statistical getStatsErrors()
+    {
+        return this.statsErrors;
     }
     
     @Override

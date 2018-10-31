@@ -66,6 +66,11 @@ public interface ConnectionAdapter
 
     <T,R> StatementAdapter<T,R> newStatement(Queryable queryable);
     
+    /**
+     * create an adapter for a Prepared Statement
+     * @param sql statement
+     * @return Adapter for Prepared Statement
+     */
     <T, R> StatementAdapter<T, R> newStatement(String sql);
     
     Object unwrap();

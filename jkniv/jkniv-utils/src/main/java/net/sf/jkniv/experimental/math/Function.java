@@ -19,7 +19,7 @@
  */
 package net.sf.jkniv.experimental.math;
 
-public interface Function<I, O>
+interface Function<I, O>
 {
     O fx(I input);
 

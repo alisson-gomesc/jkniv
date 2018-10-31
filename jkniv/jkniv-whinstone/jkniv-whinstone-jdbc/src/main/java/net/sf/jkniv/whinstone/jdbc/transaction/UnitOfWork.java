@@ -65,7 +65,7 @@ public class UnitOfWork implements Work
     private final static Assertable notNull    = AssertsFactory.getNotNull();
     private final static BasicType  BASIC_TYPE = BasicType.getInstance();
     
-    private ConnectionFactory      connectionFactory;
+    private ConnectionFactory       connectionFactory;
     private Transactional           transaction;
     private HandleableException     handlerException;
     private RepositoryConfig        config;
@@ -107,7 +107,7 @@ public class UnitOfWork implements Work
         {
             //SqlDialect sqlDialect = newDialect(queryable);
             adapterConn = getConnection(queryable.getDynamicSql().getIsolation());
-            conn = (Connection)adapterConn.unwrap();
+            conn = (Connection) adapterConn.unwrap();
             PreparedStatementStrategy stmtStrategy = new DefaultPreparedStatementStrategy(queryable);//getPreparedStatementStrategy(sqlDialect);
             
             if (queryable.getDynamicSql().isInsertable())
@@ -119,9 +119,9 @@ public class UnitOfWork implements Work
             {
                 DbCommand command = DbCommandFactory.newInstance(queryable, adapterConn, stmtStrategy);
                 affected = command.execute();
-//                StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
-//                queryable.bind(adapterStmt).on();
-//                affected = adapterStmt.execute();
+                //                StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
+                //                queryable.bind(adapterStmt).on();
+                //                affected = adapterStmt.execute();
             }
         }
         finally
@@ -143,14 +143,14 @@ public class UnitOfWork implements Work
     {
         return select(queryable, returnType, null);
     }
-
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    
+    @SuppressWarnings(
+    { "unchecked", "rawtypes" })
     @Override
     public <T> List<T> select(Queryable queryable, Class<T> overloadReturnType,
             ResultRow<T, ResultSet> overloadResultRow)
     {
-        ConnectionAdapter adapterConn= null;
+        ConnectionAdapter adapterConn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
         List<T> list = null;
@@ -165,87 +165,25 @@ public class UnitOfWork implements Work
                 returnType = overloadReturnType;
             else if (select.getReturnTypeAsClass() != null)
                 returnType = (Class<T>) select.getReturnTypeAsClass();
-
+            
             StatementAdapter<T, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
             
             queryable.bind(adapterStmt).on();
             
-            adapterStmt
-                .returnType(returnType)
-                .resultRow(overloadResultRow)
-                .oneToManies(select.getOneToMany())
-                .groupingBy(select.getGroupByAsList());
+            adapterStmt.returnType(returnType)
+                       .resultRow(overloadResultRow)
+                       .oneToManies(select.getOneToMany())
+                       .groupingBy(select.getGroupByAsList());
             
-            if(queryable.isScalar())
+            if (queryable.isScalar())
                 adapterStmt.scalar();
-                
-            list = adapterStmt.rows();
             
-            /*
-            
-            conn = (Connection)adapterConn.unwrap();
-            PreparedStatementStrategy stmtStrategy = new DefaultPreparedStatementStrategy(sqlDialect, sqlLogger);
-            stmt = stmtStrategy.prepareStatement(conn);
-            StatementAdapterOld stmtAdapter = new PreparedStatementAdapterOld(stmt, stmtStrategy.getSqlLogger());
-            BindParams prepareParams = PrepareParamsFactory.newPrepareParams(stmtAdapter, isql.getParamParser(),
-                    queryable);
-            prepareParams.parameterized(sqlDialect.getParamsNames());
-            rs = stmt.executeQuery();
-            
-            //TODO performance trouble improve design
-            if (overloadParserRow != null)
-                rsRowParser = overloadParserRow;
-            else
-            {
-                JdbcColumn[] columns = JdbcFactory.getJdbcColumns(rs.getMetaData());
-                if (queryable.isScalar())
-                {
-                    rsRowParser = new ScalarResultRow(columns, sqlLogger);
-                }
-                else if (Map.class.isAssignableFrom(returnType))
-                {
-                    rsRowParser = new MapResultRow(returnType, columns, sqlLogger);
-                }
-                else if (Number.class.isAssignableFrom(returnType)) // FIXME implements for date, calendar, boolean improve design
-                {
-                    rsRowParser = new NumberResultRow(returnType, columns, sqlLogger);
-                }
-                else if (String.class.isAssignableFrom(returnType))
-                {
-                    rsRowParser = new StringResultRow(columns, sqlLogger);
-                }
-                else if (selectTag.getOneToMany().isEmpty())
-                {
-                    rsRowParser = new FlatObjectResultRow(returnType, columns, sqlLogger);
-                }
-                else
-                {
-                    rsRowParser = new PojoResultRow(returnType, columns, selectTag.getOneToMany(), sqlLogger);
-                }
-            }
-            
-            transformable = rsRowParser.getTransformable();
-            List<String> groupingBy = selectTag.getGroupByAsList();
-            if (!groupingBy.isEmpty())
-            {
-                grouping = new GroupingBy(groupingBy, returnType, transformable);
-            }
-            rsParser = new ObjectResultSetParser(rsRowParser, grouping);
-            list = rsParser.parser(rs);
-            */
+            list = adapterStmt.rows();            
             if (queryable.isPaging())
             {
                 StatementAdapter<Number, ResultSet> adapterStmtCount = adapterConn.newStatement(queryable.queryCount());
-
                 queryable.bind(adapterStmtCount).on();
-                
-                //BindParams prepareParams = PrepareParamsFactory.newPrepareParams(adapterStmtCount, queryable);
-                //prepareParams.parameterized(queryable.getParamsNames());
-                
-                adapterStmtCount
-                .returnType(Number.class)
-                .scalar();
-
+                adapterStmtCount.returnType(Number.class).scalar();
                 try
                 {
                     Long rows = adapterStmtCount.rows().get(0).longValue();
@@ -253,43 +191,13 @@ public class UnitOfWork implements Work
                 }
                 catch (RepositoryException e)
                 {
-                     // FIXME BUG select count with ORDER BY 
-                     // The ORDER BY clause is invalid in views, inline functions, derived tables, subqueries, and common table expressions, unless TOP or FOR XML is also specified.
+                    // FIXME BUG select count with ORDER BY 
+                    // The ORDER BY clause is invalid in views, inline functions, derived tables, subqueries, and common table expressions, unless TOP or FOR XML is also specified.
                     LOG.error("Cannot count the total of rows from full query [{}]", queryable.getName(), e);
                 }
-                /*
-                PreparedStatement stmtCount = null;
-                ResultSet rsCount = null;
-                try
-                {
-                    stmtCount = stmtStrategy.prepareStatementCount(conn);
-                    StatementAdapterOld stmtAdapterCount = new PreparedStatementAdapterOld(stmtCount,
-                            stmtStrategy.getSqlLogger());
-                    BindParams prepareParamsCount = PrepareParamsFactory.newPrepareParams(stmtAdapterCount,
-                            isql.getParamParser(), sqlDialect.getQueryable());
-                    prepareParamsCount.parameterized(sqlDialect.getParamsNames());
-                    rsCount = stmtCount.executeQuery();
-                    long rows = 0;
-                    if (rsCount.next())
-                        rows = rsCount.getLong(1);
-                    queryable.setTotal(rows);
-                }
-                catch (SQLException e)
-                {
-                     // FIXME BUG select count with ORDER BY 
-                     // The ORDER BY clause is invalid in views, inline functions, derived tables, subqueries, and common table expressions, unless TOP or FOR XML is also specified.
-                    LOG.error("Cannot count the total of rows from full query [{}]", queryable.getName(), e);
-                }
-                finally
-                {
-                    connectionFactory.close(rsCount);
-                    connectionFactory.close(stmtCount);
-                }
-                */
             }
             else
-                queryable.setTotal(list.size());
-            
+                queryable.setTotal(list.size());            
         }
         catch (RepositoryException e)
         {
@@ -329,22 +237,22 @@ public class UnitOfWork implements Work
         return conn;
     }
     
-//    /**
-//     * Create new Dialect to generate the queries.
-//     * @param queryable query name and your params
-//     * @return return new instance of SqlDialect
-//     */
-//    private SqlDialect newDialect(Queryable queryable)
-//    {
-//        //notNull.verify(queryable, isql);
-//        // TODO performance keep instance from SqlDialect implementation
-//        SqlDialect sqlDialect = null;// TODO auto-discover dialect over jdbc connection
-//        String sqlDialectName = config.getSqlDialect();
-//        ObjectProxy<SqlDialect> proxy = ObjectProxyFactory.newProxy(sqlDialectName);
-//        sqlDialect = proxy.newInstance();
-//        sqlDialect.setQueryable(queryable);
-//        return sqlDialect;
-//    }
+    //    /**
+    //     * Create new Dialect to generate the queries.
+    //     * @param queryable query name and your params
+    //     * @return return new instance of SqlDialect
+    //     */
+    //    private SqlDialect newDialect(Queryable queryable)
+    //    {
+    //        //notNull.verify(queryable, isql);
+    //        // TODO performance keep instance from SqlDialect implementation
+    //        SqlDialect sqlDialect = null;// TODO auto-discover dialect over jdbc connection
+    //        String sqlDialectName = config.getSqlDialect();
+    //        ObjectProxy<SqlDialect> proxy = ObjectProxyFactory.newProxy(sqlDialectName);
+    //        sqlDialect = proxy.newInstance();
+    //        sqlDialect.setQueryable(queryable);
+    //        return sqlDialect;
+    //    }
     
     private <T> void setParseRow(Queryable queryable, Sql isql, Class<T> returnType, JdbcColumn[] columns)
     {

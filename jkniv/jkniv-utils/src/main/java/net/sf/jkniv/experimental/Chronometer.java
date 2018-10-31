@@ -19,70 +19,108 @@
  */
 package net.sf.jkniv.experimental;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * Multi-thread chronometer for multiple tags.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ *
+ */
 public class Chronometer
 {
-    private static final Map<String, Chrono> chronos = new HashMap<String, Chrono>();
-    private static final DecimalFormat       df      = new DecimalFormat("0.00");
+    private static final Map<String, Chrono> chronos      = new HashMap<String, Chrono>();
+    private static int                       padLeft      = 0;
+    private static final Chrono              EMPTY_CHRONO = new Chrono("");
     
-    private static int                       padLeft = 0;
-    
-    public static void timer(String name)
+    public synchronized static void timer(String name)
     {
         if (name.length() > padLeft)
             padLeft = name.length() + 1;
-        Chronometer.Chrono chrono = chronos.get(name);
+        Chrono chrono = chronos.get(name);
         if (chrono == null)
         {
-            chrono = new Chronometer().new Chrono(name);
+            chrono = new Chrono(name);
             chronos.put(name, chrono);
         }
-        else
-            chrono.changeTimer(false);
+        chrono.changeTimer(false);
     }
     
-    public static void pause(String name)
+    public static Chrono pause(String name)
     {
-        Chronometer.Chrono chrono = chronos.get(name);
+        Chrono chrono = chronos.get(name);
         if (chrono != null)
+        {
             chrono.changeTimer(true);
+            return chrono;
+        }
+        return EMPTY_CHRONO;
+    }
+    
+    public static Chrono remove(String name)
+    {
+        Chrono chrono = chronos.remove(name);
+        chrono.changeTimer(true);
+        return chrono;
     }
     
     public static String getTimer(String name)
     {
-        Chronometer.Chrono chrono = chronos.get(name);
+        Chrono chrono = chronos.get(name);
         if (chrono != null)
             return chrono.toString();
         
         return null;
     }
     
+    public static Chrono getChronoTimer(String name)
+    {
+        return chronos.get(name);
+    }
+    
     public static long milliseconds(String name)
     {
-        Chronometer.Chrono chrono = chronos.get(name);
+        Chrono chrono = chronos.get(name);
         if (chrono != null)
-            return chrono.milliseconds;
-        
-        return System.currentTimeMillis();
-    }
-
-    public static long avg(String name)
-    {
-        Chronometer.Chrono chrono = chronos.get(name);
-        if (chrono != null)
-            return chrono.avg();
+            return chrono.time();
         
         return 0L;
     }
-
+    
+    public static double avg(String name)
+    {
+        Chrono chrono = chronos.get(name);
+        if (chrono != null)
+            return chrono.avg();
+        
+        return 0D;
+    }
+    
+    public static long min(String name)
+    {
+        Chrono chrono = chronos.get(name);
+        if (chrono != null)
+            return chrono.min();
+        
+        return 0L;
+    }
+    
+    public static long max(String name)
+    {
+        Chrono chrono = chronos.get(name);
+        if (chrono != null)
+            return chrono.max();
+        
+        return 0L;
+    }
+    
     public static String log()
     {
         StringBuilder sb = new StringBuilder();
@@ -99,86 +137,5 @@ public class Chronometer
         for (Chrono c : list)
             c.clear();
         
-    }
-    
-    class Chrono implements Comparable<Chrono>
-    {
-        private String name;
-        private Date   startTimer;
-        private long   milliseconds;
-        /** how many times I called */
-        private long   times; 
-        
-        public Chrono(String name)
-        {
-            this.times++;
-            this.name = name;
-            this.startTimer = new Date();
-            this.milliseconds = 0L;
-        }
-        
-        public void clear()
-        {
-            this.milliseconds = 0;
-            this.startTimer = null;
-        }
-        
-        public synchronized void changeTimer(boolean pause)
-        {
-            if (pause)
-            {
-                if (this.startTimer != null)
-                    this.milliseconds += System.currentTimeMillis() - this.startTimer.getTime();
-                
-                this.startTimer = null;
-            }
-            else
-            {
-                this.times++;
-                if (this.startTimer != null)
-                    this.milliseconds += System.currentTimeMillis() - this.startTimer.getTime();
-                
-                this.startTimer = new Date();
-            }
-        }
-        
-        public long avg()
-        {
-            return this.milliseconds/times;
-        }
-        
-        public String getTime()
-        {
-            String value = milliseconds + " ms";
-            double seconds = milliseconds / 1000L;
-            if (seconds > 1)
-                value = df.format(seconds) + " seg";
-            double minutes = seconds / 60L;
-            if (minutes > 1)
-                value = df.format(minutes) + " min";
-            double hours = minutes / 60L;
-            if (hours > 1)
-                value = df.format(hours) + " h";
-            return value;
-        }
-        
-        @Override
-        public String toString()
-        {
-            return "Chronometer [" + String.format("%1$" + padLeft + "s", (name)) + ": " + getTime() + ", total="+times+", avg="+avg()+" ms]";
-        }
-        
-        @Override
-        public int compareTo(Chrono o)
-        {
-            if (o == null)
-                return -1;
-            else if (milliseconds < o.milliseconds)
-                return 1;
-            else if (milliseconds > o.milliseconds)
-                return -1;
-            else
-                return 0;
-        }
-    }
+    }    
 }

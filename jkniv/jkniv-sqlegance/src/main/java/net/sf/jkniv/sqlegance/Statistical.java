@@ -19,28 +19,50 @@
  */
 package net.sf.jkniv.sqlegance;
 
-import java.util.List;
-import java.util.Set;
-
-import net.sf.jkniv.cache.Cacheable;
-
-public interface Selectable extends Sql
+/**
+ * Statistical data for query execution 
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ *
+ */
+public interface Statistical
 {
-    public static final String TAG_NAME = "select";
-
-    String getGroupBy();
+    /**
+     * add time to statistics
+     * @param time milliseconds
+     */
+    void add(long time);
     
-    List<String> getGroupByAsList();
+    /**
+     * maximum time execution
+     * @return maximum milliseconds execution
+     */
+    long getMaxTime();
     
-    Set<OneToMany> getOneToMany();
-
-    void addOneToMany(OneToMany oneToMany);
+    /**
+     * minimum time execution
+     * @return minimum milliseconds execution
+     */
+    long getMinTime();
     
-    boolean hasCache();
+    /**
+     * average time execution
+     * @return average milliseconds execution
+     */
+    long getAvgTime();
     
-    String getCacheName();
+    /**
+     * total time execution
+     * @return total milliseconds execution
+     */
+    long getTotalTime();
     
-    <K,V> Cacheable<K,V> getCache();
+    /**
+     * times executed
+     * @return times executed
+     */
+    long getCount();
     
-    Statistical getStatsPaging();
+        
 }

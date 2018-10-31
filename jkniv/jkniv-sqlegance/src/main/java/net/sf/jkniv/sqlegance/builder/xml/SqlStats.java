@@ -17,30 +17,18 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.sqlegance;
+package net.sf.jkniv.sqlegance.builder.xml;
 
-import java.util.List;
-import java.util.Set;
-
-import net.sf.jkniv.cache.Cacheable;
-
-public interface Selectable extends Sql
+/**
+ * select statistics
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
+public class SqlStats extends AbstractStats
 {
-    public static final String TAG_NAME = "select";
-
-    String getGroupBy();
-    
-    List<String> getGroupByAsList();
-    
-    Set<OneToMany> getOneToMany();
-
-    void addOneToMany(OneToMany oneToMany);
-    
-    boolean hasCache();
-    
-    String getCacheName();
-    
-    <K,V> Cacheable<K,V> getCache();
-    
-    Statistical getStatsPaging();
+    public SqlStats()
+    {
+        super();
+    }
 }
