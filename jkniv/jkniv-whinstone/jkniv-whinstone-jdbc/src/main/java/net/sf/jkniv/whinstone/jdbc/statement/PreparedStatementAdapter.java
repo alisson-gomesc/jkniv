@@ -216,7 +216,7 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
         catch (SQLException e)
         {
             if(queryable != null) // TODO design improve for use sql stats
-                queryable.getDynamicSql().getStatsErrors().add(TimerKeeper.clear());
+                queryable.getDynamicSql().getStats().add(e);
             handlerException.handle(e, e.getMessage());
         }
         return list;
@@ -238,7 +238,7 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
         }
         catch (SQLException e)
         {
-            queryable.getDynamicSql().getStatsErrors().add(TimerKeeper.clear());
+            queryable.getDynamicSql().getStats().add(e);
             handlerException.handle(e, e.getMessage());
         }
         return ret;

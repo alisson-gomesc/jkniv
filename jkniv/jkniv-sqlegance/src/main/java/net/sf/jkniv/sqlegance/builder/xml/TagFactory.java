@@ -23,6 +23,7 @@ import net.sf.jkniv.sqlegance.Deletable;
 import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.Selectable;
+import net.sf.jkniv.sqlegance.Statistical;
 import net.sf.jkniv.sqlegance.Updateable;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
@@ -69,15 +70,16 @@ public class TagFactory
      * @param returnType type of object must be returned
      * @param groupBy columns name to group the result of query (columns name separated by comma)
      * @param validateType validation to apply before execute SQL.
+     * @param stats sql statistical
      * @return select tag
      */
     public static Selectable newSelect(String id, LanguageType languageType, Isolation isolation, int timeout,
             boolean batch, String cache, String hint, ResultSetType resultSetType,
             ResultSetConcurrency resultSetConcurrency, ResultSetHoldability resultSetHoldability, String returnType,
-            String groupBy, ValidateType validateType)
+            String groupBy, ValidateType validateType, Statistical stats)
     {
         return new SelectTag(id, languageType, isolation, timeout, batch, cache, hint, resultSetType,
-                resultSetConcurrency, resultSetHoldability, returnType, groupBy, validateType);
+                resultSetConcurrency, resultSetHoldability, returnType, groupBy, validateType, stats);
     }
     
     public static Insertable newInsert(String id, LanguageType languageType)
@@ -92,9 +94,9 @@ public class TagFactory
     
     
     public static Insertable newInsert(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch, String hint,
-            ValidateType validateType)
+            ValidateType validateType, Statistical stats)
     {
-        return new InsertTag(id, languageType, isolation, timeout, batch, hint, validateType);
+        return new InsertTag(id, languageType, isolation, timeout, batch, hint, validateType, stats);
     }
 
     /**
@@ -120,9 +122,10 @@ public class TagFactory
         return new UpdateTag(id, languageType, sqlDialect);
     }
     
-    public static Updateable newUpdate(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch, String hint, ValidateType validateType)
+    public static Updateable newUpdate(String id, LanguageType languageType, Isolation isolation, 
+            int timeout, boolean batch, String hint, ValidateType validateType, Statistical stats)
     {
-        return new UpdateTag(id, languageType, isolation, timeout, batch, hint, validateType);
+        return new UpdateTag(id, languageType, isolation, timeout, batch, hint, validateType, stats);
     }
 
     
@@ -138,9 +141,9 @@ public class TagFactory
 
     public static Deletable newDelete(
             String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch, String hint,
-            ValidateType validateType)
+            ValidateType validateType, Statistical stats)
     {
-        return new DeleteTag(id, languageType, isolation, timeout, batch, hint, validateType);
+        return new DeleteTag(id, languageType, isolation, timeout, batch, hint, validateType, stats);
     }
     
 }

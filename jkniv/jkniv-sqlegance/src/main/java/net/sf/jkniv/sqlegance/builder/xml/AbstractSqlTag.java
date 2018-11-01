@@ -20,27 +20,16 @@
 package net.sf.jkniv.sqlegance.builder.xml;
 
 import java.lang.annotation.Annotation;
-import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
-import net.sf.jkniv.reflect.ReflectionUtils;
-import net.sf.jkniv.sqlegance.ConstraintException;
 import net.sf.jkniv.sqlegance.Deletable;
 import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.LanguageType;
@@ -52,16 +41,16 @@ import net.sf.jkniv.sqlegance.builder.xml.dynamic.ITextTag;
 import net.sf.jkniv.sqlegance.builder.xml.dynamic.StaticText;
 import net.sf.jkniv.sqlegance.builder.xml.dynamic.WhereTag;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
-import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
-import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
-import net.sf.jkniv.sqlegance.statement.ResultSetType;
-import net.sf.jkniv.sqlegance.validation.ValidateType;
 import net.sf.jkniv.sqlegance.params.ParamParser;
 import net.sf.jkniv.sqlegance.params.ParamParserColonMark;
 import net.sf.jkniv.sqlegance.params.ParamParserHashMark;
 import net.sf.jkniv.sqlegance.params.ParamParserNoMark;
 import net.sf.jkniv.sqlegance.params.ParamParserQuestionMark;
+import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
+import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
+import net.sf.jkniv.sqlegance.statement.ResultSetType;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
+import net.sf.jkniv.sqlegance.validation.ValidateType;
 
 /**
  * Generic tag to support the common functions from other tags.
@@ -123,7 +112,6 @@ public abstract class AbstractSqlTag implements SqlTag
     //private ResultRow<?, ?> parserRow;
     private SqlDialect sqlDialect;
     private Statistical stats;
-    private Statistical statsErrors;
     
     /**
      * Build a new SQL tag from XML file.
@@ -135,12 +123,12 @@ public abstract class AbstractSqlTag implements SqlTag
      */
     public AbstractSqlTag(String id, LanguageType languageType)
     {
-        this(id, languageType, Isolation.DEFAULT, -1, false, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", ValidateType.NONE);
+        this(id, languageType, Isolation.DEFAULT, -1, false, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", ValidateType.NONE, NoSqlStats.getInstance());
     }
     
     public AbstractSqlTag(String id, LanguageType languageType, SqlDialect sqlDialect)
     {
-        this(id, languageType, Isolation.DEFAULT, -1, false, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", ValidateType.NONE);
+        this(id, languageType, Isolation.DEFAULT, -1, false, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", ValidateType.NONE, NoSqlStats.getInstance());
         this.sqlDialect = sqlDialect;
     }
 
@@ -162,6 +150,7 @@ public abstract class AbstractSqlTag implements SqlTag
      * @param hint
      *            A SQL hint can be used on certain database platforms.
      * @param validateType validation to apply before execute SQL.
+     * @param stats SQL statistical
      */
     public AbstractSqlTag(String id, 
                           LanguageType languageType, 
@@ -169,9 +158,10 @@ public abstract class AbstractSqlTag implements SqlTag
                           int timeout, 
                           boolean batch, 
                           String hint, 
-                          ValidateType validateType)
+                          ValidateType validateType,
+                          Statistical stats)
     {
-        this(id, languageType, isolation, timeout, batch, hint, ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", validateType);
+        this(id, languageType, isolation, timeout, batch, hint, ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", validateType, stats);
     }
 
     /**
@@ -208,7 +198,8 @@ public abstract class AbstractSqlTag implements SqlTag
                           ResultSetConcurrency resultSetConcurrency, 
                           ResultSetHoldability resultSetHoldability, 
                           String returnType,
-                          ValidateType validateType)
+                          ValidateType validateType,
+                          Statistical stats)
     {
         this.textTag = new ArrayList<ITextTag>();
         this.id = id;
@@ -225,8 +216,7 @@ public abstract class AbstractSqlTag implements SqlTag
         this.timestamp = new Date();
         this.paramParser = ParamParserNoMark.emptyParser();
         this.returnTypeClass = forName(returnType);
-        this.stats =  new SqlStats();
-        this.statsErrors =  new SqlStats();
+        this.stats = stats;
         Class<? extends Annotation> entityAnnotation = (Class<? extends Annotation>) forName("javax.persistence.Entity");
             if (returnTypeClass != null && entityAnnotation != null)
                 this.returnTypeManaged = returnTypeClass.isAnnotationPresent(entityAnnotation);
@@ -610,12 +600,11 @@ public abstract class AbstractSqlTag implements SqlTag
         return this.stats;
     }
     
-    @Override
-    public Statistical getStatsErrors()
+    protected void setStats(Statistical stats)
     {
-        return this.statsErrors;
+        this.stats = stats;
     }
-    
+        
     @Override
     public int hashCode()
     {

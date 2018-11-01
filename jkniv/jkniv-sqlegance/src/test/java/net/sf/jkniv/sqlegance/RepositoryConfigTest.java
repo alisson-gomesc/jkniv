@@ -31,6 +31,9 @@ import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
+import net.sf.jkniv.sqlegance.builder.xml.NoSqlStats;
+import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
+import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
 
@@ -100,7 +103,10 @@ public class RepositoryConfigTest
         assertThat(config.getProperty(RepositoryProperty.QUERY_NAME_STRATEGY), is(RepositoryProperty.QUERY_NAME_STRATEGY.defaultValue()));
         assertThat(config.getProperty(RepositoryProperty.SHORT_NAME_ENABLE), is(RepositoryProperty.SHORT_NAME_ENABLE.defaultValue()));
         assertThat(config.getProperty(RepositoryProperty.SQL_DIALECT), is(RepositoryProperty.SQL_DIALECT.defaultValue()));
-
+        assertThat(config.getProperty(RepositoryProperty.SQL_STATS), is(RepositoryProperty.SQL_STATS.defaultValue()));
+        
+        assertThat(RepositoryProperty.SQL_STATS.defaultValue(), is("false"));
+        
         assertThat(config.getProperties().isEmpty(), is(true));
         assertThat(config.isReloadableXmlEnable(), is(false));
         assertThat(config.isShotKeyEnable(), is(false));
@@ -109,6 +115,10 @@ public class RepositoryConfigTest
         
         assertThat(config.getDataMasking(), instanceOf(SimpleDataMasking.class));
         //assertThat(config.getSqlLogger(), instanceOf(SqlLogger.class));
-        assertThat(config.getSqlDialect(), is(RepositoryProperty.SQL_DIALECT.defaultValue()));                
+        assertThat(config.getSqlDialect().getClass().getName(), is(RepositoryProperty.SQL_DIALECT.defaultValue()));
+        assertThat(config.getSqlDialect(), instanceOf(SqlDialect.class));
+        assertThat(config.getSqlDialect(), instanceOf(AnsiDialect.class));
+        assertThat(config.getStatistical(), instanceOf(Statistical.class));
+        assertThat(config.getStatistical(), instanceOf(NoSqlStats.class));
     }
 }

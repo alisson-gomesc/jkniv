@@ -90,6 +90,13 @@ public enum RepositoryProperty
         public String defaultValue() { return "net.sf.jkniv.sqlegance.dialect.AnsiDialect"; }
     },
 
+    /** property: <code>jkniv.repository.jdbc.dialect</code> */
+    SQL_STATS {
+        public String key() { return "jkniv.repository.stats"; }
+        
+        public String defaultValue() { return "false"; }
+    },
+
     /** property: <code>jkniv.repository.debug_sql</code> */
     DEBUG_SQL {
         public String key() { return "jkniv.repository.debug_sql"; }

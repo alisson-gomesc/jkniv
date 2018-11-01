@@ -34,13 +34,21 @@ public abstract class AbstractStats implements Statistical
     private AtomicLong min;
     private AtomicLong total;
     private AtomicLong count;
+    private AtomicLong firstTime;
+    private AtomicLong lastTime;
+    private AtomicLong totalException;
+    private Exception  firstException;
+    private Exception  lastException;
     
     public AbstractStats()
     {
         this.max = new AtomicLong();
         this.min = new AtomicLong(Long.MAX_VALUE);
         this.total = new AtomicLong();
+        this.firstTime = null;
+        this.lastTime = new AtomicLong();
         this.count = new AtomicLong();
+        this.totalException = new AtomicLong();
     }
     
     @Override
@@ -50,9 +58,24 @@ public abstract class AbstractStats implements Statistical
             this.max.set(time);
         if (time < this.min.get())
             this.min.set(time);
-        
+        if (firstTime == null)
+            this.firstTime = new AtomicLong(time);
+        this.lastTime.set(time);
         this.count.getAndIncrement();
         this.total.addAndGet(time);
+    }
+    
+    @Override
+    public void add(Exception e)
+    {
+        this.totalException.incrementAndGet();
+        if (e != null)
+        {
+            if (this.firstException == null)
+                this.firstException = e;
+            
+            this.lastException = e;
+        }
     }
     
     @Override
@@ -86,10 +109,43 @@ public abstract class AbstractStats implements Statistical
     }
     
     @Override
-    public String toString()
+    public long getFirstTime()
     {
-        return "AbstractStats [min=" + getMinTime() + ", max=" + getMaxTime() + ", avg=" + (getTotalTime() / getCount())
-                + ", total=" + getTotalTime() + ", count=" + getCount() + "]";
+        return (this.firstTime != null ? this.firstTime.get() : 0L);
     }
     
+    @Override
+    public long getLastTime()
+    {
+        return this.lastTime.get();
+    }
+    
+    @Override
+    public long getTotalException()
+    {
+        return this.totalException.get();
+    }
+    
+    @Override
+    public Exception getFirstException()
+    {
+        return this.firstException;
+    }
+    
+    @Override
+    public Exception getLastException()
+    {
+        return this.lastException;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "AbstractStats [max=" + max + ", min=" + min + ", total=" + total + ", count=" + count + ", firstTime="
+                + firstTime + ", lastTime=" + lastTime + ", totalException=" + totalException + ", firstException="
+                + (firstException != null ? firstException.getMessage() : "") 
+                + ", lastException=" + (lastException != null ? lastException.getMessage() : "") + "]";
+    }
+    
+   
 }

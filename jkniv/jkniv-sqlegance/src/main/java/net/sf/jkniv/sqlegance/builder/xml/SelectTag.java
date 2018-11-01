@@ -99,13 +99,14 @@ class SelectTag extends AbstractSqlTag implements Selectable
      * @param returnType type of object must be returned
      * @param groupBy columns name to group the result of query (columns name separated by comma)
      * @param validateType validation to apply before execute SQL.
+     * @param stats sql statistical
      */
     public SelectTag(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch,
             String cacheName, String hint, ResultSetType resultSetType, ResultSetConcurrency resultSetConcurrency,
-            ResultSetHoldability resultSetHoldability, String returnType, String groupBy, ValidateType validateType)
+            ResultSetHoldability resultSetHoldability, String returnType, String groupBy, ValidateType validateType, Statistical stats)
     {
         super(id, languageType, isolation, timeout, batch/*, cache*/, hint, resultSetType, resultSetConcurrency,
-                resultSetHoldability, returnType, validateType);
+                resultSetHoldability, returnType, validateType, stats);
         this.groupBy = groupBy;
         this.oneToMany = new HashSet<OneToMany>();
         this.cacheName = cacheName;

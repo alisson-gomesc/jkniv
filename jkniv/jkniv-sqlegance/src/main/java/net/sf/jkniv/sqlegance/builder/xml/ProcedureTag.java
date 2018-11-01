@@ -21,6 +21,7 @@ package net.sf.jkniv.sqlegance.builder.xml;
 
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.SqlType;
+import net.sf.jkniv.sqlegance.Statistical;
 import net.sf.jkniv.sqlegance.Storable;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
@@ -53,9 +54,10 @@ public class ProcedureTag extends AbstractSqlTag implements SqlTag, Storable
      * @param id Name/Identify from tag.
      * @param languageType type of language from tag.
      */
-    public ProcedureTag(String id, LanguageType languageType)
+    public ProcedureTag(String id, LanguageType languageType, Statistical stats)
     {
         super(id, languageType);
+        setStats(stats);
     }
     
     /**
@@ -71,11 +73,12 @@ public class ProcedureTag extends AbstractSqlTag implements SqlTag, Storable
      * @param batch Indicate if query is a batch of commands.
      * @param hint A SQL hint can be used on certain database platforms.
      * @param validateType validation to apply before execute SQL.
+     * @param stats SQL statistical
      */
     public ProcedureTag(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch,
-            String hint, ValidateType validateType)
+            String hint, ValidateType validateType, Statistical stats)
     {
-        super(id, languageType, isolation, timeout, batch, /*null,*/ hint, validateType);
+        super(id, languageType, isolation, timeout, batch, /*null,*/ hint, validateType, stats);
     }
     
     /**

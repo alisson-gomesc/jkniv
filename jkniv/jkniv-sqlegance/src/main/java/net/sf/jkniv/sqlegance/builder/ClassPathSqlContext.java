@@ -26,8 +26,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,10 +37,7 @@ import org.w3c.dom.NodeList;
 
 import net.sf.jkniv.cache.CacheManager;
 import net.sf.jkniv.cache.CachePolicy;
-import net.sf.jkniv.cache.Cacheable;
 import net.sf.jkniv.cache.TTLCachePolicy;
-import net.sf.jkniv.reflect.beans.ObjectProxy;
-import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.QueryNotFoundException;
 import net.sf.jkniv.sqlegance.RepositoryException;
@@ -50,8 +47,6 @@ import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.xml.AbstractSqlTag;
 import net.sf.jkniv.sqlegance.builder.xml.IncludeTag;
-import net.sf.jkniv.sqlegance.builder.xml.SelectColumnsTag;
-import net.sf.jkniv.sqlegance.builder.xml.SqlTag;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 
 /**
@@ -70,7 +65,7 @@ class ClassPathSqlContext implements SqlContext
     private final RepositoryConfig                repositoryConfig;
     private final boolean                         shortnameEnable;
     private final String                          contextName;
-    private SqlDialect                            sqlDialect;
+    //private SqlDialect                            sqlDialect;
     /** XMLs and yours includes */
     private final Map<String, List<XmlStatement>> resources;
     
@@ -99,7 +94,7 @@ class ClassPathSqlContext implements SqlContext
         String defaultContextName = getDefaultContextName(xmlStatementMain);// TODO test me defaultContextName and repoConfigName
         this.repositoryConfig = new RepositoryConfig(repoConfigName == null ? defaultContextName : repoConfigName);
         this.repositoryConfig.add(props);
-        this.defineDialect();
+        //this.defineDialect();
         this.shortnameEnable = repositoryConfig.isShotKeyEnable();// FIXME implements DotQueryNameStrategy cannot use shortkeyenable
                                                                   // TODO test me ShortKeyEnable with DotQueryNameStrategy
         build(xmlStatementMain, resourceName);
@@ -118,12 +113,12 @@ class ClassPathSqlContext implements SqlContext
         LOG.info("{} SQL was loaded at {} ms", statements.size(), (System.currentTimeMillis() - initial));
     }
     
-    private void defineDialect()
-    {
-        String sqlDialectName = repositoryConfig.getSqlDialect();
-        ObjectProxy<SqlDialect> proxy = ObjectProxyFactory.newProxy(sqlDialectName);
-        sqlDialect = proxy.newInstance();
-    }
+//    private void defineDialect()
+//    {
+//        String sqlDialectName = repositoryConfig.getSqlDialect();
+//        ObjectProxy<SqlDialect> proxy = ObjectProxyFactory.newProxy(sqlDialectName);
+//        sqlDialect = proxy.newInstance();
+//    }
     
     @Override
     public Sql getQuery(String name)
@@ -228,7 +223,7 @@ class ClassPathSqlContext implements SqlContext
             }
         }
         // for last, process the tags from main file
-        Map<String, Sql> readStatements = xmlStatementMain.build(sqlDialect);
+        Map<String, Sql> readStatements = xmlStatementMain.build(repositoryConfig);
         configCacheManager(xmlStatementMain);
         for (Entry<String, Sql> entry : readStatements.entrySet())
             add(entry.getKey(), entry.getValue());
@@ -274,7 +269,7 @@ class ClassPathSqlContext implements SqlContext
                 addResource(xmlStatement.getResourceName(), xmlStatementInclude);
             }
         }
-        Map<String, Sql> readStatements = xmlStatement.build(sqlDialect);
+        Map<String, Sql> readStatements = xmlStatement.build(repositoryConfig);
         configCacheManager(xmlStatement);
         for (Entry<String, Sql> entry : readStatements.entrySet())
             add(entry.getKey(), entry.getValue());
@@ -283,7 +278,7 @@ class ClassPathSqlContext implements SqlContext
     private void configCacheManager(XmlStatement xmlStatement)
     {
         if (cacheManager != null)
-            throw new RepositoryException("There is already a configured cache manager "+cacheManager+", just one for SqlContext");
+            throw new RepositoryException("There is already a configured cache manager "+cacheManager+", just one for SqlContext is permitted");
             
         NodeList nodes = xmlStatement.evaluateXpath(XmlStatement.ROOT_NODE+"/cache-manager");
         if (nodes != null)
@@ -403,7 +398,7 @@ class ClassPathSqlContext implements SqlContext
     @Override
     public SqlDialect getSqlDialect()
     {
-        return this.sqlDialect;
+        return this.repositoryConfig.getSqlDialect();
     }
     
     @Override

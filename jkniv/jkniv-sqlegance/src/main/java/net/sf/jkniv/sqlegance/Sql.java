@@ -244,8 +244,6 @@ public interface Sql
      
      Statistical getStats();
      
-     Statistical getStatsErrors();
-     
      /*
       * Use validator (JSR 303) to perform validation against params
       * @param params parameters of query

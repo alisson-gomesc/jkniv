@@ -12,7 +12,7 @@
     <level value="INFO" />
     <appender-ref ref="console" />
   </logger>
-  <logger name="net.sf.jkniv.sqlegance.SQL" additivity="false">
+  <logger name="jkniv.whinstone.jdbc.SQL" additivity="false">
     <level value="trace" />
     <appender-ref ref="console" />
   </logger>

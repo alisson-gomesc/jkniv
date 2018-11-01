@@ -34,6 +34,10 @@ import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.RepositoryType;
+import net.sf.jkniv.sqlegance.Statistical;
+import net.sf.jkniv.sqlegance.builder.xml.NoSqlStats;
+import net.sf.jkniv.sqlegance.builder.xml.SqlStats;
+import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
@@ -71,6 +75,7 @@ public class RepositoryConfig
     //private SqlLogger                           sqlLogger;
     private DataMasking                         masking;
     private RepositoryType                      repositoryType;
+    private SqlDialect                          sqlDialect;
     
     public RepositoryConfig()
     {
@@ -141,6 +146,7 @@ public class RepositoryConfig
                 this.jndiDataSource = this.name;
             }
         }
+        defineDialect();
     }
     
     private void parseAttributes(Element element)
@@ -263,10 +269,10 @@ public class RepositoryConfig
 //        return factory.newInstance();
 //    }
     
-    public String getSqlDialect()
-    {
-        return getProperty(RepositoryProperty.SQL_DIALECT);//this.sqlDialectName;
-    }
+//    public String getSqlDialect()
+//    {
+//        return getProperty(RepositoryProperty.SQL_DIALECT);//this.sqlDialectName;
+//    }
     
     public boolean isShotKeyEnable()
     {
@@ -295,6 +301,8 @@ public class RepositoryConfig
                 if (old != null)
                     LOG.info("The value of key [{}] with original value [{}] was replacement to [{}]", entry.getKey(),
                             old, entry.getValue());
+                if(RepositoryProperty.SQL_DIALECT.key().equals(entry.getKey().toString()))
+                    defineDialect();
             }
         }
     }
@@ -347,6 +355,20 @@ public class RepositoryConfig
         return transactionType;
     }
     
+    public SqlDialect getSqlDialect()
+    {
+        return this.sqlDialect;
+    }
+    
+    public Statistical getStatistical()
+    {
+        String enable = getProperty(RepositoryProperty.SQL_STATS);
+        if ("true".equalsIgnoreCase(enable))
+            return new SqlStats();
+        
+        return NoSqlStats.getInstance();
+    }
+
     public String getJndiDataSource()
     {
         return jndiDataSource;
@@ -376,7 +398,14 @@ public class RepositoryConfig
     {
         return repositoryType;
     }
-    
+
+    private void defineDialect()
+    {
+        String sqlDialectName = getProperty(RepositoryProperty.SQL_DIALECT);
+        ObjectProxy<SqlDialect> proxy = ObjectProxyFactory.newProxy(sqlDialectName);
+        sqlDialect = proxy.newInstance();
+    }
+
     @Override
     public String toString()
     {

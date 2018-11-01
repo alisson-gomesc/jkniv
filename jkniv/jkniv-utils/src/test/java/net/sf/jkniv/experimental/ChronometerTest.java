@@ -125,7 +125,7 @@ public class ChronometerTest
         assertThat( LOW_TIME*2D, is(closeTo(chrono2.min(),  TOLERANCE_MIN*1.2D)));
         assertThat(HIGH_TIME*2D, is(closeTo(chrono2.max(),  TOLERANCE_MIN*1.2D)));
         assertThat(          2L, is(chrono2.times()));
-        assertThat(HIGH_TIME*3D, is(closeTo(chrono3.time(), TOLERANCE_MAX*1.5D)));
+        assertThat(HIGH_TIME*3D, is(closeTo(chrono3.time(), TOLERANCE_MAX*1.7D)));
         assertThat( LOW_TIME*3D, is(closeTo(chrono3.min(),  TOLERANCE_MIN*1.5D)));
         assertThat(HIGH_TIME*3D, is(closeTo(chrono3.max(),  TOLERANCE_MIN*1.5D)));
         assertThat(          2L, is(chrono3.times()));

@@ -35,6 +35,13 @@ public interface Statistical
     void add(long time);
     
     /**
+     * Add a exception data to statistical keeping the
+     * first, last and total exceptions registered.
+     * @param e exception
+     */
+    void add(Exception e);
+    
+    /**
      * maximum time execution
      * @return maximum milliseconds execution
      */
@@ -57,12 +64,40 @@ public interface Statistical
      * @return total milliseconds execution
      */
     long getTotalTime();
-    
+
+    /**
+     * first time execution
+     * @return total milliseconds execution
+     */
+    long getFirstTime();
+
+    /**
+     * last time execution
+     * @return total milliseconds execution
+     */
+    long getLastTime();
+
     /**
      * times executed
      * @return times executed
      */
     long getCount();
-    
-        
+
+    /**
+     * the total of execution with error
+     * @return quantity of errors happened
+     */
+    long getTotalException();
+
+    /**
+     * The first error happened
+     * @return the first error
+     */
+    Exception getFirstException();
+
+    /**
+     * The last error happened
+     * @return the last error
+     */
+    Exception getLastException();
 }

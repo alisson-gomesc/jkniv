@@ -22,6 +22,7 @@ package net.sf.jkniv.sqlegance.builder.xml;
 import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.SqlType;
+import net.sf.jkniv.sqlegance.Statistical;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
@@ -86,11 +87,12 @@ class InsertTag extends AbstractSqlTag implements Insertable
      * @param batch Indicate if query is a batch of commands.
      * @param hint A SQL hint can be used on certain database platforms
      * @param validateType validation to apply before execute SQL
+     * @param stats sql statistical
      */
     public InsertTag(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch, String hint,
-            ValidateType validateType)
+            ValidateType validateType, Statistical stats)
     {
-        super(id, languageType, isolation, timeout, batch/*, null*/, hint, validateType);
+        super(id, languageType, isolation, timeout, batch/*, null*/, hint, validateType, stats);
     }
     
     /**

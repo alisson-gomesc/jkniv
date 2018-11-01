@@ -21,6 +21,7 @@ package net.sf.jkniv.sqlegance.builder.xml;
 
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.SqlType;
+import net.sf.jkniv.sqlegance.Statistical;
 import net.sf.jkniv.sqlegance.Updateable;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
@@ -72,10 +73,11 @@ class UpdateTag extends AbstractSqlTag implements Updateable
      * @param batch Indicate if query is a batch of commands.
      * @param hint A SQL hint can be used on certain database platforms
      * @param validateType validation to apply before execute SQL.
+     * @param stats SQL statistical
      */
-    public UpdateTag(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch, String hint, ValidateType validateType)
+    public UpdateTag(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch, String hint, ValidateType validateType, Statistical stats)
     {
-        super(id, languageType, isolation, timeout, batch/*, null*/, hint, validateType);
+        super(id, languageType, isolation, timeout, batch/*, null*/, hint, validateType, stats);
     }
 
     /**

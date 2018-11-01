@@ -92,7 +92,7 @@ class ReloadableXmlResource
                 {
                     LOG.info("Auto reloading xml [{}] resource building", xmlStatements);
                     XmlStatement xmlStatement = xmlStatements.get(0);
-                    xmlStatement.build(context.getSqlDialect());
+                    xmlStatement.build(context.getRepositoryConfig());
                 }
             }
         }
