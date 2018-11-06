@@ -109,7 +109,7 @@ public class UnitOfWork implements Work
             adapterConn = getConnection(queryable.getDynamicSql().getIsolation());
             conn = (Connection) adapterConn.unwrap();
             PreparedStatementStrategy stmtStrategy = new DefaultPreparedStatementStrategy(queryable);//getPreparedStatementStrategy(sqlDialect);
-            
+            LOG.info(queryable.query());
             if (queryable.getDynamicSql().isInsertable())
             {
                 DbCommand command = DbCommandFactory.newInstance(queryable, conn, stmtStrategy);
@@ -168,6 +168,7 @@ public class UnitOfWork implements Work
             
             StatementAdapter<T, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
             
+            LOG.info(queryable.query());
             queryable.bind(adapterStmt).on();
             
             adapterStmt.returnType(returnType)

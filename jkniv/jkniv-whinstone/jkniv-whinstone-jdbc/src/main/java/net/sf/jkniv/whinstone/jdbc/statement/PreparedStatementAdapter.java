@@ -30,6 +30,7 @@ import net.sf.jkniv.whinstone.classification.NoGroupingBy;
 import net.sf.jkniv.whinstone.classification.Transformable;
 import net.sf.jkniv.whinstone.jdbc.DefaultJdbcColumn;
 import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
+import net.sf.jkniv.whinstone.jdbc.result.BooleanResultRow;
 import net.sf.jkniv.whinstone.jdbc.result.FlatObjectResultRow;
 import net.sf.jkniv.whinstone.jdbc.result.MapResultRow;
 import net.sf.jkniv.whinstone.jdbc.result.NumberResultRow;
@@ -368,6 +369,10 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
         else if (String.class.isAssignableFrom(returnType))
         {
             resultRow = new StringResultRow(columns);
+        }
+        else if (Boolean.class.isAssignableFrom(returnType))
+        {
+            resultRow = new BooleanResultRow(columns);
         }
         else if (oneToManies.isEmpty())
         {

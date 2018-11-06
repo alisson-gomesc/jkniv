@@ -37,12 +37,12 @@ import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class StringResultRow<T> implements ResultRow<T, ResultSet>
+public class BooleanResultRow<T> implements ResultRow<T, ResultSet>
 {
     private static final Logger  LOG = LoggerFactory.getLogger();
     private JdbcColumn<ResultSet>[] columns;
     
-    public StringResultRow(JdbcColumn<ResultSet>[] columns)
+    public BooleanResultRow(JdbcColumn<ResultSet>[] columns)
     {
         this.columns = columns;
     }
@@ -57,9 +57,8 @@ public class StringResultRow<T> implements ResultRow<T, ResultSet>
             jdbcObject = columns[0].getValue(rs);
         
         if(LOG.isTraceEnabled())
-            LOG.trace("Column index [0] named [{}] with value [{}] as String", jdbcObject, columns[0].getAttributeName());
-
-        return (T)(jdbcObject != null ? jdbcObject.toString() : null);
+            LOG.trace("Column index [0] named [{}] value of [{}] as Boolean", jdbcObject, columns[0].getAttributeName());
+        return (T)Boolean.valueOf(jdbcObject != null ? jdbcObject.toString() : "false");
     }
 
     @Override
