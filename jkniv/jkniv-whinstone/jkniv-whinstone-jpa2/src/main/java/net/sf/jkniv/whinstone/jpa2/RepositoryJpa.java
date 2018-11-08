@@ -81,7 +81,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         this("");
     }
     
-    /**
+    /*
      * Create a JPA repository using a specific persistence unit name, where
      * EntityManager is a container-managed persistence context.
      * 
@@ -89,13 +89,15 @@ class RepositoryJpa implements RepositoryJpaExtend
      *            Name of persistence unit name at from persistence.xml.
      *            <code>&lt;persistence-unit name="...</code>
      */
-    RepositoryJpa(String unitName)
+    RepositoryJpa(String sqlContextName)
     {
-        notNull.verify(unitName);
+        notNull.verify(sqlContextName);
+        this.sqlContext = SqlContextFactory.newInstance(sqlContextName);//, this.persistenceInfo.getProperties());
+        String unitName = sqlContext.getName();
         this.persistenceInfo = getPersitenceInfo(unitName);
-        this.sqlContext = SqlContextFactory.newInstance("/repository-sql.xml", this.persistenceInfo.getProperties());
+        sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
         this.xmlQueryName = null;
-        this.emFactory = new JpaEmFactoryJndi(unitName);
+        this.emFactory = new JpaEmFactoryJndi(sqlContextName);
         if (!emFactory.isActive())
             this.emFactory = new JpaEmFactorySEenv(unitName);
         

@@ -26,23 +26,56 @@ import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.whinstone.Repository;
 
 /**
- * Build a new instance of Repository Factory to construct the repository 
- * according the data access tecnology like JPA, JDBC, CASSANDRA, COUCHDB, etc
+ * Build a new instance of {@code Repository} Factory to construct the {@code Repository} 
+ * according the data access technology like JPA, JDBC, CASSANDRA, COUCHDB, etc
  * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
 public interface RepositoryFactory
 {
+    /**
+     * New instance of Repository using default name from {@code SqlContext} "repository-sql.xml".
+     * 
+     * @return new instance of {@code Repository}.
+     */
     Repository newInstance();
     
+    /**
+     * New instance of {@code Repository} using default name from {@code SqlContext} "repository-sql.xml"
+     * with additional properties.
+     * 
+     * @param props additional properties of {@code Repository}
+     * @return new instance of {@code Repository}.
+     */
     Repository newInstance(Properties props);
     
+    /**
+     * New instance of {@code Repository} using additional properties and {@code SqlContext} instance.
+     * 
+     * @param props additional properties of {@code Repository}
+     * @param sqlContext the {@code SqlContext} with the queries from {@code Repository}.
+     * @return new instance of {@code Repository}.
+     */
     Repository newInstance(Properties props, SqlContext sqlContext);
     
+    /**
+     * 
+     * @param sqlContext the name of XML file with the queries from {@code Repository}.
+     * @return new instance of {@code Repository}.
+     */
     Repository newInstance(String sqlContext);
     
+    /**
+     * 
+     * @param sqlContext the {@code SqlContext} with the queries from {@code Repository}.
+     * @return new instance of {@code Repository}.
+     */
     Repository newInstance(SqlContext sqlContext);
     
+    /**
+     * The type of {@code Repository}
+     * @return the type of {@code Repository} like: JDBC, JPA, COUCHDB, CASSANDRA
+     */
     RepositoryType getType();
 }

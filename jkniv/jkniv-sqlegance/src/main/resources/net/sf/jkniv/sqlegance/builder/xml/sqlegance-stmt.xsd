@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <xsd:schema 
   xmlns="http://jkniv.sf.net/schema/sqlegance/statements" 
-  xmlns:cache="http://jkniv.sf.net/schema/sqlegance/cache"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   targetNamespace="http://jkniv.sf.net/schema/sqlegance/statements"
   elementFormDefault="qualified">
 
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
-  <xsd:import namespace="http://jkniv.sf.net/schema/sqlegance/cache"  schemaLocation="http://jkniv.sf.net/schema/sqlegance/sqlegance-cache.xsd"/>
-
   <xsd:element name="statements">
     <xsd:complexType>
       <xsd:sequence>
         <xsd:choice maxOccurs="unbounded">
-          <xsd:element maxOccurs="1" minOccurs="0" ref="cache:cache-manager" />
           <xsd:element maxOccurs="unbounded" ref="package" />
           <xsd:element maxOccurs="unbounded" ref="include" />
           <xsd:element maxOccurs="unbounded" ref="select" />
@@ -21,6 +17,7 @@
           <xsd:element maxOccurs="unbounded" ref="update" />
           <xsd:element maxOccurs="unbounded" ref="delete" />
           <xsd:element maxOccurs="unbounded" ref="procedure" />
+          <xsd:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:choice>
       </xsd:sequence>
       <xsd:attribute name="context" use="optional" type="xsd:string" />
@@ -310,7 +307,6 @@
       <xsd:enumeration value="NATIVE"></xsd:enumeration>
       <xsd:enumeration value="CRITERIA"></xsd:enumeration>
       <xsd:enumeration value="STORED"></xsd:enumeration>
-      <xsd:enumeration value="VIEW"></xsd:enumeration>
     </xsd:restriction>
   </xsd:simpleType>
 

@@ -62,7 +62,7 @@ public class RepositoryFactoryJpa implements RepositoryFactory
     @Override
     public RepositoryType getType()
     {
-        return RepositoryType.JDBC;
+        return RepositoryType.JPA;
     }
     
 }

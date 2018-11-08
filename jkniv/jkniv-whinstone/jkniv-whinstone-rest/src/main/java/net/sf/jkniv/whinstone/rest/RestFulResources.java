@@ -436,7 +436,6 @@ public class RestFulResources extends BaseResource
      * @param ui URL query parameterss
      * @return the quantity of data deleted
      */
-    
     @DELETE
     @Path("{q}")
     public Response remove(@PathParam("context") String ctx, @PathParam("q") String q, @Context UriInfo ui) 

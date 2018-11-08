@@ -20,16 +20,14 @@
 package net.sf.jkniv.whinstone.cassandra;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 
 import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import net.sf.jkniv.acme.domain.Author;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
@@ -57,6 +55,7 @@ public class CassandraGroupingByTest extends BaseJdbc
         assertThat(black.getPriorities(), containsInAnyOrder("HIGH", "NORMAL", "LOW"));
     }
     
+    /*    
     @Test
     public void whenGroupingByTwoFields()
     {
@@ -145,4 +144,5 @@ public class CassandraGroupingByTest extends BaseJdbc
         assertThat(author5.getBooks().get(1).getName(), is("The Stranger"));
 
     }
+    */
 }
