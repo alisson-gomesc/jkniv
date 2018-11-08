@@ -166,6 +166,11 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
             jdbcObject = column.getValue(rs);
         // otm.property : 'book', JdbcColumn: book.name, capitalize -> setName
         String method = SETTER.capitalize(column.getName().substring(otm.getProperty().length() + 1));
+        if(SQLLOG.isTraceEnabled())
+            SQLLOG.trace("Mapping index [{}] column [{}] type of [{}] to value [{}]", 
+                    column.getIndex(), column.getAttributeName(), 
+                    (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), 
+                    MASKING.mask(column.getAttributeName(), jdbcObject));
         reflect.inject(method, jdbcObject);
     }
     /*

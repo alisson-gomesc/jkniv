@@ -18,14 +18,15 @@
   <include href="/repository-sql-IN.xml" />
   <include href="/repository-sql-scalar.xml" />
   <include href="/repository-sql-cache.xml" />
-  
+  <include href="/repository-sql-onetomany.xml" />
+
   <select id="all" returnType="net.sf.jkniv.whinstone.cassandra.model.MxtData">
   select * from TRACKABLE_DATA
   </select>
 
-  <insert id="removeAll">
+  <delete id="removeAll">
     delete from dev_data_3t.TEST_DATA
-  </insert>
+  </delete>
 
   <insert id="simpleInsert">
     INSERT INTO dev_data_3t.TEST_DATA (my_key,evt_date,object_id, lat, lng, warn)

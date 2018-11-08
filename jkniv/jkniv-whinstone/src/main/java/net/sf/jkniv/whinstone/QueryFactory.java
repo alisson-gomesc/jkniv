@@ -49,7 +49,7 @@ public class QueryFactory
      * @param params array of parameters
      * @return Queryable object with parameters and unlimited result
      */
-    public static Queryable ofArray(String name, Object[] params)
+    public static Queryable ofArray(String name, Object... params)
     {
         return new QueryName(name, params, 0, Integer.MAX_VALUE);
     }
