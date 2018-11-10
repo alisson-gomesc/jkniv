@@ -36,6 +36,7 @@ import net.sf.jkniv.reflect.beans.MethodName;
 import net.sf.jkniv.reflect.beans.MethodNameFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.sqlegance.RepositoryConfigException;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.whinstone.QueryFactory;
@@ -73,18 +74,24 @@ public class BaseResource
 
         RepositoryService service = RepositoryService.getInstance();
         String[] contexts = sqlContextName.split(",");
-        for (String ctxName : contexts)
+        for (String ctxFile : contexts)
         {
-            ctxName = ctxName.trim();
-            LOG.trace("Creating new repository for sql context [" + ctxName + "]");
+            ctxFile = ctxFile.trim();
+            LOG.trace("Creating new repository for sql context file [" + ctxFile + "]");
             
-            SqlContext context = SqlContextFactory.newInstance(ctxName);
+            SqlContext context = SqlContextFactory.newInstance(ctxFile);
+            if (context == null)
+                throw new RepositoryConfigException("Cannot found SQL Context file ["+ctxFile+"]");
+            
             if (!repositories.containsKey(context.getName()))
             {
                 Repository repository = service.lookup(context.getRepositoryConfig().getRepositoryType())
                         .newInstance(context);
+                if (repository == null)
+                    throw new RepositoryConfigException("Cannot found Repository for context file ["+ctxFile+"] named ["+context.getName()+"]");
+                
                 repositories.put(context.getName(), repository);
-                LOG.debug("Sql Context [" + ctxName + "] was created");
+                LOG.info("Sql Context [" + ctxFile + "] was created with name ["+context.getName()+"] for RESTful services");
             }
         }
     }

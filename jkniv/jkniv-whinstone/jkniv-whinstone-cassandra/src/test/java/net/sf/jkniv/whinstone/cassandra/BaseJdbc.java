@@ -33,7 +33,6 @@ public class BaseJdbc //extends BaseSpringJUnit4
 {
     protected static final String url = "127.0.0.1";
     protected static final String schema = "dev_data_3t";
-    protected static final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
     protected static final String user = "cassandra";
     protected static final String pass = "cassandra";
     protected static final Properties config;
@@ -44,7 +43,6 @@ public class BaseJdbc //extends BaseSpringJUnit4
         config.put(RepositoryProperty.JDBC_SCHEMA.key(), schema);
         config.put(RepositoryProperty.JDBC_USER.key(), user);
         config.put(RepositoryProperty.JDBC_PASSWORD.key(), pass);
-        config.put(RepositoryProperty.JDBC_DRIVER.key(), driver);
     }
     
     
@@ -52,29 +50,4 @@ public class BaseJdbc //extends BaseSpringJUnit4
     {
         return new RepositoryCassandra(config);
     }
-
-    protected Map<String, Object> asParams(Object... args)
-    {
-        Map<String, Object> params = new HashMap<String, Object>();
-        int i = 1;
-        String key = null;
-        Object value = null;
-        for (Object o : args)
-        {
-            if (i % 2 == 1)
-            {
-                key = o.toString();
-            }
-            else
-            {
-                value = o;
-                params.put(key, value);
-                key = null;
-                value = null;
-            }
-            i++;
-        }
-        return params;
-    }
-
 }

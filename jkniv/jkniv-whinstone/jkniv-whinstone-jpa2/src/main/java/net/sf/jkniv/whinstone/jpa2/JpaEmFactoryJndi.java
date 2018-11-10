@@ -2,6 +2,8 @@ package net.sf.jkniv.whinstone.jpa2;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 
@@ -14,7 +16,7 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
 
 class JpaEmFactoryJndi implements JpaEmFactory
 {
-    private final static  Logger LOG = LoggerFactory.getLogger(JpaEmFactoryJndi.class);
+    private final static Logger LOG = LoggerFactory.getLogger(JpaEmFactoryJndi.class);
     private Context             ctx;
     private String              unitName;
     private NamingException     nex;
@@ -48,9 +50,22 @@ class JpaEmFactoryJndi implements JpaEmFactory
             em = (EntityManager) ctx.lookup(jndiName);
             LOG.debug("EntityManager {} was lookup successufly", em);
         }
-        catch (NamingException ex)
+        catch (NamingException nex)
         {
-            throw new RepositoryException("Cannot lookup [" + jndiName + "] for EntityManager", ex);
+            try
+            {
+                NamingEnumeration<NameClassPair> list = ctx.list("");
+                LOG.info("Cannot lookup jndi name [{}]", jndiName);
+                while (list.hasMore())
+                {
+                    NameClassPair name = list.next();
+                    LOG.info("There is jndi entry [{}] type of [{}] in namespace [{}]",  name.getName(), name.getClassName(), name.getNameInNamespace());
+                }
+            }
+            catch (NamingException ex)
+            {
+            }
+            throw new RepositoryException("Cannot lookup [" + jndiName + "] for EntityManager", nex);
         }
         return em;
     }
@@ -92,7 +107,8 @@ class JpaEmFactoryJndi implements JpaEmFactory
         }
         catch (RepositoryException rex)
         {
-            LOG.error("Error at start EntityManagerFactory for JNDI [{}], cause: {}", jndiName, rex.getCause().getMessage());
+            LOG.error("Error at start EntityManagerFactory for JNDI [{}], cause: {}", jndiName,
+                    rex.getCause().getMessage());
             this.active = false;
         }
     }

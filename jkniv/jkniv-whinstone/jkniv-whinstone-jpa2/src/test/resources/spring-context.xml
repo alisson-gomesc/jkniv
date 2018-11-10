@@ -36,9 +36,10 @@
 -->
   <jdbc:initialize-database data-source="dataSourceOra" enabled="true"
     ignore-failures="DROPS">
-    <jdbc:script location="classpath:database/ora/db-drop.sql" execution="DESTROY" encoding="UTF-8"/>
+    <jdbc:script location="classpath:database/ora/db-drop.sql" execution="INIT" encoding="UTF-8"/>
     <jdbc:script location="classpath:database/ora/db-create.sql" execution="INIT" encoding="UTF-8"/>
     <jdbc:script location="classpath:database/ora/db-load.sql" execution="INIT" encoding="UTF-8"/>
+    <jdbc:script location="classpath:database/ora/db-drop.sql" execution="DESTROY" encoding="UTF-8"/>
   </jdbc:initialize-database>
 
 
