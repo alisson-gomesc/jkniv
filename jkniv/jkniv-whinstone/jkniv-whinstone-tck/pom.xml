@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>net.sf.jkniv</groupId>
@@ -12,21 +13,46 @@
   <name>jkniv-whinstone-tck</name>
   <dependencies>
     <dependency>
-     <groupId>net.sf.jkniv</groupId>
-     <artifactId>jkniv-whinstone-jpa2</artifactId>
+      <groupId>net.sf.jkniv</groupId>
+      <artifactId>jkniv-whinstone-jpa2</artifactId>
     </dependency>
     <dependency>
-     <groupId>net.sf.jkniv</groupId>
-     <artifactId>jkniv-whinstone-jdbc</artifactId>
+      <groupId>net.sf.jkniv</groupId>
+      <artifactId>jkniv-whinstone-jdbc</artifactId>
     </dependency>
     <dependency>
-     <groupId>net.sf.jkniv</groupId>
-     <artifactId>jkniv-whinstone-couchdb</artifactId>
+      <groupId>net.sf.jkniv</groupId>
+      <artifactId>jkniv-whinstone-couchdb</artifactId>
     </dependency>
     <dependency>
-     <groupId>net.sf.jkniv</groupId>
-     <artifactId>jkniv-whinstone-cassandra</artifactId>
+      <groupId>net.sf.jkniv</groupId>
+      <artifactId>jkniv-whinstone-cassandra</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.oracle</groupId>
+      <artifactId>ojdbc6</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.microsoft.sqlserver</groupId>
+      <artifactId>sqljdbc4</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+    </dependency>
+    <dependency>
+    <groupId>org.apache.derby</groupId>
+    <artifactId>derbyclient</artifactId>
+    </dependency>
+
   </dependencies>
   <build>
     <plugins>

@@ -21,7 +21,6 @@
   -->
   <context:component-scan base-package="net.sf.jkniv.whinstone.cassandra" />
 
-
   <bean id="dataSourceCas" class="org.apache.commons.dbcp.BasicDataSource"
     destroy-method="close">
     <property name="driverClassName" value="com.dbschema.CassandraJdbcDriver" />

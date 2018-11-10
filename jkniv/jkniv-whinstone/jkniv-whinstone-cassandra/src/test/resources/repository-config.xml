@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<repository-config xmlns="http://jkniv.sf.net/schema/sqlegance/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/config http://jkniv.sf.net/schema/sqlegance/sqlegance-config-0.6.xsd">
+
+  <repository name="whin-cassandra" type="CASSANDRA">
+   <properties>
+     <property name="url" value="127.0.0.1" />
+     <property name="schema" value="dev_data_3t"/>
+     <property name="user" value="cassandra"/>
+     <property name="password" value="cassandra"/>
+   </properties>
+  </repository>
+
+
+</repository-config>
