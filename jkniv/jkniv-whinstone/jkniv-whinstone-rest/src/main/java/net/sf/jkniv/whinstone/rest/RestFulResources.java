@@ -139,6 +139,7 @@ public class RestFulResources extends BaseResource
     
     /**
      * Execute query <code>q</code> against the database with all parameters from URL string <code>ui</code>
+     * @param ctx context name for Sql Context
      * @param q query name
      * @param ui query parameters
      * @return A set of JSON objects that matches with query and HTTP status <code>200 OK</code>, if
@@ -155,6 +156,7 @@ public class RestFulResources extends BaseResource
     /**
      * Execute query <code>q</code> against the database with all parameters from URL string <code>ui</code>
      * converted for model type <code>m</code>
+     * @param ctx context name for Sql Context
      * @param q query name
      * @param m Model or Transform name (could be simple name or canonical name from class)
      * @param ui query parameters
@@ -190,6 +192,7 @@ public class RestFulResources extends BaseResource
     /**
      * Execute query <code>q</code> against the database with all parameters from URL string <code>ui</code>
      * converted for model type <code>m</code>
+     * @param ctx context name for Sql Context
      * @param q query name
      * @param m Model name (could be simple name or canonical name from class)
      * @param t transform name (could be simple name or canonical name from class)
@@ -212,6 +215,7 @@ public class RestFulResources extends BaseResource
 
     /**
      * Execute query <code>q</code> against the database with all parameters from URL string <code>ui</code>
+     * @param ctx context name for Sql Context
      * @param q query name
      * @param ui query parameters
      * @return An JSON object that matches with query and HTTP status <code>200 OK</code>, if
@@ -228,6 +232,7 @@ public class RestFulResources extends BaseResource
     /**
      * Execute query <code>q</code> against the database with all parameters from URL string <code>ui</code>
      * converted for model type <code>m</code>.
+     * @param ctx context name for Sql Context
      * @param q query name
      * @param m Model or Transform name (could be simple name or canonical name from class)
      * @param ui query parameters
@@ -289,6 +294,7 @@ public class RestFulResources extends BaseResource
      *  <li> <p><code>HTTP 204 No Content</code>: Update change nothing, zero rows affected</p> </li>
      *  <li> <p><code>HTTP 409 Conflict</code>: Conflict to update rows, zero rows affected</p> </li>
      * </ul>
+     * @param ctx context name for Sql Context
      * @param q queryable name
      * @param ui request URI information
      * @param body request information using json
@@ -317,6 +323,7 @@ public class RestFulResources extends BaseResource
      *  <li> <p><code>HTTP 204 No Content</code>: Update change nothing, zero rows affected</p> </li>
      *  <li> <p><code>HTTP 409 Conflict</code>: Conflict to update rows, zero rows affected</p> </li>
      * </ul>
+     * @param ctx context name for Sql Context
      * @param q queryable name
      * @param m model name (qualified or short name)
      * @param ui request URI information
@@ -371,6 +378,7 @@ public class RestFulResources extends BaseResource
      *  <li> <p><code>HTTP 204 No Content</code>: Update change nothing, zero rows affected</p> </li>
      *  <li> <p><code>HTTP 409 Conflict</code>: Conflict to update rows, zero rows affected</p> </li>
      * </ul>
+     * @param ctx context name for Sql Context
      * @param q queryable name
      * @param body request information using json
      * @return <code>HTTP 200 OK</code>, <code>HTTP 204 No Content</code> or <code>HTTP 409 Conflict</code> with
@@ -430,7 +438,7 @@ public class RestFulResources extends BaseResource
     // HTTP 404 Not Found (Resource not exists)
     /**
      * 
-     * @param ctx
+     * @param ctx context name for Sql Context
      * @param q query name to delete the data. If the {@code queryname} not exist 
      * the value is used as {@code id} attribute
      * @param ui URL query parameterss

@@ -30,6 +30,7 @@
     </head>
     <menu name="Whinstone JPA2" inherit="top">
       <item name="Introduction" href="index.html" />
+      <item name="Configuring a Persistence Context" href="config-persistence-ctx.html" />
       <item name="Logging" href="logging.html" />
       <item name="Javadoc"  href="http://jkniv.sourceforge.net/apidocs/whinstone/index.html" />
       <item name="Donwload"  href="https://sourceforge.net/projects/jkniv/files/whinstone-jpa2/" />

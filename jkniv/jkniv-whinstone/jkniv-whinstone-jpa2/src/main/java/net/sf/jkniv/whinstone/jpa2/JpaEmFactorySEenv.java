@@ -22,7 +22,7 @@ class JpaEmFactorySEenv implements JpaEmFactory
     {
         this.emf = Persistence.createEntityManagerFactory(unitName);
         //isContainerManaged();
-        LOG.info("Factory {} was started successfully for unitName [{}]", getClass().getName(), unitName);
+        LOG.info("Java SE environments factory {} was started successfully for unitName [{}]. No supports for transaction managed!", getClass().getName(), unitName);
     }
     
     @Override

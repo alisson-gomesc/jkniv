@@ -36,7 +36,7 @@ The steps to start are:
 No annotations, no mapping (except if you want to use JPA), easily to test. The power of the database query language is yours and `whinstone` gives to you **the plain java objects with automatic bind to input parameters and result set output**, reducing a boilerplate of code to set JDBC parameters and ResultSet *getters*.
 
 
-It's very seductive write a query and someone (framework) translate to my specific database like HQL, JPQL, jOOQ DSL, etc. But there is the trap from Least Common Multiple that could hug that framework. It's probable that a lot of extra java code is necessary to do the same without the **native** query from your database.
+It's very seductive write a query and someone (framework) translate to my specific database like HQL, JPQL, jOOQ DSL, etc. But there is the trap from lowest common denominator that could hug that framework. It's probable that a lot of extra java code is necessary to do the same without the **native** query from your database.
 
 The `whinstone` approach keep the power of database query language and your java code become more maintainable naturally.
 
