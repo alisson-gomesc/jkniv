@@ -54,7 +54,6 @@ public class CouchDbRepositoryAddTest extends BaseJdbc
         
         assertThat(author.getId(), notNullValue());
         assertThat(rows, is(1));
-        System.out.println(author);
     }
     
     @Test

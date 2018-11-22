@@ -18,7 +18,7 @@ To active the logger configure a logger category `jkniv.whinstone.couchdb.SQL`.
 | -------------------------------- | --------- |--------|
 | `jkniv.whinstone.couchdb.SQL` |  `trace` | result set bind |
 | `jkniv.whinstone.couchdb.SQL` |  `debug` | statement parameters bind |
-| `jkniv.whinstone.couchdb.SQL` |  `info`  | connection config |
+| `jkniv.whinstone.couchdb.SQL` |  `info`  | statement sentence |
 
 
 <a href="http://www.slf4j.org/">SLF4J guide you for more information.</a>

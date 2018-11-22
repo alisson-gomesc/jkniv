@@ -135,7 +135,6 @@ public class UpdateCommand extends AbstractCommand implements CouchCommand
             CloseableHttpClient httpclient = HttpClients.createDefault();
             String url = httpBuilder.getUrlForAddOrUpdateOrDelete(queryable);
             HttpPut http = null;
-            LOG.debug(url);
             http = (HttpPut)asPut().newHttp(url);
             http.setEntity( getEntity() );
             

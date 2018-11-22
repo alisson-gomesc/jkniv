@@ -30,63 +30,69 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "offset",
-    "rows",
-    "total_rows"
-})
-public class AllDocsAnswer {
-
+@JsonPropertyOrder(
+{ "offset", "rows", "total_rows" })
+public class AllDocsAnswer
+{
+    
     @JsonProperty("offset")
-    private Long offset;
-
+    private Long                offset;
+    
     @JsonProperty("total_rows")
-    private Long totalRows;
+    private Long                totalRows;
     
     @JsonProperty("rows")
-    private List<Map> rows = null;
+    private List<Map>           rows                 = null;
     
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
+    
     @JsonProperty("offset")
-    public Long getOffset() {
+    public Long getOffset()
+    {
         return offset;
     }
-
+    
     @JsonProperty("offset")
-    public void setOffset(Long offset) {
+    public void setOffset(Long offset)
+    {
         this.offset = offset;
     }
-
+    
     @JsonProperty("rows")
-    public List<Map> getRows() {
+    public List<Map> getRows()
+    {
         return rows;
     }
-
+    
     @JsonProperty("rows")
-    public void setRows(List<Map> rows) {
+    public void setRows(List<Map> rows)
+    {
         this.rows = rows;
     }
-
+    
     @JsonProperty("total_rows")
-    public Long getTotalRows() {
+    public Long getTotalRows()
+    {
         return totalRows;
     }
-
+    
     @JsonProperty("total_rows")
-    public void setTotalRows(Long totalRows) {
+    public void setTotalRows(Long totalRows)
+    {
         this.totalRows = totalRows;
     }
-
+    
     @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
+    public Map<String, Object> getAdditionalProperties()
+    {
         return this.additionalProperties;
     }
-
+    
     @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
+    public void setAdditionalProperty(String name, Object value)
+    {
         this.additionalProperties.put(name, value);
     }
-
+    
 }

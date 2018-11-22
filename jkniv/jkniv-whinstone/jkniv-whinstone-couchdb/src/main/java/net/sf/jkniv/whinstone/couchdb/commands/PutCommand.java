@@ -38,6 +38,7 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 public class PutCommand implements DbCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger(PutCommand.class);
+    private static final Logger LOGSQL = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
     private HttpPut            put;
     private String body;
 

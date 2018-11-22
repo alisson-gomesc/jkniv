@@ -18,7 +18,7 @@ To active the logger configure a logger category `jkniv.whinstone.jdbc.SQL`.
 | -------------------------------- | --------- |--------|
 | `jkniv.whinstone.jdbc.SQL` |  `trace` | result set bind |
 | `jkniv.whinstone.jdbc.SQL` |  `debug` | statement parameters bind |
-| `jkniv.whinstone.jdbc.SQL` |  `info`  | connection config |
+| `jkniv.whinstone.jdbc.SQL` |  `info`  | statement sentence |
 
 
 <a href="http://www.slf4j.org/">SLF4J guide you for more information.</a>

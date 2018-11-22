@@ -22,6 +22,12 @@ package net.sf.jkniv.reflect.beans;
 
 import java.lang.reflect.Method;
 
+/**
+ * Interface with a contract to invoke method class by reflection.
+ * 
+ * @author Alisson Gomes
+ *
+ */
 public interface Invokable
 {
     Object invoke(Method method, Object theInstance, Object... values);

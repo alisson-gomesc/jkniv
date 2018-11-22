@@ -112,6 +112,7 @@ import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 public class DeleteCommand extends AbstractCommand implements CouchCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger(DeleteCommand.class);
+    private static final Logger LOGSQL = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
     private Queryable           queryable;
     private HttpBuilder         httpBuilder;
     
@@ -137,7 +138,7 @@ public class DeleteCommand extends AbstractCommand implements CouchCommand
             CloseableHttpClient httpclient = HttpClients.createDefault();
             String url = httpBuilder.getUrlForAddOrUpdateOrDelete(queryable);
             HttpDelete http = null;
-            LOG.debug(url);
+            LOGSQL.debug(url);
             http = (HttpDelete)asDelete().newHttp(url);
             //http.setEntity( getEntity() );
             

@@ -18,7 +18,7 @@ To active the logger configure a logger category `jkniv.whinstone.cassandra.SQL`
 | ---------------------------------- | --------- |--------|
 | `jkniv.whinstone.cassandra.SQL` |  `trace` | result set bind |
 | `jkniv.whinstone.cassandra.SQL` |  `debug` | statement parameters bind |
-| `jkniv.whinstone.cassandra.SQL` |  `info`  | connection config and Real SQL |
+| `jkniv.whinstone.cassandra.SQL` |  `info`  | statement sentence |
 
 
 <a href="http://www.slf4j.org/">SLF4J guide you for more information.</a>

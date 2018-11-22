@@ -16,7 +16,7 @@ For `META-INF/persistence.xml` example:
      </persistence-unit>
     </persistence>
 
-Basically entity manager there are 3 use cases:
+Basically entity manager there are 3 use cases: WAR, EAR and SE applications.
 
 **Note:** In JEE environment the prefix `persistence` is a best practice, not required. But for `whinstone-jpa2` this prefix is mandatory.
 
@@ -29,13 +29,16 @@ Basically entity manager there are 3 use cases:
      xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
      id="WebApp_ID" version="3.1" metadata-complete="true">
 
-    <persistence-context-ref>
-      <description>JNDI for lookup EntityManager</description>
-      <persistence-context-ref-name>persistence/ctx-vendor</persistence-context-ref-name>
-      <persistence-unit-name>ctx-vendor</persistence-unit-name>
-      <persistence-context-type>Transaction</persistence-context-type>
-    </persistence-context-ref>
-
+    ...
+    
+      <persistence-context-ref>
+        <description>JNDI for lookup EntityManager</description>
+        <persistence-context-ref-name>persistence/ctx-vendor</persistence-context-ref-name>
+        <persistence-unit-name>ctx-vendor</persistence-unit-name>
+        <persistence-context-type>Transaction</persistence-context-type>
+      </persistence-context-ref>
+    </web-app>
+    
 ## EAR Application
 
 
@@ -123,11 +126,11 @@ So the `Repository` can be instanced:
 
 ###  Java EE *versus* Java SE environments
 
-`whinstone-jpa2` always try to acquire EntityManager by JNDI reference, however when cannot lookup that reference the EntityManager is create using `Persistence.createEntityManagerFactory(unitName)` like Java SE environments. Pay attention because instance of EntityManager for JEE is supports transaction managed but Java SE don't. If you intend use JNDI check the logger if the lookup is made correctly. 
+`whinstone-jpa2` always try to acquire EntityManager by JNDI reference, however when cannot lookup that reference the EntityManager is create using `Persistence.createEntityManagerFactory(unitName)` like Java SE environments. Pay attention because instance of EntityManager for JEE supports transaction managed but Java SE don't. If you intend use JNDI check the logger if the lookup was made correctly. 
 
 
-The log at INFO level told about that:
+The log at WARN level told about that:
 
-    [INFO ] JpaEmFactorySEenv.<init> - Java SE environments factory net.sf.jkniv.whinstone.jpa2.JpaEmFactorySEenv was started successfully for unitName [ctx-vendor]. No supports for transaction managed!
+    [WARN ] JpaEmFactorySEenv.<init> - Java SE environments factory net.sf.jkniv.whinstone.jpa2.JpaEmFactorySEenv was started successfully for unitName [ctx-vendor]. No supports for transaction managed!
 
     

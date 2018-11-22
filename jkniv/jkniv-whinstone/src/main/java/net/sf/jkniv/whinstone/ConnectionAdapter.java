@@ -69,6 +69,8 @@ public interface ConnectionAdapter
     /**
      * create an adapter for a Prepared Statement
      * @param sql statement
+     * @param <T> TODO documents T param
+     * @param <R> TODO documents R param
      * @return Adapter for Prepared Statement
      */
     <T, R> StatementAdapter<T, R> newStatement(String sql);

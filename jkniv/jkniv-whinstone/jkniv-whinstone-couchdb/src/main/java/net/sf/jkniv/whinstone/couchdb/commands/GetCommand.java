@@ -40,7 +40,7 @@ import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 public class GetCommand extends AbstractCommand implements CouchCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger(GetCommand.class);
-    private static final Logger LOGSQL = LoggerFactory.getLogger("jkniv.whinstone.couchdb.SQL");
+    private static final Logger LOGSQL = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
     private String              body;
     private Queryable           queryable;
     private HttpBuilder         httpBuilder;

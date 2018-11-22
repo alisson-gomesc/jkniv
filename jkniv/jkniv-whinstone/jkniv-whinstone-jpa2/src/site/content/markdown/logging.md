@@ -18,7 +18,7 @@ To active the logger configure a logger category `jkniv.whinstone.jpa2.SQL`.
 | -------------------------------- | --------- |--------|
 | `jkniv.whinstone.jpa2.SQL` |  `trace` | result set bind |
 | `jkniv.whinstone.jpa2.SQL` |  `debug` | statement parameters bind |
-| `jkniv.whinstone.jpa2.SQL` |  `info`  | connection config |
+| `jkniv.whinstone.jpa2.SQL` |  `info`  | statement sentence |
 
 
 <a href="http://www.slf4j.org/">SLF4J guide you for more information.</a>

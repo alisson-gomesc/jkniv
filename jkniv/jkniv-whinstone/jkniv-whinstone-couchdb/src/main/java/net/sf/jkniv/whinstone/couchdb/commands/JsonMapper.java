@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -61,6 +62,21 @@ public class JsonMapper
     }
     
     public static <T> T mapper(String content, Class<T> valueType)
+    {
+        try
+        {
+            return mapper.readValue(content, valueType);
+        }
+        catch (Exception e)
+        {
+            // JsonParseException | JsonMappingException | IOException
+            handlerException.handle(e);
+        }
+        return null;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static <T> T mapper(String content, TypeReference valueType)
     {
         try
         {

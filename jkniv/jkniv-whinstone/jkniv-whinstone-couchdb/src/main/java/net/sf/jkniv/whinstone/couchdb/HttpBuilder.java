@@ -282,6 +282,14 @@ public class HttpBuilder
         return urlAllDocs.toString() + urlParams.toString();
     }
     
+    public String getUrlForBulk()
+    {
+        StringBuilder urlSave = new StringBuilder(this.hostContext);
+        urlSave.append("_bulk_docs");
+        return urlSave.toString();
+    }
+
+    
     public String getHostContext()
     {
         String hostContext = this.url + "/" + this.schema;
@@ -298,9 +306,7 @@ public class HttpBuilder
         {
             v = queryable.getProperty(name);
         }
-        catch (ParameterNotFoundException ignore)
-        {
-            /* parameter not exixts */}
+        catch (ParameterNotFoundException ignore) { /* parameter not exixts */}
         return v;
     }
     

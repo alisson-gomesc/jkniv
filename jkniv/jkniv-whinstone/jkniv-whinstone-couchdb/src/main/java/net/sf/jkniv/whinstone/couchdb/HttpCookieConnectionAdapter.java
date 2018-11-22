@@ -29,6 +29,7 @@ import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 import net.sf.jkniv.whinstone.couchdb.commands.AllDocsCommand;
+import net.sf.jkniv.whinstone.couchdb.commands.BulkCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.CouchCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.DeleteCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.FindCommand;
@@ -177,15 +178,18 @@ public class HttpCookieConnectionAdapter implements ConnectionAdapter
         String sql = queryable.query();
         StatementAdapter<T, R> stmt = new CouchDbStatementAdapter(this.httpBuilder, sql, queryable.getDynamicSql().getParamParser());
 
-        queryable.bind(stmt).on();
+        //queryable.bind(stmt).on();
         
         //if (queryable.getReturnType() != null)
         //    returnType = queryable.getReturnType();
         //else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
         //    returnType = queryable.getDynamicSql().getReturnTypeAsClass();
         
-        command = new UpdateCommand(httpBuilder, queryable);
-        
+        if (queryable.isTypeOfBulk())
+            command = new BulkCommand(httpBuilder, queryable);
+        else
+            command = new UpdateCommand(httpBuilder, queryable);
+            
         return command;
     }
 
@@ -198,14 +202,17 @@ public class HttpCookieConnectionAdapter implements ConnectionAdapter
         String sql = queryable.query();
         StatementAdapter<T, R> stmt = new CouchDbStatementAdapter(this.httpBuilder, sql, queryable.getDynamicSql().getParamParser());
 
-        queryable.bind(stmt).on();
+        //queryable.bind(stmt).on();
         
         //if (queryable.getReturnType() != null)
         //    returnType = queryable.getReturnType();
         //else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
         //    returnType = queryable.getDynamicSql().getReturnTypeAsClass();
         
-        command = new DeleteCommand(httpBuilder, queryable);
+        if (queryable.isTypeOfBulk())
+            command = new BulkCommand(httpBuilder, queryable);
+        else
+            command = new DeleteCommand(httpBuilder, queryable);
         
         return command;
     }
@@ -219,15 +226,18 @@ public class HttpCookieConnectionAdapter implements ConnectionAdapter
         String sql = queryable.query();
         StatementAdapter<T, R> stmt = new CouchDbStatementAdapter(this.httpBuilder, sql, queryable.getDynamicSql().getParamParser());
 
-        queryable.bind(stmt).on();
+        //queryable.bind(stmt).on();
         
         //if (queryable.getReturnType() != null)
         //    returnType = queryable.getReturnType();
         //else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
         //    returnType = queryable.getDynamicSql().getReturnTypeAsClass();
         
-        command = new AddCommand(httpBuilder, queryable);
-        
+        if (queryable.isTypeOfBulk())
+            command = new BulkCommand(httpBuilder, queryable);
+        else
+            command = new AddCommand(httpBuilder, queryable);
+            
         return command;
     }
 

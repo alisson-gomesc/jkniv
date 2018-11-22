@@ -317,7 +317,6 @@ class QueryName implements Queryable
         return (this.paramType == TYPEOF_PARAM.COLLECTION_POJO || this.paramType == TYPEOF_PARAM.COLLECTION_MAP
                 || this.paramType == TYPEOF_PARAM.COLLECTION_ARRAY || this.paramType == TYPEOF_PARAM.ARRAY_MAP
                 || this.paramType == TYPEOF_PARAM.ARRAY_POJO);
-        
     }
     
     @Override

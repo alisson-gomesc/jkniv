@@ -62,6 +62,7 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
 public class UnitOfWork implements Work
 {
     private final static Logger     LOG        = LoggerFactory.getLogger(UnitOfWork.class);
+    private final static Logger     LOGSQL        = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
     private final static Assertable notNull    = AssertsFactory.getNotNull();
     private final static BasicType  BASIC_TYPE = BasicType.getInstance();
     
@@ -168,7 +169,7 @@ public class UnitOfWork implements Work
             
             StatementAdapter<T, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
             
-            LOG.info(queryable.query());
+            LOGSQL.info(queryable.query());
             queryable.bind(adapterStmt).on();
             
             adapterStmt.returnType(returnType)

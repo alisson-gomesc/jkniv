@@ -29,13 +29,24 @@ import net.sf.jkniv.whinstone.Command;
  */
 public interface CouchCommand extends Command
 {
+    /** 200 OK */
     static final int HTTP_OK = 200;
+    /**  201 Created */
     static final int HTTP_CREATED = 201;
+    /** 202 Accepted */
     static final int HTTP_ACCEPTED = 202;
+    /** 204 No Content */
     static final int HTTP_NO_CONTENT = 204;
+    /** 205 Reset Content */
     static final int HTTP_RESET_CONTENT = 205;
+    /**  304 Not Modified */
     static final int HTTP_NOT_MODIFIED = 304;
+    /**  404 Not Found */
     static final int HTTP_NOT_FOUND = 404;
+    /** 400 Bad Request */
+    static final int HTTP_BAD_REQUEST = 400;
+    /**  417 Expectation FaileD */
+    static final int HTTP_EXPECTATION_FAILED = 407;
     
     HttpMethod asPut();
 

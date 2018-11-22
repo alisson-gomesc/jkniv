@@ -51,4 +51,8 @@ Example:
 
 
 
+#### Resources
 
+[Architectural Styles and the Design of Network-based Software Architectures] https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm[1]
+[REST API Design - Resource Modeling] https://www.thoughtworks.com/pt/insights/blog/rest-api-design-resource-modeling [2]
+[REST Resource Naming] https://www.restapitutorial.com/lessons/restfulresourcenaming.html [3]
