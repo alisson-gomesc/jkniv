@@ -22,6 +22,7 @@ package net.sf.jkniv.whinstone.couchdb;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 
@@ -52,8 +53,11 @@ public class CouchDbRepositoryAddTest extends BaseJdbc
         Queryable q = getQuery("add", author);
         int rows = repositoryDb.add(q);
         
-        assertThat(author.getId(), notNullValue());
         assertThat(rows, is(1));
+        assertThat(author.getId(), notNullValue());
+        assertThat(author.getAddAt(), notNullValue());
+        assertThat(author.getUpdateAt(), nullValue());
+
     }
     
     @Test
@@ -67,8 +71,10 @@ public class CouchDbRepositoryAddTest extends BaseJdbc
         Queryable q = getQuery("add", author);
         int rows = repositoryDb.add(q);
         
-        assertThat(author.getId(), is(repositoryDb.get(Author.class,"001").getId()));        
         assertThat(rows, is(1));
+        assertThat(author.getId(), is(repositoryDb.get(Author.class,"001").getId()));        
+        assertThat(author.getAddAt(), notNullValue());
+        assertThat(author.getUpdateAt(), nullValue());
     }
 
     @Test
@@ -82,5 +88,7 @@ public class CouchDbRepositoryAddTest extends BaseJdbc
         repositoryDb.add(author);
         
         assertThat(author.getId(), is(repositoryDb.get(Author.class,"002").getId()));
+        assertThat(author.getAddAt(), notNullValue());
+        assertThat(author.getUpdateAt(), nullValue());
     }
 }

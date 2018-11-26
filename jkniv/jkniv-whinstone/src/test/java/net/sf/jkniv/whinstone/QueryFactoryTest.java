@@ -57,7 +57,7 @@ public class QueryFactoryTest
         assertThat(q.getTotal(), is(-1L));
         assertThat(q.getOffset(), is(0));
     }
-
+    
     @Test
     public void whenAsQueryableNamedWithEntity()
     {
@@ -69,7 +69,7 @@ public class QueryFactoryTest
         assertThat(q.getTotal(), is(-1L));
         assertThat(q.getOffset(), is(0));
     }
-
+    
     @Test
     public void whenAsQueryableNamedWithString()
     {
@@ -81,13 +81,13 @@ public class QueryFactoryTest
         assertThat(q.getTotal(), is(-1L));
         assertThat(q.getOffset(), is(0));
     }
-
+    
     @Test
     public void whenAsQueryableNamedWithArray()
     {
         String[] params =
-            { "Albert Camus", "Franz Kafka", "Martin Fowler" };
-
+        { "Albert Camus", "Franz Kafka", "Martin Fowler" };
+        
         Queryable q = QueryFactory.ofArray("query-name", params);
         assertThat(q, notNullValue());
         assertThat(q.getParams(), instanceOf(String[].class));
@@ -95,12 +95,12 @@ public class QueryFactoryTest
         assertThat(q.getTotal(), is(-1L));
         assertThat(q.getOffset(), is(0));
     }
-
+    
     @Test
     public void whenAsQueryableNamedWithCollection()
     {
         List<String> params = Arrays.asList("Albert Camus", "Franz Kafka", "Martin Fowler");
-
+        
         Queryable q = QueryFactory.of("query-name", params);
         assertThat(q, notNullValue());
         assertThat(q.getParams(), instanceOf(List.class));
@@ -108,6 +108,7 @@ public class QueryFactoryTest
         assertThat(q.getTotal(), is(-1L));
         assertThat(q.getOffset(), is(0));
     }
+    
     @Test
     public void whenAsQueryableNamedWithEntityMaxAndOffset()
     {
@@ -120,4 +121,17 @@ public class QueryFactoryTest
         assertThat(q.getOffset(), is(5));
     }
 
+    @Test
+    public void whenAsQueryableWithReturnType()
+    {
+        AuthorFlat a = new AuthorFlat("Jose", "Rio");
+        Queryable q = QueryFactory.of("query-name", AuthorFlat.class, a);
+        assertThat(q, notNullValue());
+        assertThat(q.getName(), is("query-name"));
+        assertThat(q.getParams(), instanceOf(AuthorFlat.class));
+        assertThat(q.getMax(), is(Integer.MAX_VALUE));
+        assertThat(q.getTotal(), is(-1L));
+        assertThat(q.getOffset(), is(0));
+    }
+    
 }

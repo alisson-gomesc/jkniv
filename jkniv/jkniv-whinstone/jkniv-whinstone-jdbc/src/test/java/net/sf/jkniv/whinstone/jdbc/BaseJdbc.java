@@ -26,7 +26,6 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.dialect.Derby10o7Dialect;
-import net.sf.jkniv.whinstone.jdbc.test.BaseSpringJUnit4;
 
 public class BaseJdbc extends BaseSpringJUnit4
 {

@@ -29,7 +29,7 @@ class StringUtil
             {
                 if (i > 0)
                     sb.append(", " + args[i].getName());
-                else
+                else if(args[i] != null)
                     sb.append(args[i].getName());
             }
         }

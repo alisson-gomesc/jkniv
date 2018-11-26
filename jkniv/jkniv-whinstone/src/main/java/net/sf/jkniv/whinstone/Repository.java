@@ -1,5 +1,5 @@
 /* 
- * JKNIV, SQLegance keeping queries maintainable.
+ * JKNIV, whinstone one contract to access your database.
  * 
  * Copyright (C) 2017, the original author or authors.
  *
@@ -131,8 +131,10 @@ public interface Repository
     <T> T scalar(Queryable queryable);
 
     /**
-     * Use the queryable to retrieve data and appends to the {@link Queryable#getParams()}   
-     * @param queryable  Query with yours parameters
+     * Use the {@link Queryable} to retrieve data and appends to the {@link Queryable#getParams()} 
+     * parameters, where for each {@code get} method must have a correspondent {@code set}.
+     * 
+     * @param queryable Query with yours parameters
      * @return return {@code true} if the objects was enriched, {@code false} otherwise.
      * @throws QueryNotFoundException when not found the query name
      */

@@ -64,6 +64,7 @@ public class CouchDbRepositoryUpdateTest extends BaseJdbc
         author.setNationality("BR");
         Queryable q = getQuery("update", author);
         repositoryDb.update(q);
+        
     }
 
     @Test
@@ -83,6 +84,8 @@ public class CouchDbRepositoryUpdateTest extends BaseJdbc
         assertThat(rows, is(1));
         assertThat(author.getId(), notNullValue());
         assertThat(revision, not(is(author.getRev())));
+        assertThat(author.getUpdateAt(), notNullValue());        
+        
         //System.out.println(author);
     }
 
@@ -101,6 +104,7 @@ public class CouchDbRepositoryUpdateTest extends BaseJdbc
         
         assertThat(author.getId(), notNullValue());
         assertThat(revision, not(is(author.getRev())));
+        assertThat(author.getUpdateAt(), notNullValue());        
     }
     
 }

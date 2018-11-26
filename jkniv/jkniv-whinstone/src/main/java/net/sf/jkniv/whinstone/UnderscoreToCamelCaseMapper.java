@@ -1,4 +1,3 @@
-/**
 /* 
  * JKNIV, whinstone one contract to access your database.
  * 

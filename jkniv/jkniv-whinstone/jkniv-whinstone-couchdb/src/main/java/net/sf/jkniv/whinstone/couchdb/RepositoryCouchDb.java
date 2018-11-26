@@ -37,6 +37,7 @@ import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.sqlegance.Deletable;
 import net.sf.jkniv.sqlegance.NonUniqueResultException;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
 import net.sf.jkniv.sqlegance.RepositoryException;
@@ -45,15 +46,15 @@ import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
+import net.sf.jkniv.sqlegance.Updateable;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
-import net.sf.jkniv.whinstone.Command;
+import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.couchdb.commands.CouchDbSynchViewDesign;
-import net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
 /**
@@ -138,7 +139,7 @@ class RepositoryCouchDb implements Repository
     public <T> T get(Queryable queryable)
     {
         notNull.verify(queryable);
-        T ret = get(queryable, null, null);
+        T ret = getInternal(queryable, null);
         return ret;
     }
     
@@ -146,7 +147,9 @@ class RepositoryCouchDb implements Repository
     public <T> T get(Queryable queryable, Class<T> returnType)
     {
         notNull.verify(queryable, returnType);
-        T ret = get(queryable, returnType, null);
+        Queryable queryableClone = QueryFactory.clone(queryable, returnType);
+        T ret = getInternal(queryableClone, null);
+        queryable.setTotal(queryableClone.getTotal());
         return ret;
     }
     
@@ -154,8 +157,8 @@ class RepositoryCouchDb implements Repository
     public <T> T get(T object)
     {
         notNull.verify(object);
-        Queryable queryable = QueryFactory.of("get", object);
-        T ret = (T) get(queryable, object.getClass(), null);
+        Queryable queryable = QueryFactory.of("get", object.getClass(), object);
+        T ret = (T) getInternal(queryable, null);
         return ret;
     }
 
@@ -163,15 +166,16 @@ class RepositoryCouchDb implements Repository
     public <T> T get(Class<T> returnType, Object object)
     {
         notNull.verify(object);
-        Queryable queryable = QueryFactory.of("get", object);
-        T ret = (T) get(queryable, returnType, null);
+        Queryable queryable = QueryFactory.of("get", returnType, object);
+        T ret = (T) getInternal(queryable, null);
         return ret;
     }
 
     @Override
     public <T, R> T get(Queryable queryable, ResultRow<T, R> resultRow)
     {
-        throw new UnsupportedOperationException("CouchDb Repository doesn't implement this method yet!");
+        return getInternal(queryable, resultRow);
+        //throw new UnsupportedOperationException("CouchDb Repository doesn't implement this method yet!");
         //        notNull.verify(queryable, resultRow);
         //        if (isTraceEnabled)
         //            LOG.trace("Executing [{}] as get command", queryable);
@@ -185,13 +189,29 @@ class RepositoryCouchDb implements Repository
         //        
     }
     
-    private <T, R> T get(Queryable q, Class<T> returnType, ResultRow<T, R> resultRow)
+    private <T, R> T getInternal(Queryable q, ResultRow<T, R> overloadResultRow)
     {
+        Sql sql = sqlContext.getQuery(q.getName());
+        CommandHandler handler = new SelectHandler(this.adapterConn);
+        handler.with(q);
+        handler.with(sql);
+        handler.with(overloadResultRow); 
+        
+        T ret = null;
+        List<T> list = handler.run();
+        if (list.size() > 1)
+            throw new NonUniqueResultException("No unique result for query ["+q.getName()+"] with params ["+q.getParams()+"]");
+        else if (list.size() == 1)
+            ret = list.get(0);
+        
+        return ret;
+
+        /*
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as get command", q);
         
         T ret = null;
-        Queryable queryable = QueryFactory.clone(q, returnType);
+        Queryable queryable = QueryFactory.clone(q, overloadReturnType);
         List<T> list = Collections.emptyList();
         Selectable selectable = sqlContext.getQuery(queryable.getName()).asSelectable();
         selectable.getValidateType().assertValidate(queryable.getParams());
@@ -230,6 +250,7 @@ class RepositoryCouchDb implements Repository
             LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(),
                     queryable.getTotal());
         return ret;
+        */
     }
     
     @Override
@@ -237,13 +258,17 @@ class RepositoryCouchDb implements Repository
     {
         notNull.verify(queryable);
         T result = null;
-        Map map = get(queryable, Map.class, null);
+        Queryable queryableClone = QueryFactory.clone(queryable, Map.class);
+        Map map = getInternal(queryableClone, null);
         if (map != null)
         {
             if(map.size() > 1)
                 throw new NonUniqueResultException("Query ["+queryable.getName()+"] no return scalar value, scalar function must return unique field");
             result = (T)map.values().iterator().next();
+            queryable.setTotal(1);
         }
+        else
+            queryable.setTotal(0);
         return result;
     }
     
@@ -265,26 +290,27 @@ class RepositoryCouchDb implements Repository
     @Override
     public <T> List<T> list(Queryable queryable)
     {
-        return list(queryable, null, null);
+        return listInternal(queryable, null);
     }
     
     @Override
-    public <T> List<T> list(Queryable queryable, Class<T> returnType)
+    public <T> List<T> list(Queryable queryable, Class<T> overloadReturnType)
     {
-        return list(queryable, returnType, null);
+        List<T> list = Collections.emptyList();
+        Queryable queryableClone = queryable;
+        if (overloadReturnType != null)
+            queryableClone = QueryFactory.clone(queryable, overloadReturnType);
+        list = listInternal(queryableClone, null);
+        queryable.setTotal(queryableClone.getTotal());
+        return list;
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
-        throw new UnsupportedOperationException("CouchDb Repository doesn't implement this method yet!");
-        //return list(queryable, null, overloadResultRow);
-    }
-    
-    @SuppressWarnings("unchecked")
-    private <T, R> List<T> list(Queryable q, Class<T> overloadReturnType, ResultRow<T, R> overloadResultRow)
-    {
+        return listInternal(queryable, overloadResultRow);        
+        /*
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as list command", q);
         
@@ -321,12 +347,31 @@ class RepositoryCouchDb implements Repository
             LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
         
         return list;
-        
+        */
+
     }
+    
+    private <T, R> List<T> listInternal(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    {
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new SelectHandler(this.adapterConn);
+        handler.with(queryable);
+        handler.with(sql);
+        handler.with(overloadResultRow); 
+        return handler.run();
+    }
+
         
     @Override
     public int add(Queryable queryable)
     {
+        notNull.verify(queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new AddHandler(this.adapterConn);
+        handler.with(queryable);
+        handler.with(sql);
+        return handler.run();
+        /*
         notNull.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as add command with dialect [{}]", queryable, CouchDbDialect.class);
@@ -344,11 +389,21 @@ class RepositoryCouchDb implements Repository
         if (isDebugEnabled)
             LOG.debug("{} records was affected by add [{}] query", affected, queryable.getName());
         return affected;
+        */
     }
     
     @Override
     public <T> T add(T entity)
     {
+        notNull.verify(entity);
+        Queryable queryable = QueryFactory.of("add", entity);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new AddHandler(this.adapterConn);
+        handler.with(queryable);
+        handler.with(sql);
+        handler.run();
+        return entity;// FIXME design update must return a number
+        /*
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("add", entity);
         if (isTraceEnabled)
@@ -367,11 +422,19 @@ class RepositoryCouchDb implements Repository
         if (isDebugEnabled)
             LOG.debug("{} records was affected by add [{}] query", affected, queryable.getName());
         return entity;
+        */
     }
     
     @Override
     public int update(Queryable queryable)
     {
+        notNull.verify(queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName()).asUpdateable();
+        CommandHandler handler = new UpdateHandler(this.adapterConn);
+        handler.with(queryable);
+        handler.with(sql);
+        return handler.run();
+        /*
         notNull.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update query", queryable);
@@ -389,11 +452,21 @@ class RepositoryCouchDb implements Repository
         if (isDebugEnabled)
             LOG.debug("{} records was affected by update [{}] query", affected, queryable.getName());
         return affected;
+        */
     }
     
     @Override
     public <T> T update(T entity)
     {
+        notNull.verify(entity);
+        Queryable queryable = QueryFactory.of("update", entity);
+        Sql sql = sqlContext.getQuery(queryable.getName()).asUpdateable();
+        CommandHandler handler = new UpdateHandler(this.adapterConn);
+        handler.with(queryable);
+        handler.with(sql);
+        handler.run();
+        return entity;// FIXME design update must return a number 
+        /*
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("update", entity);
         if (isTraceEnabled)
@@ -412,11 +485,19 @@ class RepositoryCouchDb implements Repository
         if (isDebugEnabled)
             LOG.debug("{} records was affected by update [{}] query", affected, queryable.getName());
         return entity;
+        */
     }
     
     @Override
     public int remove(Queryable queryable)
     {
+        notNull.verify(queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new RemoveHandler(this.adapterConn);
+        handler.with(queryable);
+        handler.with(sql);
+        return handler.run();
+        /*
         notNull.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as remove query", queryable);
@@ -434,11 +515,21 @@ class RepositoryCouchDb implements Repository
         if (isDebugEnabled)
             LOG.debug("{} records was affected by remove [{}] query", affected, queryable.getName());
         return affected;
+        */
     }
     
     @Override
     public <T> int remove(T entity)
     {
+        notNull.verify(entity);
+        Queryable queryable = QueryFactory.of("remove", entity);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new RemoveHandler(this.adapterConn);
+        handler.with(queryable);
+        handler.with(sql);
+        return handler.run();
+
+        /*
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("remove", entity);
         if (isTraceEnabled)
@@ -457,6 +548,7 @@ class RepositoryCouchDb implements Repository
         if (isDebugEnabled)
             LOG.debug("{} records was affected by remove [{}] query", affected, queryable.getName());
         return affected;
+        */
     }
     
     @Override

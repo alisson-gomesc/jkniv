@@ -3,7 +3,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sf.jkniv</groupId>
-  <version>0.6.0.M42</version>
+  <version>0.6.0.M43</version>
   <packaging>pom</packaging>
   <name>jkniv</name>
   <artifactId>jkniv</artifactId>
@@ -23,7 +23,8 @@
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <jaxb-version>2.0.3</jaxb-version>
     <version.jackson>2.6.7</version.jackson>
-    <spring.version>4.3.20.RELEASE</spring.version>
+    <!--<spring.version>4.3.20.RELEASE</spring.version>-->
+    <spring.version>4.2.5.RELEASE</spring.version>
   </properties>
 
   <issueManagement> 
@@ -364,16 +365,6 @@
             <skipStartingCamelContext>false</skipStartingCamelContext>
           </systemPropertyVariables>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>3.7.1</version>
-        <!-- 
-        <configuration>
-          <templateFile>${basedir}/src/site/site.vm</templateFile>
-        </configuration>
-         -->
       </plugin>
       <!-- 
       <plugin>

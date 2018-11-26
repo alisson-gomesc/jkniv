@@ -37,7 +37,6 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook;
 import net.sf.jkniv.whinstone.jdbc.jndi.JndiCreator;
-import net.sf.jkniv.whinstone.jdbc.test.BaseSpringJUnit4;
 
 public class RepositoryJdbcInstanceTest extends BaseSpringJUnit4
 {

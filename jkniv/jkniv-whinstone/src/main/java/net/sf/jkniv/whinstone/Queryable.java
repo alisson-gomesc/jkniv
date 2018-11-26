@@ -1,5 +1,5 @@
 /* 
- * JKNIV, SQLegance keeping queries maintainable.
+ * JKNIV, whinstone one contract to access your database.
  * 
  * Copyright (C) 2017, the original author or authors.
  *
@@ -279,7 +279,7 @@ public interface Queryable
      * Overload the return type from XML query.
      * @return the class to return by repository using this query
      */
-    Class getReturnType();
+    Class<?> getReturnType();
     
     /**
      * Specifies intentionally to no retrieve the data from cache, the query must be hit the database

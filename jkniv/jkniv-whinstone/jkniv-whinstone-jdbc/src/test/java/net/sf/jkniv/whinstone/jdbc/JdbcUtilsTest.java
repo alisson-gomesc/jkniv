@@ -34,7 +34,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jkniv.sqlegance.transaction.Isolation;
-import net.sf.jkniv.whinstone.jdbc.test.BaseSpringJUnit4;
 
 /**
  * @author Alisson Gomes

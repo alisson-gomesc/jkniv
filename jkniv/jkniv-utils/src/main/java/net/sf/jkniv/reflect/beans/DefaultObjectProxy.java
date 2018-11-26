@@ -19,6 +19,7 @@
  */
 package net.sf.jkniv.reflect.beans;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,12 +29,9 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -329,6 +327,32 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     {
         return this.targetClass;
     }
+
+    public Object invoke(Method method, Object... args) // TODO write unit test
+    {
+        return invokeDirect(method, this.instance, args);
+    }
+    
+    private Object invokeDirect(Method method, Object theInstance, Object... values)
+    {
+        Object ret = null;
+        try
+        {
+            //
+            if (method.getParameterTypes().length > 0)
+                ret = method.invoke(theInstance, values);
+            else
+                ret = method.invoke(theInstance);
+        }
+        //IllegalAccessException, IllegalArgumentException, InvocationTargetException
+        catch (Exception e)
+        {
+            this.handleException.handle(e, e.getMessage() + " method [" + method + "] type of(" + StringUtil.arrayToClass(values)
+                    + ") values of (" + StringUtil.arrayToString(values) + ")");
+        }
+        return ret;
+    }
+
     
     /* (non-Javadoc)
      * @see net.sf.jkniv.reflect.beans.ObjectProxy#invoke(java.lang.String, java.lang.Object)
@@ -448,6 +472,21 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     public boolean hasMethod(String methodName)
     {
         return pojoInvoke.hasMethod(methodName, this.targetClass);
+    }
+    
+    public List<Method> getAnnotationMethods(final Class<? extends Annotation> annotation)
+    {
+        final List<Method> methods = new ArrayList<Method>();
+        final List<Method> allMethods = new ArrayList<Method>(Arrays.asList(this.targetClass.getMethods()));
+        for (final Method method : allMethods)
+        {
+            if (method.isAnnotationPresent(annotation))
+            {
+                Annotation annotInstance = method.getAnnotation(annotation);
+                methods.add(method);
+            }
+        }
+        return methods;
     }
     
     private Class<?>[] getTypes(Object[] args)

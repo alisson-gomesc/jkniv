@@ -57,7 +57,7 @@ public class CouchDbRepositoryAllDocsTest extends BaseJdbc
     public void whenListAllDocsWithLimit()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = QueryFactory.of("_all_docs", 2,3);
+        Queryable q = QueryFactory.of("_all_docs", 2, 3);
         
         List<Map> list = repositoryDb.list(q);
         assertThat(list.size(), is(3));

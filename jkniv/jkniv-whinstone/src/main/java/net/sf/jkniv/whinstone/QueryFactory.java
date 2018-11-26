@@ -1,3 +1,22 @@
+/* 
+ * JKNIV, whinstone one contract to access your database.
+ * 
+ * Copyright (C) 2017, the original author or authors.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software Foundation, Inc., 
+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package net.sf.jkniv.whinstone;
 
 import java.util.HashMap;
@@ -93,6 +112,14 @@ public class QueryFactory
         return new QueryName(name, params, offset, max);
     }
 
+    /**
+     * Build a new {@code Queryable} object without parameters
+     * 
+     * @param name a name for query
+     * @param offset the first row
+     * @param max row numbers
+     * @return Queryable object with parameters and limited result starting at {@code offset} and {@code max} rows.
+     */
     public static Queryable of(String name, int offset, int max)
     {
         return new QueryName(name, null, offset, max);
@@ -117,6 +144,22 @@ public class QueryFactory
         return q;
     }
 
+    /**
+     * Creates a {@link Queryable} object parameterized starting at first row and retrieve all rows, 
+     * isolation default, no timeout and online (no batch).
+     * 
+     * @param name query name
+     * @param clazz return type that overload return type from XML
+     * @param params parameters of query
+     * @return Queryable object with parameters and unlimited result
+     */
+    public static <T> Queryable of(String name, Class<T> clazz, Object params)
+    {
+        QueryName q = new QueryName(name, params);
+        q.setReturnType(clazz);
+        return q;
+    }
+    
     /**
      * Build a new {@code Queryable} object
      * @param name query name
@@ -154,7 +197,7 @@ public class QueryFactory
     }
     
     /**
-     * 
+     * TODO test me
      * @param name query name
      * @param returnType type of return that overload return type from XML
      * @param offset the first row

@@ -19,7 +19,9 @@
  */
 package net.sf.jkniv.reflect.beans;
 
-import javax.management.ReflectionException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * Utility interface to work with object reflection
@@ -70,7 +72,9 @@ public interface ObjectProxy<T>
     Class<T> getTargetClass();
     
     Object invoke(String methodName, Object... args); 
-    
+
+    Object invoke(Method method, Object... args); 
+
     /**
      * copy all data from properties started with {@code get} or {@code is} to instance of this proxy
      * @param o origin object data
@@ -87,4 +91,10 @@ public interface ObjectProxy<T>
      */
     T merge(Object o);
 
+    /**
+     * Retrieve all public methods annotated with {@code annotation}
+     * @param annotation looked for
+     * @return a list of all public methods annotated with {@code annotation} or empty list otherwise.
+     */
+    List<Method> getAnnotationMethods(final Class<? extends Annotation> annotation);
 }

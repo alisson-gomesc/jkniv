@@ -93,7 +93,6 @@ public class FindCommand extends AbstractCommand implements CouchCommand
                 if (returnType != null)
                 {
                     list = new ArrayList();
-                    
                     // FIXME overload performance, writer better deserialization using jackson
                     for(Object row : answer.getDocs())
                     {

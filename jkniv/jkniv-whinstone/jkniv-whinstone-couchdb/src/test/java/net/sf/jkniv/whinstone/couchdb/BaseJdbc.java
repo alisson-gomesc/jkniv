@@ -21,7 +21,6 @@ package net.sf.jkniv.whinstone.couchdb;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -35,35 +34,35 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.sqlegance.DefaultClassLoader;
-import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.RepositoryType;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
-import net.sf.jkniv.whinstone.RepositoryService;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
+import net.sf.jkniv.whinstone.RepositoryService;
 import net.sf.jkniv.whinstone.couchdb.commands.PutCommand;
 import net.sf.jkniv.whinstone.couchdb.jndi.JndiCreator;
 
 public class BaseJdbc extends BaseSpringJUnit4
 {
-    private static final Logger LOG           = LoggerFactory.getLogger(BaseJdbc.class);
-    public  static final Properties config, configDb3t;
-    private static final String URL           = "http://127.0.0.1:5984";
-    private static final String SCHEMA        = "whinstone-author";
-    private static final String USER          = "admin";
-    private static final String PASSWD        = "admin";
-    private static boolean      CREATED       = false;
-    static int                  TOTAL_AUTHORS = 7;
-    static int                  TOTAL_VIEWS   = 1;
+    private static final Logger    LOG                 = LoggerFactory.getLogger(BaseJdbc.class);
+    public static final Properties config, configDb3t;
+    private static final String    URL                 = "http://127.0.0.1:5984";
+    private static final String    SCHEMA              = "whinstone-author";
+    private static final String    USER                = "admin";
+    private static final String    PASSWD              = "admin";
+    private static boolean         SETUP_DATABASE_DONE = false;
+    static int                     TOTAL_AUTHORS       = 7;
+    static int                     TOTAL_VIEWS         = 1;
     
-    static 
+    static
     {
         config = new Properties();
         configDb3t = new Properties();
@@ -71,13 +70,12 @@ public class BaseJdbc extends BaseSpringJUnit4
         config.setProperty(RepositoryProperty.JDBC_SCHEMA.key(), "whinstone-author");
         config.setProperty(RepositoryProperty.JDBC_USER.key(), USER);
         config.setProperty(RepositoryProperty.JDBC_PASSWORD.key(), PASSWD);
-
+        
         configDb3t.setProperty(RepositoryProperty.JDBC_URL.key(), URL);
         configDb3t.setProperty(RepositoryProperty.JDBC_SCHEMA.key(), "db3t-user-origin");
         configDb3t.setProperty(RepositoryProperty.JDBC_USER.key(), USER);
         configDb3t.setProperty(RepositoryProperty.JDBC_PASSWORD.key(), PASSWD);
     }
-
     
     // Serialize Date to ISO-8601
     // pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ"
@@ -85,18 +83,18 @@ public class BaseJdbc extends BaseSpringJUnit4
     @BeforeClass
     public static void setUpDatabase()
     {
-        if (!CREATED)
-        {
-            CouchDbAuthenticate auth = new CouchDbAuthenticate(URL, USER, PASSWD);
-            String token = auth.authenticate();
-            HttpBuilder httpBuilder = new HttpBuilder(auth, URL, SCHEMA, new RequestParams(SCHEMA));
-            
-            dropDatabase(httpBuilder);
-            createDatabase(httpBuilder);
-            loadDatabase(httpBuilder);
-            JndiCreator.bind();
-        }
-        CREATED = true;
+        if (SETUP_DATABASE_DONE)
+            return;
+        
+        CouchDbAuthenticate auth = new CouchDbAuthenticate(URL, USER, PASSWD);
+        String token = auth.authenticate();
+        HttpBuilder httpBuilder = new HttpBuilder(auth, URL, SCHEMA, new RequestParams(SCHEMA));
+        
+        dropDatabase(httpBuilder);
+        createDatabase(httpBuilder);
+        loadDatabase(httpBuilder);
+        JndiCreator.bind();
+        SETUP_DATABASE_DONE = true;
     }
     
     private static void dropDatabase(HttpBuilder httpBuilder)
@@ -145,12 +143,13 @@ public class BaseJdbc extends BaseSpringJUnit4
     {
         return RepositoryService.getInstance().lookup(RepositoryType.COUCHDB).newInstance(config);
     }
-
+    
     protected static Repository getRepositoryDb3t()
     {
-        return RepositoryService.getInstance().lookup(RepositoryType.COUCHDB).newInstance(configDb3t, SqlContextFactory.newInstance("/repository-sql-db3t.xml"));
+        return RepositoryService.getInstance().lookup(RepositoryType.COUCHDB).newInstance(configDb3t,
+                SqlContextFactory.newInstance("/repository-sql-db3t.xml"));
     }
-
+    
     protected Queryable getQuery(String name)
     {
         Queryable q = QueryFactory.of(name);
