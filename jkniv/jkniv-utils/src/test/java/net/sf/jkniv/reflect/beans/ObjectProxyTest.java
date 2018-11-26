@@ -22,13 +22,22 @@ package net.sf.jkniv.reflect.beans;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.instanceOf;
+
+import java.lang.reflect.Method;
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.*;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import net.sf.jkniv.acme.domain.Book;
+import net.sf.jkniv.domain.orm.Animal;
+import net.sf.jkniv.domain.orm.Cat;
 import net.sf.jkniv.reflect.ReflectionException;
 
 public class ObjectProxyTest
@@ -120,6 +129,27 @@ public class ObjectProxyTest
         bean.setConstructorArgs("My Exception Message", new NoSuchMethodException("Im cause Exception"));
         ReflectionException exception = bean.newInstance();
         Assert.assertNotNull("Cannot create Exception with super type", exception);
+    }
+    
+    @Test
+    public void whenLookingForAnnotationMethods()
+    {
+        ObjectProxy<Animal> proxy = ObjectProxyFactory.newProxy(Animal.class);
+        List<Method> methods = proxy.getAnnotationMethods(Before.class);
+        
+        assertThat(methods.size(), is(1));
+        assertThat(methods.get(0).getAnnotations()[0], instanceOf(Before.class));
+        
+        
+        ObjectProxy<Cat> proxyCat = ObjectProxyFactory.newProxy(Cat.class);
+        List<Method> methodBefore = proxyCat.getAnnotationMethods(Before.class);
+        List<Method> methodDeprecated = proxyCat.getAnnotationMethods(Deprecated.class);
+        
+        assertThat(methodBefore.size(), is(1));
+        assertThat(methodDeprecated.size(), is(1));
+        assertThat(methodBefore.get(0).getAnnotations()[0], instanceOf(Before.class));
+        assertThat(methodDeprecated.get(0).getAnnotations()[0], instanceOf(Deprecated.class));
+
     }
 
 }

@@ -19,6 +19,7 @@
  */
 package net.sf.jkniv.reflect.beans;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,12 +29,9 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -448,6 +446,21 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     public boolean hasMethod(String methodName)
     {
         return pojoInvoke.hasMethod(methodName, this.targetClass);
+    }
+    
+    public List<Method> getAnnotationMethods(final Class<? extends Annotation> annotation)
+    {
+        final List<Method> methods = new ArrayList<Method>();
+        final List<Method> allMethods = new ArrayList<Method>(Arrays.asList(this.targetClass.getMethods()));
+        for (final Method method : allMethods)
+        {
+            if (method.isAnnotationPresent(annotation))
+            {
+                Annotation annotInstance = method.getAnnotation(annotation);
+                methods.add(method);
+            }
+        }
+        return methods;
     }
     
     private Class<?>[] getTypes(Object[] args)

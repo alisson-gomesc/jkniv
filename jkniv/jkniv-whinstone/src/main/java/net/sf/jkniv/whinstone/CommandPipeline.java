@@ -19,45 +19,23 @@
  */
 package net.sf.jkniv.whinstone;
 
-import java.sql.SQLException;
+import java.util.List;
+
 
 /**
- * 
- * TODO docme
- * 
- * @param <R> The result of a query (ResultSet).
+ * TODO documentation here
  * 
  * @author Alisson Gomes
  *
  */
-public interface JdbcColumn<R>
+public interface CommandPipeline 
 {
-    String getName();
+    //void process(Message message);
     
-    String getAttributeName();
-    
-    String getMethodName();
-    
-    int getIndex();
-    
-    int getJdbcType();
-    
-    boolean isBinary();
+    void setHandles(List<CommandHandler> handles);
 
-    boolean isClob();
-
-    boolean isBlob();
-
-    boolean isDate();
+    CommandPipeline add(CommandHandler handler);
     
-    boolean isTimestamp();
-
-    boolean isTime();
-
-    boolean isNestedAttribute();
-    
-    Object getValue(R resultSet) throws SQLException;
-    
-    Object getBytes(R resultSet) throws SQLException;
+    void cleanup();
     
 }

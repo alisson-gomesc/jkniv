@@ -92,12 +92,6 @@ public class AuthorForDelete {
         this.books = books;
     }
 
-    @Override
-    public String toString()
-    {
-        return "Author [id=" + id + ", name=" + name + ", nationality=" + nationality + ", books=" + books + "]";
-    }
-
     @JsonProperty("_deleted")
     public boolean isDeleted()
     {
@@ -109,4 +103,12 @@ public class AuthorForDelete {
     {
         this.deleted = deleted;
     }
+
+    @Override
+    public String toString()
+    {
+        return "AuthorForDelete [id=" + id + ", rev=" + rev + ", name=" + name + ", nationality=" + nationality
+                + ", books=" + books + ", born=" + born + ", deleted=" + deleted + "]";
+    }
+    
 }

@@ -37,6 +37,8 @@ import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.sqlegance.Deletable;
+import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.NonUniqueResultException;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
 import net.sf.jkniv.sqlegance.RepositoryException;
@@ -45,6 +47,7 @@ import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
+import net.sf.jkniv.sqlegance.Updateable;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.whinstone.Command;
@@ -185,13 +188,25 @@ class RepositoryCouchDb implements Repository
         //        
     }
     
-    private <T, R> T get(Queryable q, Class<T> returnType, ResultRow<T, R> resultRow)
+    private <T, R> T get(Queryable q, Class<T> overloadReturnType, ResultRow<T, R> overloadResultRow)
     {
+        Selectable selectable = sqlContext.getQuery(q.getName()).asSelectable();
+        SelectHandler handler = new SelectHandler(q, selectable, overloadReturnType, overloadResultRow, this.adapterConn);
+        T ret = null;
+        List<T> list = handler.list();
+        if (list.size() > 1)
+            throw new NonUniqueResultException("No unique result for query ["+q.getName()+"] with params ["+q.getParams()+"]");
+        else if (list.size() == 1)
+            ret = list.get(0);
+        
+        return ret;
+
+        /*
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as get command", q);
         
         T ret = null;
-        Queryable queryable = QueryFactory.clone(q, returnType);
+        Queryable queryable = QueryFactory.clone(q, overloadReturnType);
         List<T> list = Collections.emptyList();
         Selectable selectable = sqlContext.getQuery(queryable.getName()).asSelectable();
         selectable.getValidateType().assertValidate(queryable.getParams());
@@ -230,6 +245,7 @@ class RepositoryCouchDb implements Repository
             LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(),
                     queryable.getTotal());
         return ret;
+        */
     }
     
     @Override
@@ -269,9 +285,9 @@ class RepositoryCouchDb implements Repository
     }
     
     @Override
-    public <T> List<T> list(Queryable queryable, Class<T> returnType)
+    public <T> List<T> list(Queryable queryable, Class<T> overloadReturnType)
     {
-        return list(queryable, returnType, null);
+        return list(queryable, overloadReturnType, null);
     }
     
     @Override
@@ -285,6 +301,10 @@ class RepositoryCouchDb implements Repository
     @SuppressWarnings("unchecked")
     private <T, R> List<T> list(Queryable q, Class<T> overloadReturnType, ResultRow<T, R> overloadResultRow)
     {
+        Selectable selectable = sqlContext.getQuery(q.getName()).asSelectable();
+        SelectHandler handler = new SelectHandler(q, selectable, overloadReturnType, overloadResultRow, this.adapterConn);
+        return handler.list();
+        /*
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as list command", q);
         
@@ -321,12 +341,18 @@ class RepositoryCouchDb implements Repository
             LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
         
         return list;
-        
+        */
+
     }
         
     @Override
     public int add(Queryable queryable)
     {
+        notNull.verify(queryable);
+        Insertable insertable = sqlContext.getQuery(queryable.getName()).asInsertable();
+        AddHandler handler = new AddHandler(queryable, insertable, this.adapterConn);
+        return handler.add();
+        /*
         notNull.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as add command with dialect [{}]", queryable, CouchDbDialect.class);
@@ -344,11 +370,19 @@ class RepositoryCouchDb implements Repository
         if (isDebugEnabled)
             LOG.debug("{} records was affected by add [{}] query", affected, queryable.getName());
         return affected;
+        */
     }
     
     @Override
     public <T> T add(T entity)
     {
+        notNull.verify(entity);
+        Queryable queryable = QueryFactory.of("add", entity);
+        Insertable insertable = sqlContext.getQuery(queryable.getName()).asInsertable();
+        AddHandler handler = new AddHandler(queryable, insertable, this.adapterConn);
+        handler.add();
+        return entity;// FIXME design update must return a number
+        /*
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("add", entity);
         if (isTraceEnabled)
@@ -367,11 +401,17 @@ class RepositoryCouchDb implements Repository
         if (isDebugEnabled)
             LOG.debug("{} records was affected by add [{}] query", affected, queryable.getName());
         return entity;
+        */
     }
     
     @Override
     public int update(Queryable queryable)
     {
+        notNull.verify(queryable);
+        Updateable updateable = sqlContext.getQuery(queryable.getName()).asUpdateable();
+        UpdateHandler handler = new UpdateHandler(queryable, updateable, this.adapterConn);
+        return handler.update();
+        /*
         notNull.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update query", queryable);
@@ -389,11 +429,19 @@ class RepositoryCouchDb implements Repository
         if (isDebugEnabled)
             LOG.debug("{} records was affected by update [{}] query", affected, queryable.getName());
         return affected;
+        */
     }
     
     @Override
     public <T> T update(T entity)
     {
+        notNull.verify(entity);
+        Queryable queryable = QueryFactory.of("update", entity);
+        Updateable updateable = sqlContext.getQuery(queryable.getName()).asUpdateable();
+        UpdateHandler handler = new UpdateHandler(queryable, updateable, this.adapterConn);
+        handler.update();
+        return entity;// FIXME design update must return a number 
+        /*
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("update", entity);
         if (isTraceEnabled)
@@ -412,11 +460,17 @@ class RepositoryCouchDb implements Repository
         if (isDebugEnabled)
             LOG.debug("{} records was affected by update [{}] query", affected, queryable.getName());
         return entity;
+        */
     }
     
     @Override
     public int remove(Queryable queryable)
     {
+        notNull.verify(queryable);
+        Deletable insertable = sqlContext.getQuery(queryable.getName()).asDeletable();
+        RemoveHandler handler = new RemoveHandler(queryable, insertable, this.adapterConn);
+        return handler.remove();
+        /*
         notNull.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as remove query", queryable);
@@ -434,11 +488,19 @@ class RepositoryCouchDb implements Repository
         if (isDebugEnabled)
             LOG.debug("{} records was affected by remove [{}] query", affected, queryable.getName());
         return affected;
+        */
     }
     
     @Override
     public <T> int remove(T entity)
     {
+        notNull.verify(entity);
+        Queryable queryable = QueryFactory.of("remove", entity);
+        Deletable insertable = sqlContext.getQuery(queryable.getName()).asDeletable();
+        RemoveHandler handler = new RemoveHandler(queryable, insertable, this.adapterConn);
+        return handler.remove();
+
+        /*
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("remove", entity);
         if (isTraceEnabled)
@@ -457,6 +519,7 @@ class RepositoryCouchDb implements Repository
         if (isDebugEnabled)
             LOG.debug("{} records was affected by remove [{}] query", affected, queryable.getName());
         return affected;
+        */
     }
     
     @Override

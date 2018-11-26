@@ -14,7 +14,7 @@
   <dependency>
    <groupId>net.sf.jkniv</groupId>
    <artifactId>jkniv-whinstone-jpa2</artifactId>
-   <version>0.6.0.M42</version>
+   <version>0.6.0.M43</version>
   </dependency>
   <dependency>
    <groupId>net.sf.jkniv.examples</groupId>

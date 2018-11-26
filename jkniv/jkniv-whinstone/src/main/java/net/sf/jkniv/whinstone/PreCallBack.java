@@ -19,37 +19,22 @@
  */
 package net.sf.jkniv.whinstone;
 
-import java.lang.reflect.Array;
-import java.util.Iterator;
+import static java.lang.annotation.ElementType.METHOD;
 
-class ArrayIterator implements Iterator<Object>
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(METHOD)
+public @interface PreCallBack
 {
-    private final Object array;
-    private int          currentIndex = 0;
-    private int          length;
     
-    public ArrayIterator(Object array, int length)
-    {
-        this.array = array;
-        this.length = length;
-    }
     
-    @Override
-    public boolean hasNext()
-    {
-        return currentIndex < length;
-    }
-    
-    @Override
-    public Object next()
-    {
-        return Array.get(array, currentIndex++);
-    }
-    
-    @Override
-    public void remove()
-    {
-        throw new UnsupportedOperationException("cannot remove elements from array");
-    }
-    
+    /**
+     * Scope of execution pre callback methods.
+     * @return a set of {@link CallbackScope}, default is NONE.
+     */
+    CallbackScope[] scope() default CallbackScope.NONE;
+
 }

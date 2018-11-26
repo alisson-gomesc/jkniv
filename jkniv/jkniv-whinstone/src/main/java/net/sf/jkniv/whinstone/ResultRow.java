@@ -1,5 +1,6 @@
 /* 
- * JKNIV, SQLegance keeping queries maintainable.
+ * JKNIV, whinstone one contract to access your database.
+ * 
  * Copyright (C) 2017, the original author or authors.
  *
  * This library is free software; you can redistribute it and/or
@@ -16,7 +17,6 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
 package net.sf.jkniv.whinstone;
 
 import java.sql.SQLException;
@@ -25,8 +25,8 @@ import net.sf.jkniv.whinstone.classification.Transformable;
 
 /**
  * Extract the result for each row from {@code ResultSet}.
- * 
- * ResultRow must be stateless.
+ * <p>
+ * <b>Note:</b> ResultRow must be {@code stateless}.
  * 
  * @author Alisson Gomes
  * @since 0.6.0

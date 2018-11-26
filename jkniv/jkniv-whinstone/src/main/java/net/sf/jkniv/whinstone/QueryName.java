@@ -1,5 +1,5 @@
 /* 
- * JKNIV, SQLegance keeping queries maintainable.
+ * JKNIV, whinstone one contract to access your database.
  * 
  * Copyright (C) 2017, the original author or authors.
  *
@@ -67,7 +67,7 @@ class QueryName implements Queryable
     private String       hint;
     private int          timeout;
     private boolean      batch;
-    private final Object       params;
+    private final Object params;
     private boolean      scalar;
     private int          size;
     private TYPEOF_PARAM paramType;
@@ -578,12 +578,12 @@ class QueryName implements Queryable
     }
 
     @Override
-    public Class getReturnType()
+    public Class<?> getReturnType()
     {
         return this.returnType;
     }
     
-    void setReturnType(Class clazz)
+    void setReturnType(Class<?> clazz)
     {
         isNull.verify(this.returnType);
         this.returnType = clazz;
