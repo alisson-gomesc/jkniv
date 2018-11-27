@@ -124,7 +124,7 @@ public class SqlUpdateCollectionTest extends BaseJdbc
 
     private Collection<Book> getValuesBook()
     {
-        List<Book> list = new ArrayList();
+        List<Book> list = new ArrayList<Book>();
         for (int i=0; i<10; i++)
         {
         	Book b = new  Book();
@@ -139,7 +139,7 @@ public class SqlUpdateCollectionTest extends BaseJdbc
 
     private Collection<Map<String, Object>> getValuesBookAsMap()
     {
-        List<Map<String, Object>> list = new ArrayList();
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         for (int i=0; i<10; i++)
         {
             Map<String, Object> row = new HashMap<String, Object>();
@@ -155,7 +155,7 @@ public class SqlUpdateCollectionTest extends BaseJdbc
     //update book set name = ?, isbn = ?, visualization = ? where id = ?
     private Collection<Object[]> getValuesBookAsArray()
     {
-        List<Object[]> list = new ArrayList();
+        List<Object[]> list = new ArrayList<Object[]>();
         for (int i=0; i<10; i++)
         {
             Object[] param = new Object[4];
@@ -170,7 +170,7 @@ public class SqlUpdateCollectionTest extends BaseJdbc
 
     private Object[] getValuesBookAsArrayOfMap()
     {
-        List<Map<String, Object>> list = new ArrayList();
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         for (int i=0; i<10; i++)
         {
             Map<String, Object> row = new HashMap<String, Object>();

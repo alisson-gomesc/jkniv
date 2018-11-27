@@ -36,6 +36,8 @@
     <menu name="whinstone CouchDb" inherit="top">
       <item name="Introduction" href="index.html" />
       <item name="Transaction" href="transaction.html" />
+      <item name="Bulk Command" href="bulk-command.html" />
+      <item name="Callback Methods" href="callback-methods.html" />
       <item name="Logging" href="logging.html" />
       <item name="Javadoc" href="api-docs/index.html" />
       <item name="Donwload" href="https://sourceforge.net/projects/jkniv/files/jkniv-whinstone/couchdb/" />

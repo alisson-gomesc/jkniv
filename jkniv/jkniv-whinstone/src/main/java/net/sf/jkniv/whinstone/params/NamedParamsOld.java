@@ -24,7 +24,6 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.jkniv.sqlegance.logger.LogLevel;
 import net.sf.jkniv.whinstone.Queryable;
 
 class NamedParamsOld extends AbstractParam implements AutoBindParams
@@ -54,7 +53,7 @@ class NamedParamsOld extends AbstractParam implements AutoBindParams
                 if (paramValue != null && paramValue.getClass().isArray())
                     o = (Object[]) paramValue;
                 else if (paramValue instanceof Collection)
-                    o = ((Collection) paramValue).toArray();
+                    o = ((Collection<?>) paramValue).toArray();
             }
             else
                 o = queryable.getProperty(s);

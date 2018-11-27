@@ -203,7 +203,7 @@ public abstract class AbstractParamParser implements ParamParser
     {
         Object[] array = null;
         if (params instanceof Collection)
-            array = ((Collection) params).toArray();
+            array = ((Collection<?>) params).toArray();
         else if (params != null && params.getClass().isArray())
         {
             array = (Object[]) params;

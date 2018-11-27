@@ -58,7 +58,7 @@ class NamedParams extends AbstractParam implements AutoBindParams
                 if (paramValue != null && paramValue.getClass().isArray())
                     o = (Object[]) paramValue;
                 else if (paramValue instanceof Collection)
-                    o = ((Collection) paramValue).toArray();
+                    o = ((Collection<?>) paramValue).toArray();
             }
             else
                 o = queryable.getProperty(s);

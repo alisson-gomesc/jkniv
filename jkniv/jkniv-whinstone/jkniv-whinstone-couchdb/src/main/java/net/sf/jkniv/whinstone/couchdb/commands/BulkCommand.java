@@ -123,7 +123,7 @@ public class BulkCommand extends AbstractCommand implements CouchCommand
         
         if (queryable.getDynamicSql().isDeletable())
         {
-            Collection objectsToDelete = (Collection) queryable.getParams();
+            Collection<?> objectsToDelete = (Collection<?>) queryable.getParams();
             boolean broken = true;
             String className = "null";
             for (Object o : objectsToDelete)
@@ -143,7 +143,7 @@ public class BulkCommand extends AbstractCommand implements CouchCommand
                                 + className + " type and setted as TRUE.");
 
         }
-        DocBulk docs = new DocBulk((Collection) queryable.getParams());
+        DocBulk docs = new DocBulk((Collection<?>) queryable.getParams());
         this.body = JsonMapper.mapper(docs);
     }
     

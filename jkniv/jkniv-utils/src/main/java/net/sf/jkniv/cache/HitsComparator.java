@@ -21,6 +21,7 @@ package net.sf.jkniv.cache;
 
 import java.util.Comparator;
 
+@SuppressWarnings("rawtypes")
 class HitsComparator implements Comparator<Cacheable.Entry>
 {
 

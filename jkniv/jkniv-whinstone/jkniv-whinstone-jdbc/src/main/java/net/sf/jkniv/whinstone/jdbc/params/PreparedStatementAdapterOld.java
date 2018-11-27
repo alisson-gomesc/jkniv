@@ -58,7 +58,7 @@ public class PreparedStatementAdapterOld implements StatementAdapterOld
             }
             else if (Enum.class.isInstance(value))
             {
-                setValue((Enum) value);
+                setValue((Enum<?>) value);
             }
             else if (value instanceof java.util.Calendar)
             {
@@ -89,7 +89,7 @@ public class PreparedStatementAdapterOld implements StatementAdapterOld
             }
             else if (Enum.class.isInstance(value))
             {
-                setValue((Enum) value);
+                setValue((Enum<?>) value);
             }
             else if (value instanceof java.util.Calendar)
             {

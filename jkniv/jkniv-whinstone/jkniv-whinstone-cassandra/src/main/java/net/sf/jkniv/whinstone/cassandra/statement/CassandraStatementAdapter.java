@@ -197,7 +197,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
             }
             else if (Enum.class.isInstance(value))
             {
-                setInternalValue((Enum) value);
+                setInternalValue((Enum<?>) value);
             }
             else if (value instanceof java.util.Calendar)
             {

@@ -45,6 +45,7 @@ class CollectionInvoke extends AbstractInvoke implements Invokable
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Object invoke(String methodName, Object theInstance, Object... values)
     {
         boolean ret = false;

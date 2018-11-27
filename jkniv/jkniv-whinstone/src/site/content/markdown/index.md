@@ -83,6 +83,28 @@ The `Repository` interface have a simple set of methods to manipulate the data f
 The library is 100% protected against [SQL injection](https://www.owasp.org/index.php/SQL_Injection "OWASP SQL injection") because all statements are [PreparedStatement](https://docs.oracle.com/javase/6/docs/api/java/sql/PreparedStatement.html "PreparedStatement"), except to couchdb that access it's over HTTP protocol.
 
 
+### Traceability for Whinstone Features
+
+| Features            | whinstone-jpa2 | whinstone-jdbc | whinstone-cassandra | whinstone-couchdb |
+| ------------------- | -------------- | -------------- |---------------------|-------------------|
+| Auto Bind Parameters| ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     |
+| Auto Bind Result    | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     |
+| One-to-One          | ![close][chk]  | ![close][chk]  | ![close][chk]        | ![open][clo]     |
+| One-to-Many         | ![close][chk]  | ![close][chk]  | ![close][chk]        | ![open][clo]     |
+| JSR Bean Validation | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     |
+| Transaction         | ![close][chk]  | ![close][chk]  | ![open][clo]        | ![open][clo]      |
+| Paginate Query      | ![close][chk]  | ![close][chk]  | ![open][clo]        | ![open][clo]      |
+| Retrieving auto-generated keys| ![close][chk]| ![close][chk]| ![open][clo]  | ![close][chk]     |
+| Bulk Commands(batch)| ![open][clo]   | ![open][clo]   | ![open][clo]        | ![close][chk]     |
+| Callback Methods    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![close][chk]     |
+| Triggers Events     | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
+| Query Cache         | ![open][clo]   | ![open][clo]   | ![close][chk]       | ![close][chk]     |
+| Query Statistics    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
+| Stored Procedure    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
+| Converter Annotation| ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
+| Jdk8 Timers         | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![close][chk]  (jackson)|
+
+
 
 ### Transaction supports
 
@@ -94,4 +116,5 @@ The library is 100% protected against [SQL injection](https://www.owasp.org/inde
 | Spring transaction |   yes (0.6.0)  | yes  (0.6.0)   | no                  | no                |
 
 
-
+[chk]: images/check.png "Supported"
+[clo]: images/close.png "Not implemented yet"

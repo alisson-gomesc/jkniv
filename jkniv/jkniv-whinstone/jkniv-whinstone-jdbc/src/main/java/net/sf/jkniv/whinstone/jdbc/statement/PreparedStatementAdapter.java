@@ -128,7 +128,7 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
             }
             else if (Enum.class.isInstance(value))
             {
-                setValue((Enum) value);
+                setValue((Enum<?>) value);
             }
             else if (value instanceof java.util.Calendar)
             {
@@ -160,7 +160,7 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
             }
             else if (Enum.class.isInstance(value))
             {
-                setValue((Enum) value);
+                setValue((Enum<?>) value);
             }
             else if (value instanceof java.util.Calendar)
             {

@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
+import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.Sql;
@@ -46,19 +47,12 @@ public abstract class DefaultCommandHandler implements CommandHandler
     protected Sql                   sql;
     protected RepositoryConfig      config;
     protected ResultRow<?, ?>       overloadResultRow;
-    //private List<Method>            preCallbackMethods;
-    //private List<Method>            postCallbackMethods;
-    //private List<Method>            postCallbackMethodsCommit;
-    //private List<Method>            postCallbackMethodsException;
     private ObjectProxy<?>          proxyParams;
+    private HandleableException     handleableException;
     
     public DefaultCommandHandler(ConnectionAdapter conn)
     {
         this.adapterConn = conn;
-        //this.preCallbackMethods = new ArrayList<Method>();
-        //this.postCallbackMethods = new ArrayList<Method>();
-        //this.postCallbackMethodsException = new ArrayList<Method>();
-        //this.postCallbackMethodsCommit = new ArrayList<Method>();
     }
     
     @Override
@@ -99,6 +93,12 @@ public abstract class DefaultCommandHandler implements CommandHandler
         return this;
     }
     
+    public CommandHandler with(HandleableException handlerException)
+    {
+     
+        return this;
+    }
+
     @Override
     public <T> T run()
     {

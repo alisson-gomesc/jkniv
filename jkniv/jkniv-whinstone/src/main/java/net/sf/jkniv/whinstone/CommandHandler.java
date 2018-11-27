@@ -19,6 +19,7 @@
  */
 package net.sf.jkniv.whinstone;
 
+import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 
@@ -41,6 +42,8 @@ public interface CommandHandler
 
     CommandHandler with(RepositoryConfig repositoryConfig);
 
+    CommandHandler with(HandleableException handlerException);
+    
     Command asCommand();
     
     CommandHandler preCallback();

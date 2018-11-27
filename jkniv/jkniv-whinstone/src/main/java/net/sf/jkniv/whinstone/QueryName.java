@@ -399,6 +399,7 @@ class QueryName implements Queryable
     }
     
     @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Iterator<Object> iterator()
     {
         if (this.params == null)
@@ -417,6 +418,7 @@ class QueryName implements Queryable
     }
     
     @Override
+    @SuppressWarnings({ "rawtypes" })
     public Object[] values(String[] paramsNames)
     {
         List<Object> params = new ArrayList<Object>();

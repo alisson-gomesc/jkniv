@@ -93,7 +93,7 @@ class BuildNestedObject
         
         Object nestedInstance = null;
         Object useInstance = this.instance;
-        Class useTargetClass = this.targetClass;
+        Class<?> useTargetClass = this.targetClass;
         for (int i = 0; i < nestedMethodsNames.length - 1; i++)
         {
             String methodName = nestedMethodsNames[i];
@@ -143,7 +143,7 @@ class BuildNestedObject
         invokeDirect(methodInfoSeter.method, nestedInstance, value);
     }
 
-    private MethodInfo getMethodByName(Class theTargetClass, String methodName)// FIXME performance gap build cache info
+    private MethodInfo getMethodByName(Class<?> theTargetClass, String methodName)// FIXME performance gap build cache info
     {
         MethodInfo methodInfo = new MethodInfo();
         //int count = 0;
@@ -188,7 +188,7 @@ class BuildNestedObject
     }
     
     
-    private Field getFieldByName(Class theTargetClass, String attributeName)// FIXME performance gap build cache info
+    private Field getFieldByName(Class<?> theTargetClass, String attributeName)// FIXME performance gap build cache info
     {
         Field field = null;
         for (Field f : theTargetClass.getDeclaredFields())
@@ -202,11 +202,11 @@ class BuildNestedObject
         return field;
     }
     
-    private String arrayToString(Class[] values)
+    private String arrayToString(Class<?>[] values)
     {
         StringBuilder sb = new StringBuilder();
         
-        for (Class c : values)
+        for (Class<?> c : values)
             sb.append(c.getName() + (sb.length() > 0 ? "," : ""));
         
         return sb.toString();
