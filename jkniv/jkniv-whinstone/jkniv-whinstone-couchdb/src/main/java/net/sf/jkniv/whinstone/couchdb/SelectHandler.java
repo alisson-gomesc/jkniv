@@ -70,5 +70,4 @@ public class SelectHandler extends DefaultCommandHandler
     {
         return adapterConn.asSelectCommand(queryable, overloadResultRow);
     }
-
 }

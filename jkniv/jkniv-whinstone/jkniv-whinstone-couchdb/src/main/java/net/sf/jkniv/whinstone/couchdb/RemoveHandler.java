@@ -22,7 +22,6 @@ public class RemoveHandler extends DefaultCommandHandler
         return adapterConn.asDeleteCommand(queryable);
     }
 
-
     /*
     public int remove()
     {

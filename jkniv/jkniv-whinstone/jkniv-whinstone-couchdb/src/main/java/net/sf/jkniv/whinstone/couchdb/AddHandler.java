@@ -40,6 +40,5 @@ public class AddHandler extends DefaultCommandHandler
     public Command asCommand()
     {
         return adapterConn.asAddCommand(queryable);
-    }
-    
+    }    
 }

@@ -37,16 +37,13 @@ import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
-import net.sf.jkniv.sqlegance.Deletable;
 import net.sf.jkniv.sqlegance.NonUniqueResultException;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
-import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
-import net.sf.jkniv.sqlegance.Updateable;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.whinstone.CommandHandler;
@@ -139,7 +136,7 @@ class RepositoryCouchDb implements Repository
     public <T> T get(Queryable queryable)
     {
         notNull.verify(queryable);
-        T ret = getInternal(queryable, null);
+        T ret = handleGet(queryable, null);
         return ret;
     }
     
@@ -148,7 +145,7 @@ class RepositoryCouchDb implements Repository
     {
         notNull.verify(queryable, returnType);
         Queryable queryableClone = QueryFactory.clone(queryable, returnType);
-        T ret = getInternal(queryableClone, null);
+        T ret = handleGet(queryableClone, null);
         queryable.setTotal(queryableClone.getTotal());
         return ret;
     }
@@ -158,7 +155,7 @@ class RepositoryCouchDb implements Repository
     {
         notNull.verify(object);
         Queryable queryable = QueryFactory.of("get", object.getClass(), object);
-        T ret = (T) getInternal(queryable, null);
+        T ret = (T) handleGet(queryable, null);
         return ret;
     }
 
@@ -167,14 +164,14 @@ class RepositoryCouchDb implements Repository
     {
         notNull.verify(object);
         Queryable queryable = QueryFactory.of("get", returnType, object);
-        T ret = (T) getInternal(queryable, null);
+        T ret = (T) handleGet(queryable, null);
         return ret;
     }
 
     @Override
     public <T, R> T get(Queryable queryable, ResultRow<T, R> resultRow)
     {
-        return getInternal(queryable, resultRow);
+        return handleGet(queryable, resultRow);
         //throw new UnsupportedOperationException("CouchDb Repository doesn't implement this method yet!");
         //        notNull.verify(queryable, resultRow);
         //        if (isTraceEnabled)
@@ -189,7 +186,7 @@ class RepositoryCouchDb implements Repository
         //        
     }
     
-    private <T, R> T getInternal(Queryable q, ResultRow<T, R> overloadResultRow)
+    private <T, R> T handleGet(Queryable q, ResultRow<T, R> overloadResultRow)
     {
         Sql sql = sqlContext.getQuery(q.getName());
         CommandHandler handler = new SelectHandler(this.adapterConn);
@@ -259,7 +256,7 @@ class RepositoryCouchDb implements Repository
         notNull.verify(queryable);
         T result = null;
         Queryable queryableClone = QueryFactory.clone(queryable, Map.class);
-        Map map = getInternal(queryableClone, null);
+        Map map = handleGet(queryableClone, null);
         if (map != null)
         {
             if(map.size() > 1)
@@ -290,7 +287,7 @@ class RepositoryCouchDb implements Repository
     @Override
     public <T> List<T> list(Queryable queryable)
     {
-        return listInternal(queryable, null);
+        return handleList(queryable, null);
     }
     
     @Override
@@ -300,7 +297,7 @@ class RepositoryCouchDb implements Repository
         Queryable queryableClone = queryable;
         if (overloadReturnType != null)
             queryableClone = QueryFactory.clone(queryable, overloadReturnType);
-        list = listInternal(queryableClone, null);
+        list = handleList(queryableClone, null);
         queryable.setTotal(queryableClone.getTotal());
         return list;
     }
@@ -309,7 +306,7 @@ class RepositoryCouchDb implements Repository
     @SuppressWarnings("unchecked")
     public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
-        return listInternal(queryable, overloadResultRow);        
+        return handleList(queryable, overloadResultRow);        
         /*
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as list command", q);
@@ -351,7 +348,7 @@ class RepositoryCouchDb implements Repository
 
     }
     
-    private <T, R> List<T> listInternal(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new SelectHandler(this.adapterConn);
@@ -528,7 +525,6 @@ class RepositoryCouchDb implements Repository
         handler.with(queryable);
         handler.with(sql);
         return handler.run();
-
         /*
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("remove", entity);

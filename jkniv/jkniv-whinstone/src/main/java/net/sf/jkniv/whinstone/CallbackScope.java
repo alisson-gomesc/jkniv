@@ -89,6 +89,5 @@ public enum CallbackScope
     {
         return (this == COMMIT ? true : false);
     }
-    */
-    
+    */    
 }
