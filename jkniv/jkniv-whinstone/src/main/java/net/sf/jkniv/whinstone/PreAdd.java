@@ -36,7 +36,7 @@ import java.lang.annotation.ElementType;
 @Target(
 { ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PreAdd
+@interface PreAdd
 {
     
 }

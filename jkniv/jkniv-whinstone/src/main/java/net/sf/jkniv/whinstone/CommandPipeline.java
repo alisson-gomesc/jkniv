@@ -28,7 +28,7 @@ import java.util.List;
  * @author Alisson Gomes
  *
  */
-public interface CommandPipeline 
+interface CommandPipeline 
 {
     //void process(Message message);
     
