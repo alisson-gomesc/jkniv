@@ -50,6 +50,10 @@ public class CouchDbRepositoryUpdateTest extends BaseJdbc
         author.setNationality("BR");
         Queryable q = getQuery("update", author);
         repositoryDb.update(q);
+        
+        Author authorCallbackCheck = repositoryDb.get(Author.class, author);
+        assertThat(authorCallbackCheck.getAddAt(), is(notNullValue()));
+        assertThat(authorCallbackCheck.getUpdateAt(), is(notNullValue()));
     }
 
     @Test
@@ -64,7 +68,10 @@ public class CouchDbRepositoryUpdateTest extends BaseJdbc
         author.setNationality("BR");
         Queryable q = getQuery("update", author);
         repositoryDb.update(q);
-        
+     
+        Author authorCallbackCheck = repositoryDb.get(Author.class, author);
+        assertThat(authorCallbackCheck.getAddAt(), is(notNullValue()));
+        assertThat(authorCallbackCheck.getUpdateAt(), is(notNullValue()));
     }
 
     @Test
@@ -86,7 +93,9 @@ public class CouchDbRepositoryUpdateTest extends BaseJdbc
         assertThat(revision, not(is(author.getRev())));
         assertThat(author.getUpdateAt(), notNullValue());        
         
-        //System.out.println(author);
+        Author authorCallbackCheck = repositoryDb.get(Author.class, author);
+        assertThat(authorCallbackCheck.getAddAt(), is(nullValue()));
+        assertThat(authorCallbackCheck.getUpdateAt(), is(notNullValue()));
     }
 
     @Test
@@ -104,7 +113,11 @@ public class CouchDbRepositoryUpdateTest extends BaseJdbc
         
         assertThat(author.getId(), notNullValue());
         assertThat(revision, not(is(author.getRev())));
-        assertThat(author.getUpdateAt(), notNullValue());        
+        assertThat(author.getUpdateAt(), notNullValue());   
+        
+        Author authorCallbackCheck = repositoryDb.get(Author.class, author);
+        assertThat(authorCallbackCheck.getAddAt(), is(nullValue()));
+        assertThat(authorCallbackCheck.getUpdateAt(), is(notNullValue()));
     }
     
 }

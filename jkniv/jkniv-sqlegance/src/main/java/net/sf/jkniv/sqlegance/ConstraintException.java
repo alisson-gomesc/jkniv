@@ -19,8 +19,9 @@
  */
 package net.sf.jkniv.sqlegance;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Thrown when model data violate the rules with JSR Bean Validation  
@@ -42,7 +43,7 @@ public class ConstraintException extends RepositoryException
     public ConstraintException(String param, String message)
     {
         super(message);
-        this.violations = new HashMap<String, String>();
+        this.violations = new TreeMap<String, String>();
         this.violations.put(param, message);
     }
 
@@ -63,7 +64,24 @@ public class ConstraintException extends RepositoryException
      */
     public Map<String, String> getViolations()
     {
-        return violations;
+        return Collections.unmodifiableMap(violations);
     }
     
+    @Override
+    public String getMessage()
+    {
+        StringBuilder sb = new StringBuilder(getClass().getName()+": ");
+        sb.append(super.getMessage() == null ? "There " + 
+                (violations.size() > 1 ? "are " : "is ") + violations.size() + 
+                " data violations"  : super.getMessage());
+        for(String k : violations.keySet())
+            sb.append("\n\t["+k+"]="+violations.get(k));
+        return sb.toString();        
+    }
+    
+    @Override
+    public String toString()
+    {
+        return getMessage();
+    }
 }

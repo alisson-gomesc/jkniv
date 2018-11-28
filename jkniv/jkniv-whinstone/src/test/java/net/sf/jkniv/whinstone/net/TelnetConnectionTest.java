@@ -13,8 +13,10 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class TelnetConnectionTest
 {
     

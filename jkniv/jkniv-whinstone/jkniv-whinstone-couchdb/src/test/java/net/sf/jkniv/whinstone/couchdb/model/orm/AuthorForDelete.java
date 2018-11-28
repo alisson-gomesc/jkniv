@@ -1,6 +1,7 @@
 
 package net.sf.jkniv.whinstone.couchdb.model.orm;
 
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -26,10 +27,12 @@ public class AuthorForDelete {
     private String nationality;
     @JsonProperty("books")
     private List<Book> books = null;
-
     private Integer born;
     @JsonProperty("_deleted")
     private boolean deleted;
+    private Date updateAt;
+    private Date addAt;
+
     
     @JsonProperty("_id")
     public String getId() {
@@ -102,6 +105,26 @@ public class AuthorForDelete {
     public void setDeleted(boolean deleted)
     {
         this.deleted = deleted;
+    }
+    
+    public Date getUpdateAt()
+    {
+        return updateAt;
+    }
+
+    public void setUpdateAt(Date updateAt)
+    {
+        this.updateAt = updateAt;
+    }
+
+    public Date getAddAt()
+    {
+        return addAt;
+    }
+
+    public void setAddAt(Date addAt)
+    {
+        this.addAt = addAt;
     }
 
     @Override

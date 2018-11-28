@@ -36,9 +36,9 @@ import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 
-public abstract class DefaultCommandHandler implements CommandHandler
+public abstract class QueryHandler implements CommandHandler
 {
-    private final static Logger     LOG     = LoggerFactory.getLogger(DefaultCommandHandler.class);
+    private final static Logger     LOG     = LoggerFactory.getLogger(QueryHandler.class);
     private static final Assertable notNull = AssertsFactory.getNotNull();
     protected ConnectionAdapter     adapterConn;
     protected CommandHandler        handler;
@@ -50,7 +50,7 @@ public abstract class DefaultCommandHandler implements CommandHandler
     private ObjectProxy<?>          proxyParams;
     private HandleableException     handleableException;
     
-    public DefaultCommandHandler(ConnectionAdapter conn)
+    public QueryHandler(ConnectionAdapter conn)
     {
         this.adapterConn = conn;
     }
@@ -111,8 +111,8 @@ public abstract class DefaultCommandHandler implements CommandHandler
         if (!queryable.isBoundSql())
             queryable.bind(sql);
         
-        preCallback();
         this.command = handler.asCommand();
+        preCallback();
         T t = this.command.execute();
         postCallback();
         if (LOG.isDebugEnabled())

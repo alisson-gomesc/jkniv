@@ -96,7 +96,6 @@ public class Author {
         this.books = books;
     }
 
-    
     public Date getUpdateAt()
     {
         return updateAt;
