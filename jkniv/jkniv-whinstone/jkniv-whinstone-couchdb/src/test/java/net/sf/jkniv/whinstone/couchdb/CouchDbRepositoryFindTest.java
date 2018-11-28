@@ -50,10 +50,10 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
         Repository repositoryDb = getRepository();
         Queryable q = getQuery("authorsBR");
         
-        List<Map> list = repositoryDb.list(q);
+        List<Map<String, ?>> list = repositoryDb.list(q);
         assertThat(list.size(), greaterThan(0));
         assertThat(list.get(0), instanceOf(Map.class));
-        System.out.println(list.get(0));
+        //System.out.println(list.get(0));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
         List<Author> list = repositoryDb.list(q);
         assertThat(list.size(), greaterThan(0));
         assertThat(list.get(0), instanceOf(Author.class));
-        System.out.println(list.get(0));
+        //System.out.println(list.get(0));
     }
     
     @Test @Ignore("doesn't work")
@@ -78,7 +78,7 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
         assertThat(list.size(), is(1));
         assertThat(list.get(0), instanceOf(Author.class));
         assertThat(list.get(0).getBooks().get(0).getPublished(), is(1886L));
-        System.out.println(list.get(0));
+        //System.out.println(list.get(0));
     }
     
     

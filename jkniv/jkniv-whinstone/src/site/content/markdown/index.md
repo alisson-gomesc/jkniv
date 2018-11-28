@@ -78,32 +78,31 @@ The `Repository` interface have a simple set of methods to manipulate the data f
 - `update`: update an object or collection of data to repository.
 - `remove`: delete an object or collection of data from repository.
 - `enrich`: use the `queryable` object to retrieve data from repository and append the result to object parameter from `queryable`. 
-- `scalar`: retrieve a scalar value
+- `scalar`: retrieve a scalar value (String, Number, Date etc)
 
 The library is 100% protected against [SQL injection](https://www.owasp.org/index.php/SQL_Injection "OWASP SQL injection") because all statements are [PreparedStatement](https://docs.oracle.com/javase/6/docs/api/java/sql/PreparedStatement.html "PreparedStatement"), except to couchdb that access it's over HTTP protocol.
 
 
-### Traceability for Whinstone Features
+### Traceability for Whinstone Features (Roadmap)
 
-| Features            | whinstone-jpa2 | whinstone-jdbc | whinstone-cassandra | whinstone-couchdb |
-| ------------------- | -------------- | -------------- |---------------------|-------------------|
-| Auto Bind Parameters| ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     |
-| Auto Bind Result    | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     |
-| One-to-One          | ![close][chk]  | ![close][chk]  | ![close][chk]        | ![open][clo]     |
-| One-to-Many         | ![close][chk]  | ![close][chk]  | ![close][chk]        | ![open][clo]     |
-| JSR Bean Validation | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     |
-| Transaction         | ![close][chk]  | ![close][chk]  | ![open][clo]        | ![open][clo]      |
-| Paginate Query      | ![close][chk]  | ![close][chk]  | ![open][clo]        | ![open][clo]      |
-| Retrieving auto-generated keys| ![close][chk]| ![close][chk]| ![open][clo]  | ![close][chk]     |
-| Bulk Commands(batch)| ![open][clo]   | ![open][clo]   | ![open][clo]        | ![close][chk]     |
-| Callback Methods    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![close][chk]     |
-| Triggers Events     | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
-| Query Cache         | ![open][clo]   | ![open][clo]   | ![close][chk]       | ![close][chk]     |
-| Query Statistics    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
-| Stored Procedure    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
-| Converter Annotation| ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
-| Jdk8 Timers         | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![close][chk]  (jackson)|
-
+|Version| Features            | whinstone-jpa2 | whinstone-jdbc | whinstone-cassandra | whinstone-couchdb |
+|-------| ------------------- | -------------- | -------------- |---------------------|-------------------|
+|`0.6.0 version`| Auto Bind Parameters| ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     |
+|`0.6.0 version`| Auto Bind Result    | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     |
+|`0.6.0 version`| One-to-One          | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![open][clo](native) |
+|`0.6.0 version`| One-to-Many         | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![open][clo](native) |
+|`0.6.0 version`| JSR Bean Validation | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     |
+|`0.6.0 version`| Transaction         | ![close][chk]  | ![close][chk]  | ![open][clo]        | ![open][clo]      |
+|`0.6.0 version`| Paginate Query      | ![close][chk]  | ![close][chk]  | ![open][clo]        | ![open][clo]      |
+|`0.6.0 version`| Retrieving auto-generated keys| ![close][chk]| ![close][chk]| ![open][clo]  | ![close][chk]     |
+|`0.6.0 version`| Bulk Commands (batch)| ![open][clo]  | ![open][clo]   | ![open][clo]        | ![close][chk]     |
+|`0.6.0 version`| Callback Methods    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![close][chk]     |
+|`0.6.0 version`| Query Cache         | ![open][clo]   | ![open][clo]   | ![close][chk]       | ![close][chk]     |
+|`0.6.0 version`| Query Statistics    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
+|`0.7.0 version`| Converter Annotation| ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
+|`0.7.0 version`| Triggers Events     | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
+|`0.7.0 version`| Stored Procedure    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
+|`0.7.0 version`| Jdk8 Timers         | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]  (jackson)|
 
 
 ### Transaction supports
