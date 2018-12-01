@@ -113,9 +113,11 @@ public class FindCommand extends AbstractCommand implements CouchCommand
                 LOG.error(errorFormat(httpPost, response.getStatusLine(), json));
                 throw new RepositoryException(response.getStatusLine().toString());
             }
+            commandHandler.postCommit();
         }
         catch (Exception e) // ClientProtocolException | JsonParseException | JsonMappingException | IOException
         {
+            commandHandler.postException();
             if (currentRow != null)
                 LOG.error("Error to process current row {}", currentRow, e);
             handlerException.handle(e);

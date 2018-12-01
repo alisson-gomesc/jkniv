@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.whinstone;
 
+import net.sf.jkniv.exception.HandleableException;
+
 /**
  * Command to be executed at database like {@code Select}, {@code Update}, {@code Delete}, 
  * {@code Insert}, {@code Stored Procedure}...
@@ -28,6 +30,10 @@ package net.sf.jkniv.whinstone;
  */
 public interface Command
 {
+    Command with(HandleableException handleableException);
+    
+    Command with(CommandHandler commandHandler);
+    
     <T> T execute();
     
     //String getBody();

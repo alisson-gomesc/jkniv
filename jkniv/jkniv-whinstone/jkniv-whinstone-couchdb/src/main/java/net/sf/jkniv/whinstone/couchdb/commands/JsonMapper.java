@@ -25,10 +25,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.sqlegance.RepositoryException;
@@ -36,12 +34,11 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 public class JsonMapper
 {
     private static HandlerException handlerException;
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     static
     {
         handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
-        
         // JsonParseException | JsonMappingException | IOException
         handlerException.config(JsonParseException.class, "Error to parser json non-well-formed content [%s]");
         handlerException.config(JsonMappingException.class, "Error to deserialization content [%s]");
@@ -58,14 +55,14 @@ public class JsonMapper
         //ObjectMapper mapper = new ObjectMapper();
         // FIXME design jackson json properties config
         //mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return mapper;
+        return MAPPER;
     }
     
     public static <T> T mapper(String content, Class<T> valueType)
     {
         try
         {
-            return mapper.readValue(content, valueType);
+            return MAPPER.readValue(content, valueType);
         }
         catch (Exception e)
         {
@@ -80,7 +77,7 @@ public class JsonMapper
     {
         try
         {
-            return mapper.readValue(content, valueType);
+            return MAPPER.readValue(content, valueType);
         }
         catch (Exception e)
         {
@@ -95,7 +92,7 @@ public class JsonMapper
         try
         {
             //final ObjectMapper mapper = new ObjectMapper(); // jackson's objectmapper
-            return mapper.convertValue(content, valueType);
+            return MAPPER.convertValue(content, valueType);
             //return newMapper().readValue(content, valueType);
         }
         catch (Exception e)
@@ -110,7 +107,7 @@ public class JsonMapper
     {
         try
         {
-            return mapper.writeValueAsString(o);
+            return MAPPER.writeValueAsString(o);
         }
         catch (Exception e)
         {

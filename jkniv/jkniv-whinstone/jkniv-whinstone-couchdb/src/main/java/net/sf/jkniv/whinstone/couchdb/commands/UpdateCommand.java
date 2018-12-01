@@ -171,9 +171,11 @@ public class UpdateCommand extends AbstractCommand implements CouchCommand
                 LOG.error(errorFormat(http, response.getStatusLine(), json));
                 throw new RepositoryException(response.getStatusLine().toString() +", "+ reason);
             }
+            this.commandHandler.postCommit();
         }
         catch (Exception e) // ClientProtocolException | JsonParseException | JsonMappingException | IOException
         {
+            this.commandHandler.postException();
             handlerException.handle(e);
         }
         finally

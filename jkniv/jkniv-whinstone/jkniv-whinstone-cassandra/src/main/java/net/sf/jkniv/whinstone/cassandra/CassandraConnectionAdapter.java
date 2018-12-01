@@ -40,7 +40,7 @@ import net.sf.jkniv.whinstone.cassandra.commands.UpdateCommand;
 import net.sf.jkniv.whinstone.cassandra.statement.CassandraStatementAdapter;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
-public class CassandraConnectionAdapter implements ConnectionAdapter
+class CassandraConnectionAdapter implements ConnectionAdapter
 {
     private static final transient Logger  LOG = LoggerFactory.getLogger();
     private Session session;
@@ -59,7 +59,6 @@ public class CassandraConnectionAdapter implements ConnectionAdapter
     {
         // FIXME UnsupportedOperationException
         throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
-        
     }
     
     @Override
@@ -152,19 +151,13 @@ public class CassandraConnectionAdapter implements ConnectionAdapter
     }
     
     @Override
-    public String toString()
-    {
-        return "CassandraConnectionAdapter [session=" + session + ", cluster=" + cluster + "]";
-    }
-    
-    @Override
     public <T, R> Command asSelectCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         Class returnType = Map.class;
         SelectCommand command = null;
         String sql = queryable.query();
         if(LOG.isInfoEnabled())
-            LOG.debug("Bind Native SQL\n{}",sql);
+            LOG.debug("Bind Native SQL\n{}", sql);
 
         PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
         StatementAdapter<T, R> stmt = new CassandraStatementAdapter(this.session, stmtPrep);
@@ -223,7 +216,6 @@ public class CassandraConnectionAdapter implements ConnectionAdapter
     public <T, R> Command asAddCommand(Queryable queryable)//, ResultRow<T, R> overloadResultRow)
     {
         InsertCommand command = null;
-
         String sql = queryable.query();
         if(LOG.isInfoEnabled())
             LOG.debug("Bind Native SQL\n{}",sql);
@@ -234,5 +226,10 @@ public class CassandraConnectionAdapter implements ConnectionAdapter
         command = new InsertCommand((CassandraStatementAdapter) stmt, queryable);
         return command;
     }
-    
+
+    @Override
+    public String toString()
+    {
+        return "CassandraConnectionAdapter [session=" + session + ", cluster=" + cluster + "]";
+    }
 }

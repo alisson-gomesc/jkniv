@@ -43,7 +43,7 @@ import net.sf.jkniv.whinstone.couchdb.commands.AddCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.ViewCommand;
 import net.sf.jkniv.whinstone.couchdb.statement.CouchDbStatementAdapter;
 
-public class HttpCookieConnectionAdapter implements ConnectionAdapter
+class HttpCookieConnectionAdapter implements ConnectionAdapter
 {
     private static final transient Logger LOG = LoggerFactory.getLogger(HttpCookieConnectionAdapter.class);
     private HttpBuilder httpBuilder;
@@ -114,7 +114,8 @@ public class HttpCookieConnectionAdapter implements ConnectionAdapter
     @Override
     public <T, R> StatementAdapter<T, R> newStatement(Queryable queryable)
     {
-        String sql = queryable.query(); //queryable.getDynamicSql().getSql(queryable.getParams());
+        String sql = queryable.query(); 
+        //queryable.getDynamicSql().getSql(queryable.getParams());
         //String positionalSql = queryable.getDynamicSql().getParamParser().replaceForQuestionMark(sql, queryable.getParams());
         //HttpRequestBase httpRequest = null;
         CouchCommand command = null;
@@ -172,72 +173,39 @@ public class HttpCookieConnectionAdapter implements ConnectionAdapter
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public <T, R> Command asUpdateCommand(Queryable queryable)
     {
-        //Class returnType = Map.class;
         CouchCommand command = null;
-        //Sql dynamicSql = queryable.getDynamicSql();
         String sql = queryable.query();
         StatementAdapter<T, R> stmt = new CouchDbStatementAdapter(this.httpBuilder, sql, queryable.getDynamicSql().getParamParser());
-
-        //queryable.bind(stmt).on();
-        
-        //if (queryable.getReturnType() != null)
-        //    returnType = queryable.getReturnType();
-        //else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-        //    returnType = queryable.getDynamicSql().getReturnTypeAsClass();
-        
         if (queryable.isTypeOfBulk())
             command = new BulkCommand(httpBuilder, queryable);
         else
             command = new UpdateCommand(httpBuilder, queryable);
-            
         return command;
     }
 
     @Override
     public <T, R> Command asDeleteCommand(Queryable queryable)
     {
-        //Class returnType = Map.class;
         CouchCommand command = null;
-        //Sql dynamicSql = queryable.getDynamicSql();
         String sql = queryable.query();
         StatementAdapter<T, R> stmt = new CouchDbStatementAdapter(this.httpBuilder, sql, queryable.getDynamicSql().getParamParser());
-
-        //queryable.bind(stmt).on();
-        
-        //if (queryable.getReturnType() != null)
-        //    returnType = queryable.getReturnType();
-        //else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-        //    returnType = queryable.getDynamicSql().getReturnTypeAsClass();
-        
         if (queryable.isTypeOfBulk())
             command = new BulkCommand(httpBuilder, queryable);
         else
             command = new DeleteCommand(httpBuilder, queryable);
-        
         return command;
     }
 
     @Override
     public <T, R> Command asAddCommand(Queryable queryable)
     {
-        //Class returnType = Map.class;
         CouchCommand command = null;
-        //Sql dynamicSql = queryable.getDynamicSql();
         String sql = queryable.query();
         StatementAdapter<T, R> stmt = new CouchDbStatementAdapter(this.httpBuilder, sql, queryable.getDynamicSql().getParamParser());
-
-        //queryable.bind(stmt).on();
-        
-        //if (queryable.getReturnType() != null)
-        //    returnType = queryable.getReturnType();
-        //else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-        //    returnType = queryable.getDynamicSql().getReturnTypeAsClass();
-        
         if (queryable.isTypeOfBulk())
             command = new BulkCommand(httpBuilder, queryable);
         else
             command = new AddCommand(httpBuilder, queryable);
-            
         return command;
     }
 

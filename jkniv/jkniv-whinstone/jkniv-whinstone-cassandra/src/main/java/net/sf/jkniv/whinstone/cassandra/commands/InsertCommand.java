@@ -19,16 +19,15 @@
  */
 package net.sf.jkniv.whinstone.cassandra.commands;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.whinstone.Command;
+import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.cassandra.statement.CassandraStatementAdapter;
 
 public class InsertCommand implements Command
 {
-    private static final Logger                  LOG = LoggerFactory.getLogger(InsertCommand.class);
+    //private static final Logger                  LOG = LoggerFactory.getLogger(InsertCommand.class);
     private CassandraStatementAdapter<?, String> stmt;
     
     public InsertCommand(CassandraStatementAdapter<?, String> stmt, Queryable queryable)
@@ -36,8 +35,22 @@ public class InsertCommand implements Command
         super();
         this.stmt = stmt;
     }
+
+    @Override
+    public Command with(HandleableException handleableException)
+    {
+        return this;
+    }
+
+    @Override
+    public Command with(CommandHandler commandHandler)
+    {
+        return this;
+    }
+
     
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T execute()
     {
         Integer rows = stmt.execute();

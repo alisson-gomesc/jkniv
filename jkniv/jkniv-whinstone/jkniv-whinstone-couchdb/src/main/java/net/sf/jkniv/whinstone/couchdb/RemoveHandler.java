@@ -35,6 +35,9 @@ public class RemoveHandler extends DefaultCommandHandler
     @Override
     public Command asCommand()
     {
-        return getConnectionAdapter().asDeleteCommand(queryable);
+        Command c = getConnectionAdapter().asDeleteCommand(queryable);
+        c.with(this);
+        c.with(this.handleableException);
+        return c;
     }
 }

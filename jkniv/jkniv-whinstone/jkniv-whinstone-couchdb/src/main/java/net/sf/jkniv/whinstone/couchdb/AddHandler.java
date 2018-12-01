@@ -35,6 +35,9 @@ public class AddHandler extends DefaultCommandHandler
     @Override
     public Command asCommand()
     {
-        return getConnectionAdapter().asAddCommand(queryable);
-    }    
+        Command c = getConnectionAdapter().asAddCommand(queryable);
+        c.with(this);
+        c.with(this.handleableException);
+        return c;
+    }
 }

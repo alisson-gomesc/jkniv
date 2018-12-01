@@ -131,12 +131,13 @@ public interface Repository
     <T> T scalar(Queryable queryable);
 
     /**
-     * Use the {@link Queryable} to retrieve data and appends to the {@link Queryable#getParams()} 
+     * Use the {@link Queryable} to retrieve data and appends the result to {@link Queryable#getParams()} 
      * parameters, where for each {@code get} method must have a correspondent {@code set}.
      * 
      * @param queryable Query with yours parameters
      * @return return {@code true} if the objects was enriched, {@code false} otherwise.
      * @throws QueryNotFoundException when not found the query name
+     * @throws NonUniqueResultException if your {@link Queryable} doesn't return one unique value
      */
     boolean enrich(Queryable queryable);// TODO test enrich
                                         // FIXME implements using MAP

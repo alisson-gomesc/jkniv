@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.whinstone.couchdb;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,8 +28,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.http.client.ClientProtocolException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
@@ -43,7 +49,6 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
-import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.whinstone.CommandHandler;
@@ -52,10 +57,11 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.couchdb.commands.CouchDbSynchViewDesign;
+import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
 /**
- * Encapsulate the data access for Cassandra
+ * Encapsulate the data access for CouchDB
  * 
  * @author Alisson Gomes
  *
@@ -114,7 +120,7 @@ class RepositoryCouchDb implements Repository
         this.isTraceEnabled = LOG.isTraceEnabled();
         this.adapterConn = (HttpCookieConnectionAdapter) new HttpConnectionFactory(
                 sqlContext.getRepositoryConfig().getProperties()).open();
-        this.handlerException = new HandlerException(RepositoryException.class, "CouchDB error at [%s]");
+        configHanlerException();
         this.cache = new MemoryCache<Queryable, Object>();
         this.init();
     }
@@ -131,6 +137,19 @@ class RepositoryCouchDb implements Repository
             DOC_SCHEMA_UPDATED.put(hostContext, Boolean.TRUE);
         }
     }
+    
+    private void configHanlerException()
+    {
+        this.handlerException = new HandlerException(RepositoryException.class, "CouchDB error at [%s]");
+        // ClientProtocolException | JsonParseException | JsonMappingException | IOException
+        this.handlerException.config(ClientProtocolException.class, "Error to HTTP protocol [%s]");
+        this.handlerException.config(JsonParseException.class, "Error to parser json non-well-formed content [%s]");
+        this.handlerException.config(JsonMappingException.class, "Error to deserialization content [%s]");
+        this.handlerException.config(UnsupportedEncodingException.class, "Error at json content encoding unsupported [%s]");
+        this.handlerException.config(IOException.class, "Error from I/O json content [%s]");
+        this.handlerException.mute(ParameterNotFoundException.class);
+    }
+
     
     @Override
     public <T> T get(Queryable queryable)
@@ -188,14 +207,14 @@ class RepositoryCouchDb implements Repository
     
     private <T, R> T handleGet(Queryable q, ResultRow<T, R> overloadResultRow)
     {
+        T ret = null;
         Sql sql = sqlContext.getQuery(q.getName());
         CommandHandler handler = new SelectHandler(this.adapterConn);
-        handler.with(q);
-        handler.with(sql);
-        handler.with(overloadResultRow); 
-        
-        T ret = null;
-        List<T> list = handler.run();
+        List<T> list = handler.with(q)
+        .with(sql)
+        .with(handlerException)
+        .with(overloadResultRow)
+        .run();
         if (list.size() > 1)
             throw new NonUniqueResultException("No unique result for query ["+q.getName()+"] with params ["+q.getParams()+"]");
         else if (list.size() == 1)
@@ -256,12 +275,12 @@ class RepositoryCouchDb implements Repository
         notNull.verify(queryable);
         T result = null;
         Queryable queryableClone = QueryFactory.clone(queryable, Map.class);
-        Map map = handleGet(queryableClone, null);
+        Map<String,T> map = handleGet(queryableClone, null);
         if (map != null)
         {
             if(map.size() > 1)
                 throw new NonUniqueResultException("Query ["+queryable.getName()+"] no return scalar value, scalar function must return unique field");
-            result = (T)map.values().iterator().next();
+            result = map.values().iterator().next();
             queryable.setTotal(1);
         }
         else
@@ -274,7 +293,7 @@ class RepositoryCouchDb implements Repository
     {
         notNull.verify(queryable, queryable.getParams());
         boolean enriched = false;
-        Object o = get(queryable);
+        Object o = handleGet(queryable, null);
         if(o != null)
         {
             ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(queryable.getParams());
@@ -303,7 +322,6 @@ class RepositoryCouchDb implements Repository
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         return handleList(queryable, overloadResultRow);        
@@ -345,17 +363,18 @@ class RepositoryCouchDb implements Repository
         
         return list;
         */
-
     }
     
     private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new SelectHandler(this.adapterConn);
-        handler.with(queryable);
-        handler.with(sql);
-        handler.with(overloadResultRow); 
-        return handler.run();
+        List<T> list = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .with(overloadResultRow)
+        .run();
+        return list;
     }
 
         
@@ -365,9 +384,11 @@ class RepositoryCouchDb implements Repository
         notNull.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new AddHandler(this.adapterConn);
-        handler.with(queryable);
-        handler.with(sql);
-        return handler.run();
+        int rows = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return rows;
         /*
         notNull.verify(queryable);
         if (isTraceEnabled)
@@ -396,9 +417,10 @@ class RepositoryCouchDb implements Repository
         Queryable queryable = QueryFactory.of("add", entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new AddHandler(this.adapterConn);
-        handler.with(queryable);
-        handler.with(sql);
-        handler.run();
+        handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
         return entity;// FIXME design update must return a number
         /*
         notNull.verify(entity);
@@ -428,9 +450,11 @@ class RepositoryCouchDb implements Repository
         notNull.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName()).asUpdateable();
         CommandHandler handler = new UpdateHandler(this.adapterConn);
-        handler.with(queryable);
-        handler.with(sql);
-        return handler.run();
+        int rows = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return rows;
         /*
         notNull.verify(queryable);
         if (isTraceEnabled)
@@ -459,9 +483,10 @@ class RepositoryCouchDb implements Repository
         Queryable queryable = QueryFactory.of("update", entity);
         Sql sql = sqlContext.getQuery(queryable.getName()).asUpdateable();
         CommandHandler handler = new UpdateHandler(this.adapterConn);
-        handler.with(queryable);
-        handler.with(sql);
-        handler.run();
+        handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
         return entity;// FIXME design update must return a number 
         /*
         notNull.verify(entity);
@@ -491,9 +516,11 @@ class RepositoryCouchDb implements Repository
         notNull.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new RemoveHandler(this.adapterConn);
-        handler.with(queryable);
-        handler.with(sql);
-        return handler.run();
+        int rows = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return rows;
         /*
         notNull.verify(queryable);
         if (isTraceEnabled)
@@ -522,9 +549,11 @@ class RepositoryCouchDb implements Repository
         Queryable queryable = QueryFactory.of("remove", entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new RemoveHandler(this.adapterConn);
-        handler.with(queryable);
-        handler.with(sql);
-        return handler.run();
+        int rows = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return rows;
         /*
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("remove", entity);
@@ -577,13 +606,6 @@ class RepositoryCouchDb implements Repository
             LOG.warn("Error to try close CouchDB session [{}]", adapterConn, e);
         }
         sqlContext.close();
-    }
-    
-    private void checkSqlType(Sql isql, SqlType expected)
-    {
-        if (isql.getSqlType() != expected)
-            throw new IllegalArgumentException("Cannot execute sql [" + isql.getName() + "] as [" + isql.getSqlType()
-                    + "], exptected is " + expected);
     }
     
     private Properties lookup(String remaining)

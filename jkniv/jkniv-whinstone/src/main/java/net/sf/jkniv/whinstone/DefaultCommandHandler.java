@@ -38,18 +38,18 @@ import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 
 public abstract class DefaultCommandHandler implements CommandHandler
 {
-    final static Logger     LOG     = LoggerFactory.getLogger(DefaultCommandHandler.class);
-    static final Assertable notNull = AssertsFactory.getNotNull();
-    ConnectionAdapter     adapterConn;
-    CommandHandler        handler;
-    Command               command;
-    protected Queryable             queryable;
-    protected Sql                   sql;
-    protected RepositoryConfig      config;
-    protected ResultRow<?, ?>       overloadResultRow;
-    protected HandleableException     handleableException;
-    ObjectProxy<?>          proxyParams;
-
+    final static Logger           LOG     = LoggerFactory.getLogger(DefaultCommandHandler.class);
+    static final Assertable       notNull = AssertsFactory.getNotNull();
+    ConnectionAdapter             adapterConn;
+    CommandHandler                handler;
+    Command                       command;
+    protected Queryable           queryable;
+    protected Sql                 sql;
+    protected RepositoryConfig    config;
+    protected ResultRow<?, ?>     overloadResultRow;
+    protected HandleableException handleableException;
+    ObjectProxy<?>                proxyParams;
+    
     public DefaultCommandHandler(ConnectionAdapter conn)
     {
         this.adapterConn = conn;
@@ -95,10 +95,10 @@ public abstract class DefaultCommandHandler implements CommandHandler
     
     public CommandHandler with(HandleableException handlerException)
     {
-     
+        this.handleableException = handlerException;
         return this;
     }
-
+    
     @SuppressWarnings("rawtypes")
     @Override
     public <T> T run()
@@ -156,24 +156,24 @@ public abstract class DefaultCommandHandler implements CommandHandler
     @Override
     public CommandHandler postCommit()
     {
-//        if (proxyParams != null)
-//        {
-//            CallbackMethods preCallbackMethods = CacheCallback.get(proxyParams.getTargetClass(), sql.getSqlType());
-//            for (Method m : preCallbackMethods.getCallbacks())
-//                proxyParams.invoke(m);
-//        }
+        //        if (proxyParams != null)
+        //        {
+        //            CallbackMethods preCallbackMethods = CacheCallback.get(proxyParams.getTargetClass(), sql.getSqlType());
+        //            for (Method m : preCallbackMethods.getCallbacks())
+        //                proxyParams.invoke(m);
+        //        }
         return this;
     }
     
     @Override
     public CommandHandler postException()
     {
-//        if (proxyParams != null)
-//        {            
-//            CallbackMethods preCallbackMethods = CacheCallback.get(proxyParams.getTargetClass(), sql.getSqlType());
-//            for (Method m : preCallbackMethods.getCallbacks())
-//                proxyParams.invoke(m);
-//        }
+        //        if (proxyParams != null)
+        //        {            
+        //            CallbackMethods preCallbackMethods = CacheCallback.get(proxyParams.getTargetClass(), sql.getSqlType());
+        //            for (Method m : preCallbackMethods.getCallbacks())
+        //                proxyParams.invoke(m);
+        //        }
         return this;
     }
     
@@ -184,13 +184,13 @@ public abstract class DefaultCommandHandler implements CommandHandler
     
     private void loadCallbackEvents()
     {
-        if(proxyParams == null)
+        if (proxyParams == null)
             return;
         
         CallbackMethods callbacks = CacheCallback.get(proxyParams.getTargetClass(), SqlType.SELECT);
         if (callbacks != CallbackMethods.EMPTY)
             return;// target class already loaded
-        
+            
         List<Method> precallbacks = proxyParams.getAnnotationMethods(PreCallBack.class);
         List<Method> postcallbacks = proxyParams.getAnnotationMethods(PostCallBack.class);
         
@@ -263,16 +263,16 @@ public abstract class DefaultCommandHandler implements CommandHandler
                 else if (scope.isRemove())
                     postRemove.add(m);
             }
-        }   
+        }
         CacheCallback.put(proxyParams.getTargetClass(), SqlType.SELECT, preSelect);
         CacheCallback.put(proxyParams.getTargetClass(), SqlType.INSERT, preAdd);
         CacheCallback.put(proxyParams.getTargetClass(), SqlType.UPDATE, preUpdate);
         CacheCallback.put(proxyParams.getTargetClass(), SqlType.DELETE, preRemove);
-
+        
         CacheCallback.put(proxyParams.getTargetClass(), SqlType.SELECT, postSelect);
         CacheCallback.put(proxyParams.getTargetClass(), SqlType.INSERT, postAdd);
         CacheCallback.put(proxyParams.getTargetClass(), SqlType.UPDATE, postUpdate);
         CacheCallback.put(proxyParams.getTargetClass(), SqlType.DELETE, postRemove);
     }
-
+    
 }

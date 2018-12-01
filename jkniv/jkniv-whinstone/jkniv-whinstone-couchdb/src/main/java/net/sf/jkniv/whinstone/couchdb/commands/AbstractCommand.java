@@ -38,9 +38,13 @@ import org.apache.http.util.EntityUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.whinstone.Command;
+import net.sf.jkniv.whinstone.CommandHandler;
+import net.sf.jkniv.whinstone.NoCommandHandler;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 
@@ -54,12 +58,13 @@ import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
  */
 public abstract class AbstractCommand implements CouchCommand
 {
-    protected final static String    COUCHDB_ID  = "id";
-    protected final static String    COUCHDB_REV = "rev";
-    protected final HandlerException handlerException;
-    protected String                 url;
-    protected String                 body;
-    protected HttpMethod             method;
+    protected final static String COUCHDB_ID  = "id";
+    protected final static String COUCHDB_REV = "rev";
+    protected HandleableException handlerException;
+    protected CommandHandler      commandHandler;
+    protected String              url;
+    protected String              body;
+    protected HttpMethod          method;
     
     public AbstractCommand()
     {
@@ -74,22 +79,25 @@ public abstract class AbstractCommand implements CouchCommand
     public AbstractCommand(String url, String body)
     {
         // TODO design exception message to handler exception
-        this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
+        //this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
         this.url = url;
         this.body = body;
         this.method = HttpMethod.GET;
-        this.configHanlerException();
+        this.commandHandler = NoCommandHandler.getInstance();
     }
     
-    private void configHanlerException()
+    @Override
+    public Command with(HandleableException handlerException)
     {
-        // ClientProtocolException | JsonParseException | JsonMappingException | IOException
-        handlerException.config(ClientProtocolException.class, "Error to HTTP protocol [%s]");
-        handlerException.config(JsonParseException.class, "Error to parser json non-well-formed content [%s]");
-        handlerException.config(JsonMappingException.class, "Error to deserialization content [%s]");
-        handlerException.config(UnsupportedEncodingException.class, "Error at json content encoding unsupported [%s]");
-        handlerException.config(IOException.class, "Error from I/O json content [%s]");
-        handlerException.mute(ParameterNotFoundException.class);
+        this.handlerException = handlerException;
+        return this;
+    }
+    
+    @Override
+    public Command with(CommandHandler commandHandler)
+    {
+        this.commandHandler = commandHandler;
+        return this;
     }
     
     protected HttpEntity getEntity()
@@ -252,8 +260,9 @@ public abstract class AbstractCommand implements CouchCommand
             rev = (String) getProperty(queryable, "_rev");
         return rev;
     }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    
+    @SuppressWarnings(
+    { "rawtypes", "unchecked" })
     protected void injectIdentity(ObjectProxy<?> proxy, Object param, String id, String rev)
     {
         if (param instanceof Map)
@@ -271,8 +280,9 @@ public abstract class AbstractCommand implements CouchCommand
                 proxy.invoke("setRev", rev);
         }
     }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    
+    @SuppressWarnings(
+    { "rawtypes", "unchecked" })
     protected void injectAutoIdentity(ObjectProxy<?> proxy, Object param, String id, String rev, String properName)
     {
         if (param instanceof Map)
@@ -288,7 +298,6 @@ public abstract class AbstractCommand implements CouchCommand
                 proxy.invoke("setId", id);
         }
     }
-
     
     private Object getProperty(Queryable queryable, String name)
     {
@@ -302,6 +311,5 @@ public abstract class AbstractCommand implements CouchCommand
             /* parameter not exixts */}
         return v;
     }
-
     
 }

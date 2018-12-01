@@ -25,16 +25,19 @@ import net.sf.jkniv.whinstone.DefaultCommandHandler;
 public class UpdateHandler extends DefaultCommandHandler
 {
     //private static final Logger         LOG = LoggerFactory.getLogger(UpdateHandler.class);
-
+    
     public UpdateHandler(HttpCookieConnectionAdapter adapterConn)
     {
         super(adapterConn);
         with(this);
     }
-
+    
     @Override
     public Command asCommand()
     {
-        return getConnectionAdapter().asUpdateCommand(queryable);
+        Command c = getConnectionAdapter().asUpdateCommand(queryable);
+        c.with(this);
+        c.with(this.handleableException);
+        return c;
     }
 }

@@ -59,9 +59,9 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * //FIXME unsupported methodbound.set
  * 
  * @author Alisson Gomes
- *
+ * @deprecated No used in for CouchDB Repository
  */
-public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, String>
+class PreparedStatementAdapter<T, R> implements StatementAdapter<T, String>
 {
     private final static Logger LOG = LoggerFactory.getLogger(PreparedStatementAdapter.class);
     private final static Logger  sqlLogger = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();

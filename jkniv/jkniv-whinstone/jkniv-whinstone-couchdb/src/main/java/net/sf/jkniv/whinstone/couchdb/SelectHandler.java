@@ -16,6 +16,9 @@ public class SelectHandler extends DefaultQueryHandler
     @Override
     public Command asCommand()
     {
-        return getConnectionAdapter().asSelectCommand(queryable, overloadResultRow);
+        Command c = getConnectionAdapter().asSelectCommand(queryable, overloadResultRow);
+        c.with(this);
+        c.with(this.handleableException);
+        return c;
     }
 }
