@@ -38,18 +38,18 @@ import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 
 public abstract class DefaultCommandHandler implements CommandHandler
 {
-    private final static Logger     LOG     = LoggerFactory.getLogger(DefaultCommandHandler.class);
-    private static final Assertable notNull = AssertsFactory.getNotNull();
-    protected ConnectionAdapter     adapterConn;
-    protected CommandHandler        handler;
-    protected Command               command;
+    final static Logger     LOG     = LoggerFactory.getLogger(DefaultCommandHandler.class);
+    static final Assertable notNull = AssertsFactory.getNotNull();
+    ConnectionAdapter     adapterConn;
+    CommandHandler        handler;
+    Command               command;
     protected Queryable             queryable;
     protected Sql                   sql;
     protected RepositoryConfig      config;
     protected ResultRow<?, ?>       overloadResultRow;
-    private ObjectProxy<?>          proxyParams;
-    private HandleableException     handleableException;
-    
+    protected HandleableException     handleableException;
+    ObjectProxy<?>          proxyParams;
+
     public DefaultCommandHandler(ConnectionAdapter conn)
     {
         this.adapterConn = conn;
@@ -99,6 +99,7 @@ public abstract class DefaultCommandHandler implements CommandHandler
         return this;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public <T> T run()
     {
@@ -176,6 +177,10 @@ public abstract class DefaultCommandHandler implements CommandHandler
         return this;
     }
     
+    protected ConnectionAdapter getConnectionAdapter()
+    {
+        return this.adapterConn;
+    }
     
     private void loadCallbackEvents()
     {

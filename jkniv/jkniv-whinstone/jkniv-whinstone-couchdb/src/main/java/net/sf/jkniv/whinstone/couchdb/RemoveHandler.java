@@ -1,14 +1,30 @@
+/* 
+ * JKNIV, whinstone one contract to access your database.
+ * 
+ * Copyright (C) 2017, the original author or authors.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software Foundation, Inc., 
+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package net.sf.jkniv.whinstone.couchdb;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.DefaultCommandHandler;
 
 public class RemoveHandler extends DefaultCommandHandler
 {
-    private static final Logger         LOG = LoggerFactory.getLogger(RemoveHandler.class);
+    //private static final Logger         LOG = LoggerFactory.getLogger(RemoveHandler.class);
     
     public RemoveHandler(HttpCookieConnectionAdapter adapterConn)
     {
@@ -19,26 +35,6 @@ public class RemoveHandler extends DefaultCommandHandler
     @Override
     public Command asCommand()
     {
-        return adapterConn.asDeleteCommand(queryable);
+        return getConnectionAdapter().asDeleteCommand(queryable);
     }
-
-    /*
-    public int remove()
-    {
-        if (LOG.isTraceEnabled())
-            LOG.trace("Executing [{}] as remove command with dialect [{}]", queryable, CouchDbDialect.class);
-        
-        if (!queryable.isBoundSql())
-            queryable.bind(deletable);
-        
-        deletable.getValidateType().assertValidate(queryable.getParams());
-        
-        Command command = adapterConn.asDeleteCommand(queryable);
-        int affected = command.execute();
-        
-        if (LOG.isDebugEnabled())
-            LOG.debug("{} records was affected by remove [{}] query", affected, queryable.getName());
-        return affected;
-    }
-    */
 }

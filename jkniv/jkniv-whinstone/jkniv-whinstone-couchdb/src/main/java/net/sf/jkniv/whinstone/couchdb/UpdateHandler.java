@@ -1,16 +1,30 @@
+/* 
+ * JKNIV, whinstone one contract to access your database.
+ * 
+ * Copyright (C) 2017, the original author or authors.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software Foundation, Inc., 
+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package net.sf.jkniv.whinstone.couchdb;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import net.sf.jkniv.sqlegance.Updateable;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.DefaultCommandHandler;
-import net.sf.jkniv.whinstone.Queryable;
 
 public class UpdateHandler extends DefaultCommandHandler
 {
-    private static final Logger         LOG = LoggerFactory.getLogger(UpdateHandler.class);
+    //private static final Logger         LOG = LoggerFactory.getLogger(UpdateHandler.class);
 
     public UpdateHandler(HttpCookieConnectionAdapter adapterConn)
     {
@@ -21,27 +35,6 @@ public class UpdateHandler extends DefaultCommandHandler
     @Override
     public Command asCommand()
     {
-        return adapterConn.asUpdateCommand(queryable);
+        return getConnectionAdapter().asUpdateCommand(queryable);
     }
-
-    
-/*    
-    public int update()
-    {
-        if (LOG.isTraceEnabled())
-            LOG.trace("Executing [{}] as update command with dialect [{}]", queryable, CouchDbDialect.class);
-        
-        if (!queryable.isBoundSql())
-            queryable.bind(updateable);
-        
-        updateable.getValidateType().assertValidate(queryable.getParams());
-        
-        Command command = adapterConn.asUpdateCommand(queryable);
-        int affected = command.execute();
-        
-        if (LOG.isDebugEnabled())
-            LOG.debug("{} records was affected by update [{}] query", affected, queryable.getName());
-        return affected;
-    }
-*/    
 }

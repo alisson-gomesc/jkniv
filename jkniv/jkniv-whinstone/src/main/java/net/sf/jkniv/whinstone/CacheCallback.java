@@ -33,13 +33,9 @@ class CacheCallback
     static CallbackMethods get(Class<?> clazz, SqlType sqlType)
     {
         String key = buildKey(clazz, sqlType);
-        
-        
         CallbackMethods callbacks = cache.get(key);
-        
         if (callbacks == null)
             return CallbackMethods.EMPTY;
-        
         return callbacks;
     }
 
@@ -57,5 +53,4 @@ class CacheCallback
     {
         return (clazz != null ? clazz.getName() + "." + sqlType : sqlType.name());
     }
-
 }
