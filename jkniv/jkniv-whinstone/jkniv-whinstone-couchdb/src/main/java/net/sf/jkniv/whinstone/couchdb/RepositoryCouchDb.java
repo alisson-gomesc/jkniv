@@ -188,9 +188,9 @@ class RepositoryCouchDb implements Repository
     }
 
     @Override
-    public <T, R> T get(Queryable queryable, ResultRow<T, R> resultRow)
+    public <T, R> T get(Queryable queryable, ResultRow<T, R> customResultRow)
     {
-        return handleGet(queryable, resultRow);
+        return handleGet(queryable, customResultRow);
         //throw new UnsupportedOperationException("CouchDb Repository doesn't implement this method yet!");
         //        notNull.verify(queryable, resultRow);
         //        if (isTraceEnabled)
@@ -322,9 +322,9 @@ class RepositoryCouchDb implements Repository
     }
 
     @Override
-    public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> customResultRow)
     {
-        return handleList(queryable, overloadResultRow);        
+        return handleList(queryable, customResultRow);        
         /*
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as list command", q);

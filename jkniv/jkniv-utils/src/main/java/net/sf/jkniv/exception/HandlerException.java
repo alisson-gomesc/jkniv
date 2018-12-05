@@ -189,11 +189,10 @@ public class HandlerException implements HandleableException
                     if (caught != null)//  TODO alternative method when caught is null
                         theException.setStackTrace(caught.getStackTrace());
                 }
-                
             }
         }
         else
-            LOG.info("Be careful the Handler exception is mute for configured exceptions [{}]",
+            LOG.warn("Be careful the Handler exception is mute for configured exceptions [{}]",
                     caught.getClass().getName());
         return theException;
     }

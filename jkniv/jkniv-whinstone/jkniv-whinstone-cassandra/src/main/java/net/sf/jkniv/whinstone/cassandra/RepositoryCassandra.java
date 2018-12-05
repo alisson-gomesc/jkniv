@@ -148,9 +148,9 @@ class RepositoryCassandra implements Repository
     }
     
     @Override
-    public <T, R> T get(Queryable queryable, ResultRow<T, R> resultRow)
+    public <T, R> T get(Queryable queryable, ResultRow<T, R> customResultRow)
     {
-        return get(queryable, null, resultRow);
+        return get(queryable, null, customResultRow);
     }
     
     @Override
@@ -253,12 +253,12 @@ class RepositoryCassandra implements Repository
     
     @Override
     @SuppressWarnings("unchecked")
-    public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> customResultRow)
     {
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as list command", queryable);
 
-        List<T> list = list(queryable, null, overloadResultRow);
+        List<T> list = list(queryable, null, customResultRow);
         
         if (isDebugEnabled)
             LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
@@ -267,7 +267,7 @@ class RepositoryCassandra implements Repository
     }
     
     @SuppressWarnings("unchecked")
-    private <T, R> List<T> list(Queryable q, Class<T> overloadReturnType, ResultRow<T, R> overloadResultRow)
+    private <T, R> List<T> list(Queryable q, Class<T> overloadReturnType, ResultRow<T, R> customResultRow)
     {
         Queryable queryable = QueryFactory.clone(q, overloadReturnType);
         
@@ -287,7 +287,7 @@ class RepositoryCassandra implements Repository
         
         if (entry == null)
         {
-            Command command = adapterConn.asSelectCommand(queryable, overloadResultRow);
+            Command command = adapterConn.asSelectCommand(queryable, customResultRow);
             list = command.execute();
             if (selectable.hasCache() && !list.isEmpty())
                 selectable.getCache().put(queryable, list);

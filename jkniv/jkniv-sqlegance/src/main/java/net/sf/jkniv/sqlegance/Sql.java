@@ -32,8 +32,9 @@ import net.sf.jkniv.sqlegance.transaction.Isolation;
 /**
  * This interface represent Structured Query Language (SQL and some derivations like JPQL, HQL, JPQL, CQL...) 
  * in XML file, each node at XML file is represented by this class. 
+ * <p>
  * Those queries can be dynamic or static and to recover a dynamic query (built on-the-fly) is necessary to
- * pass the parameters that can be mounted.
+ * pass the parameters that can be mounted dynamically.
  * 
  * @author Alisson Gomes
  * @since 0.6.0

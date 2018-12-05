@@ -37,7 +37,6 @@ import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 
 public class CouchDbRepositoryBulkAddTest extends BaseJdbc
 {
-    
     @Test
     public void whenAddingBulkDocumentsWithouId()
     {

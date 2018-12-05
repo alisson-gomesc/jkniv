@@ -467,7 +467,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         */
     }
     
-    public <T, R> T get(Queryable queryName, ResultRow<T, R> resultRow)
+    public <T, R> T get(Queryable queryName, ResultRow<T, R> customResultRow)
     {
         throw new UnsupportedOperationException("Cannot iterate over Jpa query. Not implemented.");
     }
@@ -515,9 +515,9 @@ class RepositoryJpa implements RepositoryJpaExtend
         return ret;
     }
     
-    public <T, R> List<T> list(Queryable queryName, ResultRow<T, R> resultRow)
+    public <T, R> List<T> list(Queryable queryName, ResultRow<T, R> customResultRow)
     {
-        notNull.verify(resultRow);
+        notNull.verify(customResultRow);
         throw new UnsupportedOperationException("Cannot iterate over Jpa query. Not implemented.");
     }
     

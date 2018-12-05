@@ -72,7 +72,7 @@ public interface Repository
     /**
      * Get one object instance from repository using a query.
      * @param queryable The Query name with yours parameters
-     * @param resultRow Customized extractor to process each row from query
+     * @param customResultRow Customized extractor to process each row from query
      * @param <T> type of object returned
      * @param <R> raw type from repository API (Like {@code ResultSet} from JDBC)
      * @return Return the object {@code returnType} that matches with query. A null reference is
@@ -80,7 +80,7 @@ public interface Repository
      * @throws QueryNotFoundException when not found the query name
      * @throws NonUniqueResultException when select or select with group by recovery more one objects
      */
-    <T,R> T get(Queryable queryable, ResultRow<T,R> resultRow);
+    <T,R> T get(Queryable queryable, ResultRow<T,R> customResultRow);
 
     /**
      * Get one object instance from repository using a {@code object} as parameter.
@@ -167,14 +167,14 @@ public interface Repository
     /**
      * Retrieve a set of objects {@code T} from repository using a query.
      * @param queryable The Query name with yours parameters
-     * @param resultRow Customized extractor to process each row from query
+     * @param customResultRow Customized extractor to process each row from query
      * @param <T> type of object returned
      * @param <R> raw type from repository API (Like {@code ResultSet} from JDBC)
      * @return Return a set of object that matches with query. A empty list is
      *         returned if the query no match anyone object.
      * @throws QueryNotFoundException when not found the query name
      */
-    <T,R> List<T> list(Queryable queryable, ResultRow<T, R> resultRow);
+    <T,R> List<T> list(Queryable queryable, ResultRow<T, R> customResultRow);
 
     /**
      * Add a new object to repository.

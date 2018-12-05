@@ -28,9 +28,25 @@ import net.sf.jkniv.sqlegance.SqlType;
 
 class CacheCallback
 {
-    private static Map<String, CallbackMethods> cache = new HashMap<String, CallbackMethods>();
-    
-    static CallbackMethods get(Class<?> clazz, SqlType sqlType)
+    private static Map<String, CallbackMethods> cachePreMethods = new HashMap<String, CallbackMethods>();
+    private static Map<String, CallbackMethods> cachePostMethods = new HashMap<String, CallbackMethods>();
+    //private static Map<String, CallbackMethods> cachePostCommitMethods = new HashMap<String, CallbackMethods>();
+    //sprivate static Map<String, CallbackMethods> cachePostRollbackMethods = new HashMap<String, CallbackMethods>();
+
+    static CallbackMethods getPost(Class<?> clazz, SqlType sqlType)
+    {
+        return handleGet(clazz, sqlType, cachePostMethods);
+    }
+
+    static CallbackMethods getPre(Class<?> clazz, SqlType sqlType)
+    {
+        return handleGet(clazz, sqlType, cachePreMethods);
+    }
+
+    private static CallbackMethods handleGet(
+            Class<?> clazz, 
+            SqlType sqlType, 
+            final Map<String, CallbackMethods> cache)
     {
         String key = buildKey(clazz, sqlType);
         CallbackMethods callbacks = cache.get(key);
@@ -39,7 +55,26 @@ class CacheCallback
         return callbacks;
     }
 
-    static CallbackMethods put(Class<?> clazz, SqlType sqlType, List<Method> methods)
+    static CallbackMethods putPost(Class<?> clazz, SqlType sqlType, List<Method> methods)
+    {
+        return handlePut(clazz, sqlType, methods, cachePostMethods);
+    }
+
+    static CallbackMethods putPostCommit(Class<?> clazz, SqlType sqlType, List<Method> methods)
+    {
+        return handlePut(clazz, sqlType, methods, cachePostMethods);
+    }
+
+    static CallbackMethods putPre(Class<?> clazz, SqlType sqlType, List<Method> methods)
+    {
+        return handlePut(clazz, sqlType, methods, cachePreMethods);
+    }
+
+    private static CallbackMethods handlePut(
+            Class<?> clazz, 
+            SqlType sqlType, 
+            List<Method> methods,
+            final Map<String, CallbackMethods> cache)
     {
         String key = buildKey(clazz, sqlType);
         CallbackMethods callbacks = new CallbackMethods(sqlType, methods);
@@ -49,6 +84,7 @@ class CacheCallback
         return old;
     }
     
+
     private static String buildKey(Class<?> clazz, SqlType sqlType)
     {
         return (clazz != null ? clazz.getName() + "." + sqlType : sqlType.name());

@@ -20,9 +20,11 @@
 package net.sf.jkniv.whinstone;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,17 +40,19 @@ import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 
 public abstract class DefaultCommandHandler implements CommandHandler
 {
-    final static Logger           LOG     = LoggerFactory.getLogger(DefaultCommandHandler.class);
-    static final Assertable       notNull = AssertsFactory.getNotNull();
-    ConnectionAdapter             adapterConn;
-    CommandHandler                handler;
-    Command                       command;
-    protected Queryable           queryable;
-    protected Sql                 sql;
-    protected RepositoryConfig    config;
-    protected ResultRow<?, ?>     overloadResultRow;
-    protected HandleableException handleableException;
-    ObjectProxy<?>                proxyParams;
+    final static Logger                              LOG              = LoggerFactory
+            .getLogger(DefaultCommandHandler.class);
+    static final Assertable                          notNull          = AssertsFactory.getNotNull();
+    ConnectionAdapter                                adapterConn;
+    CommandHandler                                   handler;
+    Command                                          command;
+    ObjectProxy<?>                                   proxyParams;
+    protected Queryable                              queryable;
+    protected Sql                                    sql;
+    protected RepositoryConfig                       config;
+    protected ResultRow<?, ?>                        overloadResultRow;
+    protected HandleableException                    handleableException;
+    private final static Map<String, ObjectCallback> OBJECTS_CALLBACKS = new HashMap<String, ObjectCallback>();
     
     public DefaultCommandHandler(ConnectionAdapter conn)
     {
@@ -129,14 +133,23 @@ public abstract class DefaultCommandHandler implements CommandHandler
         return t;
     }
     
+    protected ConnectionAdapter getConnectionAdapter()
+    {
+        return this.adapterConn;
+    }
+    
     @Override
     public CommandHandler preCallback()
     {
         if (proxyParams != null)
         {
-            CallbackMethods preCallbackMethods = CacheCallback.get(proxyParams.getTargetClass(), sql.getSqlType());
-            for (Method m : preCallbackMethods.getCallbacks())
-                proxyParams.invoke(m);
+            ObjectCallback objectCallback = OBJECTS_CALLBACKS.get(proxyParams.getTargetClass().getName());
+            if (objectCallback != null)
+            {
+                Set<Method> methods = objectCallback.getPreMethods(sql.getSqlType());
+                for (Method m : methods)
+                    proxyParams.invoke(m);
+            }
         }
         return this;
     }
@@ -146,9 +159,13 @@ public abstract class DefaultCommandHandler implements CommandHandler
     {
         if (proxyParams != null)
         {
-            CallbackMethods preCallbackMethods = CacheCallback.get(proxyParams.getTargetClass(), sql.getSqlType());
-            for (Method m : preCallbackMethods.getCallbacks())
-                proxyParams.invoke(m);
+            ObjectCallback objectCallback = OBJECTS_CALLBACKS.get(proxyParams.getTargetClass().getName());
+            if (objectCallback != null)
+            {
+                Set<Method> methods = objectCallback.getPostMethods(sql.getSqlType());
+                for (Method m : methods)
+                    proxyParams.invoke(m);
+            }
         }
         return this;
     }
@@ -177,102 +194,109 @@ public abstract class DefaultCommandHandler implements CommandHandler
         return this;
     }
     
-    protected ConnectionAdapter getConnectionAdapter()
-    {
-        return this.adapterConn;
-    }
-    
     private void loadCallbackEvents()
     {
         if (proxyParams == null)
             return;
         
-        CallbackMethods callbacks = CacheCallback.get(proxyParams.getTargetClass(), SqlType.SELECT);
-        if (callbacks != CallbackMethods.EMPTY)
+        CallbackMethods preCallbacks = CacheCallback.getPre(proxyParams.getTargetClass(), SqlType.SELECT);
+        if (preCallbacks != CallbackMethods.EMPTY)
             return;// target class already loaded
             
+        ObjectCallback objectCallback = new ObjectCallback(proxyParams.getTargetClass());
+
         List<Method> precallbacks = proxyParams.getAnnotationMethods(PreCallBack.class);
         List<Method> postcallbacks = proxyParams.getAnnotationMethods(PostCallBack.class);
-        
-        List<Method> preAdd = new ArrayList<Method>();
-        List<Method> postAdd = new ArrayList<Method>();
-        List<Method> preSelect = new ArrayList<Method>();
-        List<Method> postSelect = new ArrayList<Method>();
-        List<Method> preUpdate = new ArrayList<Method>();
-        List<Method> postUpdate = new ArrayList<Method>();
-        List<Method> preRemove = new ArrayList<Method>();
-        List<Method> postRemove = new ArrayList<Method>();
-        List<Method> postAddException = new ArrayList<Method>();
-        List<Method> postAddCommit = new ArrayList<Method>();
-        List<Method> postSelectException = new ArrayList<Method>();
-        List<Method> postUpdateException = new ArrayList<Method>();
-        List<Method> postUpdateCommit = new ArrayList<Method>();
-        List<Method> postRemoveException = new ArrayList<Method>();
-        List<Method> postRemoveCommit = new ArrayList<Method>();
-        
+        /*
+        Set<Method> preAdd = new HashSet<Method>();
+        Set<Method> postAdd = new HashSet<Method>();
+        Set<Method> preSelect = new HashSet<Method>();
+        Set<Method> postSelect = new HashSet<Method>();
+        Set<Method> preUpdate = new HashSet<Method>();
+        Set<Method> postUpdate = new HashSet<Method>();
+        Set<Method> preRemove = new HashSet<Method>();
+        Set<Method> postRemove = new HashSet<Method>();
+        Method postAddCommit = null;
+        Method postUpdateCommit = null;
+        Method postRemoveCommit = null;
+        Method postSelectException = null;
+        Method postAddException = null;
+        Method postUpdateException = null;
+        Method postRemoveException = null;
+        */
         for (Method m : precallbacks)
         {
             PreCallBack precallback = m.getAnnotation(PreCallBack.class);
             for (CallbackScope scope : precallback.scope())
             {
                 if (scope.isSelect())
-                    preSelect.add(m);
+                    objectCallback.addPreMethod(SqlType.SELECT, m);
                 else if (scope.isAdd())
-                    preAdd.add(m);
+                    objectCallback.addPreMethod(SqlType.INSERT, m);//preAdd.add(m);
                 else if (scope.isUpdate())
-                    preUpdate.add(m);
+                    objectCallback.addPreMethod(SqlType.UPDATE, m);//preUpdate.add(m);
                 else if (scope.isRemove())
-                    preRemove.add(m);
+                    objectCallback.addPreMethod(SqlType.DELETE, m);//preRemove.add(m);
             }
         }
         for (Method m : postcallbacks)
         {
             PostCallBack postcallback = m.getAnnotation(PostCallBack.class);
             List<CallbackScope> scopes = Arrays.asList(postcallback.scope());
-            boolean containsException = false;//scopes.contains(CallbackScope.EXCEPTION);
-            boolean containsCommit = false;//scopes.contains(CallbackScope.COMMIT);
+            boolean containsException = scopes.contains(CallbackScope.EXCEPTION);
+            boolean containsCommit = scopes.contains(CallbackScope.COMMIT);
             for (CallbackScope scope : postcallback.scope())
             {
                 if (containsCommit)
                 {
                     if (scope.isAdd())
-                        postAddCommit.add(m);
+                        objectCallback.addCommitMethod(SqlType.INSERT, m);//postAddCommit = m;
                     else if (scope.isUpdate())
-                        postUpdateCommit.add(m);
+                        objectCallback.addCommitMethod(SqlType.UPDATE, m);//postUpdateCommit = m;
                     else if (scope.isRemove())
-                        postRemoveCommit.add(m);
+                        objectCallback.addCommitMethod(SqlType.DELETE, m);//postRemoveCommit = m;
                 }
                 else if (containsException)
                 {
                     if (scope.isSelect())
-                        postSelectException.add(m);
+                        objectCallback.addExceptionMethod(SqlType.SELECT, m);//postSelectException = m;
                     else if (scope.isAdd())
-                        postAddException.add(m);
+                        objectCallback.addExceptionMethod(SqlType.INSERT, m);//postAddException = m;
                     else if (scope.isUpdate())
-                        postUpdateException.add(m);
+                        objectCallback.addExceptionMethod(SqlType.UPDATE, m);//postUpdateException = m;
                     else if (scope.isRemove())
-                        postRemoveException.add(m);
-                    
+                        objectCallback.addExceptionMethod(SqlType.DELETE, m);//postRemoveException = m;
                 }
                 else if (scope.isSelect())
-                    postSelect.add(m);
+                    objectCallback.addPostMethod(SqlType.SELECT, m);//postSelect.add(m);
                 else if (scope.isAdd())
-                    postAdd.add(m);
+                    objectCallback.addPostMethod(SqlType.INSERT, m);//postAdd.add(m);
                 else if (scope.isUpdate())
-                    postUpdate.add(m);
+                    objectCallback.addPostMethod(SqlType.UPDATE, m);//postUpdate.add(m);
                 else if (scope.isRemove())
-                    postRemove.add(m);
+                    objectCallback.addPostMethod(SqlType.DELETE, m);//postRemove.add(m);
             }
         }
-        CacheCallback.put(proxyParams.getTargetClass(), SqlType.SELECT, preSelect);
-        CacheCallback.put(proxyParams.getTargetClass(), SqlType.INSERT, preAdd);
-        CacheCallback.put(proxyParams.getTargetClass(), SqlType.UPDATE, preUpdate);
-        CacheCallback.put(proxyParams.getTargetClass(), SqlType.DELETE, preRemove);
+        /*
+        objectCallback.addPreMethod(SqlType.SELECT, preSelect);
+        objectCallback.addPreMethod(SqlType.INSERT, preAdd);
+        objectCallback.addPreMethod(SqlType.UPDATE, preUpdate);
+        objectCallback.addPreMethod(SqlType.DELETE, preRemove);
+        objectCallback.addPostMethod(SqlType.SELECT, postSelect);
+        objectCallback.addPostMethod(SqlType.INSERT, postAdd);
+        objectCallback.addPostMethod(SqlType.UPDATE, postUpdate);
+        objectCallback.addPostMethod(SqlType.DELETE, postRemove);
         
-        CacheCallback.put(proxyParams.getTargetClass(), SqlType.SELECT, postSelect);
-        CacheCallback.put(proxyParams.getTargetClass(), SqlType.INSERT, postAdd);
-        CacheCallback.put(proxyParams.getTargetClass(), SqlType.UPDATE, postUpdate);
-        CacheCallback.put(proxyParams.getTargetClass(), SqlType.DELETE, postRemove);
+        objectCallback.addCommitMethod(SqlType.INSERT, postAddCommit);
+        objectCallback.addCommitMethod(SqlType.UPDATE, postUpdateCommit);
+        objectCallback.addCommitMethod(SqlType.DELETE, postRemoveCommit);
+
+        objectCallback.addExceptionMethod(SqlType.SELECT, postAddException);
+        objectCallback.addExceptionMethod(SqlType.INSERT, postAddException);
+        objectCallback.addExceptionMethod(SqlType.UPDATE, postUpdateException);
+        objectCallback.addExceptionMethod(SqlType.DELETE, postRemoveException);
+        */
+        OBJECTS_CALLBACKS.put(proxyParams.getTargetClass().getName(), objectCallback);
     }
     
 }

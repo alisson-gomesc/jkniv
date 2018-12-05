@@ -309,9 +309,9 @@ class RepositoryJdbc implements Repository
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> resultRow)
+    public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> customResultRow)
     {
-        return list(queryable, null, (ResultRow<T, ResultSet>) resultRow);
+        return list(queryable, null, (ResultRow<T, ResultSet>) customResultRow);
     }
 
     @Override
@@ -320,7 +320,7 @@ class RepositoryJdbc implements Repository
         return list(queryable, returnType, null);
     }
     
-    private <T,R> List<T> list(Queryable queryable, Class<T> returnType, ResultRow<T, ResultSet> resultRow)
+    private <T,R> List<T> list(Queryable queryable, Class<T> returnType, ResultRow<T, ResultSet> customResultRow)
     {
         notNull.verify(queryable);
         if (isTraceEnabled)
@@ -332,7 +332,7 @@ class RepositoryJdbc implements Repository
         if (!queryable.isBoundSql())
             queryable.bind(isql);
         
-        List<T> list = currentWork().select(queryable, returnType, resultRow);
+        List<T> list = currentWork().select(queryable, returnType, customResultRow);
         
         if (isDebugEnabled)
             LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(), queryable.getTotal());

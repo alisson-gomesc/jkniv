@@ -25,36 +25,51 @@ package net.sf.jkniv.whinstone;
 public enum CallbackScope
 {
     /**
-     * Value that means that a callback method is invoked before {@code add} {@link Repository#add(Queryable)}
+     * Value that means that a callback method is invoked 
+     * before {@code add} {@link Repository#add(Queryable)}
      * or {@link Repository#add(Object)} methods
      */
     ADD,
     /**
-     * Value that means that a callback method is invoked before {@code update} {@link Repository#update(Queryable)}
+     * Value that means that a callback method is invoked 
+     * before {@code update} {@link Repository#update(Queryable)}
      * or {@link Repository#update(Object)} methods
      */
     UPDATE,
     /**
-     * Value that means that a callback method is invoked before {@code remove} {@link Repository#remove(Queryable)}
+     * Value that means that a callback method is invoked 
+     * before {@code remove} {@link Repository#remove(Queryable)}
      * or {@link Repository#remove(Object)} methods
      */
     REMOVE,
     /**
-     * Value that means that a callback method is invoked before {@code get} and {@code list} methods
-     * like: {@link Repository#get(Queryable)}, {@link Repository#get(Object)}, {@link Repository#list(Queryable)}
+     * Value that means that a callback method is invoked 
+     * before {@code get} and {@code list} methods
+     * like: {@link Repository#get(Queryable)}, 
+     * {@link Repository#get(Object)}, {@link Repository#list(Queryable)}
      * etc.
      */
     SELECT,
-    /*
-     * Value that means that a callback method is invoked after an {@code exception} is generate, this annotation
-     * must be followed with another scope like {@code ADD}, {@code UPDATE}, {@code REMOVE} or {@code SELECT}.
+    /**
+     * Value that means that a callback method is invoked 
+     * after all columns from a tuple are setted with all select 
+     * methods like: {@link Repository#list(Queryable)}, {@link Repository#get(Queryable)}
      */
-    //EXCEPTION,
-    /*
-     * Value that means that a callback method is invoked after an successful {@code COMMIT} is execute, this annotation
-     * must be followed with another scope like {@code ADD}, {@code UPDATE}, {@code REMOVE} or {@code SELECT}.
+    LOAD,
+    /**
+     * Value that means that a callback method is invoked 
+     * after an successful {@code COMMIT} is execute, this annotation
+     * must be followed with another scope like {@code ADD}, 
+     * {@code UPDATE}, {@code REMOVE} or {@code SELECT}.
      */
-    //COMMIT,
+    COMMIT,
+    /**
+     * Value that means that a callback method is invoked 
+     * after an {@code exception} is generate, this annotation
+     * must be followed with another scope like {@code ADD}, 
+     * {@code UPDATE}, {@code REMOVE} or {@code SELECT}.
+     */
+    EXCEPTION,
     /**
      * Value that indicates that no callback method is invoked.
      */
@@ -79,7 +94,7 @@ public enum CallbackScope
     {
         return (this == SELECT ? true : false);
     }
-    /*
+    
     public boolean isException()
     {
         return (this == CallbackScope.EXCEPTION ? true : false);
@@ -89,5 +104,9 @@ public enum CallbackScope
     {
         return (this == COMMIT ? true : false);
     }
-    */    
+
+    public boolean isLoad()
+    {
+        return (this == LOAD ? true : false);
+    }
 }
