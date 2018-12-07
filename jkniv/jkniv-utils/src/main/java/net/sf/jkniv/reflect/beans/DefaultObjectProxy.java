@@ -482,7 +482,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         {
             if (method.isAnnotationPresent(annotation))
             {
-                Annotation annotInstance = method.getAnnotation(annotation);
+                //Annotation annotInstance = method.getAnnotation(annotation);
                 methods.add(method);
             }
         }

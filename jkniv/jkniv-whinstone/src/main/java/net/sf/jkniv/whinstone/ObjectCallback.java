@@ -26,16 +26,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.jkniv.sqlegance.SqlType;
 
 class ObjectCallback
 {
+    private final static Logger LOG = LoggerFactory.getLogger(ObjectCallback.class);
+    final static ObjectCallback EMPTY = new ObjectCallback(String.class);
     private Class<?> clazz;
     private Map<SqlType, Set<Method>> preMethods;
     private Map<SqlType, Set<Method>> postMethods;
     private Map<SqlType, Method> commitMethod;
     private Map<SqlType, Method> exceptionMethod;
-    final static ObjectCallback EMPTY = new ObjectCallback(String.class);
     
     static {
         
@@ -57,6 +61,7 @@ class ObjectCallback
         EMPTY.exceptionMethod.put(SqlType.UPDATE, null);
         EMPTY.exceptionMethod.put(SqlType.DELETE, null);
     }
+    
     public ObjectCallback(Class<?> clazz)
     {
         this.clazz = clazz;
@@ -133,7 +138,9 @@ class ObjectCallback
 
     public void addCommitMethod(SqlType sqlType, Method method)
     {
-        this.commitMethod.put(sqlType, method);
+        Method m = this.commitMethod.put(sqlType, method);
+        if (m != null)
+            LOG.warn("There are more one callback method to [{}] after commit. {} was replaced for {}", sqlType, m, method);
     }
 
     public Method getExceptionMethod(SqlType sqlType)
@@ -143,7 +150,9 @@ class ObjectCallback
 
     public void addExceptionMethod(SqlType sqlType, Method method)
     {
-        this.exceptionMethod.put(sqlType, method);
+        Method m = this.exceptionMethod.put(sqlType, method);
+        if (m != null)
+            LOG.warn("There are more one callback method to [{}] after exception. {} was replaced for {}", sqlType, m, method);
     }
 
     @Override

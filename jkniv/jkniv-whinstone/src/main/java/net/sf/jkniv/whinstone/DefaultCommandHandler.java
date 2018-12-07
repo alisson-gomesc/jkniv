@@ -199,11 +199,11 @@ public abstract class DefaultCommandHandler implements CommandHandler
         if (proxyParams == null)
             return;
         
-        CallbackMethods preCallbacks = CacheCallback.getPre(proxyParams.getTargetClass(), SqlType.SELECT);
-        if (preCallbacks != CallbackMethods.EMPTY)
+        ObjectCallback objectCallback = OBJECTS_CALLBACKS.get(proxyParams.getTargetClass().getName());
+        if (objectCallback != null)
             return;// target class already loaded
             
-        ObjectCallback objectCallback = new ObjectCallback(proxyParams.getTargetClass());
+        objectCallback = new ObjectCallback(proxyParams.getTargetClass());
 
         List<Method> precallbacks = proxyParams.getAnnotationMethods(PreCallBack.class);
         List<Method> postcallbacks = proxyParams.getAnnotationMethods(PostCallBack.class);
