@@ -158,7 +158,7 @@ class RepositoryJdbc implements Repository
         this.repositoryConfig.add(props);
         
         if (ds == null)
-            ds = lookupDataSource(repositoryConfig.getJndiDataSource());
+            ds = repositoryConfig.lookup();
         
         String classNameJdbcAdapter = repositoryConfig.getProperty(RepositoryProperty.JDBC_ADAPTER_FACTORY.key());
         
@@ -571,25 +571,6 @@ class RepositoryJdbc implements Repository
         if (type == TransactionType.GLOBAL ||
             type == TransactionType.EJB)
             throw new UnsupportedTransactionException("GLOBAL or EJB transaction unsupported");
-    }
-    
-    private DataSource lookupDataSource(String jndi)
-    {
-        DataSource ds = null;
-        Context ctx = null;
-        try
-        {
-            //ctx = (Context) new InitialContext().lookup("java:comp/env");
-            ctx = new InitialContext();
-            if (LOG.isDebugEnabled())
-                LOG.debug("Lookuping JNDI resource with: new InitialContext().lookup(\"{}\") ...", jndi);
-            ds = (DataSource) ctx.lookup(jndi);
-        }
-        catch (NamingException ne)
-        {
-            LOG.error("NamingException, cannot lookup jndi datasource [" + repositoryConfig.getJndiDataSource() + "]: " + ne.getMessage());
-        }
-        return ds;
     }
     
     private void showMetadata()

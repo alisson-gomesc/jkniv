@@ -20,6 +20,12 @@
 package net.sf.jkniv.sqlegance.builder;
 
 import java.util.Map.Entry;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -387,6 +393,26 @@ public class RepositoryConfig
     public String getProperty(String proper)
     {
         return properties.getProperty(proper);
+    }
+    
+    public DataSource lookup()
+    {
+        String jndi = getJndiDataSource();
+        DataSource ds = null;
+        Context ctx = null;
+        try
+        {
+            //ctx = (Context) new InitialContext().lookup("java:comp/env");
+            ctx = new InitialContext();
+            if (LOG.isDebugEnabled())
+                LOG.debug("Lookuping JNDI resource with: new InitialContext().lookup(\"{}\") ...", jndi);
+            ds = (DataSource) ctx.lookup(jndi);
+        }
+        catch (NamingException ne)
+        {
+            LOG.error("NamingException, cannot lookup jndi datasource [" + jndi + "]: " + ne.getMessage());
+        }
+        return ds;
     }
     
     private boolean isEmpty(String value)

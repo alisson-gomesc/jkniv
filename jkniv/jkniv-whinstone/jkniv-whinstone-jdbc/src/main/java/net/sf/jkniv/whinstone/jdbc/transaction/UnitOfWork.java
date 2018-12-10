@@ -209,7 +209,7 @@ public class UnitOfWork implements Work
         finally
         {
             connectionFactory.close(rs);
-            connectionFactory.close(stmt);
+            connectionFactory.close(stmt);// FIXME StatementAdapter doesn't have instance setter in stmt
             connectionFactory.close(adapterConn);
         }
         return list;

@@ -1,4 +1,4 @@
-package be.jkniv.whinstone.tck.config;
+package be.jkniv.whinstone.tck.datasource;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
