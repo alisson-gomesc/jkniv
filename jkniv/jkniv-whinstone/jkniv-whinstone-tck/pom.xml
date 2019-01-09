@@ -49,10 +49,27 @@
       <artifactId>derby</artifactId>
     </dependency>
     <dependency>
-    <groupId>org.apache.derby</groupId>
-    <artifactId>derbyclient</artifactId>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbyclient</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>fluent-hc</artifactId>
+      <version>4.5.5</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${version.jackson}</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

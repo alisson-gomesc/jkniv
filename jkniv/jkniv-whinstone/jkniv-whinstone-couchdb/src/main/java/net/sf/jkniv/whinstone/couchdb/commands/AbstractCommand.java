@@ -41,11 +41,13 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
+import net.sf.jkniv.sqlegance.QueryNotFoundException;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.NoCommandHandler;
 import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.params.ParameterException;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 
 /**
@@ -79,7 +81,7 @@ public abstract class AbstractCommand implements CouchCommand
     public AbstractCommand(String url, String body)
     {
         // TODO design exception message to handler exception
-        //this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
+        this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
         this.url = url;
         this.body = body;
         this.method = HttpMethod.GET;

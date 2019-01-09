@@ -21,6 +21,9 @@ package net.sf.jkniv.whinstone.params;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
 
+/**
+ * This exception is thrown when an illegal parameter is used that cause a problem with a query.
+ */
 public class ParameterException extends RepositoryException
 {
     private static final long serialVersionUID = 5911476699510280411L;

@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import net.sf.jkniv.domain.flat.AuthorFlat;
@@ -134,4 +135,12 @@ public class QueryFactoryTest
         assertThat(q.getOffset(), is(0));
     }
     
+    // FIXME The method of(String, Object[]) is ambiguous for the type QueryFactory
+    @Test @Ignore("The method of(String, Object[]) is ambiguous for the type QueryFactory")
+    public void whenAsQueryableWithPaginate()
+    {
+        QueryFactory.of("authors-page-override", 0, 3);
+        //QueryFactory.of("authors-page-override", 0, 3, "id", 1);
+        //QueryFactory.of("authors-page-override", 0, 3, "id", 1);
+    }
 }

@@ -1,0 +1,41 @@
+{
+  "name": "Carlos Drummond de Andrade",
+  "nationality": "BR",
+  "books": [
+    {
+     "isbn": "9788535920598",
+     "name": "Claro Enigma",
+     "published": 1951,
+     "lastView": "2017-04-10T12:10:00.000-0300",
+     "visualization": 0
+    },
+        {
+     "isbn": "9788535921182",
+     "name": "Sentimento do Mundo",
+     "published": 1940,
+     "lastView": "2016-04-20T11:05:10.800-0300",
+     "visualization": 0
+    },
+        {
+     "isbn": "9788535926019",
+     "name": "A Lição do Amigo",
+     "published": 1988,
+     "lastView": "2017-05-20T08:10:00.000-0300",
+     "visualization": 0
+    },
+    {
+     "isbn": "9788535922837",
+     "name": "Alguma Poesia",
+     "published": 1930,
+     "lastView": "2017-05-20T08:10:00.000-0300",
+     "visualization": 0
+    },
+    {
+     "isbn": "9788535921205",
+     "name": "José",
+     "published": 1942,
+     "lastView": "2017-05-20T08:10:00.000-0300",
+     "visualization": 0
+    }
+  ]
+}

@@ -17,13 +17,13 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.couchdb.jndi;
+package be.jkniv.whinstone.tck.jndi;
 
 import javax.naming.NamingException;
 
 import org.springframework.mock.jndi.SimpleNamingContextBuilder;
 
-import net.sf.jkniv.whinstone.couchdb.BaseJdbc;
+import be.jkniv.whinstone.tck.BaseJdbc;
 
 public class JndiCreator
 {

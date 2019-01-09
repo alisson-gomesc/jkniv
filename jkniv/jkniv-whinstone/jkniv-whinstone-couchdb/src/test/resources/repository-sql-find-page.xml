@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <statements 
-  context="whin-couchdb"
   xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
        http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
-    
-  <select id="authors-by-name">
+  
+
+  <select id="authors-page">
     {
-     "selector": {"name": :name }
+     "selector": {"nationality": {"$in": :nations}}
     }
   </select>
+
+  <select id="authors-page-override">
+    {
+     "selector": {"nationality": {"$in": :nations}},
+     "limit": 3,
+     "skip": 1,
+     "bookmark": "2"
+    }
+  </select>
+
 </statements>

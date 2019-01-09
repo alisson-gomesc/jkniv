@@ -63,4 +63,40 @@ public class StringTest
     }
 
     
+    @Test 
+    public void whenInstanceNullReference()
+    {
+        String s = null;
+        Integer i = null;
+        newString(s);
+        newInteger(i);
+        assertThat(s, nullValue());
+        assertThat(i, nullValue());
+    }
+
+    @Test 
+    public void whenInstanceNonNullReference()
+    {
+        String s = "A";
+        Integer i = 1;
+        newString(s);
+        newInteger(i);
+        assertThat(s, notNullValue());
+        assertThat(i, notNullValue());
+        assertThat(s, is("A"));
+        assertThat(i, is(1));
+    }
+
+    private void newString(String s)
+    {
+        s = "B";
+        assertThat(s, is("B"));
+    }
+
+    private void newInteger(Integer i)
+    {
+        i = Integer.valueOf(2);
+        assertThat(i, is(2));
+    }
+
 }

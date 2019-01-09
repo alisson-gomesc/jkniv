@@ -85,7 +85,6 @@ public class FindCommand extends AbstractCommand implements CouchCommand
                 else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
                     returnType = queryable.getDynamicSql().getReturnTypeAsClass();
 
-                
                 answer = JsonMapper.mapper(json, FindAnswer.class);
                 if (answer.getWarning() != null)
                     LOG.warn("Query [{}] warnning message: {}", queryable.getName(), answer.getWarning());
@@ -102,6 +101,14 @@ public class FindCommand extends AbstractCommand implements CouchCommand
                 }
                 else
                     list =  answer.getDocs();
+                
+                if (queryable.isPaging())
+                {
+                    if (answer.getBookmark() == null)
+                        queryable.setTotal(-2);
+                }
+                else
+                    queryable.setTotal(list.size());
             }
             else if (isNotFound(statusCode))
             {

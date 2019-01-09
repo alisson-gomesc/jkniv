@@ -27,13 +27,11 @@
     <dependency>
       <groupId>net.sf.jkniv</groupId>
       <artifactId>jkniv-whinstone-jdbc</artifactId>
-      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>net.sf.jkniv</groupId>
       <artifactId>jkniv-whinstone-jpa2</artifactId>
-      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <!--  \/\/ DATABASE CONFIG \/\/  -->

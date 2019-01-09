@@ -243,8 +243,8 @@ public abstract class DefaultCommandHandler implements CommandHandler
         {
             PostCallBack postcallback = m.getAnnotation(PostCallBack.class);
             List<CallbackScope> scopes = Arrays.asList(postcallback.scope());
-            boolean containsException = scopes.contains(CallbackScope.EXCEPTION);
-            boolean containsCommit = scopes.contains(CallbackScope.COMMIT);
+            boolean containsException = false;//scopes.contains(CallbackScope.EXCEPTION);
+            boolean containsCommit = false;//scopes.contains(CallbackScope.COMMIT);
             for (CallbackScope scope : postcallback.scope())
             {
                 if (containsCommit)

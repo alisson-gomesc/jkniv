@@ -9,9 +9,11 @@
   
  <include href="/repository-sql-design.xml" />
  <include href="/repository-sql-find.xml" />
+ <include href="/repository-sql-find-page.xml" />
  <include href="/repository-sql-views.xml" />
  <include href="/repository-sql-cache.xml" />
  <include href="/repository-sql-scalar.xml" />
+ <include href="/repository-sql-find-error.xml" />
  
    <select id="adminRoles" returnType="">
     {

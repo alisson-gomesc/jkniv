@@ -11,6 +11,9 @@
   <repository name="couchdb-authors">
     <description>Jndi for properties file</description>
     <jndi-data-source>java:comp/env/props/couchdb</jndi-data-source>
+    <properties>
+      <property name="jkniv.repository.jdbc.dialect" value="net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect" />
+    </properties>
   </repository>
 
   <repository name="couchdb-db3t">
