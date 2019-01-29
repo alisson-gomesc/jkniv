@@ -95,8 +95,7 @@ public class SqlSelectMockitoTest
     @Before
     public void setUp() throws Exception 
     {
-        this.qqueryable = mock(Queryable.class);
-        
+        this.qqueryable = mock(Queryable.class);        
         this.connection = mock(Connection.class);
         this.dataSource = mock(DataSource.class);
         this.stmt = mock(PreparedStatement.class);

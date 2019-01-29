@@ -23,7 +23,7 @@ import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.params.ParameterException;
 
-public class CouchDbDialect extends AnsiDialect
+public class CouchDbDialect21 extends AnsiDialect
 {
     @Override
     public boolean supportsLimit()

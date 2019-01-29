@@ -67,7 +67,7 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
                         list.size(), selectable.getCache().getName(), sql.getName(), entry.getTimestamp(),
                         entry.hits());
         }
-        queryable.setTotal(queryable.getTotal());
+        //queryable.setTotal(list.size());
         if (LOG.isDebugEnabled())
             LOG.debug("Executed [{}] query as {} command, {} rows fetched", queryable.getName(), sql.getSqlType(), list.size());
         

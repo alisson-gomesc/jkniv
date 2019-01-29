@@ -35,7 +35,7 @@ import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 import net.sf.jkniv.whinstone.params.ParameterException;
 
-public class CouchDbDialectTest
+public class CouchDbDialect21Test
 {
     private static SqlContext sqlContext;
     @Rule
@@ -54,7 +54,7 @@ public class CouchDbDialectTest
         //catcher.expectMessage(".");
         Sql sql = sqlContext.getQuery("authors-page-override");
         String sqlText = sql.getSql();
-        CouchDbDialect dialect = new CouchDbDialect();
+        CouchDbDialect21 dialect = new CouchDbDialect21();
         dialect.buildQueryPaging(sqlText, 0, 10);
     }
 
@@ -63,7 +63,7 @@ public class CouchDbDialectTest
     {
         Sql sql = sqlContext.getQuery("authors-page");
         String sqlText = sql.getSql();
-        CouchDbDialect dialect = new CouchDbDialect();
+        CouchDbDialect21 dialect = new CouchDbDialect21();
         String sqlPage = dialect.buildQueryPaging(sqlText, 0, 10);
         
         assertThat(sqlPage, is("{\n     \"selector\": {\"nationality\": {\"$in\": :nations}}\n    \n,\"limit\": 10, \"skip\": 0 }") );

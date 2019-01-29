@@ -21,6 +21,11 @@ package net.sf.jkniv.util;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.concurrent.TimeUnit;
+
 import org.hamcrest.Matchers;
 
 //import static org.hamcrest.Matchers.*;
@@ -31,7 +36,21 @@ import org.junit.Test;
 
 public class StringTest
 {
-    
+    @Test
+    public void whenUseNameOrToStringForEnums()
+    {
+        System.out.printf("%s = %s\n", TimeUnit.MINUTES.toString(), TimeUnit.MINUTES.name());
+        assertThat(TimeUnit.MINUTES.toString(), is(TimeUnit.MINUTES.name()));
+    }
+
+    @Test
+    public void whenParseDateWithVariableString() throws ParseException
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd'st' MMM yyyy");
+        
+        Date d = sdf.parse("01st Mar 2019");
+        assertThat(d, notNullValue());
+    }
     @Test
     public void whenMyStringHasPercentToFormatter()
     {

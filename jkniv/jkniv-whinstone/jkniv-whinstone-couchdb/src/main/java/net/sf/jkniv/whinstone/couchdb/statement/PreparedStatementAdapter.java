@@ -268,7 +268,7 @@ class PreparedStatementAdapter<T, R> implements StatementAdapter<T, String>
             answer = mapper.readValue(json, FindAnswer.class);
             if (answer.getWarning() != null)
                 LOG.warn(answer.getWarning());
-            list = (List<T>) answer.getDocs();
+            //list = (List<T>) answer.getDocs();
         }
         catch (Exception e) // JsonParseException | JsonMappingException | IOException
         {

@@ -19,13 +19,18 @@
  */
 package net.sf.jkniv.exception;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 public class ExceptionTest
 {
 
-    
     @Test
     public void testCatch()
     {
@@ -56,5 +61,25 @@ public class ExceptionTest
         System.out.println("a+b+c=" + r);
         Exception e = new Exception("Erro sum");
         throw e;
+    }
+    
+    @Test
+    public void whenExtractLineFromException()
+    {
+        Exception ex = new IllegalAccessException("Testing parse stack");
+        System.out.println(parseException(ex));
+    }
+    
+    private static String parseException(Exception e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        String line = null;
+        Pattern pattern = Pattern.compile("\\tat\\s[\\w|.|\\(|:|\\)]+", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(sw.toString());
+        if (matcher.find())
+            line = matcher.group();
+
+        return line + ", msg=" + e.getMessage();
     }
 }

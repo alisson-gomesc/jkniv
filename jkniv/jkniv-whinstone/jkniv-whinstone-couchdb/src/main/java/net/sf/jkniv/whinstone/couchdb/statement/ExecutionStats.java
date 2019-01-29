@@ -94,4 +94,12 @@ public class ExecutionStats {
         this.additionalProperties.put(name, value);
     }
 
+    @Override
+    public String toString()
+    {
+        return "ExecutionStats [totalKeysExamined=" + totalKeysExamined + ", totalDocsExamined=" + totalDocsExamined
+                + ", totalQuorumDocsExamined=" + totalQuorumDocsExamined + ", resultsReturned=" + resultsReturned
+                + ", executionTimeMs=" + executionTimeMs + "]";
+    }
+
 }

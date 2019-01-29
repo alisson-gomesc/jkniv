@@ -42,7 +42,9 @@ public class CouchDbRepositoryViewTest extends BaseJdbc
     public void whenUseViewWithoutParams()
     {
         Repository repositoryDb = getRepository();
-        List<Map> list = repositoryDb.list(QueryFactory.of("docs/_view/natio"), Map.class);
+        Queryable q = QueryFactory.of("docs/_view/natio");
+        List<Map> list = repositoryDb.list(q, Map.class);
+        assertThat(q.getTotal(), is((long)list.size()));
         assertThat(list.size(), greaterThan(0));
         assertThat(list.get(0), instanceOf(Map.class));
         assertThat(list.get(0).get("id"), notNullValue());
@@ -54,7 +56,9 @@ public class CouchDbRepositoryViewTest extends BaseJdbc
     public void whenUseViewListWithReturnType()
     {
         Repository repositoryDb = getRepository();
-        List<AuthorView> list = repositoryDb.list(QueryFactory.of("docs/_view/natio"));
+        Queryable q = QueryFactory.of("docs/_view/natio");
+        List<AuthorView> list = repositoryDb.list(q);
+        assertThat(q.getTotal(), is((long)list.size()));
         assertThat(list.size(), greaterThan(0));
         assertThat(list.get(0), instanceOf(AuthorView.class));
         for(AuthorView view : list)
@@ -79,6 +83,7 @@ public class CouchDbRepositoryViewTest extends BaseJdbc
         Repository repositoryDb = getRepository();
         Queryable q = getQuery("docs/_view/natio", asParams("startkey","DE","endkey","DE"));
         List<AuthorView> list = repositoryDb.list(q);
+        assertThat(q.getTotal(), is((long)list.size()));
         assertThat(list.size(), greaterThanOrEqualTo(3));
         assertThat(list.get(0), instanceOf(AuthorView.class));
         assertThat(list.get(0).getKey(), is("DE"));

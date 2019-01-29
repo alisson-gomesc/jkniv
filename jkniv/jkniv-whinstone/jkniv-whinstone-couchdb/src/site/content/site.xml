@@ -23,7 +23,8 @@
   <body>
     <head>
       <![CDATA[
-      <meta name="keywords" content="whinstone, jdbc, couchdb" />
+      <meta name="description" content="CouchDB Java API" />
+      <meta name="keywords" content="CouchDB, JDBC, Java, API, LGPL, Free, Open Source, Framework, Repository Pattern" />
       ]]>
     </head>
     <breadcrumbs>

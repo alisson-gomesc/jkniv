@@ -24,7 +24,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -43,6 +45,7 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
+import net.sf.jkniv.whinstone.couchdb.model.orm.AuthorView;
 import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
 import net.sf.jkniv.whinstone.params.ParameterException;
 
@@ -57,9 +60,10 @@ public class CouchDbRepositoryFindPaginationTest extends BaseJdbc
         catcher.expect(ParameterException.class);
         Repository repositoryDb = getRepository();
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("nations", Arrays.asList("DE","GB","BR","CZ","DE"));
+        params.put("nations", Arrays.asList("DE","GB","BR","CZ"));
         Queryable q = QueryFactory.of("authors-page-override", params, 0, 3);
         List<Map<String, ?>> list = repositoryDb.list(q);
+        assertThat(q.getTotal(), is(-1L));
     }
 
     
@@ -68,14 +72,26 @@ public class CouchDbRepositoryFindPaginationTest extends BaseJdbc
     {
         Repository repositoryDb = getRepository();
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("nations", Arrays.asList("DE","GB","BR","CZ","DE"));
-        Queryable q = QueryFactory.of("authors-page", params, 0, 3);
+        params.put("nations", Arrays.asList("DE"));
+        Queryable q = QueryFactory.of("authors-page", params, 0, 2);
         
         List<Map<String, ?>> list = repositoryDb.list(q);
-        assertThat(list.size(), is(3));
-        assertThat(q.getTotal(), is(-2L));
+        assertThat(list.size(), is(2));
+        assertThat(q.getTotal(), is((long)Statement.SUCCESS_NO_INFO));
         assertThat(list.get(0), instanceOf(Map.class));
     }
 
+
+    @Test
+    public void whenUseViewWithParams()
+    {
+        Repository repositoryDb = getRepository();
+        Queryable q = QueryFactory.of("docs/_view/natio", asParams("startkey","DE","endkey","DE"), 0, 2);
+        List<AuthorView> list = repositoryDb.list(q);
+        assertThat(q.getTotal(), is(3L));
+        assertThat(list.size(), is(2));
+        assertThat(list.get(0), instanceOf(AuthorView.class));
+        assertThat(list.get(0).getKey(), is("DE"));
+    }
 
 }

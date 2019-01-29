@@ -17,8 +17,7 @@
     {
      "selector": {"nationality": {"$in": :nations}},
      "limit": 3,
-     "skip": 1,
-     "bookmark": "2"
+     "skip": 1
     }
   </select>
 

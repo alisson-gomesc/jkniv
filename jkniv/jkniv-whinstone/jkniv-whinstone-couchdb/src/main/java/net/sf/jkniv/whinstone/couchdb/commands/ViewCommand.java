@@ -20,6 +20,7 @@
 package net.sf.jkniv.whinstone.couchdb.commands;
 
 import java.io.IOException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -92,7 +93,7 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
                     {
                         Map content = (Map) map.get("value"); 
                         //list.add(proxy.from(r));
-                        Object o =JsonMapper.mapper(content, returnType);
+                        Object o = JsonMapper.mapper(content, returnType);
                         list.add(o);
                         if (o instanceof Map)
                         {
@@ -111,10 +112,15 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
                 }
                 else
                     list = answer.getRows();
+                if(queryable.isPaging())
+                    queryable.setTotal(answer.getTotalRows());
+                else
+                    queryable.setTotal(list.size());
             }
             else if (isNotFound(statusCode))
             {
                 // 204 No Content, 304 Not Modified, 205 Reset Content
+                queryable.setTotal(0);
                 LOG.warn(errorFormat(http, response.getStatusLine(), json));
             }
             else
@@ -125,6 +131,7 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
         }
         catch (Exception e) // ClientProtocolException | JsonParseException | JsonMappingException | IOException
         {
+            queryable.setTotal(Statement.EXECUTE_FAILED);
             handlerException.handle(e);
         }
         finally

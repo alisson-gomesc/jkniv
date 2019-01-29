@@ -23,7 +23,8 @@
   <body>
     <head>
       <![CDATA[
-      <meta name="keywords" content="whinstone, jdbc" />
+      <meta name="description" content="JDBC Java API" />
+      <meta name="keywords" content="JDBC, Java, API, LGPL, Free, Open Source, Framework, Repository Pattern" />
       ]]>
     </head>
     <breadcrumbs>

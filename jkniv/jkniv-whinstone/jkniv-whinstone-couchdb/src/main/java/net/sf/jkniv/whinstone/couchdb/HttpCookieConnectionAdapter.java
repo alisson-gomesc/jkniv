@@ -33,6 +33,7 @@ import net.sf.jkniv.whinstone.couchdb.commands.BulkCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.CouchCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.DeleteCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.FindCommand;
+import net.sf.jkniv.whinstone.couchdb.commands.FullResponseFindCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.GetCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.UpdateCommand;
 import net.sf.jkniv.whinstone.Command;
@@ -42,6 +43,7 @@ import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.couchdb.commands.AddCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.ViewCommand;
 import net.sf.jkniv.whinstone.couchdb.statement.CouchDbStatementAdapter;
+import net.sf.jkniv.whinstone.couchdb.statement.FindAnswer;
 
 class HttpCookieConnectionAdapter implements ConnectionAdapter
 {
@@ -164,6 +166,8 @@ class HttpCookieConnectionAdapter implements ConnectionAdapter
                 command = new AllDocsCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
             else if (queryable.getDynamicSql().getLanguageType() == LanguageType.STORED)
                 command = new ViewCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
+            else if (queryable.getReturnType() != null && FindAnswer.class.getName().equals(queryable.getReturnType().getName()))
+                command = new FullResponseFindCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
             else
                 command = new FindCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
         return command;

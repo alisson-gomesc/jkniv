@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
+import net.sf.jkniv.whinstone.couchdb.statement.FindAnswer;
 
 public class GetCommand extends AbstractCommand implements CouchCommand
 {

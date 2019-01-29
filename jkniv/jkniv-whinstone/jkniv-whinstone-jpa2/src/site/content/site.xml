@@ -25,7 +25,8 @@
 
   <body>
     <head><![CDATA[
-      <meta name="keywords" content="SQLegance, mybatis, ibatis, SQL, Java, framework, jdbc" />
+      <meta name="description" content="JPA Java API" />
+      <meta name="keywords" content="JPA, JDBC, Java, API, LGPL, Free, Open Source, Framework, Repository Pattern" />
       ]]>
     </head>
     <menu name="Whinstone JPA2" inherit="top">

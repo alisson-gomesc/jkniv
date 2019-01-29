@@ -20,12 +20,10 @@
 package net.sf.jkniv.whinstone.couchdb.commands;
 
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -41,26 +39,23 @@ import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 import net.sf.jkniv.whinstone.couchdb.statement.CouchDbStatementAdapter;
 import net.sf.jkniv.whinstone.couchdb.statement.FindAnswer;
 
-public class FindCommand extends AbstractCommand implements CouchCommand
+public class FullResponseFindCommand extends AbstractCommand implements CouchCommand
 {
-    private static final Logger LOG = LoggerFactory.getLogger(FindCommand.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FullResponseFindCommand.class);
     private static final Logger LOGSQL = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
     private String body;
-    //private CouchDbStatementAdapter<?, String> stmt;
     private HttpBuilder httpBuilder;
     private Queryable queryable;
     
-    public FindCommand(CouchDbStatementAdapter<?, String> stmt, HttpBuilder httpBuilder, Queryable queryable)
+    public FullResponseFindCommand(CouchDbStatementAdapter<?, String> stmt, HttpBuilder httpBuilder, Queryable queryable)
     {
         super();
         this.queryable = queryable;
         this.httpBuilder = httpBuilder;
-        //this.stmt = stmt;
         stmt.rows();
         this.body = stmt.getBody();
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public <T> T execute()
     {
@@ -83,30 +78,20 @@ public class FindCommand extends AbstractCommand implements CouchCommand
             int statusCode = response.getStatusLine().getStatusCode();
             if (isOk(statusCode))
             {
-                if (queryable.getReturnType() != null)
-                    returnType = queryable.getReturnType();
-                else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-                    returnType = queryable.getDynamicSql().getReturnTypeAsClass();
-
+                returnType = queryable.getReturnType();
                 answer = JsonMapper.mapper(json, FindAnswer.class);
                 if (answer.getWarning() != null)
                     LOG.warn("Query [{}] warnning message: {}", queryable.getName(), answer.getWarning());
-                
-                if (returnType != null)
-                {
-                    // FIXME overload performance, writer better deserialization using jackson
-                    list = answer.listOf(returnType);
-                }
-                else
-                    list =  answer.getDocs();
-                
+                                    
+                list = new ArrayList();
+                list.add(answer);
                 if (queryable.isPaging())
                 {
                     //if (answer.getBookmark() == null)
                     queryable.setTotal(Statement.SUCCESS_NO_INFO);
                 }
                 else
-                    queryable.setTotal(list.size());
+                    queryable.setTotal(answer.getDocs().size());
             }
             else if (isNotFound(statusCode))
             {

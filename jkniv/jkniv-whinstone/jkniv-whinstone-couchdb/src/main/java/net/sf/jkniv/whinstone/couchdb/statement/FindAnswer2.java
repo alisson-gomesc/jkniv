@@ -19,27 +19,23 @@
  */
 package net.sf.jkniv.whinstone.couchdb.statement;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import net.sf.jkniv.whinstone.couchdb.commands.JsonMapper;
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(
 { "warning", "docs", "execution_stats", "bookmark" })
-public class FindAnswer
+public class FindAnswer2
 {
     @JsonProperty("warning")
     private String         warning;
     @JsonProperty("bookmark")
-    private String         bookmark;
+    private String bookmark;
     @JsonProperty("docs")
-    private List<Object>   listOfMap = null;
+    private List<Object>   docs = null;
     @JsonProperty("execution_stats")
     private ExecutionStats executionStats;
     
@@ -53,32 +49,14 @@ public class FindAnswer
         this.warning = warning;
     }
     
-    /**
-     * Runtime convert original docs from couchdb answer to
-     * list of {@code clazz}
-     * @param clazz type of to be converted
-     * @return list of {@code clazz} instances or empty
-     */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <T> List<T> listOf(Class<T> clazz)
-    {
-        List<Object> docs = new ArrayList();
-        if (listOfMap != null)
-        {
-            for (Object row : listOfMap)
-                docs.add(JsonMapper.mapper((Map) row, clazz));
-        }
-        return (List<T>) docs;
-    }
-    
     public List<Object> getDocs()
     {
-        return listOfMap;
+        return docs;
     }
     
     public void setDocs(List<Object> docs)
     {
-        this.listOfMap = docs;
+        this.docs = docs;
     }
     
     public ExecutionStats getExecutionStats()

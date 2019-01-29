@@ -13,6 +13,12 @@
     }
   </select>
 
+  <select id="authorsDE" returnType="net.sf.jkniv.whinstone.couchdb.statement.FindAnswer">
+    {
+     "selector": {"nationality": "DE" }
+    }
+  </select>
+
   <select id="authorsNat">
     {
      "selector": {"nationality": #{nat} },

@@ -19,6 +19,7 @@
  */
 package net.sf.jkniv.whinstone.couchdb;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -40,6 +41,7 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
+import net.sf.jkniv.whinstone.couchdb.statement.FindAnswer;
 
 public class CouchDbRepositoryFindTest extends BaseJdbc
 {
@@ -120,7 +122,35 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
         assertThat(list, instanceOf(List.class));
         assertThat(list.isEmpty(), is(true));
     }
-    
+
+    @Test
+    public void whenCouchDbGetWithDefaultCouchAnswer()
+    {
+        Repository repositoryDb = getRepository();
+        Queryable q = getQuery("authorsBR");
+        FindAnswer answer = repositoryDb.get(q, FindAnswer.class);
+        assertThat(answer,  notNullValue());
+        assertThat(q.getTotal(), greaterThan(0L));
+        assertThat(answer, instanceOf(FindAnswer.class));
+        assertThat(answer.getDocs().get(0), instanceOf(Map.class));
+        assertThat(answer.listOf(Author.class).get(0), instanceOf(Author.class));
+    }
+
+    @Test
+    public void whenCouchDbListWithDefaultCouchAnswer()
+    {
+        Repository repositoryDb = getRepository();
+        Queryable q = getQuery("authorsDE");
+        FindAnswer answer = repositoryDb.get(q, FindAnswer.class);
+        assertThat(answer,  notNullValue());
+        assertThat(q.getTotal(), greaterThan(0L));
+        assertThat(answer, instanceOf(FindAnswer.class));
+        assertThat(answer.getDocs().get(0), instanceOf(Map.class));
+        assertThat(q.getTotal(), is(3L));
+        assertThat(answer.getDocs().size(), is(3));
+        assertThat(answer.listOf(Author.class).get(0), instanceOf(Author.class));
+    }
+
     @Test @Ignore("Use integer as paramter")
     public void whenFindCommandUseIntegerAsParameter()
     {

@@ -204,26 +204,8 @@ public abstract class DefaultCommandHandler implements CommandHandler
             return;// target class already loaded
             
         objectCallback = new ObjectCallback(proxyParams.getTargetClass());
-
         List<Method> precallbacks = proxyParams.getAnnotationMethods(PreCallBack.class);
         List<Method> postcallbacks = proxyParams.getAnnotationMethods(PostCallBack.class);
-        /*
-        Set<Method> preAdd = new HashSet<Method>();
-        Set<Method> postAdd = new HashSet<Method>();
-        Set<Method> preSelect = new HashSet<Method>();
-        Set<Method> postSelect = new HashSet<Method>();
-        Set<Method> preUpdate = new HashSet<Method>();
-        Set<Method> postUpdate = new HashSet<Method>();
-        Set<Method> preRemove = new HashSet<Method>();
-        Set<Method> postRemove = new HashSet<Method>();
-        Method postAddCommit = null;
-        Method postUpdateCommit = null;
-        Method postRemoveCommit = null;
-        Method postSelectException = null;
-        Method postAddException = null;
-        Method postUpdateException = null;
-        Method postRemoveException = null;
-        */
         for (Method m : precallbacks)
         {
             PreCallBack precallback = m.getAnnotation(PreCallBack.class);
@@ -243,59 +225,40 @@ public abstract class DefaultCommandHandler implements CommandHandler
         {
             PostCallBack postcallback = m.getAnnotation(PostCallBack.class);
             List<CallbackScope> scopes = Arrays.asList(postcallback.scope());
-            boolean containsException = false;//scopes.contains(CallbackScope.EXCEPTION);
-            boolean containsCommit = false;//scopes.contains(CallbackScope.COMMIT);
+            boolean containsException = scopes.contains(CallbackScope.EXCEPTION);
+            boolean containsCommit = scopes.contains(CallbackScope.COMMIT);
             for (CallbackScope scope : postcallback.scope())
             {
                 if (containsCommit)
                 {
                     if (scope.isAdd())
-                        objectCallback.addCommitMethod(SqlType.INSERT, m);//postAddCommit = m;
+                        objectCallback.addCommitMethod(SqlType.INSERT, m);
                     else if (scope.isUpdate())
-                        objectCallback.addCommitMethod(SqlType.UPDATE, m);//postUpdateCommit = m;
+                        objectCallback.addCommitMethod(SqlType.UPDATE, m);
                     else if (scope.isRemove())
-                        objectCallback.addCommitMethod(SqlType.DELETE, m);//postRemoveCommit = m;
+                        objectCallback.addCommitMethod(SqlType.DELETE, m);
                 }
                 else if (containsException)
                 {
                     if (scope.isSelect())
-                        objectCallback.addExceptionMethod(SqlType.SELECT, m);//postSelectException = m;
+                        objectCallback.addExceptionMethod(SqlType.SELECT, m);
                     else if (scope.isAdd())
-                        objectCallback.addExceptionMethod(SqlType.INSERT, m);//postAddException = m;
+                        objectCallback.addExceptionMethod(SqlType.INSERT, m);
                     else if (scope.isUpdate())
-                        objectCallback.addExceptionMethod(SqlType.UPDATE, m);//postUpdateException = m;
+                        objectCallback.addExceptionMethod(SqlType.UPDATE, m);
                     else if (scope.isRemove())
-                        objectCallback.addExceptionMethod(SqlType.DELETE, m);//postRemoveException = m;
+                        objectCallback.addExceptionMethod(SqlType.DELETE, m);
                 }
                 else if (scope.isSelect())
-                    objectCallback.addPostMethod(SqlType.SELECT, m);//postSelect.add(m);
+                    objectCallback.addPostMethod(SqlType.SELECT, m);
                 else if (scope.isAdd())
-                    objectCallback.addPostMethod(SqlType.INSERT, m);//postAdd.add(m);
+                    objectCallback.addPostMethod(SqlType.INSERT, m);
                 else if (scope.isUpdate())
-                    objectCallback.addPostMethod(SqlType.UPDATE, m);//postUpdate.add(m);
+                    objectCallback.addPostMethod(SqlType.UPDATE, m);
                 else if (scope.isRemove())
                     objectCallback.addPostMethod(SqlType.DELETE, m);//postRemove.add(m);
             }
         }
-        /*
-        objectCallback.addPreMethod(SqlType.SELECT, preSelect);
-        objectCallback.addPreMethod(SqlType.INSERT, preAdd);
-        objectCallback.addPreMethod(SqlType.UPDATE, preUpdate);
-        objectCallback.addPreMethod(SqlType.DELETE, preRemove);
-        objectCallback.addPostMethod(SqlType.SELECT, postSelect);
-        objectCallback.addPostMethod(SqlType.INSERT, postAdd);
-        objectCallback.addPostMethod(SqlType.UPDATE, postUpdate);
-        objectCallback.addPostMethod(SqlType.DELETE, postRemove);
-        
-        objectCallback.addCommitMethod(SqlType.INSERT, postAddCommit);
-        objectCallback.addCommitMethod(SqlType.UPDATE, postUpdateCommit);
-        objectCallback.addCommitMethod(SqlType.DELETE, postRemoveCommit);
-
-        objectCallback.addExceptionMethod(SqlType.SELECT, postAddException);
-        objectCallback.addExceptionMethod(SqlType.INSERT, postAddException);
-        objectCallback.addExceptionMethod(SqlType.UPDATE, postUpdateException);
-        objectCallback.addExceptionMethod(SqlType.DELETE, postRemoveException);
-        */
         OBJECTS_CALLBACKS.put(proxyParams.getTargetClass().getName(), objectCallback);
     }
     

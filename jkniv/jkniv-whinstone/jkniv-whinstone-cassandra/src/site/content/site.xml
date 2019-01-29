@@ -23,7 +23,8 @@
   <body>
     <head>
       <![CDATA[
-      <meta name="keywords" content="whinstone, jdbc, cassandra, datasax" />
+      <meta name="description" content="Cassandra Java API" />
+      <meta name="keywords" content="Cassandra, Apache Cassandra, JDBC, Java, API, LGPL, Free, Open Source, Framework, Repository Pattern" />
       ]]>
     </head>
     <breadcrumbs>
