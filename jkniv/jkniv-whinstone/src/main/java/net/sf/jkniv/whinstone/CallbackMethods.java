@@ -25,6 +25,7 @@ import java.util.List;
 
 import net.sf.jkniv.sqlegance.SqlType;
 
+@Deprecated
 class CallbackMethods
 {
     private SqlType      sqlType;

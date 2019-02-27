@@ -26,7 +26,7 @@ class JpaEmFactoryHard implements JpaEmFactory
         this.em = em;
         this.threads = new HashSet<String>();
         //isContainerManaged();
-        LOG.warn("\nRepository instance using EntityManager provided with Constructor... ISN'T THREAD-SAFE! \nTake care, you needs provider a new EntityManager for each thread!\n");
+        LOG.warn("\nRepository instance using EntityManager provided with Constructor... ISN'T THREAD-SAFE! \nTake care, you need provider a new EntityManager for each thread!\n");
     }
     
     /* (non-Javadoc)

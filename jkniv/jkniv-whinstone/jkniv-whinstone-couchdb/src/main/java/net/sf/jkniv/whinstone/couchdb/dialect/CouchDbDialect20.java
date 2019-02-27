@@ -40,7 +40,16 @@ public class CouchDbDialect20 extends AnsiDialect
     @Override
     public String buildQueryPaging(final String sqlText, int offset, int max)
     {
-        return sqlText;        
+        String bodyWithLimitAndSkip = sqlText;
+        int offsetLimit = sqlText.indexOf("\"limit\"");
+        if (offsetLimit > -1)
+            throw new ParameterException("Query [" + sqlText
+                    + "] has a \"limit\" property defined, cannot use paging Queryable for this query.");
+        
+        int offsetBracket = sqlText.lastIndexOf("}");
+        if (offsetBracket >= 0)
+            bodyWithLimitAndSkip = sqlText.substring(0, offsetBracket) + "\n,\"limit\": " + max + ", \"skip\": " + offset + " }";
+        return bodyWithLimitAndSkip;        
     }
     
     @Override

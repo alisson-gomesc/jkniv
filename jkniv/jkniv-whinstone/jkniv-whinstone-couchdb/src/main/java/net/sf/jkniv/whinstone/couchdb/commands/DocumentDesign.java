@@ -47,7 +47,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DocumentDesign
+class DocumentDesign
 {
     @JsonProperty("_id")
     private String              id;

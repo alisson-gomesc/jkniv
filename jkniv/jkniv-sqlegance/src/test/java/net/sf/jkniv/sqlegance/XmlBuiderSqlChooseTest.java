@@ -30,9 +30,9 @@ import org.junit.Test;
 import net.sf.jkniv.sqlegance.builder.XmlBuilderSql;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 
+@SuppressWarnings("deprecation")
 public class XmlBuiderSqlChooseTest
 {
-
 	@Test
 	public void whenNameParameterHasValueHeIsPartOfQuery() {
         Map<String, Object> p = new HashMap<String, Object>();
@@ -53,7 +53,7 @@ public class XmlBuiderSqlChooseTest
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
 	}
 
-	@Test
+    @Test
 	public void whenPhoneParameterHasValueHeIsPartOfQuery() {
         Map<String, Object> p = new HashMap<String, Object>();
         Sql sql;

@@ -39,7 +39,7 @@ import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 
-public class DesignCommand extends AbstractCommand implements CouchCommand
+class DesignCommand extends AbstractCommand implements CouchCommand
 {
     private static final Logger     LOG     = LoggerFactory.getLogger(DesignCommand.class);
     private static final Assertable notNull = AssertsFactory.getNotNull();

@@ -60,7 +60,7 @@ public class FindAnswer
      * @return list of {@code clazz} instances or empty
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <T> List<T> listOf(Class<T> clazz)
+    public <T> List<T> getDocs(Class<T> clazz)
     {
         List<Object> docs = new ArrayList();
         if (listOfMap != null)

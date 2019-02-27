@@ -35,8 +35,7 @@ import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jpa2.test.infra.JndiJpaCreator;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations =
-{ "/spring-context.xml" })
+@ContextConfiguration(locations ={ "/spring-context.xml" })
 public class BaseTest
 {
     public static final int   TOTAL_BOOKS = 15;

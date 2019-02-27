@@ -133,7 +133,7 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
         assertThat(q.getTotal(), greaterThan(0L));
         assertThat(answer, instanceOf(FindAnswer.class));
         assertThat(answer.getDocs().get(0), instanceOf(Map.class));
-        assertThat(answer.listOf(Author.class).get(0), instanceOf(Author.class));
+        assertThat(answer.getDocs(Author.class).get(0), instanceOf(Author.class));
     }
 
     @Test
@@ -148,7 +148,7 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
         assertThat(answer.getDocs().get(0), instanceOf(Map.class));
         assertThat(q.getTotal(), is(3L));
         assertThat(answer.getDocs().size(), is(3));
-        assertThat(answer.listOf(Author.class).get(0), instanceOf(Author.class));
+        assertThat(answer.getDocs(Author.class).get(0), instanceOf(Author.class));
     }
 
     @Test @Ignore("Use integer as paramter")

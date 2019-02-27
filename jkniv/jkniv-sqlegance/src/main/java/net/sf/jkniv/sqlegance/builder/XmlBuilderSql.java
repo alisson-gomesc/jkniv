@@ -109,7 +109,7 @@ public final class XmlBuilderSql
         boolean xmlLoadedAndProcess = false;
         if (!XmlBuilderSql.initialized)
         {
-            LOG.trace("reading xml [{}] initialized={}", xmlFile, XmlBuilderSql.initialized);
+            LOG.debug("reading xml [{}] initialized={}", xmlFile, XmlBuilderSql.initialized);
             
             if (sqlContext == null)
                 sqlContext = new ClassPathSqlContext(xmlFile);

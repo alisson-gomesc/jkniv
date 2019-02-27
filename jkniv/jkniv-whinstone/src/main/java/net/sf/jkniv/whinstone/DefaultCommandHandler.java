@@ -225,10 +225,11 @@ public abstract class DefaultCommandHandler implements CommandHandler
         {
             PostCallBack postcallback = m.getAnnotation(PostCallBack.class);
             List<CallbackScope> scopes = Arrays.asList(postcallback.scope());
-            boolean containsException = scopes.contains(CallbackScope.EXCEPTION);
-            boolean containsCommit = scopes.contains(CallbackScope.COMMIT);
+            //boolean containsException = scopes.contains(CallbackScope.EXCEPTION);
+            //boolean containsCommit = scopes.contains(CallbackScope.COMMIT);
             for (CallbackScope scope : postcallback.scope())
             {
+                /*
                 if (containsCommit)
                 {
                     if (scope.isAdd())
@@ -249,7 +250,7 @@ public abstract class DefaultCommandHandler implements CommandHandler
                     else if (scope.isRemove())
                         objectCallback.addExceptionMethod(SqlType.DELETE, m);
                 }
-                else if (scope.isSelect())
+                else */if (scope.isSelect())
                     objectCallback.addPostMethod(SqlType.SELECT, m);
                 else if (scope.isAdd())
                     objectCallback.addPostMethod(SqlType.INSERT, m);

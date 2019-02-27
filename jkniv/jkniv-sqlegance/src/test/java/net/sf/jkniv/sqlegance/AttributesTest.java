@@ -23,7 +23,6 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Test;
 
 import net.sf.jkniv.cache.Cacheable;
@@ -35,6 +34,7 @@ import net.sf.jkniv.sqlegance.statement.ResultSetType;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 
+@SuppressWarnings("deprecation")
 public class AttributesTest
 {
         

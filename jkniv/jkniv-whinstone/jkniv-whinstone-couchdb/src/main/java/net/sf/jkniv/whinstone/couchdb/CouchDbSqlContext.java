@@ -34,7 +34,7 @@ import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.xml.TagFactory;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
-import net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect21;
+import net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect20;
 
 public class CouchDbSqlContext implements SqlContext
 {
@@ -43,7 +43,7 @@ public class CouchDbSqlContext implements SqlContext
     private static final String GET_QUERY = "get", PUT_QUERY = "add", UPDATE_QUERY = "update", DELETE_QUERY = "remove"; 
     private static final Map<String, Sql> BUILTIN = new HashMap<String, Sql>(); 
             
-    private static final CouchDbDialect21 couchDbDialect = new CouchDbDialect21();
+    private static final CouchDbDialect20 couchDbDialect = new CouchDbDialect20();
     
     static {
         // initialize built in Sql

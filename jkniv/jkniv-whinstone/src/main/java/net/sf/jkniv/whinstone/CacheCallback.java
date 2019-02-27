@@ -26,6 +26,7 @@ import java.util.Map;
 
 import net.sf.jkniv.sqlegance.SqlType;
 
+@Deprecated
 class CacheCallback
 {
     private static Map<String, CallbackMethods> cachePreMethods = new HashMap<String, CallbackMethods>();

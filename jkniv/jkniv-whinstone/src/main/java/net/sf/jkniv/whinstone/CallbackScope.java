@@ -55,23 +55,23 @@ public enum CallbackScope
      * after all columns from a tuple are setted with all select 
      * methods like: {@link Repository#list(Queryable)}, {@link Repository#get(Queryable)}
      */
-    
+    /*
     LOAD,
     /**
      * Value that means that a callback method is invoked 
      * after an successful {@code COMMIT} is execute, this annotation
      * must be followed with another scope like {@code ADD}, 
      * {@code UPDATE}, {@code REMOVE} or {@code SELECT}.
-     */
+     *
     COMMIT,
     /**
      * Value that means that a callback method is invoked 
      * after an {@code exception} is generate, this annotation
      * must be followed with another scope like {@code ADD}, 
      * {@code UPDATE}, {@code REMOVE} or {@code SELECT}.
-     */
+     *
     EXCEPTION,
-    
+    */
     /**
      * Value that indicates that no callback method is invoked.
      */
@@ -96,7 +96,7 @@ public enum CallbackScope
     {
         return (this == SELECT ? true : false);
     }
-    
+    /*
     public boolean isException()
     {
         return (this == CallbackScope.EXCEPTION ? true : false);
@@ -111,5 +111,6 @@ public enum CallbackScope
     {
         return (this == LOAD ? true : false);
     }
+    */
     
 }

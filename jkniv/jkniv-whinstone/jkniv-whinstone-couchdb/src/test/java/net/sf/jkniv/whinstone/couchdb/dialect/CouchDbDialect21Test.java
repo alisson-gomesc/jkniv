@@ -54,7 +54,7 @@ public class CouchDbDialect21Test
         //catcher.expectMessage(".");
         Sql sql = sqlContext.getQuery("authors-page-override");
         String sqlText = sql.getSql();
-        CouchDbDialect21 dialect = new CouchDbDialect21();
+        CouchDbDialect20 dialect = new CouchDbDialect20();
         dialect.buildQueryPaging(sqlText, 0, 10);
     }
 
@@ -63,7 +63,7 @@ public class CouchDbDialect21Test
     {
         Sql sql = sqlContext.getQuery("authors-page");
         String sqlText = sql.getSql();
-        CouchDbDialect21 dialect = new CouchDbDialect21();
+        CouchDbDialect20 dialect = new CouchDbDialect20();
         String sqlPage = dialect.buildQueryPaging(sqlText, 0, 10);
         
         assertThat(sqlPage, is("{\n     \"selector\": {\"nationality\": {\"$in\": :nations}}\n    \n,\"limit\": 10, \"skip\": 0 }") );

@@ -37,6 +37,7 @@ import org.junit.Test;
 import net.sf.jkniv.sqlegance.builder.XmlBuilderSql;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 
+@SuppressWarnings("deprecation")
 public class XmlBuiderSqlAutGeneratedKeyTest
 {
     @Test
