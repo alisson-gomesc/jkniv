@@ -37,12 +37,15 @@ import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Statistical;
 import net.sf.jkniv.sqlegance.Storable;
 import net.sf.jkniv.sqlegance.Updateable;
+import net.sf.jkniv.sqlegance.builder.xml.dynamic.ConditionalTag;
 import net.sf.jkniv.sqlegance.builder.xml.dynamic.ITextTag;
 import net.sf.jkniv.sqlegance.builder.xml.dynamic.StaticText;
 import net.sf.jkniv.sqlegance.builder.xml.dynamic.WhereTag;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
+import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.params.ParamParser;
 import net.sf.jkniv.sqlegance.params.ParamParserColonMark;
+import net.sf.jkniv.sqlegance.params.ParamParserFactory;
 import net.sf.jkniv.sqlegance.params.ParamParserHashMark;
 import net.sf.jkniv.sqlegance.params.ParamParserNoMark;
 import net.sf.jkniv.sqlegance.params.ParamParserQuestionMark;
@@ -266,10 +269,16 @@ public abstract class AbstractSqlTag implements SqlTag
             //log.trace("eval [" + result + "] " + tag.getText());
             if (result)
             {
-                if (sb.length() > 0)
-                    sb.append(" " + tag.getText());
+                String text = "";
+                if (tag.isDynamicGroup())
+                    text = tag.getText(params);
                 else
-                    sb.append(tag.getText());
+                    text = tag.getText();
+                
+                if (sb.length() > 0)
+                    sb.append(" " + text);
+                else
+                    sb.append(text);
             }
         }
         String q = sb.toString(); 
@@ -308,20 +317,24 @@ public abstract class AbstractSqlTag implements SqlTag
     public void addTag(ITextTag tag)
     {
         this.textTag.add(tag);
+        if (hasParamParser())
+            return;
+        
         for(ITextTag t : tag.getTags())
         {
             setParamParser(t.getText());
         }
-        if (tag instanceof WhereTag)//FIXME BUG implements params from set, choose tags
+        if (tag instanceof WhereTag && tag.isDynamicGroup())//FIXME BUG implements params from set, choose tags
         {
-            for(ITextTag t : ((WhereTag)tag).getTags())
+            for(ITextTag t : tag.getTags())
             {
                 setParamParser(t.getText());
                 for(ITextTag t2 : t.getTags())
                     setParamParser(t2.getText());
             }
         }
-        setParamParser(tag.getText());
+        else if(!tag.isDynamicGroup())
+            setParamParser(tag.getText());
     }
     
     /**
@@ -617,7 +630,7 @@ public abstract class AbstractSqlTag implements SqlTag
     }
 
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(Object obj)// TODO test case for Tag equals method
     {
         if (this == obj)
             return true;
@@ -652,14 +665,14 @@ public abstract class AbstractSqlTag implements SqlTag
 
     private void setParamParser(String text)
     {
-        if (this.paramParser instanceof ParamParserNoMark)
+        if (!hasParamParser())
         {
             if (PATTERN_COLON.matcher(text).find())
-                this.paramParser = new ParamParserColonMark();
+                this.paramParser = ParamParserFactory.getInstance(ParamMarkType.COLON);
             else if (PATTERN_HASH.matcher(text).find())
-                this.paramParser = new ParamParserHashMark();
+                this.paramParser = ParamParserFactory.getInstance(ParamMarkType.HASH);//new ParamParserHashMark();
             else if (PATTERN_QUESTION.matcher(text).find())
-                this.paramParser = new ParamParserQuestionMark();
+                this.paramParser = ParamParserFactory.getInstance(ParamMarkType.QUESTION);//new ParamParserQuestionMark();
         }
     }
 
@@ -674,6 +687,10 @@ public abstract class AbstractSqlTag implements SqlTag
         return classz;
     }
     
+    private boolean hasParamParser()
+    {
+        return !(this.paramParser instanceof ParamParserNoMark);
+    }
     
 
 

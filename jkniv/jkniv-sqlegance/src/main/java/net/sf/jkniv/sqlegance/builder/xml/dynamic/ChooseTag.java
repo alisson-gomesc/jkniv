@@ -25,7 +25,7 @@ public class ChooseTag implements ITextTag
 {
     public static final String TAG_NAME = "choose";
     private List<WhenTag>     listWhenTag;
-    private String text;
+    //private String text;
     
     /**
      * Build a new <code>choose</code> tag.
@@ -35,7 +35,6 @@ public class ChooseTag implements ITextTag
      */
     public ChooseTag(List<WhenTag> listWhenTag)
     {
-    	this.text = "";
         this.listWhenTag = listWhenTag;
     }
     
@@ -53,7 +52,6 @@ public class ChooseTag implements ITextTag
             if (tag.eval(rootObjects))
             {
                 evaluation = true;
-                this.text = tag.getText();
                 break;
             }
         }
@@ -67,19 +65,50 @@ public class ChooseTag implements ITextTag
      */
     public String getText()
     {
-    	return this.text;
+        return "";
+        //throw new IllegalStateException("Conditional tag group cannot getText directly, invoke getText(Object rootObjects)");
+    	//return this.text;
     }
+
+    @Override
+    public String getText(Object rootObjects)
+    {
+        return getConditionalText(rootObjects);
+    }
+
+    public String getConditionalText(Object rootObjects)
+    {
+        String text = "";
+        for (int i = 0; i < listWhenTag.size(); i++)
+        {
+            ITextTag tag = listWhenTag.get(i);
+            if (tag.eval(rootObjects))
+            {
+                text = tag.getText();
+                break;
+            }
+        }
+        return text;
+    }
+
     
     /**
      * Indicate if text is dynamic or static.
      * 
      * @return always true is returned, because this object save dynamic text.
      */
+    @Override
     public boolean isDynamic()
     {
         return true;
     }
     
+    @Override
+    public boolean isDynamicGroup()
+    {
+        return true;
+    }
+
     @Override
     public List<? extends ITextTag> getTags()
     {

@@ -23,6 +23,8 @@ package net.sf.jkniv.sqlegance.params;
  * Strategy to parser the parameters from query extracting yours names or replacing
  * the names for question mark <code>'?'</code>, used at JDBC prepared statements.
  * 
+ * <b>Instances of this class must be IMMUTABLE and safe for use by multiple concurrent threads</b>
+ * 
  * @author Alisson Gomes
  * @since 0.6.0
  */

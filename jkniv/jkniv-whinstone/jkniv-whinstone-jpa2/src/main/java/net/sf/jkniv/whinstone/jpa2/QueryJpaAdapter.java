@@ -14,6 +14,7 @@ import net.sf.jkniv.sqlegance.NonUniqueResultException;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.params.ParamParser;
+import net.sf.jkniv.sqlegance.params.ParamParserFactory;
 import net.sf.jkniv.sqlegance.params.ParamParserQuestionMark;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
@@ -47,7 +48,7 @@ public class QueryJpaAdapter extends AbstractQueryJpaAdapter
                 break;
             case NATIVE:
                 // EclipseLink doesn't support named params to native queries, adopting ?1 ?2 ?3 for every implementation
-                paramParser = new ParamParserQuestionMark();
+                paramParser = ParamParserFactory.getInstance(ParamMarkType.QUESTION);//new ParamParserQuestionMark();
                 String positionalSql = sql;
                 if (queryable.getDynamicSql().getParamParser().getType() != ParamMarkType.QUESTION)
                     positionalSql = isql.getParamParser().replaceForQuestionMarkWithNumber(sql, queryable.getParams());

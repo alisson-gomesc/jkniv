@@ -59,7 +59,11 @@ class JpaEmFactoryJndi implements JpaEmFactory
                 while (list.hasMore())
                 {
                     NameClassPair name = list.next();
-                    LOG.info("There is jndi entry [{}] type of [{}] in namespace [{}]",  name.getName(), name.getClassName(), name.getNameInNamespace());
+                    String nameInNamespace = "";
+                    try {
+                        nameInNamespace = name.getNameInNamespace();
+                    }catch (UnsupportedOperationException uoe ) {}
+                    LOG.info("There is jndi entry [{}] type of [{}] in namespace [{}]",  name.getName(), name.getClassName(), nameInNamespace);
                 }
             }
             catch (NamingException ex)

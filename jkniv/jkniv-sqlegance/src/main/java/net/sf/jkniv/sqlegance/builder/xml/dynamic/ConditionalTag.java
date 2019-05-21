@@ -85,6 +85,11 @@ public abstract class ConditionalTag implements ITextTag
         return this.text;
     }
     
+    public String getText(Object rootObjects)
+    {
+        return this.text;
+    }
+    
     /**
      * Indicate if text is dynamic or static.
      * 
@@ -94,13 +99,18 @@ public abstract class ConditionalTag implements ITextTag
     {
         return true;
     }
+    
+    @Override
+    public boolean isDynamicGroup()
+    {
+        return false;
+    }
 
     @Override
     public List<? extends ITextTag> getTags()
     {
         return Collections.emptyList();
     }
-    
     
     @Override
     public String toString()

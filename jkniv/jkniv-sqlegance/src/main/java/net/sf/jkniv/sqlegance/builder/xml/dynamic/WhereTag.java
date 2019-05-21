@@ -36,7 +36,7 @@ public class WhereTag implements ITextTag
     private static final Pattern patternOR =Pattern.compile("^(OR|^OR\\s*\\()", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     
     private List<ITextTag>     listIfTag;
-    private StringBuilder      text;
+    //private StringBuilder      text;
     
     /**
      * Build a new <code>where</code> tag.
@@ -46,7 +46,7 @@ public class WhereTag implements ITextTag
      */
     public WhereTag(List<ITextTag> listTestTag)
     {
-        this.text = new StringBuilder();
+        //this.text = new StringBuilder();
         this.listIfTag = listTestTag;
     }
     
@@ -59,30 +59,13 @@ public class WhereTag implements ITextTag
     public boolean eval(Object rootObjects)
     {
         boolean evaluation = false;
-        text.delete(0, text.length());
         for (int i = 0; i < listIfTag.size(); i++)
         {
             ITextTag tag = listIfTag.get(i);
             if (tag.eval(rootObjects))
             {
                 evaluation = true;
-                if (text.indexOf("where") >= 0)
-                {
-                    text.append(" " + tag.getText());
-                }
-                else
-                {
-                    String clause = tag.getText();
-                    text.append("where ");
-                    Matcher matcherAnd = patternAND.matcher(clause);
-                    Matcher matcherOr = patternOR.matcher(clause);
-                    if (matcherAnd.find())
-                        text.append(clause.substring(0, matcherAnd.start())).append(clause.substring(matcherAnd.end(), clause.length()).trim()) ;
-                    else if (matcherOr.find())
-                        text.append(clause.substring(0, matcherOr.start())).append(clause.substring(matcherOr.end(), clause.length()).trim()) ;
-                    else
-                        text.append(clause);
-                }
+                break;
             }
         }
         return evaluation;
@@ -95,15 +78,62 @@ public class WhereTag implements ITextTag
      */
     public String getText()
     {
+        throw new IllegalStateException("Conditional tag group cannot getText directly, invoke getText(Object rootObjects)");
+        //return text.toString();
+    }
+    
+    @Override
+    public String getText(Object rootObjects)
+    {
+        return getConditionalText(rootObjects);
+    }
+
+    private String getConditionalText(Object rootObjects)
+    {
+        StringBuilder      text = new StringBuilder();
+        for (int i = 0; i < listIfTag.size(); i++)
+        {
+            ITextTag tag = listIfTag.get(i);
+            if (tag.eval(rootObjects))
+            {
+                String clause = tag.getText();
+                if (tag.isDynamicGroup())
+                    clause = tag.getText(rootObjects);
+                if (text.indexOf("where") >= 0)
+                {
+                    text.append(" " + clause);
+                }
+                else
+                {
+                    text.append("where ");
+                    Matcher matcherAnd = patternAND.matcher(clause);
+                    Matcher matcherOr = patternOR.matcher(clause);
+                    if (matcherAnd.find())
+                        text.append(clause.substring(0, matcherAnd.start())).append(clause.substring(matcherAnd.end(), clause.length()).trim()) ;
+                    else if (matcherOr.find())
+                        text.append(clause.substring(0, matcherOr.start())).append(clause.substring(matcherOr.end(), clause.length()).trim()) ;
+                    else
+                        text.append(clause);
+                }
+            }
+        }
         return text.toString();
     }
     
+
     /**
      * Indicate if text is dynamic or static.
      * 
      * @return always true is returned, because this object save dynamic text.
      */
+    @Override
     public boolean isDynamic()
+    {
+        return true;
+    }
+    
+    @Override
+    public boolean isDynamicGroup()
     {
         return true;
     }

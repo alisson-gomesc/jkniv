@@ -22,6 +22,7 @@ package net.sf.jkniv.sqlegance.params;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 
@@ -30,11 +31,28 @@ import java.util.regex.Matcher;
  */
 public class ParamParserQuestionMark extends AbstractParamParser
 {
-
-    public ParamParserQuestionMark()
+    private static final Pattern PATTERN_PARAMS = Pattern.compile(REGEX_QUESTION_MARK,
+            Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    
+    private static ParamParser INSTANCE = new ParamParserQuestionMark();
+    
+    private ParamParserQuestionMark()
     {
-        super(REGEX_QUESTION_MARK);
+        //super(REGEX_QUESTION_MARK);
     }
+
+    public static ParamParser getInstance()
+    {
+        return INSTANCE;
+    }
+    
+    @Override
+    Pattern getPatternParams()
+    {
+        return PATTERN_PARAMS;
+    }
+
+
 
     @Override
     public String[] find(String query)

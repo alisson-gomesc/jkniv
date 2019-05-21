@@ -59,7 +59,7 @@ class NamedParamsOld extends AbstractParam implements AutoBindParams
                 o = queryable.getProperty(s);
 
             // FIXME log sql parameters
-            LOG.error("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", i,
+            LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", i++,
                     s, o, (o == null ? "NULL" : o.getClass()));
             
             stmtAdapter.setParameter(s, o);            

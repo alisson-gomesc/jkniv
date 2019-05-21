@@ -87,12 +87,24 @@ public class StaticText implements ITextTag
         return this.text;
     }
     
+    public String getText(Object rootObjects)
+    {
+        return this.text;
+    }
+    
     /**
      * Indicate if text is dynamic or static.
      * 
      * @return always false is returned, because this object save static text.
      */
+    @Override
     public boolean isDynamic()
+    {
+        return false;
+    }
+    
+    @Override
+    public boolean isDynamicGroup()
     {
         return false;
     }

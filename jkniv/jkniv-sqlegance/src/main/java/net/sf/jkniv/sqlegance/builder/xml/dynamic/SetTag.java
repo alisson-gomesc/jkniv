@@ -31,7 +31,7 @@ public class SetTag implements ITextTag
 {
     public static final String TAG_NAME = "set";
     private List<? extends ITextTag>     listIfTag;
-    private StringBuilder      text;
+    //private StringBuilder      text;
     
     /**
      * Build a new <code>set</code> tag.
@@ -41,7 +41,7 @@ public class SetTag implements ITextTag
      */
     public SetTag(List<? extends ITextTag> listIfTag)
     {
-        text = new StringBuilder();
+        //text = new StringBuilder();
         this.listIfTag = listIfTag;
     }
     
@@ -54,15 +54,45 @@ public class SetTag implements ITextTag
     public boolean eval(Object rootObjects)
     {
         boolean evaluation = false;
-        text.delete(0, text.length());
         for (int i = 0; i < listIfTag.size(); i++)
         {
             ITextTag tag = listIfTag.get(i);
             if (tag.eval(rootObjects))
             {
                 evaluation = true;
-                
-                String clause = tag.getText();
+                break;
+            }
+        }
+        return evaluation;
+    }
+    
+    /**
+     * Retrieve the dynamic text from XML element.
+     * 
+     * @return text from XML element.
+     */
+    public String getText()
+    {
+        throw new IllegalStateException("Conditional tag group cannot getText directly, invoke getText(Object rootObjects)");
+    }
+    
+    @Override
+    public String getText(Object rootObjects)
+    {
+        return getConditionalText(rootObjects);
+    }
+    
+    private String getConditionalText(Object rootObjects)
+    {
+        StringBuilder text = new StringBuilder();
+        //boolean evaluation = false;
+        for (int i = 0; i < listIfTag.size(); i++)
+        {
+            ITextTag tag = listIfTag.get(i);
+            if (tag.eval(rootObjects))
+            {
+                //evaluation = true;
+                String clause = tag.getText().trim();
                 if (clause.endsWith(","))
                     clause = clause.substring(0, clause.length() - 1);
                 
@@ -77,28 +107,28 @@ public class SetTag implements ITextTag
                 }
             }
         }
-        return evaluation;
-    }
-    
-    /**
-     * Retrieve the dynamic text from XML element.
-     * 
-     * @return text from XML element.
-     */
-    public String getText()
-    {
         return text.toString();
     }
+
+
     
     /**
      * Indicate if text is dynamic or static.
      * 
      * @return always true is returned, because this object save dynamic text.
      */
+    @Override
     public boolean isDynamic()
     {
         return true;
     }
+    
+    @Override
+    public boolean isDynamicGroup()
+    {
+        return true;
+    }
+
     
     @Override
     public List<? extends ITextTag> getTags()

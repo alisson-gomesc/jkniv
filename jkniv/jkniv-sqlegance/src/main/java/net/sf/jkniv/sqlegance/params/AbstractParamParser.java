@@ -61,14 +61,16 @@ public abstract class AbstractParamParser implements ParamParser
     //private static final Pattern PATTERN_HASH          = Pattern.compile(REGEX_HASH_SYMBOL,     Pattern.CASE_INSENSITIVE);
     //private static final Pattern PATTERN_TWO_DOTS      = Pattern.compile(REGEX_TWODOTS_SYMBOL,  Pattern.CASE_INSENSITIVE);
     //private static final Pattern PATTERN_QUESTION      = Pattern.compile(REGEX_QUESTION_SYMBOL, Pattern.CASE_INSENSITIVE);
-    protected final Pattern        PATTERN_PARAMS;                                                                //= Pattern.compile(REGEX_QUESTION_SYMBOL, Pattern.CASE_INSENSITIVE);
-    protected static final Pattern PATTERN_IN          = Pattern.compile(REGEX_IN, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    
+    private static final Pattern PATTERN_IN          = Pattern.compile(REGEX_IN, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private static final BasicType basicType           = BasicType.getInstance();
     
-    public AbstractParamParser(String regex)
-    {
-        this.PATTERN_PARAMS = Pattern.compile(regex, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-    }
+    abstract Pattern getPatternParams();
+    
+//    public AbstractParamParser(String regex)
+//    {
+//        this.PATTERN_PARAMS = Pattern.compile(regex, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+//    }
     
     @Override
     public String replaceForQuestionMark(String query)
@@ -80,7 +82,7 @@ public abstract class AbstractParamParser implements ParamParser
     public String replaceForQuestionMarkWithNumber(String query, Object params)
     {
         StringBuffer sb = new StringBuffer(query);
-        Matcher matcherTwoDots = PATTERN_PARAMS.matcher(query);
+        Matcher matcherTwoDots = getPatternParams().matcher(query);
         Map<String, String> mapForINClauseParams = new HashMap<String, String>();
         int startIndex = 0;
         int endIndex = 0;
@@ -126,7 +128,7 @@ public abstract class AbstractParamParser implements ParamParser
     public String replaceForQuestionMark(String query, Object params)
     {
         StringBuffer sb = new StringBuffer(query);
-        Matcher matcherTwoDots = PATTERN_PARAMS.matcher(query);
+        Matcher matcherTwoDots = getPatternParams().matcher(query);
         Map<String, String> mapForINClauseParams = new HashMap<String, String>();
         int startIndex = 0;
         int endIndex = 0;

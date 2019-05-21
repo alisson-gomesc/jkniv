@@ -4,7 +4,7 @@
        http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
 
 
-  <select id="test-choose1" type="JPQL">
+  <select id="test-choose-hashmark1" type="JPQL">
     select id, name from Users where id > 0
     <if test="name != null">
       AND name = #{name}
@@ -23,7 +23,7 @@
   </select>
 
 
-  <select id="test-where-with-choose" type="NATIVE" returnType="java.util.HashMap">
+  <select id="test-where-with-choose-colon" type="NATIVE" returnType="java.util.HashMap">
     select * from customers c
     <where>
       <choose>

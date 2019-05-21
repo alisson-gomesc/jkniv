@@ -4,7 +4,7 @@ Title: Changelog
 # Changelog
 
 
-### Changes between 0.5.0.1 and 0.6.0
+### Version 0.6.0 is not source compatible with 0.5.x  
 
 - ![BUG Fix](images/bug_icon.png "BUG Fix") Load repository-sql.xml, SqlConfig.xml files from EJB classloader's works.
 

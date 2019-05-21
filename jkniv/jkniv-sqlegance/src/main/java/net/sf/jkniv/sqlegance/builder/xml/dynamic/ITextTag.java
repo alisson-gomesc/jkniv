@@ -50,11 +50,30 @@ public interface ITextTag
     String getText();
     
     /**
+     * Evaluate if attribute test is true or false with OGNL expression.
+     * Something
+     * 
+     * @param rootObjects
+     *            the root object for the OGNL expression.
+     * @return dynamic value evaluating rootObjects.
+     * @throws MalformedExpression
+     *             if the expression is malformed.
+     * @see ognl.Ognl
+     */
+    String getText(Object rootObjects);
+    
+    /**
      * Indicate if text is dynamic or static.
      * 
      * @return true returned if dynamic, false otherwise.
      */
     boolean isDynamic();
+    
+    /**
+     * Indicate if text contains a dynamic group of tags like: SetTag and WhereTag.
+     * @return true returned if dynamic, false otherwise.
+     */
+    boolean isDynamicGroup();
     
     /**
      * Collections from inner tags ({@code WhereTag}, {@code SetTag}...) 

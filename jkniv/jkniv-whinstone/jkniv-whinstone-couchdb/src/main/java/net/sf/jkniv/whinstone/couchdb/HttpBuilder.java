@@ -163,6 +163,9 @@ public class HttpBuilder
         StringBuilder urlAllDocs = new StringBuilder(this.hostContext + "_design/" + queryable.getName());
         try
         {
+            if (queryable.isPaging())
+                urlParams.append("limit="+queryable.getMax());
+                
             for (QueryParam k : KEY_PARAMS_VIEW)
             {
                 Object v = getProperty(queryable, k.name());

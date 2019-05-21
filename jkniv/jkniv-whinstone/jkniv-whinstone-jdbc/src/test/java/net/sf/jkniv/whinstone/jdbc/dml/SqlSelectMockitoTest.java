@@ -59,7 +59,9 @@ import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.xml.NoSqlStats;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
+import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.params.ParamParserColonMark;
+import net.sf.jkniv.sqlegance.params.ParamParserFactory;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
 import net.sf.jkniv.whinstone.QueryFactory;
@@ -142,7 +144,7 @@ public class SqlSelectMockitoTest
         given(this.selectable.getValidateType()).willReturn(ValidateType.NONE);
         given(this.selectable.getSql(any())).willReturn("any sql");
         given(this.selectable.getSqlDialect()).willReturn(new AnsiDialect());
-        given(this.selectable.getParamParser()).willReturn(new ParamParserColonMark());
+        given(this.selectable.getParamParser()).willReturn(ParamParserFactory.getInstance(ParamMarkType.COLON));
         given(this.selectable.getStats()).willReturn(NoSqlStats.getInstance());
         given(this.selectable.getReturnType()).willReturn(FlatAuthor.class.getName());
         //given(this.selectable.getReturnTypeAsClass()).willReturn(FlatAuthor.class);

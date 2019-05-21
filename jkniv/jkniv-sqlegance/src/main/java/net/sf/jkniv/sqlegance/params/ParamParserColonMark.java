@@ -22,14 +22,29 @@ package net.sf.jkniv.sqlegance.params;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ParamParserColonMark extends AbstractParamParser
 {
-    public ParamParserColonMark()
+    private static final Pattern PATTERN_PARAMS = Pattern.compile(REGEX_COLON_MARK, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final ParamParser INSTANCE = new ParamParserColonMark();
+    
+    private ParamParserColonMark()
     {
-        super(REGEX_COLON_MARK);
+        //super(REGEX_COLON_MARK);
+    }
+
+    public static ParamParser getInstance()
+    {
+        return INSTANCE;
     }
     
+    @Override
+    Pattern getPatternParams()
+    {
+        return PATTERN_PARAMS;
+    }
+
     @Override
     public String[] find(String query)
     {
@@ -76,4 +91,5 @@ public class ParamParserColonMark extends AbstractParamParser
         
         return answer;
     }
+
 }

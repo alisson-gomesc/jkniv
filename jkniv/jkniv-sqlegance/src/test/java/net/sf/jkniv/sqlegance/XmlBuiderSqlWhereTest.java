@@ -81,7 +81,7 @@ public class XmlBuiderSqlWhereTest
         Sql sql;
         p.put("code", "123");
         p.put("codeShop", "18");
-        sql = XmlBuilderSql.getQuery("test-where-with-choose");
+        sql = XmlBuilderSql.getQuery("test-where-with-choose-colon");
         assertThat(sql.getSql(p).replaceAll("\n", "").toLowerCase(), is("select * from customers c where trim(c.code) = trim(:code)          and trim(c.codeshop) = :codeshop"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.COLON));
     }

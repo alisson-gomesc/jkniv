@@ -25,7 +25,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Test;
 
+import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.params.ParamParser;
+import net.sf.jkniv.sqlegance.params.ParamParserFactory;
 import net.sf.jkniv.sqlegance.params.ParamParserHashMark;
 
 public class ParamParserHashMarkInClaseTest
@@ -40,7 +42,7 @@ public class ParamParserHashMarkInClaseTest
         String[] params = {"A","B","C"};
         String sql                 = "select * from Roles where name IN (:in:names)";
         String sqlExpected         = "select * from Roles where name IN (?,?,?)";
-        ParamParser parser = new ParamParserHashMark();
+        ParamParser parser = ParamParserFactory.getInstance(ParamMarkType.HASH);//new ParamParserHashMark();
         
         String[] names = parser.find(sql);
         assertThat(names.length, is(1));
@@ -59,7 +61,7 @@ public class ParamParserHashMarkInClaseTest
         String[] params = {"A","B","C"};
         String sql                 = "select * from Roles where name IN (:in:names) or surname IN (:in:names)";
         String sqlExpected         = "select * from Roles where name IN (?,?,?) or surname IN (?,?,?)";
-        ParamParser parser = new ParamParserHashMark();
+        ParamParser parser = ParamParserFactory.getInstance(ParamMarkType.HASH);//new ParamParserHashMark();
         
         String[] names = parser.find(sql);
         assertThat(names.length, is(2));
@@ -76,7 +78,7 @@ public class ParamParserHashMarkInClaseTest
         String[] params = {"A","B","C"};
         String sql                 = "select * from Roles where name IN (:in:names) and id = #{id}";
         String sqlExpected         = "select * from Roles where name IN (?,?,?) and id = ?    ";
-        ParamParser parser = new ParamParserHashMark();
+        ParamParser parser = ParamParserFactory.getInstance(ParamMarkType.HASH);//new ParamParserHashMark();
         
         String[] names = parser.find(sql);
         assertThat(names.length, is(2));

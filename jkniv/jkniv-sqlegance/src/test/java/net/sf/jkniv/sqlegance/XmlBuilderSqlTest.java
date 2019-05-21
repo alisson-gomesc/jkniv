@@ -165,7 +165,7 @@ public class XmlBuilderSqlTest
         assertThat(sql1.getParamParser().getType(), is(ParamMarkType.HASH));
         assertThat(sql2.getParamParser().getType(), is(ParamMarkType.HASH));
     }
-    
+
     @Test
     public void whenReadDeleteSqlWithoutDynamicElements()
     {

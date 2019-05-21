@@ -80,7 +80,7 @@ The `Repository` interface have a simple set of methods to manipulate the data f
 - `enrich`: use the `queryable` object to retrieve data from repository and append the result to object parameter from `queryable`. 
 - `scalar`: retrieve a scalar value (String, Number, Date etc)
 
-The library is 100% protected against [SQL injection](https://www.owasp.org/index.php/SQL_Injection "OWASP SQL injection") because all statements are [PreparedStatement](https://docs.oracle.com/javase/6/docs/api/java/sql/PreparedStatement.html "PreparedStatement"), except to couchdb that access it's over HTTP protocol.
+The library is 100% protected against [SQL injection](https://www.owasp.org/index.php/SQL_Injection "OWASP SQL injection") because all statements are [PreparedStatement](https://docs.oracle.com/javase/6/docs/api/java/sql/PreparedStatement.html "PreparedStatement"), except to couchdb that access is over HTTP protocol.
 
 
 ### Traceability for Whinstone Features (Roadmap)
@@ -89,8 +89,8 @@ The library is 100% protected against [SQL injection](https://www.owasp.org/inde
 |-------| ------------------- | -------------- | -------------- |---------------------|-------------------|
 |`0.6.0 version`| Auto Bind Parameters| ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     |
 |`0.6.0 version`| Auto Bind Result    | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     |
-|`0.6.0 version`| One-to-One          | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![open][clo](native) |
-|`0.6.0 version`| One-to-Many         | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![open][clo](native) |
+|`0.6.0 version`| One-to-One          | ![close][chk]  | ![close][chk]  | ![close][chk]       | !![close][chk](native) |
+|`0.6.0 version`| One-to-Many         | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk](native) |
 |`0.6.0 version`| JSR Bean Validation | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     |
 |`0.6.0 version`| Transaction         | ![close][chk]  | ![close][chk]  | ![open][clo]        | ![open][clo]      |
 |`0.6.0 version`| Paginate Query      | ![close][chk]  | ![close][chk]  | ![open][clo]        | ![open][clo]      |

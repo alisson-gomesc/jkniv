@@ -45,6 +45,7 @@ import net.sf.jkniv.whinstone.couchdb.statement.CouchDbStatementAdapter;
 public class ViewCommand extends AbstractCommand implements CouchCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger(ViewCommand.class);
+    private static final Logger LOGSQL = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
     private String              body;
     private Queryable queryable;
     private HttpBuilder         httpBuilder;
@@ -71,7 +72,7 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
         {
             CloseableHttpClient httpclient = HttpClients.createDefault();
             String url = httpBuilder.getUrlForView(queryable);
-            LOG.debug(url);
+            LOGSQL.debug(url);
             HttpGet http = (HttpGet)asGet().newHttp(url); 
             httpBuilder.setHeader(http);
             response = httpclient.execute(http);
