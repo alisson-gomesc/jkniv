@@ -163,6 +163,7 @@ public class HttpBuilder
         StringBuilder urlAllDocs = new StringBuilder(this.hostContext + "_design/" + queryable.getName());
         try
         {
+            // FIXME add skip too curl -X GET 'http://127.0.0.1:5984/artists/_design/artists/_view/by-name?limit=5&skip=5'
             if (queryable.isPaging())
                 urlParams.append("limit="+queryable.getMax());
                 
