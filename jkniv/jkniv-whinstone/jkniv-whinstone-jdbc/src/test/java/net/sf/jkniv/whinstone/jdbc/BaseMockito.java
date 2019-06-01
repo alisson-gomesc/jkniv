@@ -39,7 +39,7 @@ import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook;
 public abstract class BaseMockito
 {
     @Rule
-    public ExpectedException  catcher = ExpectedException.none();
+    public ExpectedException    catcher = ExpectedException.none();
     
     protected DataSource        dataSource;
     protected Connection        connection;
@@ -61,6 +61,7 @@ public abstract class BaseMockito
     @Before
     public void setUp() throws Exception
     {
+        System.out.println("setting up mockito");
         this.qqueryable = mock(Queryable.class);
         this.connection = mock(Connection.class);
         this.dataSource = mock(DataSource.class);

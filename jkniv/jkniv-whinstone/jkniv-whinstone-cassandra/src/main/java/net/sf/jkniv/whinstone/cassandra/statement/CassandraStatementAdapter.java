@@ -591,5 +591,10 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         }
         return columns;
     }
-    
+
+    @Override
+    public void close()
+    {
+        // TODO how to close cassandra statement ?
+    }
 }

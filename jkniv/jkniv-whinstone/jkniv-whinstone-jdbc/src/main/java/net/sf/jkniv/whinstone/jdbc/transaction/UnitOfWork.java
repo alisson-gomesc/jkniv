@@ -152,8 +152,9 @@ public class UnitOfWork implements Work
             ResultRow<T, ResultSet> overloadResultRow)
     {
         ConnectionAdapter adapterConn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        //PreparedStatement stmt = null;
+        StatementAdapter<T, ResultSet> adapterStmt = null;
+        //ResultSet rs = null;
         List<T> list = null;
         Selectable select = queryable.getDynamicSql().asSelectable();
         Class<T> returnType = (Class<T>) Map.class;
@@ -167,7 +168,7 @@ public class UnitOfWork implements Work
             else if (select.getReturnTypeAsClass() != null)
                 returnType = (Class<T>) select.getReturnTypeAsClass();
             
-            StatementAdapter<T, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
+            adapterStmt = adapterConn.newStatement(queryable);
             
             LOGSQL.info(queryable.query());
             queryable.bind(adapterStmt).on();
@@ -208,8 +209,9 @@ public class UnitOfWork implements Work
         }
         finally
         {
-            connectionFactory.close(rs);
-            connectionFactory.close(stmt);// FIXME StatementAdapter doesn't have instance setter in stmt
+            //connectionFactory.close(rs);
+            adapterStmt.close();
+            //connectionFactory.close(stmt);
             connectionFactory.close(adapterConn);
         }
         return list;

@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -65,7 +66,7 @@ public class SqlSelectTest extends BaseJdbc
     }
     
     //public void whenSelectOneRecordByUniqueValue()
-    @Test
+    @Test @Ignore("mockito")
     public void whenSelectAllRecords()
     {
         Queryable q = QueryFactory.of("getBookByISBN");
