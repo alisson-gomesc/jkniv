@@ -13,11 +13,11 @@
     <appender-ref ref="console" />
   </logger>
   <logger name="jkniv.whinstone.jdbc.SQL" additivity="false">
-    <level value="error" />
+    <level value="trace" />
     <appender-ref ref="console" />
   </logger>
   <logger name="net.sf.jkniv.whinstone.jdbc" additivity="false">
-    <level value="info" />
+    <level value="trace" />
     <appender-ref ref="console" />
   </logger>
 

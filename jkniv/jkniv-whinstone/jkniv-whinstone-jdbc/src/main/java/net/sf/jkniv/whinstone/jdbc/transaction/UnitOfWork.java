@@ -146,7 +146,7 @@ public class UnitOfWork implements Work
     }
     
     @SuppressWarnings(
-    { "unchecked", "rawtypes" })
+    { "unchecked"})
     @Override
     public <T> List<T> select(Queryable queryable, Class<T> overloadReturnType,
             ResultRow<T, ResultSet> overloadResultRow)
