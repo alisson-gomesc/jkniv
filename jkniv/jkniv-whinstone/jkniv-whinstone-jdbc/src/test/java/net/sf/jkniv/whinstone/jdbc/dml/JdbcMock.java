@@ -63,6 +63,12 @@ public class JdbcMock
         
         given(this.dataSource.getConnection()).willReturn(this.connection);
         given(this.connection.prepareStatement(anyString(), anyInt(), anyInt())).willReturn(this.stmt);
+        given(this.connection.prepareStatement(anyString(), anyInt(), anyInt(), anyInt())).willReturn(this.stmt);
+        
+//        stmt = conn.prepareStatement(queryable.query(), rsType, rsConcurrency, rsHoldability);
+//        stmt = conn.prepareStatement(queryable.query(), rsType, rsConcurrency);
+
+        
         given(this.stmt.executeQuery()).willReturn(this.rs);
         given(this.stmt.executeQuery(anyString())).willReturn(this.rs);
         given(this.dbMetadata.getJDBCMajorVersion()).willReturn(1);
@@ -87,29 +93,15 @@ public class JdbcMock
         given(this.sql.getStats()).willReturn(NoSqlStats.getInstance());
         given(this.sql.getSqlType()).willReturn(SqlType.SELECT);
         given(this.sql.asSelectable()).willReturn((Selectable) this.sql);
-                
+
+        given(sql.getReturnType()).willReturn(returnType.getName());
+        doReturn(returnType).when(sql).getReturnTypeAsClass();
+
         given(this.sqlContext.getRepositoryConfig()).willReturn(this.repositoryConfig);
         given(this.sqlContext.getQuery(anyString())).willReturn(this.sql);
         this.repository = RepositoryService.getInstance().lookup(RepositoryType.JDBC).newInstance(sqlContext);
     }
-    
-    public Repository getRepository()
-    {
-        return repository;
-    }
-    
-    /**
-     * Build the return type
-     * @param sql instance of Sql
-     * @return this builder instance
-     */
-    public JdbcMock sql(Sql sql) 
-    {
-        given(sql.getReturnType()).willReturn(returnType.getName());
-        doReturn(returnType).when(sql).getReturnTypeAsClass();
-        return this;
-    }
-    
+        
     /**
      * Build the JDBC ResultSetMetaData 
      * @param columns array of columns like {id, name, postal_code, street_name}
@@ -127,7 +119,12 @@ public class JdbcMock
         return this;
     }
     
-    public void buildFifteenFlatBook() throws SQLException
+    public Repository getRepository()
+    {
+        return repository;
+    }
+
+    public Repository buildFifteenFlatBook() throws SQLException
     {
         given(rs.next()).willReturn(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false);
         given(rs.getObject(1)).willReturn(1001L,1002L,1003L,1004L,1005L,1006L,1007L,1008L,1009L,1010L,1011L,1012L,1013L,1014L,1015L);
@@ -136,9 +133,10 @@ public class JdbcMock
         given(rs.getObject(4)).willReturn("Friedrich Nietzsche","Martin Fowler","Martin Fowler","Martin Fowler","Martin Fowler","Martin Fowler","Carlos Drummond","Carlos Drummond","Carlos Drummond","Carlos Drummond","Carlos Drummond","Franz Kafka","Franz Kafka","Albert Camus","Albert Camus");
         given(rs.getObject(5)).willReturn(1,2,2,2,2,2,3,3,3,3,3,4,4,5,5);
         //"ID", "ISBN", "NAME", "AUTHOR", "AUTHOR_ID"
+        return this.repository;
     }
     
-    public void buildThreeFlatAuthor() throws SQLException {
+    public Repository buildThreeFlatAuthor() throws SQLException {
         //given(this.rsMetadata.getColumnCount()).willReturn(3);
         //given(this.rsMetadata.getColumnLabel(1)).willReturn("id");
         //given(this.rsMetadata.getColumnName(1)).willReturn("id");
@@ -152,5 +150,20 @@ public class JdbcMock
         given(rs.getObject(2)).willReturn("Author 1", "Author 2");
         given(rs.getObject(3)).willReturn(10L, 11L);
 
+        return this.repository;
+    }
+    
+    public PreparedStatement getStmt()
+    {
+        return stmt;
+    }
+    
+    public ResultSet getRs()
+    {
+        return rs;
+    }
+    public Connection getConnection()
+    {
+        return connection;
     }
 }

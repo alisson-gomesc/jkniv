@@ -29,6 +29,8 @@ import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.whinstone.ConnectionFactory;
 import net.sf.jkniv.whinstone.jdbc.transaction.UnitOfWork;
 import net.sf.jkniv.whinstone.jdbc.transaction.Work;
+import net.sf.jkniv.whinstone.transaction.TransactionContext;
+import net.sf.jkniv.whinstone.transaction.TransactionSessions;
 
 class SessionFactory
 {
@@ -52,7 +54,10 @@ class SessionFactory
         Work work = new UnitOfWork(connectionFactory, config);
         if(LOG.isDebugEnabled())
             LOG.debug("Started new {}", work);
-        works.put(Thread.currentThread().getName() + "." + connectionFactory.getContextName(), work);
+        TransactionContext ctx = TransactionSessions.get(config.getName());
+        if (ctx != null && ctx.isActive())
+            works.put(Thread.currentThread().getName() + "." + connectionFactory.getContextName(), work);
+        
         return work;
     }
     
