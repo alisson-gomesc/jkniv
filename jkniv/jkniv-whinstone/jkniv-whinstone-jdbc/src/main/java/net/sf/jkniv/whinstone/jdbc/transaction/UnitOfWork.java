@@ -210,7 +210,8 @@ public class UnitOfWork implements Work
         finally
         {
             //connectionFactory.close(rs);
-            adapterStmt.close();
+            if (adapterStmt != null)
+                adapterStmt.close();
             //connectionFactory.close(stmt);
             connectionFactory.close(adapterConn);
         }

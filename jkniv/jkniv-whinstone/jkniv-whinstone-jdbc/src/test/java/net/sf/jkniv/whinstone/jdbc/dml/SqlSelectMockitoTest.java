@@ -19,11 +19,13 @@
  */
 package net.sf.jkniv.whinstone.jdbc.dml;
 
+import static net.sf.jkniv.whinstone.jdbc.RepositoryJdbcInstanceTest.TOTAL_BOOKS;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -39,11 +41,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -52,6 +57,7 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 import org.mockito.verification.VerificationMode;
 
+import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.RepositoryType;
 import net.sf.jkniv.sqlegance.Selectable;
@@ -68,7 +74,9 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.RepositoryService;
+import net.sf.jkniv.whinstone.jdbc.CustomResultRow;
 import net.sf.jkniv.whinstone.jdbc.DataSourceAdapter;
+import net.sf.jkniv.whinstone.jdbc.acme.domain.Book;
 import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatAuthor;
 import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook;
 import net.sf.jkniv.whinstone.transaction.TransactionSessions;
@@ -77,13 +85,14 @@ import net.sf.jkniv.whinstone.transaction.TransactionStatus;
 public class SqlSelectMockitoTest
 {
     @Rule
-    public ExpectedException  catcher = ExpectedException.none();
+    public ExpectedException catcher = ExpectedException.none();
     
     @Test
-    public void whenSelectAllRecords() throws SQLException
+    public void whenSelectAllRecords()
     {
         JdbcMock jdbcMock = new JdbcMock(FlatBook.class);
-        Repository repository = jdbcMock.columns(new String[]{"id","isbn","name","author","author_id"}).buildFifteenFlatBook();
+        Repository repository = jdbcMock.columns(new String[]
+        { "id", "isbn", "name", "author", "author_id" }).buildFifteenFlatBook();
         Queryable q = QueryFactory.of("15 FlatBook");
         List<FlatBook> books = repository.list(q);
         assertThat("There are 15 rows", books.size(), equalTo(15));
@@ -97,17 +106,16 @@ public class SqlSelectMockitoTest
             assertThat(b.getName(), notNullValue());
         }
         assertThat(repository.getTransaction().getStatus(), is(TransactionStatus.NO_TRANSACTION));
-        verify(jdbcMock.getRs()).close();
-        verify(jdbcMock.getStmt()).close();
-        verify(jdbcMock.getConnection(), atLeast(1)).close();
+        verifyClose(jdbcMock);
     }
     
     @Test
-    public void whenUsingMockitto() throws SQLException
+    public void whenUsingMockitto()
     {
         JdbcMock jdbcMock = new JdbcMock(FlatAuthor.class);
-        Repository repository = jdbcMock.columns(new String[]{"id","name","book"}).buildThreeFlatAuthor();
-
+        Repository repository = jdbcMock.columns(new String[]
+        { "id", "name", "book" }).buildThreeFlatAuthor();
+        
         Queryable q = QueryFactory.of("2 FlatAuthor");
         List<FlatAuthor> books = repository.list(q);
         assertThat("There are 2 rows", books.size(), equalTo(2));
@@ -119,24 +127,101 @@ public class SqlSelectMockitoTest
             assertThat(a.getBookId(), notNullValue());
         }
         assertThat(repository.getTransaction().getStatus(), is(TransactionStatus.NO_TRANSACTION));
-        verify(jdbcMock.getRs()).close();
-        verify(jdbcMock.getStmt()).close();
-        verify(jdbcMock.getConnection(), atLeast(1)).close();
+        verifyClose(jdbcMock);
     }
     
+
+    
     @Test
-    public void whenSelectNonRows() throws SQLException
+    public void whenSelectNonRows()
     {
         JdbcMock jdbcMock = new JdbcMock(FlatAuthor.class);
-        Repository repository = jdbcMock.columns(new String[]{"id","name","book"}).getRepository();
-
+        Repository repository = jdbcMock.columns(new String[]
+        { "id", "name", "book" }).getRepository();
+        
         Queryable q = QueryFactory.of("0 records");
         List<FlatAuthor> books = repository.list(q);
         assertThat("Query result is Empty", books.size(), equalTo(0));
         assertThat(repository.getTransaction().getStatus(), is(TransactionStatus.NO_TRANSACTION));
-        verify(jdbcMock.getRs()).close();
-        verify(jdbcMock.getStmt()).close();
-        verify(jdbcMock.getConnection(), atLeast(1)).close();
+        verifyClose(jdbcMock);
     }
     
+    @Test
+    public void whenSelectWrongClassType()
+    {
+        catcher.expect(ClassCastException.class);
+        JdbcMock jdbcMock = new JdbcMock(FlatBook.class);
+        Repository repository = jdbcMock.columns(new String[]
+        { "id", "name", "book" }).buildOneFlatBook();
+        
+        Queryable q = QueryFactory.of("select");
+        FlatAuthor o = repository.get(q);
+        assertThat("Query result is Empty", o, notNullValue());
+        assertThat("Row is a FlatAuthor object", o, instanceOf(FlatBook.class));
+    }
+
+    @Test
+    public void whenSelectOverloadReturnType()
+    {
+        JdbcMock jdbcMock = new JdbcMock(FlatBook.class);
+        Repository repository = jdbcMock.columns(new String[]
+                { "id", "isbn", "name"}).buildFifteenFlatBook();
+        Queryable q = QueryFactory.of("select");
+        
+        List<Book> list = repository.list(q, Book.class);
+        assertThat("There are 15 rows", list.size(), equalTo(15));
+        for (Book b : list)
+        {
+            assertThat(b, instanceOf(Book.class));
+            assertThat(b.getId(), notNullValue());
+            assertThat(b.getName(), notNullValue());
+            assertThat(b.getIsbn(), notNullValue());
+        }
+        verifyClose(jdbcMock);
+    }
+    
+    @Test
+    public void whenSelectDoesntDefinedReturnType()
+    {
+        JdbcMock jdbcMock = new JdbcMock(Map.class);
+        Repository repository = jdbcMock.columns(new String[]
+                { "id", "isbn", "name"}).buildFifteenFlatBook();
+
+        Queryable q = QueryFactory.of("listBooksNoSpecificType");
+        List<Map> list = repository.list(q);
+        assertThat(list.size(), is(15));
+        assertThat(list.get(0), instanceOf(Map.class));
+        assertThat(list.get(0), instanceOf(HashMap.class));
+    }
+    
+    @Test
+    public void whenSelectWithoutTypeAndCustomResultSetParser()
+    {
+        JdbcMock jdbcMock = new JdbcMock(Map.class);
+        Repository repository = jdbcMock.columns(new String[]
+                { "id", "isbn", "name"}).buildFifteenFlatBook();
+        CustomResultRow parser = new CustomResultRow();
+        Queryable q = QueryFactory.of("listBooksNoSpecificType");
+        List<HashMap<String, Object>> list = repository.list(q, parser);
+        assertThat(list.get(0), instanceOf(Map.class));
+        assertThat(list.get(0), instanceOf(HashMap.class));
+        assertThat(String.valueOf(list.get(0).get("0")), is("1001"));
+        assertThat(String.valueOf(list.get(0).get("JUNIT")), is("true"));
+    }
+
+
+    
+    private void verifyClose(JdbcMock jdbcMock)
+    {
+        try
+        {
+            verify(jdbcMock.getRs()).close();
+            verify(jdbcMock.getStmt()).close();
+            verify(jdbcMock.getConnection(), atLeast(1)).close();
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException("Cannot verify close methods for connection, statement and resultset", e);
+        }
+    }
 }

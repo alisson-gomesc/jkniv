@@ -55,7 +55,7 @@ public class SqlSelectTest extends BaseJdbc
     @Autowired
     Repository repositoryDerby;
     
-    @Test
+    @Test @Ignore("mockito")
     public void whenSelectWrongClassType()
     {
         catcher.expect(RepositoryException.class);
@@ -83,7 +83,7 @@ public class SqlSelectTest extends BaseJdbc
         }
     }
     
-    @Test
+    @Test @Ignore("mockito")
     public void whenSelectOverloadReturnType()
     {
         Queryable q = QueryFactory.of("getBookToOverloadType");
@@ -98,7 +98,7 @@ public class SqlSelectTest extends BaseJdbc
         }
     }
     
-    @Test
+    @Test @Ignore("mockito")
     public void whenSelectDoesntDefinedReturnType()
     {
         //catcher.expect(RepositoryException.class); //now, default is java.util.Map
@@ -109,10 +109,9 @@ public class SqlSelectTest extends BaseJdbc
         assertThat(list.get(0), instanceOf(HashMap.class));
     }
     
-    @Test
+    @Test @Ignore("mockito")
     public void whenSelectWithoutTypeAndCustomResultSetParser()
     {
-        //catcher.expect(RepositoryException.class); //now, default is java.util.Map
         CustomResultRow parser = null;
         Queryable q = QueryFactory.of("listBooksNoSpecificType");
         List<HashMap<String, Object>> list = repositoryDerby.list(q, parser);
