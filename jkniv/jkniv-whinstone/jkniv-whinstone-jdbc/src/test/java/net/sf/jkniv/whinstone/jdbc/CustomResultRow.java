@@ -43,7 +43,7 @@ public class CustomResultRow<T> implements ResultRow<T, ResultSet>
     {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("JUNIT", Boolean.TRUE);
-        map.put(String.valueOf(rownum), rs.getString(1));
+        map.put(String.valueOf(rownum), rs.getObject(1));
         return (T) map;
     }
     

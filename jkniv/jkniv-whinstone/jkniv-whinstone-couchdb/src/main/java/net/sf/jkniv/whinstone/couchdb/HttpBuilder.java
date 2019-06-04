@@ -163,9 +163,11 @@ public class HttpBuilder
         StringBuilder urlAllDocs = new StringBuilder(this.hostContext + "_design/" + queryable.getName());
         try
         {
+            // https://docs.couchdb.org/en/stable/ddocs/views/pagination.html
+            // 3.2.5.5. Paging (Alternate Method)
             // FIXME add skip too curl -X GET 'http://127.0.0.1:5984/artists/_design/artists/_view/by-name?limit=5&skip=5'
             if (queryable.isPaging())
-                urlParams.append("limit="+queryable.getMax());
+                urlParams.append("limit="+queryable.getMax()+"&skip="+queryable.getOffset());
                 
             for (QueryParam k : KEY_PARAMS_VIEW)
             {

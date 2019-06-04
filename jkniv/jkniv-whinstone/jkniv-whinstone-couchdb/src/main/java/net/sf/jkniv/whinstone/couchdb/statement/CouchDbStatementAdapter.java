@@ -331,5 +331,11 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     //        }
     //        return columns;
     //    }
-    
+
+    @Override
+    public void close()
+    {
+        // there isn't statement to close
+    }
+
 }

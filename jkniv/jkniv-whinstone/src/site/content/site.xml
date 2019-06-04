@@ -31,6 +31,7 @@
     </head>
     <menu name="jkniv-whinstone" inherit="top">
       <item name="Introduction" href="index.html" />
+      <item name="Changelog" href="changelog.html" />
       <item name="Architecture" href="arch.html" />
       <item name="Connection" href="connection.html" />
       <item name="Querying" href="querying.html" />

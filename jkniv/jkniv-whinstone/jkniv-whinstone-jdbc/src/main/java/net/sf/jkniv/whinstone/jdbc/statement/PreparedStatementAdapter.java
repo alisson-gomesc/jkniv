@@ -438,6 +438,22 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
             return metaData.getColumnName(columnIndex);
         }
     }
+
+    @Override
+    public void close()
+    {
+        if (this.stmt != null) 
+        {
+            try
+            {
+                this.stmt.close();
+            }
+            catch (SQLException e)
+            {
+                LOG.warn("Cannot close prepared statement from query [{}]", this.queryable.getName(), e);
+            }
+        }
+    }
     
     
 }

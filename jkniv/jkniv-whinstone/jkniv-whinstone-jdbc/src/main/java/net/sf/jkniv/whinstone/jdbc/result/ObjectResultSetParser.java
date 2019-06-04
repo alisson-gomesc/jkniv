@@ -75,7 +75,8 @@ public class ObjectResultSetParser<T> implements ResultSetParser<T, ResultSet>
         {
             close(rs);
         }
-        return groupable.asList();
+        List<T> l =groupable.asList();
+        return l;
     }
     
     public void close(ResultSet rs)

@@ -23,12 +23,18 @@ import java.sql.ResultSet;
 import java.util.List;
 
 import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.transaction.TransactionStatus;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
 public interface Work
 {
+    /**
+     * Current thread name + {@link Repository} context name
+     * @return the thread's name '-' plus {@link Repository} Context Name. 
+     * Sample: <code>main1-PostgreSQLCtx</code>
+     */
     String getContextName();
     
     TransactionStatus getTransactionStatus();

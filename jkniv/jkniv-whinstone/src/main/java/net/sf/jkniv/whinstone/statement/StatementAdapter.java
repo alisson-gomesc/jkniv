@@ -148,6 +148,6 @@ public interface StatementAdapter<T, R>
      */
     int reset();
    
-    
+    void close();
     
 }
