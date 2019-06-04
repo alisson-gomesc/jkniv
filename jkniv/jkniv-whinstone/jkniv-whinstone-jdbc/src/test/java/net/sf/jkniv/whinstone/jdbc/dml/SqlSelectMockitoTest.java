@@ -21,65 +21,30 @@ package net.sf.jkniv.whinstone.jdbc.dml;
 
 import static net.sf.jkniv.whinstone.jdbc.RepositoryJdbcInstanceTest.TOTAL_BOOKS;
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.verify;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
-import org.mockito.verification.VerificationMode;
 
-import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.RepositoryProperty;
-import net.sf.jkniv.sqlegance.RepositoryType;
-import net.sf.jkniv.sqlegance.Selectable;
-import net.sf.jkniv.sqlegance.SqlContext;
-import net.sf.jkniv.sqlegance.SqlType;
-import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
-import net.sf.jkniv.sqlegance.builder.xml.NoSqlStats;
-import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
-import net.sf.jkniv.sqlegance.params.ParamMarkType;
-import net.sf.jkniv.sqlegance.params.ParamParserFactory;
-import net.sf.jkniv.sqlegance.transaction.TransactionType;
-import net.sf.jkniv.sqlegance.validation.ValidateType;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
-import net.sf.jkniv.whinstone.RepositoryService;
 import net.sf.jkniv.whinstone.jdbc.CustomResultRow;
-import net.sf.jkniv.whinstone.jdbc.DataSourceAdapter;
 import net.sf.jkniv.whinstone.jdbc.acme.domain.Book;
 import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatAuthor;
 import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook;
-import net.sf.jkniv.whinstone.transaction.TransactionSessions;
 import net.sf.jkniv.whinstone.transaction.TransactionStatus;
 
 public class SqlSelectMockitoTest
@@ -106,7 +71,7 @@ public class SqlSelectMockitoTest
             assertThat(b.getName(), notNullValue());
         }
         assertThat(repository.getTransaction().getStatus(), is(TransactionStatus.NO_TRANSACTION));
-        verifyClose(jdbcMock);
+        verifyClose(jdbcMock, repository);
     }
     
     @Test
@@ -126,8 +91,7 @@ public class SqlSelectMockitoTest
             assertThat(a.getId(), notNullValue());
             assertThat(a.getBookId(), notNullValue());
         }
-        assertThat(repository.getTransaction().getStatus(), is(TransactionStatus.NO_TRANSACTION));
-        verifyClose(jdbcMock);
+        verifyClose(jdbcMock, repository);
     }
     
 
@@ -143,7 +107,7 @@ public class SqlSelectMockitoTest
         List<FlatAuthor> books = repository.list(q);
         assertThat("Query result is Empty", books.size(), equalTo(0));
         assertThat(repository.getTransaction().getStatus(), is(TransactionStatus.NO_TRANSACTION));
-        verifyClose(jdbcMock);
+        verifyClose(jdbcMock, repository);
     }
     
     @Test
@@ -177,7 +141,7 @@ public class SqlSelectMockitoTest
             assertThat(b.getName(), notNullValue());
             assertThat(b.getIsbn(), notNullValue());
         }
-        verifyClose(jdbcMock);
+        verifyClose(jdbcMock, repository);
     }
     
     @Test
@@ -207,14 +171,65 @@ public class SqlSelectMockitoTest
         assertThat(list.get(0), instanceOf(HashMap.class));
         assertThat(String.valueOf(list.get(0).get("0")), is("1001"));
         assertThat(String.valueOf(list.get(0).get("JUNIT")), is("true"));
+        verifyClose(jdbcMock, repository);
     }
 
+    @Test 
+    public void whenSelectDoesntDefinedReturnTypeButForceOne()
+    {
+        JdbcMock jdbcMock = new JdbcMock(FlatAuthor.class);
+        Repository repository = jdbcMock.columns(new String[]
+        { "id", "name", "book" }).buildThreeFlatAuthor();
 
+        Queryable q = QueryFactory.of("listBooksNoSpecificType");
+        List<Book> list = repository.list(q, Book.class);
+        assertThat(list.size(), is(2));
+        assertThat(list.get(0), instanceOf(Book.class));
+        verifyClose(jdbcMock, repository);
+    }
+
+    @Test
+    public void whenSelectOneRecordByUniqueValueWithMapParams()
+    {
+        JdbcMock jdbcMock = new JdbcMock(FlatBook.class);
+        Repository repository = jdbcMock.columns(new String[]
+        { "id", "isbn", "name", "author" }).buildOneFlatBook();
+
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("isbn", "978-1503250888");
+        Queryable q = QueryFactory.of("getBookByISBNWithMap", map);
+        List<FlatBook> list = repository.list(q);
+        assertThat(list.size(), is(1));
+        assertThat(list.get(0).getId(), is(1001L));
+        assertThat(list.get(0).getIsbn(), is("978-1503250888"));
+        assertThat(list.get(0).getName(), is("Beyond Good and Evil"));
+        assertThat(list.get(0).getAuthor(), is("Friedrich Nietzsche"));
+        verifyClose(jdbcMock, repository);
+    }
     
-    private void verifyClose(JdbcMock jdbcMock)
+    @Test
+    public void whenGetRecordWithoutQueryable()
+    {
+        JdbcMock jdbcMock = new JdbcMock(FlatBook.class);
+        Repository repository = jdbcMock.columns(new String[]
+        { "id", "isbn", "name", "author" }).buildOneFlatBook();
+
+        FlatBook b = new FlatBook();
+        b.setIsbn("978-0321826626");
+        FlatBook b1 = repository.get(b);
+        assertThat(b1, is(notNullValue()));
+        assertThat(b1.getId(), is(1001L));
+        assertThat(b1.getIsbn(), is("978-1503250888"));
+        assertThat(b1.getName(), is("Beyond Good and Evil"));
+        assertThat(b1.getAuthor(), is("Friedrich Nietzsche"));
+        verifyClose(jdbcMock, repository);
+    }
+
+    private void verifyClose(JdbcMock jdbcMock, Repository repository)
     {
         try
         {
+            assertThat(repository.getTransaction().getStatus(), is(TransactionStatus.NO_TRANSACTION));
             verify(jdbcMock.getRs()).close();
             verify(jdbcMock.getStmt()).close();
             verify(jdbcMock.getConnection(), atLeast(1)).close();

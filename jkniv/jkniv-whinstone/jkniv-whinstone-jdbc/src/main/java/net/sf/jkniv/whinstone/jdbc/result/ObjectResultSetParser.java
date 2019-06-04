@@ -76,7 +76,6 @@ public class ObjectResultSetParser<T> implements ResultSetParser<T, ResultSet>
             close(rs);
         }
         List<T> l =groupable.asList();
-        System.out.println("size of list result: "+l.size());
         return l;
     }
     
@@ -87,7 +86,6 @@ public class ObjectResultSetParser<T> implements ResultSetParser<T, ResultSet>
             try
             {
                 rs.close();
-                System.out.println("close was invoked");
             }
             catch (SQLException e)
             {
