@@ -40,9 +40,9 @@ import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 
 public abstract class DefaultCommandHandler implements CommandHandler
 {
-    final static Logger                              LOG              = LoggerFactory
-            .getLogger(DefaultCommandHandler.class);
-    static final Assertable                          notNull          = AssertsFactory.getNotNull();
+    final static Logger                              LOG = LoggerFactory.getLogger(DefaultCommandHandler.class);
+    static final Assertable                          NOT_NULL = AssertsFactory.getNotNull();
+    private final static Map<String, ObjectCallback> OBJECTS_CALLBACKS = new HashMap<String, ObjectCallback>();
     ConnectionAdapter                                adapterConn;
     CommandHandler                                   handler;
     Command                                          command;
@@ -52,7 +52,6 @@ public abstract class DefaultCommandHandler implements CommandHandler
     protected RepositoryConfig                       config;
     protected ResultRow<?, ?>                        overloadResultRow;
     protected HandleableException                    handleableException;
-    private final static Map<String, ObjectCallback> OBJECTS_CALLBACKS = new HashMap<String, ObjectCallback>();
     
     public DefaultCommandHandler(ConnectionAdapter conn)
     {
@@ -107,7 +106,7 @@ public abstract class DefaultCommandHandler implements CommandHandler
     @Override
     public <T> T run()
     {
-        notNull.verify(this.adapterConn, this.queryable, this.sql, this.handler);
+        NOT_NULL.verify(this.adapterConn, this.queryable, this.sql, this.handler);
         if (LOG.isTraceEnabled())
             LOG.trace("Executing [{}] as {} command", queryable, sql.getSqlType());
         
@@ -262,5 +261,6 @@ public abstract class DefaultCommandHandler implements CommandHandler
         }
         OBJECTS_CALLBACKS.put(proxyParams.getTargetClass().getName(), objectCallback);
     }
+
     
 }

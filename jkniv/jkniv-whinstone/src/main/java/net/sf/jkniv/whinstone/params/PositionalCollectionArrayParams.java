@@ -31,7 +31,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 class PositionalCollectionArrayParams extends AbstractParam implements AutoBindParams
 {
     private StatementAdapter<?, ?> stmtAdapter;
-    private Iterator<Object>          it;
+    private Iterator<Object>       it;
     private String                 queryName;
     private String[]               paramsNames;
     
@@ -56,16 +56,16 @@ class PositionalCollectionArrayParams extends AbstractParam implements AutoBindP
     {
         onBatch();//salient client don't get rows affected
     }
-
+    
     @Override
     public int onBatch()
     {
         // FIXME implements batch using executeBatch
         int rowsAfftected = 0;
-        while(it.hasNext())
+        while (it.hasNext())
         {
             Object[] params = (Object[]) it.next();
-            for(Object o : params)
+            for (Object o : params)
             {
                 stmtAdapter.bind(o);
             }

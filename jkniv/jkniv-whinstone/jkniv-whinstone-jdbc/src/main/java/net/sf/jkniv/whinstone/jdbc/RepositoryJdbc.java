@@ -48,14 +48,22 @@ import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
+import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
+import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.ConnectionFactory;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
-import net.sf.jkniv.whinstone.jdbc.transaction.Work;
+import net.sf.jkniv.whinstone.jdbc.AddHandler;
+import net.sf.jkniv.whinstone.jdbc.transaction.WorkJdbc;
+<<<<<<< Upstream, based on origin/0.6.0.M47
+=======
+import net.sf.jkniv.whinstone.transaction.TransactionContext;
+import net.sf.jkniv.whinstone.transaction.TransactionSessions;
+>>>>>>> 3a27083 whinstone-jdbc move code REMOVE to work with Command and CommandHandler
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
 /**
@@ -67,7 +75,7 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
 class RepositoryJdbc implements Repository
 {
     private static final Logger     LOG     = LoggerFactory.getLogger(RepositoryJdbc.class);
-    private static final Assertable notNull = AssertsFactory.getNotNull();
+    private static final Assertable NOT_NULL = AssertsFactory.getNotNull();
     private QueryNameStrategy       strategyQueryName;
     private HandleableException     handlerException;
     private RepositoryConfig        repositoryConfig;
@@ -197,7 +205,7 @@ class RepositoryJdbc implements Repository
         
     }
 
-    private Work currentWork()
+    private WorkJdbc currentWork()
     {
         return SessionFactory.currentWork(connectionFactory, this.repositoryConfig);
     }
@@ -205,7 +213,7 @@ class RepositoryJdbc implements Repository
     @Override
     public <T> T get(Queryable queryable)
     {
-        notNull.verify(queryable);
+        NOT_NULL.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as get command", queryable);
         Sql isql = sqlContext.getQuery(queryable.getName());
@@ -242,7 +250,7 @@ class RepositoryJdbc implements Repository
     
     private <T> T get(Queryable queryable, Class<T> returnType, ResultRow<T, ResultSet> resultRow)
     {
-        notNull.verify(queryable);
+        NOT_NULL.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as get command", queryable);
 
@@ -275,7 +283,7 @@ class RepositoryJdbc implements Repository
     @Override
     public <T> T get(Class<T> returnType, Object entity)
     {
-        notNull.verify(entity);
+        NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toGetName(entity);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as get command", queryName);
@@ -322,7 +330,7 @@ class RepositoryJdbc implements Repository
     
     private <T,R> List<T> list(Queryable queryable, Class<T> returnType, ResultRow<T, ResultSet> customResultRow)
     {
-        notNull.verify(queryable);
+        NOT_NULL.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as list command", queryable);
         
@@ -343,7 +351,7 @@ class RepositoryJdbc implements Repository
     @Override
     public <T> T scalar(Queryable queryable)
     {
-        notNull.verify(queryable);
+        NOT_NULL.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as scalar command", queryable);
         T result = null;
@@ -367,7 +375,33 @@ class RepositoryJdbc implements Repository
             LOG.debug("Executed scalar query [{}] retrieving [{}] type of [{}]", queryable.getName(), result, (result !=null ? result.getClass().getName() : "NULL"));
         return result;
     }
+    @Override
+    public int add(Queryable queryable)
+    {
+        notNull.verify(queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new AddHandler(this.connectionFactory.open());
+        int rows = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return rows;
+    }
+    /*
+    @Override
+    public int add(Queryable queryable)
+    {
+        NOT_NULL.verify(queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new AddHandler(getConnection(sql.getIsolation()));
+        int rows = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return rows;
+    }
     
+    /*
     @Override
     public int add(Queryable queryable)
     {
@@ -387,7 +421,37 @@ class RepositoryJdbc implements Repository
             LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
         return affected;
     }
+    */
     
+    @Override
+    public <T> T add(T entity)
+    {
+<<<<<<< Upstream, based on origin/0.6.0.M47
+        notNull.verify(entity);
+        String queryName = this.strategyQueryName.toAddName(entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as add command", queryName);
+
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new AddHandler(this.connectionFactory.open());
+=======
+        NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toAddName(entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as add command", queryName);
+
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new AddHandler(getConnection(sql.getIsolation()));
+>>>>>>> 3a27083 whinstone-jdbc move code REMOVE to work with Command and CommandHandler
+        handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return entity;// FIXME design update must return a number
+    }
+    /*
     @Override
     public <T> T add(T entity)
     {
@@ -410,11 +474,12 @@ class RepositoryJdbc implements Repository
             LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
         return entity;
     }
+    */
     
     @Override
     public boolean enrich(Queryable queryable) // FIXME test enrich method 
     {
-        notNull.verify(queryable, queryable.getParams());
+        NOT_NULL.verify(queryable, queryable.getParams());
         boolean enriched = false;
         Object o = get(queryable);
         if(o != null)
@@ -429,7 +494,7 @@ class RepositoryJdbc implements Repository
     @Override
     public int update(Queryable queryable)
     {
-        notNull.verify(queryable);
+        NOT_NULL.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
 
@@ -449,7 +514,7 @@ class RepositoryJdbc implements Repository
     @Override
     public <T> T update(T entity)
     {
-        notNull.verify(entity);
+        NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toUpdateName(entity);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryName);
@@ -478,11 +543,24 @@ class RepositoryJdbc implements Repository
         
         return entity;
     }
-    
+ 
     @Override
     public int remove(Queryable queryable)
     {
-        notNull.verify(queryable);
+        NOT_NULL.verify(queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new RemoveHandler(getConnection(sql.getIsolation()));
+        int rows = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return rows;
+    }
+    /*
+    @Override
+    public int remove(Queryable queryable)
+    {
+        NOT_NULL.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as remove command", queryable);
 
@@ -498,11 +576,29 @@ class RepositoryJdbc implements Repository
             LOG.debug("{} records was affected by remove [{}] command", affected, queryable.getName());
         return affected;
     }
+    */
     
     @Override
     public <T> int remove(T entity)
     {
-        notNull.verify(entity);
+        NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toRemoveName(entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as remove command", queryName);
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new RemoveHandler(getConnection(sql.getIsolation()));
+        int rows = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return rows;
+    }
+    /*
+    @Override
+    public <T> int remove(T entity)
+    {
+        NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toRemoveName(entity);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as remove command", queryName);
@@ -531,6 +627,7 @@ class RepositoryJdbc implements Repository
 
         return affected;
     }
+    */
     
     @Override
     public void flush()
@@ -719,5 +816,22 @@ class RepositoryJdbc implements Repository
         }
         return factory.newInstance();
     }
-    
+
+    private ConnectionAdapter getConnection(Isolation isolation)
+    {
+        ConnectionAdapter conn = null;
+        TransactionContext transactionContext = TransactionSessions.get(connectionFactory.getContextName());
+        
+        if (transactionContext != null && transactionContext.isActive())
+        {
+            LOG.debug("Taking existent Connection from Transaction Context");
+            conn = transactionContext.getConnection();
+        }
+        if (conn == null)
+        {
+            conn = connectionFactory.open(isolation);
+        }
+        return conn;
+    }
+
 }

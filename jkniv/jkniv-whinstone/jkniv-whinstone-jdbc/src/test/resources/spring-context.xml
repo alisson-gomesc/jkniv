@@ -59,25 +59,27 @@
 
   <jdbc:initialize-database data-source="dataSourceDerby" enabled="true"
     ignore-failures="DROPS">
+    <!-- 
+     -->
     <jdbc:script location="classpath:database/db-drop.sql" execution="DESTROY" encoding="UTF-8"/>
     <jdbc:script location="classpath:database/db-create.sql" execution="INIT" encoding="UTF-8"/>
     <jdbc:script location="classpath:database/db-load.sql" execution="INIT" encoding="UTF-8" />
-    <!--      
-    -->
   </jdbc:initialize-database>
   <jdbc:initialize-database data-source="dataSourceOra" enabled="true"
     ignore-failures="DROPS">
+    <!-- 
+     -->
     <jdbc:script location="classpath:database/ora/db-drop.sql"  execution="DESTROY" encoding="UTF-8" />
-    <!--
-    -->
     <jdbc:script location="classpath:database/ora/db-create.sql" execution="INIT" encoding="UTF-8" />
     <jdbc:script location="classpath:database/ora/db-load.sql" execution="INIT" encoding="UTF-8" />
-    <!-- 
+    <!--
     <jdbc:script location="classpath:database/ora/db-create-stored-hello.sql" execution="INIT" encoding="UTF-8" />
-     -->
+    -->
   </jdbc:initialize-database>
   <jdbc:initialize-database data-source="dataSourcePostgres"
     enabled="true" ignore-failures="DROPS">
+    <!-- 
+     -->
     <jdbc:script location="classpath:database/postgresql/db-drop.sql" execution="DESTROY" encoding="UTF-8" />
     <jdbc:script location="classpath:database/postgresql/db-create.sql" execution="INIT" encoding="UTF-8" />
     <jdbc:script location="classpath:database/postgresql/db-load.sql" execution="INIT" encoding="UTF-8" />

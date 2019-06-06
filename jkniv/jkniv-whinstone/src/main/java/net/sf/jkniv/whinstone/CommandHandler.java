@@ -24,8 +24,8 @@ import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 
 /**
- * A command handler to keep the life-cycle to be execute
- * the Query and Command for a repository. 
+ * A command handler to keep the life-cycle to be executed
+ * the {@link Queryable} and {@link Command} for a repository. 
  * 
  * @author Alisson Gomes
  * @since 0.6.0

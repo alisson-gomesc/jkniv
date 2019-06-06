@@ -30,9 +30,9 @@ import net.sf.jkniv.whinstone.ConnectionAdapter;
  */
 public class TransactionContext
 {
-    private final String      name;
+    private final String            name;
     private final ConnectionAdapter conn;
-    private TransactionStatus status;
+    private TransactionStatus       status;
     
     public TransactionContext()
     {

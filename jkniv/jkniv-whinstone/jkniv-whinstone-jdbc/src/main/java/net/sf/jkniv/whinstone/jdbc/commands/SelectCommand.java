@@ -17,21 +17,20 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.experimental.commands;
+package net.sf.jkniv.whinstone.jdbc.commands;
 
-import java.sql.Connection;
-
+import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.jdbc.PreparedStatementStrategy;
 
-class StoredCommand extends AbstractCommand
+class SelectCommand extends AbstractCommand
 {
-    public StoredCommand(final Queryable queryable, final PreparedStatementStrategy stmtStrategy, final Connection conn)
+    public SelectCommand(final Queryable queryable, final PreparedStatementStrategy stmtStrategy, ConnectionAdapter adapterConn)
     {
-        super(queryable, stmtStrategy, conn);
-
+        super(queryable, stmtStrategy, adapterConn);
     }
 
+    
     public <T> T execute()
     {
         // TODO Auto-generated method stub
