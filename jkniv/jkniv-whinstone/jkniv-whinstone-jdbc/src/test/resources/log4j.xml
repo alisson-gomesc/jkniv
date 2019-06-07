@@ -7,13 +7,12 @@
       <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%-5p] %C.%M - %m%n" />
     </layout>
   </appender>
-
-  <logger name="org.springframework" additivity="false">
-    <level value="INFO" />
-    <appender-ref ref="console" />
-  </logger>
   <logger name="jkniv.whinstone.jdbc.SQL" additivity="false">
     <level value="trace" />
+    <appender-ref ref="console" />
+  </logger>
+  <logger name="org.springframework" additivity="false">
+    <level value="INFO" />
     <appender-ref ref="console" />
   </logger>
   <logger name="net.sf.jkniv.whinstone.jdbc" additivity="false">
@@ -22,7 +21,7 @@
   </logger>
 
   <root>
-    <level value="warn" />
+    <level value="info" />
     <appender-ref ref="console" />
   </root>
 

@@ -25,6 +25,16 @@ import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.jdbc.PreparedStatementStrategy;
 
+/**
+ * 
+ * @author Alisson Gomes
+ * 
+ * @deprecated use the methods from {@link ConnectionAdapter}:
+ * <ul><li>{@link ConnectionAdapter#asAddCommand(Queryable)}</li></ul>
+ * <ul><li>{@link ConnectionAdapter#asDeleteCommand(Queryable)}</li></ul>
+ * <ul><li>{@link ConnectionAdapter#asSelectCommand(Queryable, net.sf.jkniv.whinstone.ResultRow)}</li></ul>
+ * <ul><li>{@link ConnectionAdapter#asUpdateCommand(Queryable)}</li></ul>
+ */
 public class DbCommandFactory
 {
     
@@ -33,13 +43,13 @@ public class DbCommandFactory
             Connection conn,
             PreparedStatementStrategy stmtStrategy)
     {
-        if(queryable.getDynamicSql().isInsertable())
-            return new InsertCommand2(queryable, stmtStrategy, conn);
+//        if(queryable.getDynamicSql().isInsertable())
+//            return new InsertCommand2(queryable, stmtStrategy, conn);
 //        else if (queryable.getSql().isUpdateable())
 //            return new UpdateCommand(queryable, stmtStrategy, conn);
 //        else if (queryable.getSql().isUpdateable())
 //            return new DeleteCommand(queryable, stmtStrategy, conn);
-        else
+        //else
             throw new UnsupportedOperationException("Cannot execute a command different of INSERT|UPDATE|DELETE");
     }
     

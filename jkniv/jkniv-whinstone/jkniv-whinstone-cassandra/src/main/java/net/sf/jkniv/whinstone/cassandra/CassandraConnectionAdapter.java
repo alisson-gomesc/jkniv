@@ -133,7 +133,7 @@ class CassandraConnectionAdapter implements ConnectionAdapter
         String positionalSql = queryable.getDynamicSql().getParamParser().replaceForQuestionMark(sql,
                 queryable.getParams());
         PreparedStatement stmt = session.prepare(positionalSql);
-        StatementAdapter<T, R> adapter = new CassandraStatementAdapter(session, stmt);
+        StatementAdapter<T, R> adapter = new CassandraStatementAdapter(session, stmt, queryable);
         return adapter;
     }
     
@@ -160,7 +160,7 @@ class CassandraConnectionAdapter implements ConnectionAdapter
             LOG.debug("Bind Native SQL\n{}", sql);
 
         PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
-        StatementAdapter<T, R> stmt = new CassandraStatementAdapter(this.session, stmtPrep);
+        StatementAdapter<T, R> stmt = new CassandraStatementAdapter(this.session, stmtPrep, queryable);
         
         queryable.bind(stmt).on();
         
@@ -169,7 +169,7 @@ class CassandraConnectionAdapter implements ConnectionAdapter
         else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
             returnType = queryable.getDynamicSql().getReturnTypeAsClass();
         
-        stmt.returnType(returnType)
+        stmt//.returnType(returnType)
             .resultRow(overloadResultRow)
             .oneToManies(queryable.getDynamicSql().asSelectable().getOneToMany())
             .groupingBy(queryable.getDynamicSql().asSelectable().getGroupByAsList());
@@ -190,7 +190,7 @@ class CassandraConnectionAdapter implements ConnectionAdapter
             LOG.debug("Bind Native SQL\n{}",sql);
 
         PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
-        CassandraStatementAdapter<Number, ResultSet> stmt = new CassandraStatementAdapter<Number, ResultSet>(this.session, stmtPrep);
+        CassandraStatementAdapter<Number, ResultSet> stmt = new CassandraStatementAdapter<Number, ResultSet>(this.session, stmtPrep, queryable);
         queryable.bind(stmt).on();
         command = new UpdateCommand((CassandraStatementAdapter) stmt, queryable);
         return command;
@@ -206,7 +206,7 @@ class CassandraConnectionAdapter implements ConnectionAdapter
             LOG.debug("Bind Native SQL\n{}",sql);
 
         PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
-        CassandraStatementAdapter<Number, ResultSet> stmt = new CassandraStatementAdapter<Number, ResultSet>(this.session, stmtPrep);
+        CassandraStatementAdapter<Number, ResultSet> stmt = new CassandraStatementAdapter<Number, ResultSet>(this.session, stmtPrep, queryable);
         queryable.bind(stmt).on();
         command = new DeleteCommand((CassandraStatementAdapter) stmt, queryable);
         return command;
@@ -221,7 +221,7 @@ class CassandraConnectionAdapter implements ConnectionAdapter
             LOG.debug("Bind Native SQL\n{}",sql);
 
         PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
-        CassandraStatementAdapter<Number, ResultSet> stmt = new CassandraStatementAdapter<Number, ResultSet>(this.session, stmtPrep);
+        CassandraStatementAdapter<Number, ResultSet> stmt = new CassandraStatementAdapter<Number, ResultSet>(this.session, stmtPrep, queryable);
         queryable.bind(stmt).on();
         command = new InsertCommand((CassandraStatementAdapter) stmt, queryable);
         return command;

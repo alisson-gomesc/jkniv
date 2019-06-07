@@ -19,18 +19,19 @@
  */
 package net.sf.jkniv.whinstone.jdbc.commands;
 
-import net.sf.jkniv.whinstone.ConnectionAdapter;
+import java.sql.Connection;
+
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.jdbc.PreparedStatementStrategy;
 
-class SelectCommand extends AbstractCommand
+class StoredJdbcCommand extends AbstractCommand
 {
-    public SelectCommand(final Queryable queryable, final PreparedStatementStrategy stmtStrategy, ConnectionAdapter adapterConn)
+    public StoredJdbcCommand(final Queryable queryable, final PreparedStatementStrategy stmtStrategy, final Connection conn)
     {
-        super(queryable, stmtStrategy, adapterConn);
+        super(queryable, stmtStrategy, conn);
+
     }
 
-    
     public <T> T execute()
     {
         // TODO Auto-generated method stub

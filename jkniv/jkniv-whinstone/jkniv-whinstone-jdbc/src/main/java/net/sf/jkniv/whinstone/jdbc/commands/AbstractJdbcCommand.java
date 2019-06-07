@@ -98,12 +98,16 @@ public abstract class AbstractJdbcCommand implements Command
         return stmt;
     }
     
-    private int batchExecute()
+    protected int batchExecute()
     {
-        //StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
         return queryable.bind(stmt).onBatch();
     }
     
+    protected int simpleExecute()
+    {
+        queryable.bind(stmt).on();
+        return stmt.execute();
+    }
 
     
     protected void close(PreparedStatement stmt)

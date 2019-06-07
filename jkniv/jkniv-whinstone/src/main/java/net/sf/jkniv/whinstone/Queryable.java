@@ -235,7 +235,7 @@ public interface Queryable
     Object[] values(String[] names);
     
     /**
-     * Bind Sql to {@link Queryable} instance
+     * Bind Sql to {@link Queryable} instance generating the raw query.
      * 
      * @param sql The instance of static or dynamic SQL statement 
      */

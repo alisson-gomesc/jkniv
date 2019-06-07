@@ -19,49 +19,55 @@
  */
 package net.sf.jkniv.whinstone.jdbc.commands;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Collections;
+import java.util.List;
 
+import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.jdbc.PreparedStatementStrategy;
+import net.sf.jkniv.whinstone.jdbc.params.PreparedStatementAdapterOld;
+import net.sf.jkniv.whinstone.params.AutoBindParams;
+import net.sf.jkniv.whinstone.params.PrepareParamsFactory;
+import net.sf.jkniv.whinstone.params.StatementAdapterOld;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
- * @deprecated use {@link UpdateJdbcCommand}
+ * Default Command execute simple {@code INSERT}, {@code UPDATE} and {@code DELETE} SQL instructions.
+ * 
+ *  <b>Note: </b><p>
+ *  <ul>
+ *   <li> {@code SELECT} are handle by {@link DefaultJdbcQuery}</li>
+ *   <li> Bulk operations are handle by {@link BulkJdbcCommand}</li>
+ *  </ul>
+ *  
+ * @author Alisson Gomes
+ * @since 0.6.0
+ *
  */
-class UpdateCommand extends AbstractCommand
+public class DefaultJdbcQuery extends AbstractJdbcCommand
 {
-    public UpdateCommand(final Queryable queryable, final PreparedStatementStrategy stmtStrategy, final ConnectionAdapter conn)
+    public DefaultJdbcQuery(StatementAdapter stmt, Queryable queryable, Connection conn)
     {
-        super(queryable, stmtStrategy, conn);
+        super(stmt, queryable, conn);
     }
     
     @SuppressWarnings("unchecked")
     public <T> T execute()
     {
-        Integer rowsAffected  = 0;
-        if (queryable.getDynamicSql().isBatch() || queryable.isTypeOfBulk())
+        List rows = Collections.emptyList();
+        try
         {
-            rowsAffected = batchExecute();
+            queryable.bind(stmt).on();
+            rows = stmt.rows();
         }
-        else
+        finally
         {
-            rowsAffected = simpleExecute();
+            stmt.close();
         }
-        
-        return (T)rowsAffected;
+        return (T)rows;
     }
-    
-    private int simpleExecute()
-    {
-        StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
-        queryable.bind(adapterStmt).on();
-        return adapterStmt.execute();
-    }    
-
-    private int batchExecute()
-    {
-        StatementAdapter<Number, ResultSet> adapterStmt = adapterConn.newStatement(queryable);
-        return queryable.bind(adapterStmt).onBatch();
-    }    
 }

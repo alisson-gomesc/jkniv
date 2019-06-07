@@ -19,11 +19,13 @@
  */
 package net.sf.jkniv.whinstone.jdbc.commands;
 
+import net.sf.jkniv.whinstone.Command;
+
 /**
  * 
  * @author Alisson Gomes
  * @since 0.6.0
- *
+ * @deprecated use {@link Command} interface
  */
 public interface DbCommand
 {

@@ -52,6 +52,7 @@ public abstract class DefaultCommandHandler implements CommandHandler
     protected RepositoryConfig                       config;
     protected ResultRow<?, ?>                        overloadResultRow;
     protected HandleableException                    handleableException;
+    private   Class<?>                               returnType;
     
     public DefaultCommandHandler(ConnectionAdapter conn)
     {
@@ -88,6 +89,13 @@ public abstract class DefaultCommandHandler implements CommandHandler
         this.sql = sql;
         return this;
     }
+    
+//    @Override
+//    public CommandHandler returnType(Class<?> returnType)
+//    {
+//        this.returnType = returnType;
+//        return this;
+//    }
     
     @Override
     public CommandHandler with(RepositoryConfig repositoryConfig)

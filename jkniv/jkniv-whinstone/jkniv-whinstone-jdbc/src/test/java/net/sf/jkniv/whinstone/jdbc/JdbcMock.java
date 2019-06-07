@@ -16,6 +16,7 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import net.sf.jkniv.cache.NoCache;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.RepositoryType;
 import net.sf.jkniv.sqlegance.Selectable;
@@ -94,6 +95,7 @@ public class JdbcMock
             given(this.sql.getStats()).willReturn(NoSqlStats.getInstance());
             given(this.sql.getSqlType()).willReturn(SqlType.SELECT);
             given(this.sql.asSelectable()).willReturn((Selectable) this.sql);
+            given(this.sql.getCache()).willReturn(NoCache.getInstance());
             
             given(sql.getReturnType()).willReturn(returnType.getName());
             doReturn(returnType).when(sql).getReturnTypeAsClass();

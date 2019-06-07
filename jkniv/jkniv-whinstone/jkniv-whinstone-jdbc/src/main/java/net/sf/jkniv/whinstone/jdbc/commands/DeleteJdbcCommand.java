@@ -34,11 +34,6 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 public class DeleteJdbcCommand extends AbstractJdbcCommand
 {
-    public DeleteJdbcCommand(final Queryable queryable, final Connection conn)
-    {
-        super(queryable, conn);
-    }
-    
     public DeleteJdbcCommand(StatementAdapter stmt, Queryable queryable, Connection conn)
     {
         super(stmt, queryable, conn);
@@ -50,47 +45,13 @@ public class DeleteJdbcCommand extends AbstractJdbcCommand
         Integer rowsAffected = 0;
         try
         {
-            if (queryable.getDynamicSql().isBatch() || queryable.isTypeOfBulk())
-            {
-                rowsAffected = batchExecute();
-            }
-            else
-            {
-                rowsAffected = simpleExecute();
-            }
+            //if (queryable.getDynamicSql().isBatch() || queryable.isTypeOfBulk())
+            rowsAffected = simpleExecute();
         }
         finally
         {
             stmt.close();
         }        
-        //  //
-        //        PreparedStatement stmt = null;
-        //        stmt = prepareStatement();
-        //        StatementAdapterOld stmtAdapter = new PreparedStatementAdapterOld(stmt);
-        //        AutoBindParams prepareParams = PrepareParamsFactory.newPrepareParams(stmtAdapter, isql.getParamParser(),queryable);
-        //        prepareParams.parameterized(queryable.getParamsNames());
-        //        rowsAffected = stmt.executeUpdate();
-        //  //
         return (T) rowsAffected;
     }
-    
-    //    public <T> T _execute()
-    //    {
-    //        Integer affected = 0;
-    //        queryable.bind(stmt).on();
-    //        affected = stmt.execute();
-    //        return (T) affected;
-    //    }
-    
-    private int batchExecute()
-    {
-        return queryable.bind(stmt).onBatch();
-    }
-    
-    private int simpleExecute()
-    {
-        queryable.bind(stmt).on();
-        return stmt.execute();
-    }
-    
 }

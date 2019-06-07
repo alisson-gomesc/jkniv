@@ -40,41 +40,6 @@ import net.sf.jkniv.whinstone.params.StatementAdapterOld;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-<<<<<<< Upstream, based on origin/0.6.0.M47
-public class AddAutoKeyJdbcCommand extends JdbcAbstractCommand
-{
-    private final Insertable isql;
-    
-    public AddAutoKeyJdbcCommand(Queryable queryable, PreparedStatementStrategy stmtStrategy, Connection conn)
-    {
-        super(queryable, stmtStrategy, conn);
-        this.isql = queryable.getDynamicSql().asInsertable();
-    }
-    
-    @Override
-    public Command with(HandleableException handlerException)
-    {
-        this.handlerException = handlerException;
-        return this;
-    }
-    
-    @Override
-    public Command with(CommandHandler commandHandler)
-    {
-        this.commandHandler = commandHandler;
-        return this;
-    }
-    
-    @Override
-    public <T> T execute()
-    {
-        Integer affected = 0;
-        PreparedStatement stmt = null;
-        try
-        {
-            // first execute insert after get keys
-            stmt = prepareStatement();
-=======
 public class AddAutoKeyJdbcCommand extends AbstractJdbcCommand
 {
     private final Insertable isql;
@@ -108,7 +73,6 @@ public class AddAutoKeyJdbcCommand extends AbstractJdbcCommand
         {
             // first execute insert after get keys
             stmt = prepareInsertStatement();
->>>>>>> 3a27083 whinstone-jdbc move code REMOVE to work with Command and CommandHandler
             StatementAdapterOld stmtAdapter = new PreparedStatementAdapterOld(stmt);
             AutoBindParams prepareParams = PrepareParamsFactory.newPrepareParams(stmtAdapter, isql.getParamParser(),
                     queryable);

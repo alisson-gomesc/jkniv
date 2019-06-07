@@ -57,6 +57,7 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
     private KeyGeneratorType        keyGeneratorType;
     private Queryable               queryable;
     
+    @SuppressWarnings("unchecked")
     public PreparedStatementAdapter(PreparedStatement stmt, Queryable queryable)
     {
         this.stmt = stmt;
@@ -66,6 +67,14 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
         this.groupingBy = Collections.emptyList();
         this.scalar = false;
         this.queryable = queryable;
+        this.returnType = (Class<T>) Map.class;
+        if(queryable != null)
+        {
+            if (queryable.getReturnType() != null)
+                returnType = (Class<T>)queryable.getReturnType();
+            else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
+                returnType = (Class<T>)queryable.getDynamicSql().getReturnTypeAsClass();
+        }
         this.reset();
     }
     
@@ -74,6 +83,7 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
         this.returnType = returnType;
         return this;
     }
+    
     
     public StatementAdapter<T, ResultSet> resultRow(ResultRow<T, ResultSet> resultRow)
     {
@@ -209,7 +219,7 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
             Transformable<T> transformable = resultRow.getTransformable();
             if (!groupingBy.isEmpty())
             {
-                grouping = new GroupingBy(groupingBy, returnType, transformable);
+                grouping = new GroupingBy(groupingBy, queryable.getReturnType(), transformable);
             }
             rsParser = new ObjectResultSetParser(resultRow, grouping);
             list = rsParser.parser(rs);
@@ -351,6 +361,7 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void setResultRow(JdbcColumn<ResultSet>[] columns)
     {
+        //Class returnType = queryable.getReturnType();
         if (resultRow != null)
             return;
         

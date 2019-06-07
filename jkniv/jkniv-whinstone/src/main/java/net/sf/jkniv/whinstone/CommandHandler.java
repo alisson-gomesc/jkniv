@@ -46,6 +46,13 @@ public interface CommandHandler
      */
     CommandHandler with(Sql sql);
     
+    /*
+     * return type
+     * @param returnType type of return
+     * @return instance of this object
+     */
+   // CommandHandler returnType(Class<?> returnType);
+
     /**
      * Configure the life-cycle with a properties configuration of the repository
      * @param repositoryConfig configuration from repository

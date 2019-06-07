@@ -20,21 +20,44 @@
 package net.sf.jkniv.whinstone.jdbc.commands;
 
 import java.sql.Connection;
+import java.util.Collections;
+import java.util.List;
 
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.jdbc.PreparedStatementStrategy;
+import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
-class StoredCommand extends AbstractCommand
+/**
+ * Default Command execute simple {@code INSERT}, {@code UPDATE} and {@code DELETE} SQL instructions.
+ * 
+ *  <b>Note: </b><p>
+ *  <ul>
+ *   <li> {@code SELECT} are handle by {@link DefaultJdbcQuery}</li>
+ *   <li> Bulk operations are handle by {@link BulkJdbcCommand}</li>
+ *  </ul>
+ *  
+ * @author Alisson Gomes
+ * @since 0.6.0
+ *
+ */
+public class DefaultJdbcCommand extends AbstractJdbcCommand
 {
-    public StoredCommand(final Queryable queryable, final PreparedStatementStrategy stmtStrategy, final Connection conn)
+    public DefaultJdbcCommand(StatementAdapter stmt, Queryable queryable, Connection conn)
     {
-        super(queryable, stmtStrategy, conn);
-
+        super(stmt, queryable, conn);
     }
-
+    
+    @SuppressWarnings("unchecked")
     public <T> T execute()
     {
-        // TODO Auto-generated method stub
-        return null;
+        Integer rowsAffected = 0;
+        try
+        {
+            rowsAffected = simpleExecute();
+        }
+        finally
+        {
+            stmt.close();
+        }
+        return (T) rowsAffected;
     }
 }

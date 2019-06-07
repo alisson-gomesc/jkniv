@@ -177,7 +177,7 @@ public class UnitOfWorkJdbc implements WorkJdbc
             LOGSQL.info(queryable.query());
             queryable.bind(adapterStmt).on();
             
-            adapterStmt.returnType(returnType)
+            adapterStmt//.returnType(returnType)
                        .resultRow(overloadResultRow)
                        .oneToManies(select.getOneToMany())
                        .groupingBy(select.getGroupByAsList());

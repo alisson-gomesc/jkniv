@@ -40,42 +40,6 @@ import net.sf.jkniv.whinstone.params.StatementAdapterOld;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-<<<<<<< Upstream, based on origin/0.6.0.M47
-public class AddSequenceKeyJdbcCommand extends JdbcAbstractCommand
-{
-    private final Insertable isql;
-    
-    public AddSequenceKeyJdbcCommand(Queryable queryable, PreparedStatementStrategy stmtStrategy, Connection conn)
-    {
-        super(queryable, stmtStrategy, conn);
-        this.isql = queryable.getDynamicSql().asInsertable();
-    }
-    
-    @Override
-    public Command with(HandleableException handlerException)
-    {
-        this.handlerException = handlerException;
-        return this;
-    }
-    
-    @Override
-    public Command with(CommandHandler commandHandler)
-    {
-        this.commandHandler = commandHandler;
-        return this;
-    }
-    
-    @Override
-    public <T> T execute()
-    {
-        Integer affected = 0;
-        PreparedStatement stmt = null;
-        try
-        {
-            // first get sequence after execute insert
-            new SettingSequenceGeneratedKey(queryable, isql, conn, handlerException).set();
-            stmt = prepareStatement();
-=======
 public class AddSequenceKeyJdbcCommand extends AbstractJdbcCommand
 {
     private final Insertable isql;
@@ -110,7 +74,6 @@ public class AddSequenceKeyJdbcCommand extends AbstractJdbcCommand
             // first get sequence after execute insert
             new SettingSequenceGeneratedKey(queryable, isql, conn, handlerException).set();
             stmt = prepareInsertStatement();
->>>>>>> 3a27083 whinstone-jdbc move code REMOVE to work with Command and CommandHandler
             StatementAdapterOld stmtAdapter = new PreparedStatementAdapterOld(stmt);
             AutoBindParams prepareParams = PrepareParamsFactory.newPrepareParams(stmtAdapter, isql.getParamParser(),
                     queryable);

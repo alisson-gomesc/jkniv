@@ -21,12 +21,10 @@ package net.sf.jkniv.whinstone.jdbc;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;
@@ -57,13 +55,9 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
-import net.sf.jkniv.whinstone.jdbc.AddHandler;
 import net.sf.jkniv.whinstone.jdbc.transaction.WorkJdbc;
-<<<<<<< Upstream, based on origin/0.6.0.M47
-=======
 import net.sf.jkniv.whinstone.transaction.TransactionContext;
 import net.sf.jkniv.whinstone.transaction.TransactionSessions;
->>>>>>> 3a27083 whinstone-jdbc move code REMOVE to work with Command and CommandHandler
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
 /**
@@ -214,6 +208,49 @@ class RepositoryJdbc implements Repository
     public <T> T get(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
+        T ret = handleGet(queryable, null);
+        return ret;
+    }
+    
+    @Override
+    public <T> T get(Queryable queryable, Class<T> returnType)
+    {
+        NOT_NULL.verify(queryable, returnType);
+        Queryable queryableClone = QueryFactory.clone(queryable, returnType);
+        T ret = handleGet(queryableClone, null);
+        queryable.setTotal(queryableClone.getTotal());
+        return ret;
+    }
+    
+    @Override
+    public <T> T get(T object)
+    {
+        NOT_NULL.verify(object);
+        Queryable queryable = QueryFactory.of("get", object.getClass(), object);
+        T ret = (T) handleGet(queryable, null);
+        return ret;
+    }
+
+    @Override
+    public <T> T get(Class<T> returnType, Object object)
+    {
+        NOT_NULL.verify(object);
+        Queryable queryable = QueryFactory.of("get", returnType, object);
+        T ret = (T) handleGet(queryable, null);
+        return ret;
+    }
+
+    @Override
+    public <T, R> T get(Queryable queryable, ResultRow<T, R> customResultRow)
+    {
+        return handleGet(queryable, customResultRow);
+    }
+
+    /*
+    @Override
+    public <T> T get(Queryable queryable)
+    {
+        NOT_NULL.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as get command", queryable);
         Sql isql = sqlContext.getQuery(queryable.getName());
@@ -308,27 +345,67 @@ class RepositoryJdbc implements Repository
 
         return ret;
     }
-
+*/
     @Override
     public <T> List<T> list(Queryable queryable)
     {
-        return list(queryable, null, null);
+        return handleList(queryable, null);
+        //return __list__(queryable, null, null);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> customResultRow)
     {
-        return list(queryable, null, (ResultRow<T, ResultSet>) customResultRow);
+        return handleList(queryable, customResultRow);                
+        //return list(queryable, null, (ResultRow<T, ResultSet>) customResultRow);
     }
 
     @Override
-    public <T> List<T> list(Queryable queryable, Class<T> returnType)
+    public <T> List<T> list(Queryable queryable, Class<T> overloadReturnType)
     {
-        return list(queryable, returnType, null);
+        List<T> list = Collections.emptyList();
+        Queryable queryableClone = queryable;
+        if (overloadReturnType != null)
+            queryableClone = QueryFactory.clone(queryable, overloadReturnType);
+        list = handleList(queryableClone, null);
+        queryable.setTotal(queryableClone.getTotal());
+        return list;
+        //return list(queryable, returnType, null);
     }
     
-    private <T,R> List<T> list(Queryable queryable, Class<T> returnType, ResultRow<T, ResultSet> customResultRow)
+    private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    {
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new SelectHandler(this.connectionFactory.open());
+        List<T> list = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .with(overloadResultRow)
+        .run();
+        return list;
+    }
+    
+    private <T, R> T handleGet(Queryable q, ResultRow<T, R> overloadResultRow)
+    {
+        T ret = null;
+        Sql sql = sqlContext.getQuery(q.getName());
+        CommandHandler handler = new SelectHandler(this.connectionFactory.open());
+        List<T> list = handler.with(q)
+        .with(sql)
+        .with(handlerException)
+        .with(overloadResultRow)
+        .run();
+        if (list.size() > 1)
+            throw new NonUniqueResultException("No unique result for query ["+q.getName()+"] with params ["+q.getParams()+"]");
+        else if (list.size() == 1)
+            ret = list.get(0);
+        
+        return ret;
+    }
+
+    
+    private <T,R> List<T> __list__(Queryable queryable, Class<T> returnType, ResultRow<T, ResultSet> customResultRow)
     {
         NOT_NULL.verify(queryable);
         if (isTraceEnabled)
@@ -375,10 +452,11 @@ class RepositoryJdbc implements Repository
             LOG.debug("Executed scalar query [{}] retrieving [{}] type of [{}]", queryable.getName(), result, (result !=null ? result.getClass().getName() : "NULL"));
         return result;
     }
+    
     @Override
     public int add(Queryable queryable)
     {
-        notNull.verify(queryable);
+        NOT_NULL.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new AddHandler(this.connectionFactory.open());
         int rows = handler.with(queryable)
@@ -387,6 +465,25 @@ class RepositoryJdbc implements Repository
         .run();
         return rows;
     }
+    
+    @Override
+    public <T> T add(T entity)// FIXME design update must return a number
+    {
+        NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toAddName(entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as add command", queryName);
+
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new AddHandler(getConnection(sql.getIsolation()));
+        handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return entity;
+    }
+
     /*
     @Override
     public int add(Queryable queryable)
@@ -423,34 +520,6 @@ class RepositoryJdbc implements Repository
     }
     */
     
-    @Override
-    public <T> T add(T entity)
-    {
-<<<<<<< Upstream, based on origin/0.6.0.M47
-        notNull.verify(entity);
-        String queryName = this.strategyQueryName.toAddName(entity);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as add command", queryName);
-
-        Queryable queryable = QueryFactory.of(queryName, entity);
-        Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new AddHandler(this.connectionFactory.open());
-=======
-        NOT_NULL.verify(entity);
-        String queryName = this.strategyQueryName.toAddName(entity);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as add command", queryName);
-
-        Queryable queryable = QueryFactory.of(queryName, entity);
-        Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new AddHandler(getConnection(sql.getIsolation()));
->>>>>>> 3a27083 whinstone-jdbc move code REMOVE to work with Command and CommandHandler
-        handler.with(queryable)
-        .with(sql)
-        .with(handlerException)
-        .run();
-        return entity;// FIXME design update must return a number
-    }
     /*
     @Override
     public <T> T add(T entity)
@@ -497,6 +566,40 @@ class RepositoryJdbc implements Repository
         NOT_NULL.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new UpdateHandler(this.connectionFactory.open());
+        int rows = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return rows;
+    }
+    
+    @Override
+    public <T> T update(T entity)// FIXME design update must return a number
+    {
+        NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toUpdateName(entity);
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as update command", queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new UpdateHandler(this.connectionFactory.open());
+        int rows = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return entity;
+    }
+
+
+    /*
+    @Override
+    public int update(Queryable queryable)
+    {
+        NOT_NULL.verify(queryable);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as update command", queryable);
 
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.UPDATE);
@@ -510,9 +613,11 @@ class RepositoryJdbc implements Repository
             LOG.debug("{} records was affected by update [{}] command", affected, queryable.getName());
         return affected;
     }
-    
+    */
+
+    /*
     @Override
-    public <T> T update(T entity)
+    public <T> T update(T entity)// FIXME design update must return a number
     {
         NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toUpdateName(entity);
@@ -543,6 +648,7 @@ class RepositoryJdbc implements Repository
         
         return entity;
     }
+    */
  
     @Override
     public int remove(Queryable queryable)
@@ -556,6 +662,24 @@ class RepositoryJdbc implements Repository
         .run();
         return rows;
     }
+    
+    @Override
+    public <T> int remove(T entity)
+    {
+        NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toRemoveName(entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as remove command", queryName);
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new RemoveHandler(getConnection(sql.getIsolation()));
+        int rows = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return rows;
+    }
+    
     /*
     @Override
     public int remove(Queryable queryable)
@@ -578,22 +702,6 @@ class RepositoryJdbc implements Repository
     }
     */
     
-    @Override
-    public <T> int remove(T entity)
-    {
-        NOT_NULL.verify(entity);
-        String queryName = this.strategyQueryName.toRemoveName(entity);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as remove command", queryName);
-        Queryable queryable = QueryFactory.of(queryName, entity);
-        Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new RemoveHandler(getConnection(sql.getIsolation()));
-        int rows = handler.with(queryable)
-        .with(sql)
-        .with(handlerException)
-        .run();
-        return rows;
-    }
     /*
     @Override
     public <T> int remove(T entity)

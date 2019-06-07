@@ -19,11 +19,14 @@
  */
 package net.sf.jkniv.whinstone;
 
+import java.sql.ResultSet;
 import java.util.Collections;
 import java.util.List;
 
 import net.sf.jkniv.cache.Cacheable;
+import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Selectable;
+import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 public abstract class DefaultQueryHandler extends DefaultCommandHandler
 {
@@ -57,6 +60,8 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
             postCallback();
             if (selectable.hasCache() && !list.isEmpty())
                 selectable.getCache().put(queryable, list);
+            
+            paging(list);
         }
         else
         {
@@ -71,6 +76,31 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
         if (LOG.isDebugEnabled())
             LOG.debug("Executed [{}] query as {} command, {} rows fetched", queryable.getName(), sql.getSqlType(), list.size());
         
+        
         return (T)list;
+    }
+    
+    private void paging(List<?> list)
+    {
+        if (queryable.isPaging())
+        {
+            StatementAdapter<Number, ResultSet> adapterStmtCount = adapterConn.newStatement(queryable.queryCount());
+            queryable.bind(adapterStmtCount).on();
+            adapterStmtCount.returnType(Number.class).scalar();
+            try
+            {
+                Long rows = adapterStmtCount.rows().get(0).longValue();
+                queryable.setTotal(rows);
+            }
+            catch (RepositoryException e)
+            {
+                // FIXME BUG select count with ORDER BY 
+                // The ORDER BY clause is invalid in views, inline functions, derived tables, subqueries, and common table expressions, unless TOP or FOR XML is also specified.
+                LOG.error("Cannot count the total of rows from full query [{}]", queryable.getName(), e);
+            }
+        }
+        else
+            queryable.setTotal(list.size());     
+
     }
 }

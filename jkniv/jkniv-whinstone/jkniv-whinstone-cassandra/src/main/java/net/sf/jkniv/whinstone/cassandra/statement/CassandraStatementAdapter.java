@@ -27,6 +27,7 @@ import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
+import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.ResultSetParser;
 import net.sf.jkniv.whinstone.cassandra.CassandraColumn;
@@ -86,7 +87,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     private KeyGeneratorType        keyGeneratorType;
     private Session                 session;
     
-    public CassandraStatementAdapter(Session session, PreparedStatement stmt)
+    public CassandraStatementAdapter(Session session, PreparedStatement stmt, Queryable queryable)
     {
         this.stmt = stmt;
         this.session = session;
@@ -95,6 +96,13 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         this.oneToManies = Collections.emptySet();
         this.groupingBy = Collections.emptyList();
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
+        
+        this.returnType = (Class<T>) Map.class;
+        if (queryable.getReturnType() != null)
+            returnType = (Class<T>)queryable.getReturnType();
+        else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
+            returnType = (Class<T>)queryable.getDynamicSql().getReturnTypeAsClass();
+
         this.reset();
     }
     
