@@ -17,14 +17,17 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.couchdb;
+package net.sf.jkniv.whinstone.jdbc;
 
 import net.sf.jkniv.whinstone.Command;
+import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.DefaultCommandHandler;
 
-public class AddHandler extends DefaultCommandHandler
+class AddHandler extends DefaultCommandHandler
 {
-    public AddHandler(HttpCookieConnectionAdapter adapterConn)
+    //private static final Logger LOG = LoggerFactory.getLogger(AddHandler.class);
+    
+    public AddHandler(ConnectionAdapter adapterConn)
     {
         super(adapterConn);
         with(this);

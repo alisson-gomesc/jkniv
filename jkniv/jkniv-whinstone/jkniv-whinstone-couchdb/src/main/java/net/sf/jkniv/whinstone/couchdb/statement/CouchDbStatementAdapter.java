@@ -1,13 +1,8 @@
 package net.sf.jkniv.whinstone.couchdb.statement;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -20,21 +15,15 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import net.sf.jkniv.exception.HandlerException;
-import net.sf.jkniv.experimental.converters.SqlDateConverter;
-import net.sf.jkniv.reflect.BasicType;
 import net.sf.jkniv.sqlegance.KeyGeneratorType;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.params.ParamParser;
-import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.ResultSetParser;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 import net.sf.jkniv.whinstone.couchdb.commands.JsonMapper;
-import net.sf.jkniv.whinstone.couchdb.result.PojoResultRow;
-import net.sf.jkniv.whinstone.couchdb.result.ScalarResultRow;
-import net.sf.jkniv.whinstone.couchdb.result.StringResultRow;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
@@ -50,7 +39,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     protected static final String  REGEX_QUESTION_MARK = "[\\?]+";    //"\\?";
     protected static final Pattern PATTERN_QUESTION = Pattern.compile(REGEX_QUESTION_MARK, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private final HandlerException   handlerException;
-    private final SqlDateConverter   dtConverter;
+    //private final SqlDateConverter   dtConverter;
     private int                      index, indexIN;
     private Class<T>                 returnType;
     private ResultRow<T, String>     resultRow;
@@ -59,22 +48,22 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     private List<String>             groupingBy;
     private KeyGeneratorType         keyGeneratorType;
     private String                   body;
-    private ParamParser              paramParser;
-    private HttpBuilder              httpBuilder;
+    //private ParamParser              paramParser;
+    //private HttpBuilder              httpBuilder;
     private List<Object>             params;
     private boolean                  boundParams;
-    private static BasicType         basicType = new BasicType();
+    //private static BasicType         basicType = new BasicType();
     
     public CouchDbStatementAdapter(HttpBuilder httpBuilder, String body, ParamParser paramParser)//HttpRequestBase request)
     {
-        this.httpBuilder = httpBuilder;
+        //this.httpBuilder = httpBuilder;
         this.body = body;
-        this.paramParser = paramParser;
+        //this.paramParser = paramParser;
         this.params = new ArrayList<Object>();
         this.boundParams = false;
-        this.dtConverter = new SqlDateConverter();
-        this.oneToManies = Collections.emptySet();
-        this.groupingBy = Collections.emptyList();
+        //this.dtConverter = new SqlDateConverter();
+        //this.oneToManies = Collections.emptySet();
+        //this.groupingBy = Collections.emptyList();
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
         this.reset();
         configHanlerException();

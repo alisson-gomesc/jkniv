@@ -19,7 +19,6 @@
  */
 package net.sf.jkniv.whinstone.jdbc.dml;
 
-import static net.sf.jkniv.whinstone.jdbc.RepositoryJdbcInstanceTest.TOTAL_BOOKS;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -33,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -42,6 +40,7 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.CustomResultRow;
+import net.sf.jkniv.whinstone.jdbc.JdbcMock;
 import net.sf.jkniv.whinstone.jdbc.acme.domain.Book;
 import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatAuthor;
 import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook;

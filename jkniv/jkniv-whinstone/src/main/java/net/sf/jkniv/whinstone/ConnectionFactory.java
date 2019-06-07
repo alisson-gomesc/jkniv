@@ -24,13 +24,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
 
 /**
- * Responsable to open connections with a specific database.
+ * Responsible to open connections with a specific database,
+ * could be a DataSource, DriverManager, SpringDataSource manager...
  * 
  * @author Alisson Gomes
  *

@@ -19,11 +19,20 @@
  */
 package net.sf.jkniv.whinstone.jdbc.transaction;
 
+import java.sql.ResultSet;
+import java.util.List;
+
+import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
+import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.transaction.TransactionStatus;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
-public interface Work
+@Deprecated
+/**
+ * @deprecated interface Work replace this where the unit of work must be agnostic the API
+ */
+public interface WorkJdbc
 {
     /**
      * Current thread name + {@link Repository} context name
@@ -35,6 +44,14 @@ public interface Work
     TransactionStatus getTransactionStatus();
     
     Transactional getTransaction();
+    
+    int execute(final Queryable queryable);
+    
+    <T> List<T> select(final Queryable queryable);
+    
+    <T> List<T> select(final Queryable queryable, Class<T> returnType);
+    
+    <T> List<T> select(final Queryable query, Class<T> returnType, ResultRow<T, ResultSet> parserRow);
     
     void close();
 }

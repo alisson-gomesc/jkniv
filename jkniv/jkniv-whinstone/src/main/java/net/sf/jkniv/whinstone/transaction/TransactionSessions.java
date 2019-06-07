@@ -40,7 +40,7 @@ public class TransactionSessions
 {
     private static final Logger                                       LOG       = LoggerFactory
             .getLogger(TransactionSessions.class);
-    private static final ThreadLocal<Map<String, TransactionContext>> resources = new ThreadLocal<Map<String, TransactionContext>>(); //"Transactional resources"
+    private static final ThreadLocal<Map<String, TransactionContext>> RESOURCES = new ThreadLocal<Map<String, TransactionContext>>(); //"Transactional resources"
     
     public static boolean isEmpty(String contextName)
     {
@@ -49,7 +49,7 @@ public class TransactionSessions
     
     public static TransactionContext get(String contextName)
     {
-        Map<String, TransactionContext> context = resources.get();
+        Map<String, TransactionContext> context = RESOURCES.get();
         if (context == null)
             return null;
         
@@ -71,18 +71,18 @@ public class TransactionSessions
         {
             throw new TransactionException(sqle);// TODO handler exception
         }
-        Map<String, TransactionContext> transactionContext = resources.get();
+        Map<String, TransactionContext> transactionContext = RESOURCES.get();
         if (transactionContext == null)
         {
             transactionContext = new HashMap<String, TransactionContext>();
-            resources.set(transactionContext);
+            RESOURCES.set(transactionContext);
         }
         if (transactionContext.isEmpty() || !transactionContext.containsKey(contextName))
         {
             transactionContext.put(contextName, new TransactionContext(contextName, conn));
         }
         else if (transactionContext.containsKey(contextName))
-            throw new TransactionException("Already exists a connection bind to context name [" + contextName + "] for this thread. jkniv-whinstone-jdbc doesn't support multiple or nested transactions in same Thread!");
+            throw new TransactionException("Already exists a connection bound to context name [" + contextName + "] for this thread. jkniv-whinstone-jdbc doesn't support multiple or nested transactions in same Thread!");
         
         return transactionContext.get(contextName);
     }
@@ -164,11 +164,11 @@ public class TransactionSessions
         {
             TransactionContext txContext = get(contextName);
             txContext.getConnection().close();
-            Map<String, TransactionContext> contexts = resources.get();
+            Map<String, TransactionContext> contexts = RESOURCES.get();
             if (contexts.size() == 1) //
             {
                 contexts.clear();
-                resources.remove();
+                RESOURCES.remove();
             }
             else
             {
@@ -181,7 +181,7 @@ public class TransactionSessions
         }
         finally
         {
-            resources.remove();
+            RESOURCES.remove();
         }
     }
     

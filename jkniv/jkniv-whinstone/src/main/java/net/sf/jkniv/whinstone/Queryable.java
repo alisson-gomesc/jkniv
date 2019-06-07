@@ -30,14 +30,14 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * This class represent a query object to find the query to be performed and
  * your parameters like: query parameters, offset and max objects to return.
  * 
- * The instance of {@code Queryable} it's bind whith SQL executed, so some {@code Queryable} 
+ * The instance of {@code Queryable} is bound with the SQL executed, so some {@code Queryable} 
  * re-executing <b>must be evicted</b>, like:
  * 
  * <pre>
  *   Queryable myQuery = QueryFactory.of("my-query");
  *   Number number = repository.scalar(myQuery);
  *   
- *   List list = repository.scalar(myQuery); // wrong myQuery as marked with scalar result
+ *   List list = repository.list(myQuery); // wrong myQuery as marked with scalar result
  * </pre>
  * 
  * @author Alisson Gomes

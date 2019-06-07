@@ -1,4 +1,4 @@
-package net.sf.jkniv.whinstone.jdbc.dml;
+package net.sf.jkniv.whinstone.jdbc;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;

@@ -45,8 +45,8 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.jdbc.DefaultPreparedStatementStrategy;
 import net.sf.jkniv.whinstone.jdbc.PreparedStatementStrategy;
-import net.sf.jkniv.whinstone.jdbc.experimental.commands.DbCommand;
-import net.sf.jkniv.whinstone.jdbc.experimental.commands.DbCommandFactory;
+import net.sf.jkniv.whinstone.jdbc.commands.DbCommand;
+import net.sf.jkniv.whinstone.jdbc.commands.DbCommandFactory;
 import net.sf.jkniv.whinstone.jdbc.result.FlatObjectResultRow;
 import net.sf.jkniv.whinstone.jdbc.result.MapResultRow;
 import net.sf.jkniv.whinstone.jdbc.result.NumberResultRow;
@@ -59,9 +59,13 @@ import net.sf.jkniv.whinstone.transaction.TransactionSessions;
 import net.sf.jkniv.whinstone.transaction.TransactionStatus;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
-public class UnitOfWork implements Work
+@Deprecated
+/**
+ * @deprecated Unit of work must be agnostic to API, new implementation will be written
+ */
+public class UnitOfWorkJdbc implements WorkJdbc
 {
-    private final static Logger     LOG        = LoggerFactory.getLogger(UnitOfWork.class);
+    private final static Logger     LOG        = LoggerFactory.getLogger(UnitOfWorkJdbc.class);
     private final static Logger     LOGSQL        = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
     private final static Assertable notNull    = AssertsFactory.getNotNull();
     private final static BasicType  BASIC_TYPE = BasicType.getInstance();
@@ -71,7 +75,7 @@ public class UnitOfWork implements Work
     private HandleableException     handlerException;
     private RepositoryConfig        config;
     
-    public UnitOfWork(ConnectionFactory connectionFactory, RepositoryConfig config)
+    public UnitOfWorkJdbc(ConnectionFactory connectionFactory, RepositoryConfig config)
     {
         this.handlerException = new HandlerException(RepositoryException.class, "JDBC Error cannot execute SQL");//TODO handler exception needs better configuration
         this.connectionFactory = connectionFactory;

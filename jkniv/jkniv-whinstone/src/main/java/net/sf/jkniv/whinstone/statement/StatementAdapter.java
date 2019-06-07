@@ -30,7 +30,7 @@ import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.ResultSetParser;
 
 /**
- * Adapter for Statments {@link java.sql.Statement}, {@link java.sql.PreparedStatement}, 
+ * Adapter for Statements {@link java.sql.Statement}, {@link java.sql.PreparedStatement}, 
  * {@code java.sql.CallableStatement} or {@code javax.persistence.Query}
  * 
  * @param <T> type of object to return by {@link Repository}

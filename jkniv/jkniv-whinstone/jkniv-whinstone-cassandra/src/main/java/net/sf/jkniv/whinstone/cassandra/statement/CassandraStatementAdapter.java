@@ -75,7 +75,6 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     private final HandlerException  handlerException;
     private final PreparedStatement stmt;
     private BoundStatement          bound;
-    //private final Queryable         queryable;
     private final SqlDateConverter  dtConverter;
     
     private int                     index, indexIN;
@@ -89,7 +88,6 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     
     public CassandraStatementAdapter(Session session, PreparedStatement stmt)
     {
-        //this.queryable = queryable;
         this.stmt = stmt;
         this.session = session;
         this.bound = stmt.bind();
@@ -275,8 +273,6 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     public int execute()
     {
         session.execute(bound);
-        
-        
         return Statement.SUCCESS_NO_INFO; // FIXME design Statement.SUCCESS_NO_INFO
     }
     
