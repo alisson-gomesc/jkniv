@@ -70,7 +70,7 @@ public class DataSourceAdapter extends AbstractJdbcAdapter
         ConnectionAdapter adapter = null;
         try
         {
-            LOG.debug("Getting Connection from DataSource");
+            LOG.trace("Getting Connection from DataSource");
             Connection conn = dataSource.getConnection();
             setIsolation(conn, isolation);
             adapter = new JdbcConnectionAdapter(conn);

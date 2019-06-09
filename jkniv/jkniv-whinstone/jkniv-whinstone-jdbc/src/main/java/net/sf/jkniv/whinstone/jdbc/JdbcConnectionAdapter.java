@@ -39,6 +39,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
     public JdbcConnectionAdapter(Connection conn)
     {
         this.conn = conn;
+        //LOG.trace("new JdbcConnectionAdapter instanced");
     }
     
     @Override

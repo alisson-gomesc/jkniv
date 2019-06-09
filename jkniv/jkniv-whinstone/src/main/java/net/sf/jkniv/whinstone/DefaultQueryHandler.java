@@ -30,9 +30,9 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 public abstract class DefaultQueryHandler extends DefaultCommandHandler
 {
-    public DefaultQueryHandler(ConnectionAdapter conn)
+    public DefaultQueryHandler(ConnectionAdapter connAdapter)
     {
-        super(conn);
+        super(connAdapter);
     }
     
     @Override @SuppressWarnings({ "unchecked", "rawtypes" })

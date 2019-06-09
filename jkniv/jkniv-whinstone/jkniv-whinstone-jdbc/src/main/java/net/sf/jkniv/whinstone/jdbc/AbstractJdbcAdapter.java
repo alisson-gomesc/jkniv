@@ -177,8 +177,11 @@ abstract class AbstractJdbcAdapter implements ConnectionFactory
             //    LOG.warn("Connection [{}] working with autocommit=true it's not recommended!", conn);
             
             if (isolation != null && isolation != Isolation.DEFAULT
-                    && supportsTransactionIsolationLevel(conn, isolation))
+                    && supportsTransactionIsolationLevel(conn, isolation)) {
+                //LOG.trace("Setting transaction isolation to {}", isolation);
                 conn.setTransactionIsolation(isolation.level());
+                //LOG.debug("Isolation setted");
+            }
         }
         catch (SQLException e)
         {

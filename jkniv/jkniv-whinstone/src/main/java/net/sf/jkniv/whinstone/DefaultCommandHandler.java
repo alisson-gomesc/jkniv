@@ -52,11 +52,13 @@ public abstract class DefaultCommandHandler implements CommandHandler
     protected RepositoryConfig                       config;
     protected ResultRow<?, ?>                        overloadResultRow;
     protected HandleableException                    handleableException;
-    private   Class<?>                               returnType;
+    //private Transactional                            transaction;
+    //private   Class<?>                               returnType;
     
-    public DefaultCommandHandler(ConnectionAdapter conn)
+    public DefaultCommandHandler(ConnectionAdapter connAdapter)
     {
-        this.adapterConn = conn;
+        this.adapterConn = connAdapter;
+        //this.transaction = connFactory.getTransactionManager();
     }
     
     @Override

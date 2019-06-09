@@ -27,9 +27,9 @@ class AddHandler extends DefaultCommandHandler
 {
     //private static final Logger LOG = LoggerFactory.getLogger(AddHandler.class);
     
-    public AddHandler(ConnectionAdapter adapterConn)
+    public AddHandler(ConnectionAdapter connAdapter)
     {
-        super(adapterConn);
+        super(connAdapter);
         with(this);
     }
     

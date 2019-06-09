@@ -377,7 +377,7 @@ class RepositoryJdbc implements Repository
     private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new SelectHandler(this.connectionFactory.open());
+        CommandHandler handler = new SelectHandler(getConnection(sql.getIsolation()));
         List<T> list = handler.with(queryable)
         .with(sql)
         .with(handlerException)
@@ -390,7 +390,7 @@ class RepositoryJdbc implements Repository
     {
         T ret = null;
         Sql sql = sqlContext.getQuery(q.getName());
-        CommandHandler handler = new SelectHandler(this.connectionFactory.open());
+        CommandHandler handler = new SelectHandler(getConnection(sql.getIsolation()));
         List<T> list = handler.with(q)
         .with(sql)
         .with(handlerException)
@@ -424,7 +424,36 @@ class RepositoryJdbc implements Repository
         return list;
     }
     
-    
+    @Override
+    public <T> T scalar(Queryable queryable)
+    {
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as scalar command", queryable);
+        NOT_NULL.verify(queryable);
+        T result = null;
+        List<T> list = handleList(queryable, null);
+
+//        queryable.scalar();
+//        Sql isql = sqlContext.getQuery(queryable.getName());
+//        checkSqlType(isql, SqlType.SELECT);
+//        if (!queryable.isBoundSql())
+//            queryable.bind(isql);
+//        
+//        isql.getValidateType().assertValidate(queryable.getParams());
+//        
+//        List<T> list = currentWork().select(queryable);
+        if (list.size() == 1)
+            result = list.get(0);
+        else if (list.size() > 1)// TODO test NonUniqueResultException for scalar method
+            throw new NonUniqueResultException("Query ["+queryable.getName()+"] no return scalar value, scalar function must return unique row and column");
+            //throw new NonUniqueResultException("Not a single result was generated, scalar function must return unique row and column!");
+        
+        if (isDebugEnabled)
+            LOG.debug("Executed scalar query [{}] retrieving [{}] type of [{}]", queryable.getName(), result, (result !=null ? result.getClass().getName() : "NULL"));
+        return result;
+    }
+
+/*    
     @Override
     public <T> T scalar(Queryable queryable)
     {
@@ -452,13 +481,14 @@ class RepositoryJdbc implements Repository
             LOG.debug("Executed scalar query [{}] retrieving [{}] type of [{}]", queryable.getName(), result, (result !=null ? result.getClass().getName() : "NULL"));
         return result;
     }
+*/    
     
     @Override
     public int add(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new AddHandler(this.connectionFactory.open());
+        CommandHandler handler = new AddHandler(getConnection(sql.getIsolation()));
         int rows = handler.with(queryable)
         .with(sql)
         .with(handlerException)
@@ -567,7 +597,7 @@ class RepositoryJdbc implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new UpdateHandler(this.connectionFactory.open());
+        CommandHandler handler = new UpdateHandler(getConnection(sql.getIsolation()));
         int rows = handler.with(queryable)
         .with(sql)
         .with(handlerException)
@@ -584,7 +614,7 @@ class RepositoryJdbc implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new UpdateHandler(this.connectionFactory.open());
+        CommandHandler handler = new UpdateHandler(getConnection(sql.getIsolation()));
         int rows = handler.with(queryable)
         .with(sql)
         .with(handlerException)

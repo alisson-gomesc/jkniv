@@ -24,6 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,6 +34,7 @@ import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.BaseJdbc;
 import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook;
 
+//@Ignore("UnitOfWork in TreadLoca was lock database connection fix to HandlerCommad")
 public class DataSourceTransactionTest extends BaseJdbc
 {
     @Autowired

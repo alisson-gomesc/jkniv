@@ -67,7 +67,7 @@ public class UnitOfWorkJdbc implements WorkJdbc
 {
     private final static Logger     LOG        = LoggerFactory.getLogger(UnitOfWorkJdbc.class);
     private final static Logger     LOGSQL        = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
-    private final static Assertable notNull    = AssertsFactory.getNotNull();
+    private final static Assertable NOT_NULL    = AssertsFactory.getNotNull();
     private final static BasicType  BASIC_TYPE = BasicType.getInstance();
     
     private ConnectionFactory       connectionFactory;
