@@ -69,7 +69,6 @@ public class SqlSelectMockitoTest
             assertThat(b.getIsbn(), notNullValue());
             assertThat(b.getName(), notNullValue());
         }
-        assertThat(repository.getTransaction().getStatus(), is(TransactionStatus.NO_TRANSACTION));
         verifyClose(jdbcMock, repository);
     }
     
@@ -105,7 +104,6 @@ public class SqlSelectMockitoTest
         Queryable q = QueryFactory.of("0 records");
         List<FlatAuthor> books = repository.list(q);
         assertThat("Query result is Empty", books.size(), equalTo(0));
-        assertThat(repository.getTransaction().getStatus(), is(TransactionStatus.NO_TRANSACTION));
         verifyClose(jdbcMock, repository);
     }
     
@@ -228,7 +226,7 @@ public class SqlSelectMockitoTest
     {
         try
         {
-            assertThat(repository.getTransaction().getStatus(), is(TransactionStatus.NO_TRANSACTION));
+            //assertThat(repository.getTransaction().getStatus(), is(TransactionStatus.NO_TRANSACTION));
             verify(jdbcMock.getRs()).close();
             verify(jdbcMock.getStmt()).close();
             verify(jdbcMock.getConnection(), atLeast(1)).close();

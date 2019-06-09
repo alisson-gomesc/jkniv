@@ -69,16 +69,17 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
     }
     
     @Override
-    public void close() throws SQLException
+    public void close() //throws SQLException
     {
-        //        try
-        //        {
-        this.conn.close();
-        //        }
-        //        catch (SQLException sqle)
-        //        {
-        //            LOG.warn("Erro to closing connection. Reason: " + sqle.getMessage());
-        //        }        
+        try
+        {
+            this.conn.close();
+        }
+        catch (SQLException sqle)
+        {
+            throw new RepositoryException("Cannot close connection [" + sqle.getMessage() + "]", sqle);
+            //LOG.warn("Erro to closing connection. Reason: " + sqle.getMessage());
+        }
     }
     
     @Override
@@ -193,6 +194,12 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
     public Object unwrap()
     {
         return conn;
+    }
+    
+    @Override
+    public boolean supportsPagingByRoundtrip()
+    {
+        return true;
     }
     
     /**
@@ -346,13 +353,11 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
         StatementAdapter<Number, ResultSet> adapterStmtCount = null;
         if (queryable.isPaging())
             adapterStmtCount = newStatement(queryable.queryCount());
-
-        StatementAdapter< T, R> stmt = this.newStatement(queryable);
+        
+        StatementAdapter<T, R> stmt = this.newStatement(queryable);
         Selectable select = queryable.getDynamicSql().asSelectable();
-        stmt.resultRow(overloadResultRow)
-        .oneToManies(select.getOneToMany())
-        .groupingBy(select.getGroupByAsList());
-
+        stmt.resultRow(overloadResultRow).oneToManies(select.getOneToMany()).groupingBy(select.getGroupByAsList());
+        
         command = new DefaultJdbcQuery(stmt, queryable, this.conn);
         return command;
     }

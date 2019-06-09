@@ -73,7 +73,7 @@ class HttpCookieConnectionAdapter implements ConnectionAdapter
     }
     
     @Override
-    public void close() throws SQLException
+    public void close() //throws SQLException
     {
         LOG.warn("CouchDb repository doesn't implement this method yet!");
     }
@@ -226,6 +226,12 @@ class HttpCookieConnectionAdapter implements ConnectionAdapter
         throw new UnsupportedOperationException("CouchDb repository  doesn't implement this method yet!");
     }
     
+    @Override
+    public boolean supportsPagingByRoundtrip()
+    {
+        return false;
+    }
+
     
     @Override
     public String toString()

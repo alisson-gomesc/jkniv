@@ -40,7 +40,6 @@ public class LocalTransactionAdapter extends AbstractTransaction
         return this.connectionFactory.open();
     }
 
-
     @Override
     public TransactionType geTransactionType()
     {

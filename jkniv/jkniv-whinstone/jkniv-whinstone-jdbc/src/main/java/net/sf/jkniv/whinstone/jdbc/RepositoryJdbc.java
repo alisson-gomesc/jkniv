@@ -377,7 +377,7 @@ class RepositoryJdbc implements Repository
     private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new SelectHandler(getConnection(sql.getIsolation()));
+        CommandHandler handler = new SelectHandler(this.connectionFactory.open(sql.getIsolation()));
         List<T> list = handler.with(queryable)
         .with(sql)
         .with(handlerException)
@@ -390,7 +390,7 @@ class RepositoryJdbc implements Repository
     {
         T ret = null;
         Sql sql = sqlContext.getQuery(q.getName());
-        CommandHandler handler = new SelectHandler(getConnection(sql.getIsolation()));
+        CommandHandler handler = new SelectHandler(this.connectionFactory.open(sql.getIsolation()));
         List<T> list = handler.with(q)
         .with(sql)
         .with(handlerException)
@@ -431,6 +431,7 @@ class RepositoryJdbc implements Repository
             LOG.trace("Executing [{}] as scalar command", queryable);
         NOT_NULL.verify(queryable);
         T result = null;
+        queryable.scalar();
         List<T> list = handleList(queryable, null);
 
 //        queryable.scalar();
@@ -488,7 +489,7 @@ class RepositoryJdbc implements Repository
     {
         NOT_NULL.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new AddHandler(getConnection(sql.getIsolation()));
+        CommandHandler handler = new AddHandler(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
         .with(sql)
         .with(handlerException)
@@ -506,7 +507,7 @@ class RepositoryJdbc implements Repository
 
         Queryable queryable = QueryFactory.of(queryName, entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new AddHandler(getConnection(sql.getIsolation()));
+        CommandHandler handler = new AddHandler(this.connectionFactory.open(sql.getIsolation()));
         handler.with(queryable)
         .with(sql)
         .with(handlerException)
@@ -597,7 +598,7 @@ class RepositoryJdbc implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new UpdateHandler(getConnection(sql.getIsolation()));
+        CommandHandler handler = new UpdateHandler(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
         .with(sql)
         .with(handlerException)
@@ -614,7 +615,7 @@ class RepositoryJdbc implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new UpdateHandler(getConnection(sql.getIsolation()));
+        CommandHandler handler = new UpdateHandler(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
         .with(sql)
         .with(handlerException)
@@ -685,7 +686,7 @@ class RepositoryJdbc implements Repository
     {
         NOT_NULL.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new RemoveHandler(getConnection(sql.getIsolation()));
+        CommandHandler handler = new RemoveHandler(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
         .with(sql)
         .with(handlerException)
@@ -702,7 +703,7 @@ class RepositoryJdbc implements Repository
             LOG.trace("Executing [{}] as remove command", queryName);
         Queryable queryable = QueryFactory.of(queryName, entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new RemoveHandler(getConnection(sql.getIsolation()));
+        CommandHandler handler = new RemoveHandler(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
         .with(sql)
         .with(handlerException)
@@ -783,7 +784,8 @@ class RepositoryJdbc implements Repository
     @Override
     public Transactional getTransaction()
     {
-        return currentWork().getTransaction();
+        return null;
+        //return currentWork().getTransaction();
     }
     
     @Override
@@ -954,22 +956,4 @@ class RepositoryJdbc implements Repository
         }
         return factory.newInstance();
     }
-
-    private ConnectionAdapter getConnection(Isolation isolation)
-    {
-        ConnectionAdapter conn = null;
-        TransactionContext transactionContext = TransactionSessions.get(connectionFactory.getContextName());
-        
-        if (transactionContext != null && transactionContext.isActive())
-        {
-            LOG.debug("Taking existent Connection from Transaction Context");
-            conn = transactionContext.getConnection();
-        }
-        if (conn == null)
-        {
-            conn = connectionFactory.open(isolation);
-        }
-        return conn;
-    }
-
 }

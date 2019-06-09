@@ -35,7 +35,9 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
         super(connAdapter);
     }
     
-    @Override @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    @SuppressWarnings(
+    { "unchecked", "rawtypes" })
     public <T> T run()
     {
         if (LOG.isTraceEnabled())
@@ -51,56 +53,64 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
         
         if (!queryable.isCacheIgnore())
             entry = selectable.getCache().getEntry(queryable);
-        
-        if (entry == null)
+        try
         {
-            preCallback();
-            Command command = adapterConn.asSelectCommand(queryable, overloadResultRow);
-            list = command.execute();
-            postCallback();
-            if (selectable.hasCache() && !list.isEmpty())
-                selectable.getCache().put(queryable, list);
-            
-            paging(list);
+            if (entry == null)
+            {
+                preCallback();
+                Command command = adapterConn.asSelectCommand(queryable, overloadResultRow);
+                list = command.execute();
+                postCallback();
+                if (selectable.hasCache() && !list.isEmpty())
+                    selectable.getCache().put(queryable, list);
+                
+                paging(list);
+            }
+            else
+            {
+                queryable.cached();
+                list = (List<?>) entry.getValue();
+                if (LOG.isDebugEnabled())
+                    LOG.debug("{} object(s) was returned from [{}] cache using query [{}] since {} reach [{}] times",
+                            list.size(), selectable.getCache().getName(), sql.getName(), entry.getTimestamp(),
+                            entry.hits());
+            }
         }
-        else
+        finally
         {
-            queryable.cached();
-            list = (List<?>) entry.getValue();
-            if (LOG.isDebugEnabled())
-                LOG.debug("{} object(s) was returned from [{}] cache using query [{}] since {} reach [{}] times",
-                        list.size(), selectable.getCache().getName(), sql.getName(), entry.getTimestamp(),
-                        entry.hits());
+            this.adapterConn.close();
         }
         //queryable.setTotal(list.size());
         if (LOG.isDebugEnabled())
-            LOG.debug("Executed [{}] query as {} command, {} rows fetched", queryable.getName(), sql.getSqlType(), list.size());
+            LOG.debug("Executed [{}] query as {} command, {} rows fetched", queryable.getName(), sql.getSqlType(),
+                    list.size());
         
-        
-        return (T)list;
+        return (T) list;
     }
     
     private void paging(List<?> list)
     {
-        if (queryable.isPaging())
+        if (adapterConn.supportsPagingByRoundtrip())
         {
-            StatementAdapter<Number, ResultSet> adapterStmtCount = adapterConn.newStatement(queryable.queryCount());
-            queryable.bind(adapterStmtCount).on();
-            adapterStmtCount.returnType(Number.class).scalar();
-            try
+            if (queryable.isPaging())
             {
-                Long rows = adapterStmtCount.rows().get(0).longValue();
-                queryable.setTotal(rows);
+                StatementAdapter<Number, ResultSet> adapterStmtCount = adapterConn.newStatement(queryable.queryCount());
+                queryable.bind(adapterStmtCount).on();
+                adapterStmtCount.returnType(Number.class).scalar();
+                try
+                {
+                    Long rows = adapterStmtCount.rows().get(0).longValue();
+                    queryable.setTotal(rows);
+                }
+                catch (RepositoryException e)
+                {
+                    // FIXME BUG select count with ORDER BY 
+                    // The ORDER BY clause is invalid in views, inline functions, derived tables, subqueries, and common table expressions, unless TOP or FOR XML is also specified.
+                    LOG.error("Cannot count the total of rows from full query [{}]", queryable.getName(), e);
+                }
             }
-            catch (RepositoryException e)
-            {
-                // FIXME BUG select count with ORDER BY 
-                // The ORDER BY clause is invalid in views, inline functions, derived tables, subqueries, and common table expressions, unless TOP or FOR XML is also specified.
-                LOG.error("Cannot count the total of rows from full query [{}]", queryable.getName(), e);
-            }
+            else
+                queryable.setTotal(list.size());
         }
-        else
-            queryable.setTotal(list.size());     
-
     }
 }

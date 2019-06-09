@@ -597,14 +597,14 @@ class RepositoryCouchDb implements Repository
     @Override
     public void close()
     {
-        try
-        {
+//        try
+//        {
             adapterConn.close();
-        }
-        catch (SQLException e)
-        {
-            LOG.warn("Error to try close CouchDB session [{}]", adapterConn, e);
-        }
+//        }
+//        catch (SQLException e)
+//        {
+//            LOG.warn("Error to try close CouchDB session [{}]", adapterConn, e);
+//        }
         sqlContext.close();
     }
     

@@ -101,14 +101,14 @@ public class CassandraSessionFactory implements ConnectionFactory
     @Override
     public void close(ConnectionAdapter conn)
     {
-        try
-        {
+//        try
+//        {
             conn.close();
-        }
-        catch (SQLException e)
-        {
-            LOG.warn("Error to try close Cassandra session/cluster [{}]", conn, e);
-        }
+//        }
+//        catch (SQLException e)
+//        {
+//            LOG.warn("Error to try close Cassandra session/cluster [{}]", conn, e);
+//        }
     }
     
     @Override

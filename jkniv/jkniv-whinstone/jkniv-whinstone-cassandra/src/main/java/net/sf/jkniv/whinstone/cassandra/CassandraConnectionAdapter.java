@@ -69,7 +69,7 @@ class CassandraConnectionAdapter implements ConnectionAdapter
     }
     
     @Override
-    public void close() throws SQLException
+    public void close() //throws SQLException
     {
         if (session != null && !session.isClosed())
         {
@@ -148,6 +148,12 @@ class CassandraConnectionAdapter implements ConnectionAdapter
     public Object unwrap()
     {
         return session;
+    }
+    
+    @Override
+    public boolean supportsPagingByRoundtrip()
+    {
+        return false;
     }
     
     @Override

@@ -28,6 +28,8 @@ import net.sf.jkniv.reflect.ReflectionUtils;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
+import net.sf.jkniv.whinstone.transaction.TransactionContext;
+import net.sf.jkniv.whinstone.transaction.TransactionSessions;
 
 public class DriverManagerAdapter extends AbstractJdbcAdapter
 {
@@ -65,22 +67,39 @@ public class DriverManagerAdapter extends AbstractJdbcAdapter
      */
     public ConnectionAdapter open(Isolation isolation)
     {
-        ConnectionAdapter adapter = null;
-        try
-        {
-            LOG.debug("Getting Connection from DriverManager");
-            Connection conn = DriverManager.getConnection(url, props);
-            setIsolation(conn, isolation);
-            adapter = new JdbcConnectionAdapter(conn);
-        }
-        catch (SQLException e)
-        {
-            handlerException.handle(e,
-                    "SEVERE FAIL, cannot get database connection url [" + url + "] config=" + props);
-        }
+        ConnectionAdapter adapter = getConnection(isolation);
         return adapter;
     }    
-    
+
+    private ConnectionAdapter getConnection(Isolation isolation)
+    {
+        ConnectionAdapter adapter = null;
+        TransactionContext transactionContext = TransactionSessions.get(this.contextName);
+        
+        if (transactionContext != null && transactionContext.isActive())
+        {
+            LOG.debug("Taking existent Connection from Transaction Context");
+            adapter = transactionContext.getConnection();
+        }
+        if (adapter == null)
+        {
+            try
+            {
+                LOG.debug("Getting new connection from DriverManager");
+                Connection jdbcConn = DriverManager.getConnection(url, props);
+                setIsolation(jdbcConn, isolation);
+                adapter = new JdbcConnectionAdapter(jdbcConn);
+            }
+            catch (Exception e)//SQLException
+            {
+                handlerException.handle(e,
+                        "SEVERE FAIL, cannot get database connection url [" + url + "] config=" + props);
+            }
+            
+        }
+        return adapter;
+    }
+
     private void register()
     {
         try

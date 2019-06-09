@@ -191,6 +191,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-dbcp2</artifactId>
+      <version>2.6.0</version>
+      <scope>test</scope>
+    </dependency>    
+    <dependency>
       <groupId>com.oracle</groupId>
       <artifactId>ojdbc6</artifactId>
       <version>11.2.0</version>
@@ -200,6 +206,12 @@
       <groupId>postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <version>8.4-702.jdbc4</version>
+      <scope>test</scope>
+    </dependency>    
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>9.4-1200-jdbc41</version>
       <scope>test</scope>
     </dependency>
     <dependency>

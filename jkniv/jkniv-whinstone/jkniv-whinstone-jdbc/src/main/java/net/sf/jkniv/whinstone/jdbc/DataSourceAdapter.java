@@ -25,11 +25,13 @@ import javax.sql.DataSource;
 
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
+import net.sf.jkniv.whinstone.transaction.TransactionContext;
+import net.sf.jkniv.whinstone.transaction.TransactionSessions;
 
 public class DataSourceAdapter extends AbstractJdbcAdapter
 {
-    private DataSource          dataSource;
-    private Isolation           defaultIsolation;
+    private DataSource dataSource;
+    private Isolation  defaultIsolation;
     
     public DataSourceAdapter(DataSource ds, String contextName)//DataSource dataSource, Isolation defaultIsolation, String name)
     {
@@ -47,7 +49,6 @@ public class DataSourceAdapter extends AbstractJdbcAdapter
     }
     */
     
-    
     /**
      * Attempts to establish a connection to the database 
      * @return a Connection from DataSource
@@ -58,7 +59,6 @@ public class DataSourceAdapter extends AbstractJdbcAdapter
         return open(defaultIsolation);
     }
     
-    
     /**
      * Attempts to establish a connection to the database with specific isolation 
      * @param isolation transaction level for connection
@@ -67,18 +67,35 @@ public class DataSourceAdapter extends AbstractJdbcAdapter
      */
     public ConnectionAdapter open(Isolation isolation)
     {
+        ConnectionAdapter adapter = getConnection(isolation);
+        return adapter;
+    }
+    
+    private ConnectionAdapter getConnection(Isolation isolation)
+    {
         ConnectionAdapter adapter = null;
-        try
+        TransactionContext transactionContext = TransactionSessions.get(this.contextName);
+        
+        if (transactionContext != null && transactionContext.isActive())
         {
-            LOG.trace("Getting Connection from DataSource");
-            Connection conn = dataSource.getConnection();
-            setIsolation(conn, isolation);
-            adapter = new JdbcConnectionAdapter(conn);
+            LOG.debug("Taking existent Connection from Transaction Context");
+            adapter = transactionContext.getConnection();
         }
-        catch (Exception e)//SQLException
+        if (adapter == null)
         {
-            handlerException.handle(e, "SEVERE FAIL, cannot get database connection datasource [" + dataSource
-                    + "] Reason: " + e.getMessage());
+            try
+            {
+                LOG.trace("Getting new connection from DataSource");
+                Connection jdbcConn = dataSource.getConnection();
+                setIsolation(jdbcConn, isolation);
+                adapter = new JdbcConnectionAdapter(jdbcConn);
+            }
+            catch (Exception e)//SQLException
+            {
+                handlerException.handle(e, "SEVERE FAIL, cannot get database connection datasource [" + dataSource
+                        + "] Reason: " + e.getMessage());
+            }
+            
         }
         return adapter;
     }

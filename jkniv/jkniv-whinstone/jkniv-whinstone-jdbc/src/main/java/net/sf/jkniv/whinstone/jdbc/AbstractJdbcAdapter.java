@@ -49,7 +49,7 @@ abstract class AbstractJdbcAdapter implements ConnectionFactory
             "Cannot get database connection");
     //protected static final boolean             isTraceEnabled   = LOG.isTraceEnabled();
     
-    protected String                           contextName;
+    protected final String                           contextName;
     
     public AbstractJdbcAdapter(String contextName)
     {

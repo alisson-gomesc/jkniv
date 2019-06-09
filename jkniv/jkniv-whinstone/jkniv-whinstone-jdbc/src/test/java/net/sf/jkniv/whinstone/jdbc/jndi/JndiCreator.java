@@ -23,7 +23,6 @@ import java.util.Properties;
 
 import javax.naming.NamingException;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.mock.jndi.SimpleNamingContextBuilder;
 
 import net.sf.jkniv.sqlegance.RepositoryType;
@@ -43,7 +42,7 @@ public class JndiCreator
         try
         {
             //jdbc:derby:memory:derbwhinstone;create=true
-            BasicDataSource datasource = new BasicDataSource();
+            org.apache.commons.dbcp.BasicDataSource datasource = new org.apache.commons.dbcp.BasicDataSource();
             datasource.setUrl("jdbc:derby:memory:derbwhinstone;create=true");
             datasource.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
             final SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
@@ -65,7 +64,7 @@ public class JndiCreator
     {
         try
         {
-            BasicDataSource datasource = new BasicDataSource();
+            org.apache.commons.dbcp.BasicDataSource datasource = new org.apache.commons.dbcp.BasicDataSource();
             datasource.setUrl(props.getProperty("url"));
             datasource.setDriverClassName(props.getProperty("driver"));
             datasource.setUsername(props.getProperty("username"));

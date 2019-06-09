@@ -32,6 +32,7 @@ public class TransactionContext
 {
     private final String            name;
     private final ConnectionAdapter conn;
+    private Transactional           transaction;
     private TransactionStatus       status;
     
     public TransactionContext()

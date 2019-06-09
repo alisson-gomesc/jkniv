@@ -68,8 +68,12 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
         this.scalar = false;
         this.queryable = queryable;
         this.returnType = (Class<T>) Map.class;
+
         if(queryable != null)
         {
+            if (queryable.isScalar())
+                scalar();
+            
             if (queryable.getReturnType() != null)
                 returnType = (Class<T>)queryable.getReturnType();
             else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)

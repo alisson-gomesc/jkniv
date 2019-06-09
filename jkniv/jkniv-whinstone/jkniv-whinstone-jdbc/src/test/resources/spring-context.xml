@@ -26,6 +26,10 @@
     destroy-method="close">
     <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
     <property name="url" value="jdbc:derby:memory:derbwhinstone;create=true" />
+    <!--
+    <property name="maxWaitMillis" value="5000"/>
+    <property name="initialSize" value="100"/>
+    -->
   </bean>
   
   <bean id="dataSourceOra" class="org.apache.commons.dbcp.BasicDataSource"
@@ -37,7 +41,7 @@
   </bean>
   <bean id="dataSourcePostgres" class="org.apache.commons.dbcp.BasicDataSource"
     destroy-method="close">
-    <property name="driverClassName" value="org.postgresql.xa.PGXADataSource" />
+    <property name="driverClassName" value="org.postgresql.Driver" />
     <property name="url" value="jdbc:postgresql://127.0.0.1:5432/pgwhinstone" />
     <property name="username" value="pgwhinstone" />
     <property name="password" value="pgwhinstone" />

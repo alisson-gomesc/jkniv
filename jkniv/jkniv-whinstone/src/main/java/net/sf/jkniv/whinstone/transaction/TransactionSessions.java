@@ -175,10 +175,10 @@ public class TransactionSessions
                 contexts.remove(contextName);
             }
         }
-        catch (SQLException sqle)
-        {
-            LOG.warn("Erro to closing connection. Reason: " + sqle.getMessage());
-        }
+//        catch (SQLException sqle)
+//        {
+//            LOG.warn("Erro to closing connection. Reason: " + sqle.getMessage());
+//        }
         finally
         {
             RESOURCES.remove();

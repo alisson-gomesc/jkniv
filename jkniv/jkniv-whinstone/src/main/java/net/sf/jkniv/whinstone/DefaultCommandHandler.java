@@ -40,8 +40,9 @@ import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 
 public abstract class DefaultCommandHandler implements CommandHandler
 {
-    final static Logger                              LOG = LoggerFactory.getLogger(DefaultCommandHandler.class);
-    static final Assertable                          NOT_NULL = AssertsFactory.getNotNull();
+    final static Logger                              LOG               = LoggerFactory
+            .getLogger(DefaultCommandHandler.class);
+    static final Assertable                          NOT_NULL          = AssertsFactory.getNotNull();
     private final static Map<String, ObjectCallback> OBJECTS_CALLBACKS = new HashMap<String, ObjectCallback>();
     ConnectionAdapter                                adapterConn;
     CommandHandler                                   handler;
@@ -92,12 +93,12 @@ public abstract class DefaultCommandHandler implements CommandHandler
         return this;
     }
     
-//    @Override
-//    public CommandHandler returnType(Class<?> returnType)
-//    {
-//        this.returnType = returnType;
-//        return this;
-//    }
+    //    @Override
+    //    public CommandHandler returnType(Class<?> returnType)
+    //    {
+    //        this.returnType = returnType;
+    //        return this;
+    //    }
     
     @Override
     public CommandHandler with(RepositoryConfig repositoryConfig)
@@ -117,27 +118,34 @@ public abstract class DefaultCommandHandler implements CommandHandler
     public <T> T run()
     {
         NOT_NULL.verify(this.adapterConn, this.queryable, this.sql, this.handler);
+        T t = null;
         if (LOG.isTraceEnabled())
             LOG.trace("Executing [{}] as {} command", queryable, sql.getSqlType());
-        
-        sql.getValidateType().assertValidate(queryable.getParams());
-        
-        if (!queryable.isBoundSql())
-            queryable.bind(sql);
-        
-        preCallback();
-        this.command = handler.asCommand();
-        T t = this.command.execute();
-        postCallback();
-        if (LOG.isDebugEnabled())
+        try
         {
-            Number rows = null;
-            if (t instanceof List)
-                rows = ((List) t).size();
-            else if (t instanceof Number)
-                rows = (Number) t;
+            sql.getValidateType().assertValidate(queryable.getParams());
             
-            LOG.debug("{} records was affected by {} [{}] query", rows, sql.getSqlType(), queryable.getName());
+            if (!queryable.isBoundSql())
+                queryable.bind(sql);
+            
+            preCallback();
+            this.command = handler.asCommand();
+            t = this.command.execute();
+            postCallback();
+            if (LOG.isDebugEnabled())
+            {
+                Number rows = null;
+                if (t instanceof List)
+                    rows = ((List) t).size();
+                else if (t instanceof Number)
+                    rows = (Number) t;
+                
+                LOG.debug("{} records was affected by {} [{}] query", rows, sql.getSqlType(), queryable.getName());
+            }
+        }
+        finally
+        {
+            this.adapterConn.close();
         }
         return t;
     }
@@ -271,6 +279,5 @@ public abstract class DefaultCommandHandler implements CommandHandler
         }
         OBJECTS_CALLBACKS.put(proxyParams.getTargetClass().getName(), objectCallback);
     }
-
     
 }

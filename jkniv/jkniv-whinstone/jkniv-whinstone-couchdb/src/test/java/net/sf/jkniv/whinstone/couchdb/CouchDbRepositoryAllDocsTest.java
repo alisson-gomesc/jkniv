@@ -54,6 +54,7 @@ public class CouchDbRepositoryAllDocsTest extends BaseJdbc
     }
 
     @Test
+    @SuppressWarnings("rawtypes")
     public void whenListAllDocsWithLimit()
     {
         Repository repositoryDb = getRepository();

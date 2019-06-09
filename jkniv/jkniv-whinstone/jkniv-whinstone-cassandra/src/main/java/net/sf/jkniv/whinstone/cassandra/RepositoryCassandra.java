@@ -476,14 +476,14 @@ class RepositoryCassandra implements Repository
     @Override
     public void close()
     {
-        try
-        {
+//        try
+//        {
             adapterConn.close();
-        }
-        catch (SQLException e)
-        {
-            LOG.warn("Error to try close Cassandra session/cluster [{}]", adapterConn, e);
-        }
+//        }
+//        catch (SQLException e)
+//        {
+//            LOG.warn("Error to try close Cassandra session/cluster [{}]", adapterConn, e);
+//        }
         sqlContext.close();
     }
     
