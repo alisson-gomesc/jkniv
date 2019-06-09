@@ -1,4 +1,3 @@
-/*
 /* 
  * JKNIV, whinstone one contract to access your database.
  * 
@@ -18,16 +17,39 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.acme.domain;
+package net.sf.jkniv.whinstone.jdbc.domain.acme;
 
-public class FlatBook
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import net.sf.jkniv.sqlegance.validation.UpdateValidate;
+
+//import javax.validation.constraints.NotNull;
+//import javax.validation.constraints.Size;
+
+public class Author implements Serializable
 {
-    private Long   id;
-    private String name;
-    private String isbn;
-    private String author;
-    private Long authorId;
+    @NotNull(groups=UpdateValidate.class)
+    private Long       id;
+    //@NotNull
+    //@Size(min=1, max=60)
+    @NotNull(groups=UpdateValidate.class)
+    private String     name;
+    private List<Book> books;
     
+    public Author()
+    {
+        this.books = new ArrayList<Book>();
+    }
+
+    public Author(List<Book> books)
+    {
+        this.books = books;
+    }
+
     public Long getId()
     {
         return id;
@@ -48,40 +70,26 @@ public class FlatBook
         this.name = name;
     }
     
-    public String getIsbn()
+    public List<Book> getBooks()
     {
-        return isbn;
+        return books;
     }
     
-    public void setIsbn(String isbn)
+    public void setBooks(List<Book> books)
     {
-        this.isbn = isbn;
+        this.books = books;
     }
-    
-    public String getAuthor()
+
+    public void setBook(Book book)
     {
-        return author;
+        this.books.add(book);
     }
-    
-    public void setAuthor(String author)
-    {
-        this.author = author;
-    }
-    
-    public void setAuthorId(Long authorId)
-    {
-        this.authorId = authorId;
-    }
-    
-    public Long getAuthorId()
-    {
-        return authorId;
-    }
-    
+
     @Override
     public String toString()
     {
-        return "Book [id=" + id + ", name=" + name + ", isbn=" + isbn + ", author =" + author + "]";
+        return "Author [id=" + id + ", name=" + name + ", books=" + (books != null ? books.size() : 0) + "-> " +books+ "]";
     }
+    
     
 }

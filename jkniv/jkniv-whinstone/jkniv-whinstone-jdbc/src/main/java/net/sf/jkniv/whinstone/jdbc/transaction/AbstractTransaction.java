@@ -55,6 +55,7 @@ public abstract class AbstractTransaction implements Transactional
         NOT_NULL.verify(contextName, connAdapter, transactionScope);
         this.contextName = contextName;
         this.connAdapter = connAdapter;
+        this.status = TransactionStatus.NO_TRANSACTION;
         this.transactionScope = transactionScope;// FIXME tx implements different scopes transactions
         try
         {
@@ -202,11 +203,14 @@ public abstract class AbstractTransaction implements Transactional
         return transactionContext;
     }
     
+
     @Override
     public String toString()
     {
-        return getClass() + " [contextName=" + contextName + ", connAdapter=" + connAdapter + "]";
+        return "AbstractTransaction [contextName=" + contextName + ", status=" + status + ", transactionScope="
+                + transactionScope + ", connAdapter=" + connAdapter + "]";
     }
+    
     
     //    @Override
     //    public final void setTransactionTimeout(int seconds) throws TransactionException

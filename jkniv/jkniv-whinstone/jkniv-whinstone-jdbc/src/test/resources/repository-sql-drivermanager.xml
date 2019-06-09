@@ -8,7 +8,7 @@
        http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
   
   
-  <select id="getBookByISBN" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook">
+  <select id="getBookByISBN" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook">
     select b.ID as id, b.ISBN as isbn, b.NAME as name, a.name as author, a.ID as author_id 
     from 
      BOOK b

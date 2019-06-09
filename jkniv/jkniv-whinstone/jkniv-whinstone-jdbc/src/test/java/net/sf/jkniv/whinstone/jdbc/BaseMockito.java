@@ -35,7 +35,7 @@ import net.sf.jkniv.sqlegance.validation.ValidateType;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.RepositoryService;
-import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook;
+import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook;
 
 public abstract class BaseMockito
 {

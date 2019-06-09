@@ -33,7 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.BaseJdbc;
-import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatAuthor;
+import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatAuthor;
 
 import static net.sf.jkniv.whinstone.jdbc.RepositoryJdbcInstanceTest.TOTAL_BOOKS;
 

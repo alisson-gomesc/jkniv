@@ -33,10 +33,9 @@ import net.sf.jkniv.whinstone.ConnectionAdapter;
 public class TransactionContext
 {
     private final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
-    private final String  name;
-    private final ConnectionAdapter conn;
-    private Transactional tx;
-    //private TransactionStatus       status;
+    private final String               name;
+    private final ConnectionAdapter    conn;
+    private Transactional              tx;
     
     public TransactionContext()
     {
@@ -49,7 +48,6 @@ public class TransactionContext
         this.name = name;
         this.tx = tx;
         this.conn = conn;
-        //this.status = TransactionStatus.NO_TRANSACTION;
     }
     
     public boolean isActive()
@@ -71,14 +69,4 @@ public class TransactionContext
     {
         return conn;
     }
-    
-//    public TransactionStatus getStatus()
-//    {
-//        return status;
-//    }
-    
-//    public void setStatus(TransactionStatus status)
-//    {
-//        this.status = status;
-//    }
 }

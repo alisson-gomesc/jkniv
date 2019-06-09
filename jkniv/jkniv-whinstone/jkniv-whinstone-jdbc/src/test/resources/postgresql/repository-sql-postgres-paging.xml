@@ -6,11 +6,11 @@
   xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
        http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
   
-  <select id="listBooks" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook">
+  <select id="listBooks" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook">
     select id, name from book
   </select>
 
-  <select id="listBooksAuthor" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook">
+  <select id="listBooksAuthor" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook">
     select id, name from book where AUTHOR_ID in (:author1,:author2)
   </select>
 

@@ -50,11 +50,14 @@ public class LocalTransactionAdapter extends AbstractTransaction
     {
         return TransactionType.LOCAL;
     }
-    
+
     @Override
     public String toString()
     {
-        return "LocalTransactionAdapter [contextName=" + contextName + ", transactionScope=" + transactionScope + "]";
+        
+        return "LocalTransactionAdapter [contextName=" + contextName + ", status="+getStatus()+", transactionScope=" + transactionScope
+                + ", connAdapter=" + connAdapter + "]";
     }
+    
     
 }

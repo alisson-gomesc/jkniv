@@ -1,4 +1,3 @@
-/*
 /* 
  * JKNIV, whinstone one contract to access your database.
  * 
@@ -18,15 +17,21 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.acme.domain;
+package net.sf.jkniv.whinstone.jdbc.domain.acme;
 
-public class Book
+import java.io.Serializable;
+
+//import javax.validation.constraints.NotNull;
+//import javax.validation.constraints.Size;
+
+public class FlatAuthor implements Serializable
 {
-    private Long   id;
-    private String name;
-    private String isbn;
-    private Integer visualization;
-    private Author author;
+    //@NotNull
+    private Long       id;
+    //@NotNull
+    //@Size(min=1, max=60)
+    private String     name;
+    private Long bookId;
     
     public Long getId()
     {
@@ -48,40 +53,21 @@ public class Book
         this.name = name;
     }
     
-    public String getIsbn()
+    public Long getBookId()
     {
-        return isbn;
+        return bookId;
     }
     
-    public void setIsbn(String isbn)
+    public void setBook(Long bookId)
     {
-        this.isbn = isbn;
+        this.bookId = bookId;
     }
-    
-    public Author getAuthor()
-    {
-        return author;
-    }
-    
-    public void setAuthor(Author author)
-    {
-        this.author = author;
-    }
-    
-    public Integer getVisualization()
-    {
-        return visualization;
-    }
-    
-    public void setVisualization(Integer visualization)
-    {
-        this.visualization = visualization;
-    }
-    
+
     @Override
     public String toString()
     {
-        return "Book [id=" + id + ", name=" + name + ", isbn=" + isbn + ", author=" + author + "]";
+        return "Author [id=" + id + ", name=" + name + ", bookId=" + bookId + "]";
     }
+    
     
 }

@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.assertj.core.api.AssertFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -246,8 +245,8 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
         try
         {
             if (LOG.isTraceEnabled())
-                LOG.trace("Preparing SQL statement type [{}], concurrency [{}], holdability [{}] with [{}] parameters",
-                        isql.getResultSetType(), isql.getResultSetConcurrency(), isql.getResultSetHoldability(),
+                LOG.trace("Preparing SQL statement [{}] type [{}], concurrency [{}], holdability [{}] with [{}] parameters",
+                        queryable.getName(), isql.getResultSetType(), isql.getResultSetConcurrency(), isql.getResultSetHoldability(),
                         queryable.getParamsNames().length);
             
             if (queryable.getDynamicSql().isInsertable())

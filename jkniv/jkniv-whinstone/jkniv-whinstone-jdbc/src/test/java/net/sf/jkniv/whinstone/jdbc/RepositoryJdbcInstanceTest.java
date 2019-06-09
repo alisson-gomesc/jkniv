@@ -35,7 +35,7 @@ import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
-import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook;
+import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook;
 import net.sf.jkniv.whinstone.jdbc.jndi.JndiCreator;
 
 public class RepositoryJdbcInstanceTest extends BaseSpringJUnit4

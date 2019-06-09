@@ -17,21 +17,15 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.acme.domain;
+package net.sf.jkniv.whinstone.jdbc.domain.acme;
 
 import java.io.Serializable;
 
-//import javax.validation.constraints.NotNull;
-//import javax.validation.constraints.Size;
 
-public class FlatAuthor implements Serializable
+public class Foo implements Serializable
 {
-    //@NotNull
     private Long       id;
-    //@NotNull
-    //@Size(min=1, max=60)
     private String     name;
-    private Long bookId;
     
     public Long getId()
     {
@@ -53,21 +47,9 @@ public class FlatAuthor implements Serializable
         this.name = name;
     }
     
-    public Long getBookId()
-    {
-        return bookId;
-    }
-    
-    public void setBook(Long bookId)
-    {
-        this.bookId = bookId;
-    }
-
     @Override
     public String toString()
     {
-        return "Author [id=" + id + ", name=" + name + ", bookId=" + bookId + "]";
+        return "Author [id=" + id + ", name=" + name + "]";
     }
-    
-    
 }

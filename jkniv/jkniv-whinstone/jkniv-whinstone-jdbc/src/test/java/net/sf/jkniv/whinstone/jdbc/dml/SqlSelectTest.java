@@ -43,9 +43,9 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.BaseJdbc;
 import net.sf.jkniv.whinstone.jdbc.CustomResultRow;
-import net.sf.jkniv.whinstone.jdbc.acme.domain.Book;
-import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatAuthor;
-import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook;
+import net.sf.jkniv.whinstone.jdbc.domain.acme.Book;
+import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatAuthor;
+import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook;
 
 public class SqlSelectTest extends BaseJdbc
 {

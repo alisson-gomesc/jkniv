@@ -38,7 +38,7 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.BaseJdbc;
-import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook;
+import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook;
 
 public class SqlAddTest extends BaseJdbc
 {

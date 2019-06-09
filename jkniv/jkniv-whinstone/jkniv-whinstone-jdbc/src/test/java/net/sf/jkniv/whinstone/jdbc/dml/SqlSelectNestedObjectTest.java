@@ -32,7 +32,7 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.BaseJdbc;
-import net.sf.jkniv.whinstone.jdbc.acme.domain.Book;
+import net.sf.jkniv.whinstone.jdbc.domain.acme.Book;
 
 public class SqlSelectNestedObjectTest extends BaseJdbc
 {

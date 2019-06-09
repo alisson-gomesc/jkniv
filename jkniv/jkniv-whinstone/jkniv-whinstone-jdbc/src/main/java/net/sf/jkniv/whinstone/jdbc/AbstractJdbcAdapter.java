@@ -30,6 +30,8 @@ import java.sql.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.jkniv.asserts.Assertable;
+import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.sqlegance.RepositoryException;
@@ -45,16 +47,16 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
 abstract class AbstractJdbcAdapter implements ConnectionFactory
 {
     protected transient Logger                LOG         = LoggerFactory.getLogger(getClass());
+    private final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
     protected static final HandleableException handlerException = new HandlerException(RepositoryException.class,
             "Cannot get database connection");
-    //protected static final boolean             isTraceEnabled   = LOG.isTraceEnabled();
     
     protected final String                           contextName;
     
     public AbstractJdbcAdapter(String contextName)
     {
+        NOT_NULL.verify(contextName);
         this.contextName = contextName;
-        //this.LOGSQL = sqlLogger;
     }
     
     @Override
@@ -66,7 +68,17 @@ abstract class AbstractJdbcAdapter implements ConnectionFactory
     @Override
     public Transactional getTransactionManager()
     {
-        return new LocalTransactionAdapter(open());
+        TransactionContext ctx = TransactionSessions.get(contextName);
+        Transactional tx = null;
+        if (ctx == null)
+        {
+            ConnectionAdapter conn = open();
+            tx = new LocalTransactionAdapter(conn);
+            TransactionSessions.set(contextName, tx, conn);
+        }
+        else
+            tx = ctx.getTransactional();
+        return tx;
     }
     
     @Override

@@ -17,6 +17,7 @@
   <include href="/derby/repository-sql-derby-onecolumn.xml"/>
   <include href="/derby/repository-sql-derby-validation.xml"/>
   <include href="/derby/repository-sql-derby-IN.xml"/>
+  <include href="/derby/repository-sql-derby-tx.xml"/>
 
   <select id="listBooksNoSpecificType" type="NATIVE">
     select b.ID as id, b.ISBN as isbn, b.NAME as name
@@ -24,7 +25,7 @@
     b
   </select>
 
-  <select id="getBookToOverloadType" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook">
+  <select id="getBookToOverloadType" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook">
     select b.ID as id, b.ISBN as isbn, b.NAME
     as name
     from
@@ -32,7 +33,7 @@
   </select>
 
 
-  <select id="getBookByISBN" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook">
+  <select id="getBookByISBN" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook">
     select b.ID as id, b.ISBN as isbn, b.NAME as name, a.name as author, a.ID as author_id
     from
     BOOK b
@@ -44,7 +45,7 @@
       </if>
     </where>
   </select>
-  <select id="getBookByISBNWithMap" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook">
+  <select id="getBookByISBNWithMap" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook">
     select b.ID as id, b.ISBN as isbn, b.NAME as name, a.name as author
     from
     BOOK b
@@ -57,19 +58,19 @@
     </where>
   </select>
 
-  <select id="getAuthorWithTwoDots" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatAuthor">
+  <select id="getAuthorWithTwoDots" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.FlatAuthor">
     select
     id, name
     from author a where a.id =
     :id
   </select>
-  <select id="getAuthorWithHashParam" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatAuthor">
+  <select id="getAuthorWithHashParam" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.FlatAuthor">
     select
     id, name
     from author a where a.id =
     #{id}
   </select>
-  <select id="getAllBooks" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook">
+  <select id="getAllBooks" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook">
     select b.ID as id, b.ISBN as isbn, b.NAME as name,
     a.name as author
     from
@@ -77,7 +78,7 @@
     inner join AUTHOR a on a.ID = b.AUTHOR_ID
   </select>
 
-  <select id="FlatBook#get" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook">
+  <select id="FlatBook#get" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook">
     select b.ID as id, b.ISBN as isbn, b.NAME as name, a.name as author
     from
     BOOK b
@@ -121,7 +122,7 @@
   <update id="Book#update2">
     update book set name = ?, isbn = ?, visualization = ? where id = ?
   </update>
-  <select id="Book#get" returnType="net.sf.jkniv.whinstone.jdbc.acme.domain.Book">
+  <select id="Book#get" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.Book">
     select b.ID as id, b.ISBN as isbn, b.NAME as name, b.visualization
     from
     BOOK b
