@@ -34,7 +34,7 @@ import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.BaseJdbc;
 import net.sf.jkniv.whinstone.jdbc.acme.domain.FlatBook;
 
-@Ignore("UnitOfWork in TreadLocal was lock database connection fix to HandlerCommad")
+//@Ignore("UnitOfWork in TreadLocal was lock database connection fix to HandlerCommad")
 public class DataSourceTransactionTest extends BaseJdbc
 {
     @Autowired

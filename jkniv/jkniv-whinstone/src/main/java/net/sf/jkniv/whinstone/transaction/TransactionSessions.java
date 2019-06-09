@@ -57,20 +57,20 @@ public class TransactionSessions
         return context.get(contextName);
     }
     
-    public static TransactionContext set(String contextName, ConnectionAdapter conn)
+    public static TransactionContext set(String contextName, Transactional tx, ConnectionAdapter conn)
     {
         //final int timeout = 30;
-        try
-        {
-            if (conn == null)
+        //try
+        //{
+            if (tx == null)
                 throw new TransactionException("Cannot set a null connection to transaction context");
-            if (conn.isClosed())
-                throw new TransactionException("Cannot set a closed connection to transaction context");
-        }
-        catch (SQLException sqle)
-        {
-            throw new TransactionException(sqle);// TODO handler exception
-        }
+            //if (conn.isClosed())
+            //    throw new TransactionException("Cannot set a closed connection to transaction context");
+        //}
+        //catch (SQLException sqle)
+        //{
+        //    throw new TransactionException(sqle);// TODO handler exception
+        //}
         Map<String, TransactionContext> transactionContext = RESOURCES.get();
         if (transactionContext == null)
         {
@@ -79,7 +79,7 @@ public class TransactionSessions
         }
         if (transactionContext.isEmpty() || !transactionContext.containsKey(contextName))
         {
-            transactionContext.put(contextName, new TransactionContext(contextName, conn));
+            transactionContext.put(contextName, new TransactionContext(contextName, tx, conn));
         }
         else if (transactionContext.containsKey(contextName))
             throw new TransactionException("Already exists a connection bound to context name [" + contextName + "] for this thread. jkniv-whinstone-jdbc doesn't support multiple or nested transactions in same Thread!");
@@ -87,12 +87,13 @@ public class TransactionSessions
         return transactionContext.get(contextName);
     }
     
+    /*
     private static void setTransactionStatus(String contextName, TransactionStatus status)
     {
         TransactionContext txCtx = get(contextName);
-        LOG.trace("Context[{}] setting transaction status from [{}] to [{}]", contextName, txCtx.getStatus(), status);
+        LOG.trace("Context[{}] setting transaction status from [{}] to [{}]", contextName, txCtx.getTransactional().getStatus(), status);
         
-        txCtx.setStatus(status);
+        txCtx.getTransactional().setStatus(status);
         if (status == TransactionStatus.NO_TRANSACTION)
         {
             //setActualTransactionInactive();
@@ -134,20 +135,19 @@ public class TransactionSessions
             
         }
     }
-    
+    */
     public static void close(String contextName)
     {
 //  ACTIVE | MARKED_ROLLBACK | PREPARED | COMMITED | ROLLBACK | UNKNOW | NO_TRANSACTION | PREPARING | COMMITING | ROLLING_BACK
 // release when: MARKED_ROLLBACK | ROLLING_BACK | ROLLBACK | PREPARED | COMMITED | COMMITING
         TransactionContext transactionContext = get(contextName);
-        if (transactionContext.getStatus() == TransactionStatus.COMMITTED || 
-            transactionContext.getStatus() == TransactionStatus.ROLLEDBACK)
+        TransactionStatus txStatus =transactionContext.getTransactional().getStatus(); 
+        if (txStatus == TransactionStatus.COMMITTED ||  txStatus == TransactionStatus.ROLLEDBACK)
             releaseResource(contextName);
         
-        else if (transactionContext.getStatus() == TransactionStatus.MARKED_ROLLBACK || 
-            transactionContext.getStatus() == TransactionStatus.PREPARING)
+        else if (txStatus == TransactionStatus.MARKED_ROLLBACK || txStatus == TransactionStatus.PREPARING)
         {
-            LOG.warn("Be careful transaction was finished with status [{}]", transactionContext.getStatus());
+            LOG.warn("Be careful transaction was finished with status [{}]", txStatus);
             releaseResource(contextName);
         }
         else

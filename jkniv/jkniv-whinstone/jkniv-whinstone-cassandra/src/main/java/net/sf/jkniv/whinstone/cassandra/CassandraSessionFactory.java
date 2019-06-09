@@ -43,18 +43,19 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
 public class CassandraSessionFactory implements ConnectionFactory
 {
     private static final Logger LOG = LoggerFactory.getLogger(CassandraSessionFactory.class);
-    private String contextName;
+    private final String contextName;
     // Application connection objects
     private Cluster             cluster;
     private CassandraConnectionAdapter conn;
     
-    public CassandraSessionFactory(Properties props)
+    public CassandraSessionFactory(Properties props, String contextName)
     {
         String[] urls = props.getProperty(RepositoryProperty.JDBC_URL.key(),"127.0.0.1").split(",");
         String keyspace =  props.getProperty(RepositoryProperty.JDBC_SCHEMA.key());
         String username =  props.getProperty(RepositoryProperty.JDBC_USER.key());
         String password =  props.getProperty(RepositoryProperty.JDBC_PASSWORD.key());
         
+        this.contextName = contextName;
         if (username != null)
             cluster = Cluster.builder().addContactPoints(urls).withCredentials(username, password).build();
         else
@@ -69,7 +70,7 @@ public class CassandraSessionFactory implements ConnectionFactory
                 LOG.info("Datacenter: {}; Host: {}; Rack: {}", host.getDatacenter(), host.getAddress(), host.getRack());
         }
         Session session = cluster.connect(keyspace);    
-        this.conn = new CassandraConnectionAdapter(cluster, session);
+        this.conn = new CassandraConnectionAdapter(cluster, session, contextName);
     }
     
     @Override

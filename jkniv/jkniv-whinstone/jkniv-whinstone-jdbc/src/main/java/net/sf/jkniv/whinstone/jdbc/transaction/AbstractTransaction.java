@@ -24,6 +24,8 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.jkniv.asserts.Assertable;
+import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.transaction.TransactionContext;
 import net.sf.jkniv.whinstone.transaction.TransactionException;
@@ -34,10 +36,13 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
 
 public abstract class AbstractTransaction implements Transactional
 {
-    protected transient Logger       logger = LoggerFactory.getLogger(getClass());
-    private boolean                  wasAutoCommit;
-    protected final TransactionScope transactionScope;
-    protected final String           contextName;
+    protected static final transient Logger   logger   = LoggerFactory.getLogger(AbstractTransaction.class);
+    private static final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
+    private boolean                           wasAutoCommit;
+    private TransactionStatus                 status;
+    protected final TransactionScope          transactionScope;
+    protected final String                    contextName;
+    protected final ConnectionAdapter         connAdapter;
     
     /**
      * Open new connection with default connection properties from driver version.
@@ -45,11 +50,20 @@ public abstract class AbstractTransaction implements Transactional
      */
     public abstract ConnectionAdapter open();
     
-    public AbstractTransaction(String contextName, TransactionScope transactionScope)
+    public AbstractTransaction(String contextName, ConnectionAdapter connAdapter, TransactionScope transactionScope)
     {
+        NOT_NULL.verify(contextName, connAdapter, transactionScope);
         this.contextName = contextName;
+        this.connAdapter = connAdapter;
         this.transactionScope = transactionScope;// FIXME tx implements different scopes transactions
-        this.wasAutoCommit = false;
+        try
+        {
+            this.wasAutoCommit = connAdapter.isAutoCommit();
+        }
+        catch (SQLException e)
+        {
+            throw new TransactionException("Could not create transaction for " + toString(), e);
+        }
     }
     
     @Override
@@ -63,20 +77,20 @@ public abstract class AbstractTransaction implements Transactional
             throw new TransactionException(
                     "Transaction is active. Local transaction does not support nested transactions");
         
-        transactionContext.setStatus(TransactionStatus.PREPARING);
-        ConnectionAdapter conn = transactionContext.getConnection();
+        this.status = TransactionStatus.PREPARING;
+        //ConnectionAdapter conn = transactionContext.getConnection();
         try
         {
-            this.wasAutoCommit = conn.isAutoCommit();
+            //this.wasAutoCommit = conn.isAutoCommit();
             if (wasAutoCommit)
             {
-                conn.autoCommitOff();
-                transactionContext.setStatus(TransactionStatus.ACTIVE);
+                connAdapter.autoCommitOff();
+                this.status = TransactionStatus.ACTIVE;
                 if (logger.isDebugEnabled())
                     logger.debug("Transaction [{}] with scope [{}] ACTIVE", this.contextName, transactionScope);
             }
             else
-                transactionContext.setStatus(TransactionStatus.ACTIVE);
+                this.status = TransactionStatus.ACTIVE;
         }
         catch (SQLException sqle)
         {
@@ -97,21 +111,21 @@ public abstract class AbstractTransaction implements Transactional
         
         TransactionContext transactionContext = getTransactionContext();
         //transactionContext.setStatus(TransactionStatus.COMMITTING);
-        ConnectionAdapter conn = transactionContext.getConnection();
+        //ConnectionAdapter conn = transactionContext.getConnection();
         try
         {
             if (!transactionContext.isActive())
                 throw new TransactionException("Does not have transaction beginning. Autocommit is true!");
             
-            conn.commit();
-            transactionContext.setStatus(TransactionStatus.COMMITTED);
+            connAdapter.commit();
+            this.status = TransactionStatus.COMMITTED;
             if (logger.isDebugEnabled())
                 logger.debug("Transaction [{}] with scope [{}] COMMITTED", this.contextName, transactionScope);
             
         }
         catch (SQLException sqle)
         {
-            transactionContext.setStatus(TransactionStatus.MARKED_ROLLBACK);
+            this.status = TransactionStatus.MARKED_ROLLBACK;
             throw new TransactionException("Cannot commit transaction", sqle);
         }
         finally
@@ -119,7 +133,7 @@ public abstract class AbstractTransaction implements Transactional
             try
             {
                 if (wasAutoCommit)
-                    conn.autoCommitOn();
+                    connAdapter.autoCommitOn();
             }
             catch (SQLException sqle)
             {
@@ -132,7 +146,8 @@ public abstract class AbstractTransaction implements Transactional
     @Override
     public final TransactionStatus getStatus() //throws SystemException
     {
-        return getTransactionContext().getStatus();
+        return this.status;
+        //return getTransactionContext().getStatus();
     }
     
     @Override
@@ -142,22 +157,22 @@ public abstract class AbstractTransaction implements Transactional
             logger.trace("Rolling back transaction [{}] with scope [{}]", this.contextName, transactionScope);
         
         TransactionContext transactionContext = getTransactionContext();
-        ConnectionAdapter conn = transactionContext.getConnection();
-        if (conn == null)
-        {
-            logger.warn("Try to rollback transaction at context [{}] without connection!", this.contextName);
-            return;
-        }
+        //ConnectionAdapter conn = transactionContext.getConnection();
+//        if (conn == null)
+//        {
+//            logger.warn("Try to rollback transaction at context [{}] without connection!", this.contextName);
+//            return;
+//        }
         try
         {
-            conn.rollback();
-            transactionContext.setStatus(TransactionStatus.ROLLEDBACK);
+            connAdapter.rollback();
+            this.status = TransactionStatus.ROLLEDBACK;
             if (logger.isDebugEnabled())
                 logger.debug("Transaction [{}] with scope [{}] ROLLBACK", this.contextName, transactionScope);
         }
         catch (SQLException sqle)
         {
-            transactionContext.setStatus(TransactionStatus.MARKED_ROLLBACK);
+            this.status = TransactionStatus.MARKED_ROLLBACK;
             logger.warn("Fail to try rollback transaction. Reason: " + sqle.getLocalizedMessage());
             throw new TransactionException("Cannot rollback transaction", sqle);
         }
@@ -165,8 +180,8 @@ public abstract class AbstractTransaction implements Transactional
         {
             try
             {
-                if (wasAutoCommit && !conn.isAutoCommit())
-                    conn.autoCommitOn();
+                if (wasAutoCommit && !connAdapter.isAutoCommit())
+                    connAdapter.autoCommitOn();
             }
             catch (SQLException sqle)
             {
@@ -181,10 +196,16 @@ public abstract class AbstractTransaction implements Transactional
         TransactionContext transactionContext = TransactionSessions.get(this.contextName);
         if (transactionContext == null)
         {
-            ConnectionAdapter conn = open();
-            transactionContext = TransactionSessions.set(this.contextName, conn);
+            //ConnectionAdapter conn = open();
+            transactionContext = TransactionSessions.set(this.contextName, this, connAdapter);
         }
         return transactionContext;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return getClass() + " [contextName=" + contextName + ", connAdapter=" + connAdapter + "]";
     }
     
     //    @Override

@@ -7,9 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.assertj.core.api.AssertFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.jkniv.asserts.Assertable;
+import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Selectable;
@@ -27,19 +30,30 @@ import net.sf.jkniv.whinstone.jdbc.commands.BulkJdbcCommand;
 import net.sf.jkniv.whinstone.jdbc.commands.DefaultJdbcCommand;
 import net.sf.jkniv.whinstone.jdbc.commands.DefaultJdbcQuery;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.transaction.TransactionContext;
+import net.sf.jkniv.whinstone.transaction.TransactionSessions;
 
 public class JdbcConnectionAdapter implements ConnectionAdapter
 {
     private static final Logger LOG = LoggerFactory.getLogger(JdbcConnectionAdapter.class);
+    private static final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
     //private static final HandleableException handlerException = new HandlerException(RepositoryException.class,
     //        "Exception at connection session running %s");
     
-    private Connection          conn;
+    private final Connection          conn;
+    private final String              contextName;
     
-    public JdbcConnectionAdapter(Connection conn)
+    public JdbcConnectionAdapter(Connection conn, String contextName)
     {
+        NOT_NULL.verify(conn, contextName);
         this.conn = conn;
-        //LOG.trace("new JdbcConnectionAdapter instanced");
+        this.contextName = contextName;
+    }
+    
+    @Override
+    public String getContextName()
+    {
+        return this.contextName;
     }
     
     @Override
@@ -73,7 +87,9 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
     {
         try
         {
-            this.conn.close();
+            TransactionContext ctx = TransactionSessions.get(contextName);
+            if (ctx == null || !ctx.isActive())
+                this.conn.close();
         }
         catch (SQLException sqle)
         {

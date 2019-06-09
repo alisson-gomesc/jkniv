@@ -88,14 +88,13 @@ public class DataSourceAdapter extends AbstractJdbcAdapter
                 LOG.trace("Getting new connection from DataSource");
                 Connection jdbcConn = dataSource.getConnection();
                 setIsolation(jdbcConn, isolation);
-                adapter = new JdbcConnectionAdapter(jdbcConn);
+                adapter = new JdbcConnectionAdapter(jdbcConn, contextName);
             }
             catch (Exception e)//SQLException
             {
                 handlerException.handle(e, "SEVERE FAIL, cannot get database connection datasource [" + dataSource
                         + "] Reason: " + e.getMessage());
             }
-            
         }
         return adapter;
     }

@@ -784,7 +784,8 @@ class RepositoryJdbc implements Repository
     @Override
     public Transactional getTransaction()
     {
-        return null;
+        return this.connectionFactory.getTransactionManager();
+        //return null;
         //return currentWork().getTransaction();
     }
     

@@ -21,7 +21,6 @@ package net.sf.jkniv.whinstone;
 
 import java.sql.SQLException;
 
-import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
@@ -33,6 +32,8 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  */
 public interface ConnectionAdapter
 {
+    String getContextName();
+    
     void commit() throws SQLException;
     
     void rollback() throws SQLException;

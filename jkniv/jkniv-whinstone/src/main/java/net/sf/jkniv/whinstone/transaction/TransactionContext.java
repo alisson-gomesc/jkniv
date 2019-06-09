@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.whinstone.transaction;
 
+import net.sf.jkniv.asserts.Assertable;
+import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 
 /**
@@ -30,27 +32,29 @@ import net.sf.jkniv.whinstone.ConnectionAdapter;
  */
 public class TransactionContext
 {
-    private final String            name;
+    private final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
+    private final String  name;
     private final ConnectionAdapter conn;
-    private Transactional           transaction;
-    private TransactionStatus       status;
+    private Transactional tx;
+    //private TransactionStatus       status;
     
     public TransactionContext()
     {
-        this("Empty", null);
+        this("Empty", null, null);
     }
     
-    public TransactionContext(String name, ConnectionAdapter conn)
+    public TransactionContext(String name, Transactional tx, ConnectionAdapter conn)
     {
-        super();
+        NOT_NULL.verify(name, tx, conn);
         this.name = name;
-        this.status = TransactionStatus.NO_TRANSACTION;
+        this.tx = tx;
         this.conn = conn;
+        //this.status = TransactionStatus.NO_TRANSACTION;
     }
     
     public boolean isActive()
     {
-        return (status == TransactionStatus.ACTIVE);
+        return (tx.getStatus() == TransactionStatus.ACTIVE);
     }
     
     public String getName()
@@ -58,18 +62,23 @@ public class TransactionContext
         return name;
     }
     
+    public Transactional getTransactional()
+    {
+        return tx;
+    }
+    
     public ConnectionAdapter getConnection()
     {
         return conn;
     }
     
-    public TransactionStatus getStatus()
-    {
-        return status;
-    }
+//    public TransactionStatus getStatus()
+//    {
+//        return status;
+//    }
     
-    public void setStatus(TransactionStatus status)
-    {
-        this.status = status;
-    }
+//    public void setStatus(TransactionStatus status)
+//    {
+//        this.status = status;
+//    }
 }

@@ -66,7 +66,7 @@ abstract class AbstractJdbcAdapter implements ConnectionFactory
     @Override
     public Transactional getTransactionManager()
     {
-        return new LocalTransactionAdapter(this);
+        return new LocalTransactionAdapter(open());
     }
     
     @Override
@@ -75,7 +75,7 @@ abstract class AbstractJdbcAdapter implements ConnectionFactory
         TransactionStatus status = TransactionStatus.NO_TRANSACTION;
         TransactionContext transactionCtx = TransactionSessions.get(contextName);
         if (transactionCtx != null)
-            status = transactionCtx.getStatus();
+            status = transactionCtx.getTransactional().getStatus();
         
         boolean mustClose = ((status == TransactionStatus.COMMITTED || status == TransactionStatus.ROLLEDBACK
                 || status == TransactionStatus.NO_TRANSACTION));
@@ -173,15 +173,8 @@ abstract class AbstractJdbcAdapter implements ConnectionFactory
     {
         try
         {
-            //if (conn.getAutoCommit()) TODO log level review
-            //    LOG.warn("Connection [{}] working with autocommit=true it's not recommended!", conn);
-            
-            if (isolation != null && isolation != Isolation.DEFAULT
-                    && supportsTransactionIsolationLevel(conn, isolation)) {
-                //LOG.trace("Setting transaction isolation to {}", isolation);
+            if (isolation != null && isolation != Isolation.DEFAULT && supportsTransactionIsolationLevel(conn, isolation))
                 conn.setTransactionIsolation(isolation.level());
-                //LOG.debug("Isolation setted");
-            }
         }
         catch (SQLException e)
         {

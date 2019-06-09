@@ -119,7 +119,7 @@ class RepositoryCouchDb implements Repository
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
         this.adapterConn = (HttpCookieConnectionAdapter) new HttpConnectionFactory(
-                sqlContext.getRepositoryConfig().getProperties()).open();
+                sqlContext.getRepositoryConfig().getProperties(), sqlContext.getName()).open();
         configHanlerException();
         this.cache = new MemoryCache<Queryable, Object>();
         this.init();

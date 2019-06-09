@@ -82,21 +82,21 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
  */
 class RepositoryCassandra implements Repository
 {
-    private static final Logger LOG       = LoggerFactory.getLogger(RepositoryCassandra.class);
-    private static final Assertable                         notNull = AssertsFactory.getNotNull();
-    private QueryNameStrategy   strategyQueryName;
-    private HandleableException handlerException;
-    private RepositoryConfig    repositoryConfig;
-    private SqlContext          sqlContext;
-    private ConnectionAdapter   adapterConn;
-    private boolean             isTraceEnabled;
-    private boolean             isDebugEnabled;
+    private static final Logger     LOG     = LoggerFactory.getLogger(RepositoryCassandra.class);
+    private static final Assertable notNull = AssertsFactory.getNotNull();
+    private QueryNameStrategy       strategyQueryName;
+    private HandleableException     handlerException;
+    private RepositoryConfig        repositoryConfig;
+    private SqlContext              sqlContext;
+    private ConnectionAdapter       adapterConn;
+    private boolean                 isTraceEnabled;
+    private boolean                 isDebugEnabled;
     
     RepositoryCassandra()
     {
         this(new Properties(), SqlContextFactory.newInstance("/repository-sql.xml"));
     }
-
+    
     RepositoryCassandra(Properties props)
     {
         this(props, SqlContextFactory.newInstance("/repository-sql.xml"));
@@ -106,7 +106,7 @@ class RepositoryCassandra implements Repository
     {
         this(new Properties(), SqlContextFactory.newInstance(sqlContext));
     }
-
+    
     RepositoryCassandra(SqlContext sqlContext)
     {
         this(new Properties(), sqlContext);
@@ -126,12 +126,13 @@ class RepositoryCassandra implements Repository
         }
         else
             sqlContext.getRepositoryConfig().add(props);
-
+        
         this.sqlContext = sqlContext;
         this.repositoryConfig = this.sqlContext.getRepositoryConfig();
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
-        this.adapterConn = new CassandraSessionFactory(sqlContext.getRepositoryConfig().getProperties()).open();
+        this.adapterConn = new CassandraSessionFactory(sqlContext.getRepositoryConfig().getProperties(),
+                sqlContext.getName()).open();
         this.defineQueryNameStrategy();
     }
     
@@ -171,7 +172,6 @@ class RepositoryCassandra implements Repository
         return get(queryable, returnType, null);
     }
     
-    
     private <T, R> T get(Queryable queryable, Class<T> returnType, ResultRow<T, R> resultRow)
     {
         notNull.verify(queryable);
@@ -182,8 +182,8 @@ class RepositoryCassandra implements Repository
         
         T ret = null;
         if (list.size() > 1)
-            throw new NonUniqueResultException("No unique result for query ["+queryable.getName()+"]");
-            
+            throw new NonUniqueResultException("No unique result for query [" + queryable.getName() + "]");
+        
         else if (list.size() == 1)
             ret = list.get(0);
         
@@ -202,9 +202,10 @@ class RepositoryCassandra implements Repository
         Map map = get(queryable, Map.class, null);
         if (map != null)
         {
-            if(map.size() > 1)
-                throw new NonUniqueResultException("Query ["+queryable.getName()+"] no return scalar value, scalar function must return unique row and column");
-            result = (T)map.values().iterator().next();
+            if (map.size() > 1)
+                throw new NonUniqueResultException("Query [" + queryable.getName()
+                        + "] no return scalar value, scalar function must return unique row and column");
+            result = (T) map.values().iterator().next();
         }
         return result;
     }
@@ -215,7 +216,7 @@ class RepositoryCassandra implements Repository
         notNull.verify(queryable, queryable.getParams());
         boolean enriched = false;
         Object o = get(queryable);
-        if(o != null)
+        if (o != null)
         {
             ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(queryable.getParams());
             proxy.merge(o);
@@ -233,7 +234,7 @@ class RepositoryCassandra implements Repository
         List<T> list = list(queryable, null, null);
         if (isDebugEnabled)
             LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
-
+        
         return list;
     }
     
@@ -247,7 +248,7 @@ class RepositoryCassandra implements Repository
         
         if (isDebugEnabled)
             LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
-
+        
         return list;
     }
     
@@ -257,12 +258,12 @@ class RepositoryCassandra implements Repository
     {
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as list command", queryable);
-
+        
         List<T> list = list(queryable, null, customResultRow);
         
         if (isDebugEnabled)
             LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
-
+        
         return list;
     }
     
@@ -279,10 +280,10 @@ class RepositoryCassandra implements Repository
         
         if (!queryable.isBoundSql())
             queryable.bind(selectable);
-
+        
         Cacheable.Entry entry = null;
         
-        if(!queryable.isCacheIgnore())
+        if (!queryable.isCacheIgnore())
             entry = selectable.getCache().getEntry(queryable);
         
         if (entry == null)
@@ -311,7 +312,7 @@ class RepositoryCassandra implements Repository
         notNull.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as add command with dialect [{}]", queryable);//, this.repositoryConfig.getSqlDialect());
-        
+            
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.INSERT);
         if (!queryable.isBoundSql())
@@ -321,7 +322,7 @@ class RepositoryCassandra implements Repository
         
         Command command = adapterConn.asAddCommand(queryable);
         int affected = command.execute();
-
+        
         if (isDebugEnabled)
             LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
         return affected;
@@ -343,10 +344,10 @@ class RepositoryCassandra implements Repository
             queryable.bind(isql);
         
         isql.getValidateType().assertValidate(queryable.getParams());
-
+        
         Command command = adapterConn.asAddCommand(queryable);
         int affected = command.execute();
-
+        
         if (isDebugEnabled)
             LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
         return entity;
@@ -367,7 +368,7 @@ class RepositoryCassandra implements Repository
         
         Command command = adapterConn.asUpdateCommand(queryable);
         int affected = command.execute();
-
+        
         if (isDebugEnabled)
             LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
         return affected;
@@ -380,7 +381,7 @@ class RepositoryCassandra implements Repository
         String queryName = this.strategyQueryName.toUpdateName(entity);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryName);
-
+        
         Queryable queryable = QueryFactory.of(queryName, entity);
         
         Sql isql = sqlContext.getQuery(queryable.getName());
@@ -389,17 +390,17 @@ class RepositoryCassandra implements Repository
             queryable.bind(isql);
         
         isql.getValidateType().assertValidate(queryable.getParams());
-
+        
         Command command = adapterConn.asUpdateCommand(queryable);
         int affected = command.execute();
-
+        
         if (affected > 1)
         {
             LOG.error(
                     "{} records was affected by update command, the query [{}] must update the record using primary key or using unique columns",
                     affected, queryable.getName());
-            handlerException
-                    .throwMessage("update(T) cannot update more one records, to update several objects use update(Query)");
+            handlerException.throwMessage(
+                    "update(T) cannot update more one records, to update several objects use update(Query)");
         }
         if (isDebugEnabled)
             LOG.debug("{} records was affected by update [{}] command", affected, queryable.getName());
@@ -412,17 +413,17 @@ class RepositoryCassandra implements Repository
     {
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as remove command", queryable);
-
+        
         Sql isql = sqlContext.getQuery(queryable.getName());
         checkSqlType(isql, SqlType.DELETE);
         if (!queryable.isBoundSql())
             queryable.bind(isql);
-
+        
         isql.getValidateType().assertValidate(queryable.getParams());
         
         Command command = adapterConn.asDeleteCommand(queryable);
         int affected = command.execute();
-
+        
         if (isDebugEnabled)
             LOG.debug("{} records was affected by remove [{}] command", affected, queryable.getName());
         return affected;
@@ -441,12 +442,12 @@ class RepositoryCassandra implements Repository
         checkSqlType(isql, SqlType.DELETE);
         if (!queryable.isBoundSql())
             queryable.bind(isql);
-
+        
         isql.getValidateType().assertValidate(queryable.getParams());
         
         Command command = adapterConn.asDeleteCommand(queryable);
         int affected = command.execute();
-
+        
         if (isDebugEnabled)
             LOG.debug("{} records was affected by remove [{}] command", affected, queryable.getName());
         return affected;
@@ -455,7 +456,7 @@ class RepositoryCassandra implements Repository
     @Override
     public void flush()
     {
-     // TODO implements Repository.flush()
+        // TODO implements Repository.flush()
         throw new UnsupportedOperationException("RepositoryCassandra doesn't implement this method yet!");
     }
     
@@ -464,7 +465,6 @@ class RepositoryCassandra implements Repository
     {
         return sqlContext.containsQuery(name);
     }
-
     
     @Override
     public Transactional getTransaction()
@@ -476,24 +476,24 @@ class RepositoryCassandra implements Repository
     @Override
     public void close()
     {
-//        try
-//        {
-            adapterConn.close();
-//        }
-//        catch (SQLException e)
-//        {
-//            LOG.warn("Error to try close Cassandra session/cluster [{}]", adapterConn, e);
-//        }
+        //        try
+        //        {
+        adapterConn.close();
+        //        }
+        //        catch (SQLException e)
+        //        {
+        //            LOG.warn("Error to try close Cassandra session/cluster [{}]", adapterConn, e);
+        //        }
         sqlContext.close();
     }
     
     private void checkSqlType(Sql isql, SqlType expected)
     {
         if (isql.getSqlType() != expected)
-            throw new IllegalArgumentException("Cannot execute sql [" + isql.getName() + "] as ["
-                    + isql.getSqlType() + "], exptected is " + expected);
+            throw new IllegalArgumentException("Cannot execute sql [" + isql.getName() + "] as [" + isql.getSqlType()
+                    + "], exptected is " + expected);
     }
-
+    
     private Properties lookup(String remaining)
     {
         Properties prop = null;
@@ -505,7 +505,7 @@ class RepositoryCassandra implements Repository
             else
                 throw new RepositoryException("Resource with name [" + remaining
                         + "] must be an instance of java.util.Properties to connect with Cassandra");
-          //TODO exception design, must have ConfigurationException?
+            //TODO exception design, must have ConfigurationException?
         }
         return prop;
     }

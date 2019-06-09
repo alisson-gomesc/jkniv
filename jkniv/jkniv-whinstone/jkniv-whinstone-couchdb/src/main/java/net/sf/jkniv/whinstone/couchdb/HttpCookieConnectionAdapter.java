@@ -25,6 +25,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.jkniv.asserts.Assertable;
+import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
@@ -48,16 +50,26 @@ import net.sf.jkniv.whinstone.couchdb.statement.FindAnswer;
 class HttpCookieConnectionAdapter implements ConnectionAdapter
 {
     private static final transient Logger LOG = LoggerFactory.getLogger(HttpCookieConnectionAdapter.class);
+    private static final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
     private HttpBuilder httpBuilder;
+    private final String contextName;
     
-    public HttpCookieConnectionAdapter(HttpBuilder httpBuilder)
+    public HttpCookieConnectionAdapter(HttpBuilder httpBuilder, String contextName)
     {
+        NOT_NULL.verify(httpBuilder, contextName);
         this.httpBuilder = httpBuilder;
+        this.contextName = contextName;
     }
  
     public HttpBuilder getHttpBuilder()
     {
         return httpBuilder;
+    }
+    
+    @Override
+    public String getContextName()
+    {
+        return this.contextName;
     }
     
     @Override

@@ -29,6 +29,8 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 
+import net.sf.jkniv.asserts.Assertable;
+import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.Queryable;
@@ -43,16 +45,27 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 class CassandraConnectionAdapter implements ConnectionAdapter
 {
     private static final transient Logger  LOG = LoggerFactory.getLogger();
+    private static final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
     private Session session;
     private Cluster cluster;
     private StatementCache stmtCache;
+    private final String contextName;
     
-    public CassandraConnectionAdapter(Cluster cluster, Session session)
+    public CassandraConnectionAdapter(Cluster cluster, Session session, String contextName)
     {
+        NOT_NULL.verify(cluster, session, contextName);
         this.cluster = cluster;
         this.session = session;
         this.stmtCache = new StatementCache(session);
+        this.contextName = contextName;
     }
+    
+    @Override
+    public String getContextName()
+    {
+        return this.contextName;
+    }
+
     
     @Override
     public void commit() throws SQLException

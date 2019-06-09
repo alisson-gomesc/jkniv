@@ -38,7 +38,7 @@ public class HttpConnectionFactoryTest
     @Test
     public void whenOpenHttpConnection()
     {
-        HttpConnectionFactory factory = new HttpConnectionFactory(props);
+        HttpConnectionFactory factory = new HttpConnectionFactory(props, "default");
         ConnectionAdapter conn  = factory.open();
         assertThat(conn, notNullValue());
     }
@@ -49,14 +49,14 @@ public class HttpConnectionFactoryTest
         props.setProperty(RepositoryProperty.JDBC_PASSWORD.key(), "wrong");
         //catcher.expect(RepositoryException.class);
         //catcher.expectMessage("Access denied, unauthorized for user [admin] and url [http://127.0.0.1:5984]");
-        HttpConnectionFactory factory = new HttpConnectionFactory(props);
+        HttpConnectionFactory factory = new HttpConnectionFactory(props, "default");
         factory.open();
     }
 
     @Test
     public void whenOpenHttpConnectionGetRequest()
     {
-        HttpConnectionFactory factory = new HttpConnectionFactory(props);
+        HttpConnectionFactory factory = new HttpConnectionFactory(props, "default");
         ConnectionAdapter conn = factory.open();
         
         //conn.

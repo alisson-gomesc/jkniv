@@ -26,18 +26,23 @@ import net.sf.jkniv.whinstone.transaction.TransactionScope;
 
 public class LocalTransactionAdapter extends AbstractTransaction
 {
-    private ConnectionFactory         connectionFactory;
-    
+    //private ConnectionFactory         connectionFactory;
+    /*
     public LocalTransactionAdapter(ConnectionFactory connectionFactory)
     {
         super(connectionFactory.getContextName(), TransactionScope.REQUIRED);
         this.connectionFactory = connectionFactory;
     }
+    */
+    public LocalTransactionAdapter(ConnectionAdapter connAdapter)
+    {
+        super(connAdapter.getContextName(), connAdapter, TransactionScope.REQUIRED);
+    }
     
     @Override
     public ConnectionAdapter open()
     {
-        return this.connectionFactory.open();
+        return this.connAdapter;
     }
 
     @Override

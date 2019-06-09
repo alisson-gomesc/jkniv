@@ -39,20 +39,21 @@ public class HttpConnectionFactory implements ConnectionFactory
 {
     private static final Logger LOG         = LoggerFactory.getLogger(HttpConnectionFactory.class);
     private static final String AUTH_COOKIE = "Set-Cookie";
-    private String              contextName;
+    private final String        contextName;
     private String              url;
     private String              schema;
     private String              username;
     private String              password;
     private CouchDbAuthenticate auth;
     
-    public HttpConnectionFactory(Properties props)
+    public HttpConnectionFactory(Properties props, String contextName)
     {
         this.url = props.getProperty(RepositoryProperty.JDBC_URL.key(), "http://127.0.0.1:5984");
         this.schema = props.getProperty(RepositoryProperty.JDBC_SCHEMA.key());
         this.username = props.getProperty(RepositoryProperty.JDBC_USER.key());
         this.password = props.getProperty(RepositoryProperty.JDBC_PASSWORD.key());
         this.auth = new CouchDbAuthenticate(this.url, this.username, this.password);
+        this.contextName = contextName;
     }
     
     @Override
@@ -60,7 +61,7 @@ public class HttpConnectionFactory implements ConnectionFactory
     {
         //String token = auth.authenticate();
         HttpBuilder httpBuilder = new HttpBuilder(auth, this.url, this.schema, new RequestParams(this.schema));
-        return new HttpCookieConnectionAdapter(httpBuilder);
+        return new HttpCookieConnectionAdapter(httpBuilder, contextName);
     }
     
     

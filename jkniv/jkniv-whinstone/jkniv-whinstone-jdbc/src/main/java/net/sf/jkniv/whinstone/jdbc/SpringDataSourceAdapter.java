@@ -31,7 +31,6 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 
-@SuppressWarnings("unchecked")
 public class SpringDataSourceAdapter extends AbstractJdbcAdapter
 {
     private static final String SPRING_TRANSACTIONAWEREDATASOURCE_PROXY = "org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy";
@@ -67,7 +66,7 @@ public class SpringDataSourceAdapter extends AbstractJdbcAdapter
             LOG.debug("Getting Connection from Spring TransactionAwareDataSourceProxy class");
             Connection conn = (Connection) this.transactionAwareDataSourceProxy.invoke("getConnection");
             conn.setAutoCommit(false);
-            adapter = new JdbcConnectionAdapter(conn);
+            adapter = new JdbcConnectionAdapter(conn, contextName);
         }
         catch (SQLException e)
         {
