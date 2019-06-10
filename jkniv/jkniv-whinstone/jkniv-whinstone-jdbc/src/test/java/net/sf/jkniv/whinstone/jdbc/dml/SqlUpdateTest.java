@@ -22,6 +22,7 @@ package net.sf.jkniv.whinstone.jdbc.dml;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,7 +38,7 @@ public class SqlUpdateTest extends BaseJdbc
     @Autowired
     Repository repositoryDerby;
     
-    @Test
+    @Test @Ignore("mockito")
     public void whenUpdateRecord()
     {
         Queryable q = QueryFactory.of("getBookByISBN");
