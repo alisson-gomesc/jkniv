@@ -46,6 +46,7 @@ import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatAuthor;
 import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook;
 import net.sf.jkniv.whinstone.jdbc.domain.bank.Account;
 import net.sf.jkniv.whinstone.jdbc.domain.bank.InsufficientFundsException;
+import net.sf.jkniv.whinstone.transaction.TransactionStatus;
 
 //@Ignore("UnitOfWork in TreadLocal was lock database connection fix to HandlerCommad")
 public class BankTransactionTest extends BaseJdbc
@@ -54,7 +55,6 @@ public class BankTransactionTest extends BaseJdbc
     private Repository          repositoryDerby;
     @Rule
     public ExpectedException    catcher = ExpectedException.none();
-    private int                 countBeforeTransaction;
     private List<Account>       accounts;
     private int                 allMoney;
     private static final String JOHN    = "John Lennon";
@@ -98,13 +98,14 @@ public class BankTransactionTest extends BaseJdbc
     public void whenTransfer200Money()
     {
         repositoryDerby.getTransaction().begin();
+        assertThat(repositoryDerby.getTransaction().getStatus(), is(TransactionStatus.ACTIVE));
         Account a = repositoryDerby.get(QueryFactory.of("accountsByName", "name", JOHN));
         Account b = repositoryDerby.get(QueryFactory.of("accountsByName", "name", PAUL));
         a.transfer(200, b);
-        
         repositoryDerby.update(QueryFactory.of("update-balance", a));
         repositoryDerby.update(QueryFactory.of("update-balance", b));
         repositoryDerby.getTransaction().commit();
+        assertThat(repositoryDerby.getTransaction().getStatus(), is(TransactionStatus.NO_TRANSACTION));
     }
     
     @Test
@@ -114,6 +115,7 @@ public class BankTransactionTest extends BaseJdbc
         try
         {
             repositoryDerby.getTransaction().begin();
+            assertThat(repositoryDerby.getTransaction().getStatus(), is(TransactionStatus.ACTIVE));
             Account a = repositoryDerby.get(QueryFactory.of("accountsByName", "name", JOHN));
             Account b = repositoryDerby.get(QueryFactory.of("accountsByName", "name", PAUL));
             a.transfer(1200, b);
@@ -121,6 +123,7 @@ public class BankTransactionTest extends BaseJdbc
         catch (InsufficientFundsException e)
         {
             repositoryDerby.getTransaction().rollback();
+            assertThat(repositoryDerby.getTransaction().getStatus(), is(TransactionStatus.NO_TRANSACTION));
             throw e;
         }
     }
@@ -129,6 +132,7 @@ public class BankTransactionTest extends BaseJdbc
     public void whenTransferMoney()
     {
         repositoryDerby.getTransaction().begin();
+        assertThat(repositoryDerby.getTransaction().getStatus(), is(TransactionStatus.ACTIVE));
         Account a = repositoryDerby.get(QueryFactory.of("accountsByName", "name", JOHN));
         Account b = repositoryDerby.get(QueryFactory.of("accountsByName", "name", PAUL));
         Account c = repositoryDerby.get(QueryFactory.of("accountsByName", "name", RINGO));
@@ -140,12 +144,14 @@ public class BankTransactionTest extends BaseJdbc
         repositoryDerby.update(QueryFactory.of("update-balance", c));
         repositoryDerby.update(QueryFactory.of("update-balance", d));
         repositoryDerby.getTransaction().commit();
+        assertThat(repositoryDerby.getTransaction().getStatus(), is(TransactionStatus.NO_TRANSACTION));
     }
     
     @Test
     public void whenTransferMoneyWithRollback()
     {
         repositoryDerby.getTransaction().begin();
+        assertThat(repositoryDerby.getTransaction().getStatus(), is(TransactionStatus.ACTIVE));
         Account a = repositoryDerby.get(QueryFactory.of("accountsByName", "name", JOHN));
         Account b = repositoryDerby.get(QueryFactory.of("accountsByName", "name", PAUL));
         Account c = repositoryDerby.get(QueryFactory.of("accountsByName", "name", RINGO));
@@ -155,10 +161,13 @@ public class BankTransactionTest extends BaseJdbc
         repositoryDerby.update(QueryFactory.of("update-balance", a));
         repositoryDerby.update(QueryFactory.of("update-balance", b));
         repositoryDerby.getTransaction().commit();
+        assertThat(repositoryDerby.getTransaction().getStatus(), is(TransactionStatus.NO_TRANSACTION));
         repositoryDerby.getTransaction().begin();
+        assertThat(repositoryDerby.getTransaction().getStatus(), is(TransactionStatus.ACTIVE));
         repositoryDerby.update(QueryFactory.of("update-balance", c));
         repositoryDerby.update(QueryFactory.of("update-balance", d));
         repositoryDerby.getTransaction().rollback();
+        assertThat(repositoryDerby.getTransaction().getStatus(), is(TransactionStatus.NO_TRANSACTION));
     }
     
 }

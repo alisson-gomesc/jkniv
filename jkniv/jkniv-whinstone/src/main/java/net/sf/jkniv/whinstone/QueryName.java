@@ -496,14 +496,12 @@ class QueryName implements Queryable
             prepareParams = PrepareParamsFactory.newBasicParam(adapter, this);
         else if (isTypeOfArrayFromBasicTypes())
             prepareParams = PrepareParamsFactory.newPositionalArrayParams(adapter, this);
-        else if (isTypeOfArrayFromMap())
+        else if (isTypeOfArrayFromMap() || isTypeOfCollectionFromMap())
             prepareParams = PrepareParamsFactory.newPositionalCollectionMapParams(adapter, this);
+        else if (isTypeOfArrayFromPojo() || isTypeOfCollectionFromPojo())
+            prepareParams = PrepareParamsFactory.newPositionalCollectionPojoParams(adapter, this);
         else if (isTypeOfCollectionFromBasicTypes())
             prepareParams = PrepareParamsFactory.newPositionalCollectionParams(adapter, this);
-        else if (isTypeOfCollectionFromMap())
-            prepareParams = PrepareParamsFactory.newPositionalCollectionMapParams(adapter, this);
-        else if (isTypeOfCollectionFromPojo())
-            prepareParams = PrepareParamsFactory.newPositionalCollectionPojoParams(adapter, this);
         else if (isTypeOfCollectionFromArray())
             prepareParams = PrepareParamsFactory.newPositionalCollectionArrayParams(adapter, this);
         else if (sql.getParamParser().getType() == ParamMarkType.QUESTION)

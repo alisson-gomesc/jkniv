@@ -31,6 +31,7 @@ import org.hamcrest.Matchers;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -45,7 +46,7 @@ public class SqlAddTest extends BaseJdbc
     @Autowired
     Repository repositoryDerby;
     
-    @Test
+    @Test @Ignore("mockito")
     public void whenSelectOneRecordByUniqueValue()
     {
         Queryable q = QueryFactory.of("getBookByISBN");

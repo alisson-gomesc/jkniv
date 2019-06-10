@@ -53,13 +53,10 @@ public abstract class DefaultCommandHandler implements CommandHandler
     protected RepositoryConfig                       config;
     protected ResultRow<?, ?>                        overloadResultRow;
     protected HandleableException                    handleableException;
-    //private Transactional                            transaction;
-    //private   Class<?>                               returnType;
     
     public DefaultCommandHandler(ConnectionAdapter connAdapter)
     {
         this.adapterConn = connAdapter;
-        //this.transaction = connFactory.getTransactionManager();
     }
     
     @Override
@@ -113,8 +110,8 @@ public abstract class DefaultCommandHandler implements CommandHandler
         return this;
     }
     
-    @SuppressWarnings("rawtypes")
     @Override
+    @SuppressWarnings("rawtypes")
     public <T> T run()
     {
         NOT_NULL.verify(this.adapterConn, this.queryable, this.sql, this.handler);
