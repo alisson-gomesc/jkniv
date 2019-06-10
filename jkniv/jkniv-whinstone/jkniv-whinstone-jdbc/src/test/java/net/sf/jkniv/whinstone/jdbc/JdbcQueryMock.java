@@ -20,7 +20,6 @@ import net.sf.jkniv.cache.NoCache;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.RepositoryType;
 import net.sf.jkniv.sqlegance.Selectable;
-import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
@@ -32,9 +31,8 @@ import net.sf.jkniv.sqlegance.transaction.TransactionType;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.RepositoryService;
-import net.sf.jkniv.whinstone.jdbc.DataSourceAdapter;
 
-public class JdbcMock
+public class JdbcQueryMock
 {
     private DataSource        dataSource;
     private Connection        connection;
@@ -49,7 +47,7 @@ public class JdbcMock
     private Repository        repository;
     private Class<?>          returnType;
     
-    public JdbcMock(Class<?> returnType)
+    public JdbcQueryMock(Class<?> returnType)
     {
         this.returnType = returnType;
         this.connection = mock(Connection.class);
@@ -116,7 +114,7 @@ public class JdbcMock
      * @return this builder instance
      * @throws SQLException 
      */
-    public JdbcMock columns(String[] columns)
+    public JdbcQueryMock columns(String[] columns)
     {
         try
         {

@@ -20,7 +20,6 @@
 package net.sf.jkniv.whinstone.jdbc;
 
 import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -40,13 +39,11 @@ import net.sf.jkniv.sqlegance.NonUniqueResultException;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
-import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
-import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
 import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
@@ -55,9 +52,6 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
-import net.sf.jkniv.whinstone.jdbc.transaction.WorkJdbc;
-import net.sf.jkniv.whinstone.transaction.TransactionContext;
-import net.sf.jkniv.whinstone.transaction.TransactionSessions;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
 /**
@@ -198,12 +192,12 @@ class RepositoryJdbc implements Repository
             showMetadata();
         
     }
-
+/*
     private WorkJdbc currentWork()
     {
         return SessionFactory.currentWork(connectionFactory, this.repositoryConfig);
     }
-    
+  */  
     @Override
     public <T> T get(Queryable queryable)
     {
@@ -404,7 +398,7 @@ class RepositoryJdbc implements Repository
         return ret;
     }
 
-    
+    /*
     private <T,R> List<T> __list__(Queryable queryable, Class<T> returnType, ResultRow<T, ResultSet> customResultRow)
     {
         NOT_NULL.verify(queryable);
@@ -423,7 +417,7 @@ class RepositoryJdbc implements Repository
             LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(), queryable.getTotal());
         return list;
     }
-    
+    */
     @Override
     public <T> T scalar(Queryable queryable)
     {
@@ -792,7 +786,8 @@ class RepositoryJdbc implements Repository
     @Override
     public void close()
     {
-        SessionFactory.clear();
+        //SessionFactory.clear();
+        // FIXME release resources transaction/connection factory
         sqlContext.close();
     }
     

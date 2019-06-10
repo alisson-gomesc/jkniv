@@ -36,6 +36,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
@@ -46,7 +47,7 @@ import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatAuthor;
 import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook;
 import net.sf.jkniv.whinstone.transaction.TransactionStatus;
 
-public class SqlSelectMockitoTest
+public class SqlBulkInsertTest
 {
     @Rule
     public ExpectedException catcher = ExpectedException.none();

@@ -51,24 +51,24 @@ import net.sf.jkniv.whinstone.jdbc.domain.bank.InsufficientFundsException;
 public class BankTransactionTest extends BaseJdbc
 {
     @Autowired
-    private Repository    repositoryDerby;
+    private Repository          repositoryDerby;
     @Rule
-    public ExpectedException catcher = ExpectedException.none();
-    private int           countBeforeTransaction;
-    private List<Account> accounts;
-    private int           allMoney;
-    private static final String JOHN = "John Lennon";
-    private static final String PAUL = "Paul McCartney";
-    private static final String RINGO = "Ringo Starr";
-    private static final String GEORGE = "George Harrison";
-
+    public ExpectedException    catcher = ExpectedException.none();
+    private int                 countBeforeTransaction;
+    private List<Account>       accounts;
+    private int                 allMoney;
+    private static final String JOHN    = "John Lennon";
+    private static final String PAUL    = "Paul McCartney";
+    private static final String RINGO   = "Ringo Starr";
+    private static final String GEORGE  = "George Harrison";
+    
     @Before
     public void setUp()
     {
         Queryable q = QueryFactory.of("accounts");
-        repositoryDerby.getTransaction().begin();
         accounts = repositoryDerby.list(q);
-        for (Account a : accounts) {
+        for (Account a : accounts)
+        {
             allMoney += a.getBalance();
         }
     }
@@ -97,6 +97,7 @@ public class BankTransactionTest extends BaseJdbc
     @Test
     public void whenTransfer200Money()
     {
+        repositoryDerby.getTransaction().begin();
         Account a = repositoryDerby.get(QueryFactory.of("accountsByName", "name", JOHN));
         Account b = repositoryDerby.get(QueryFactory.of("accountsByName", "name", PAUL));
         a.transfer(200, b);
@@ -105,19 +106,29 @@ public class BankTransactionTest extends BaseJdbc
         repositoryDerby.update(QueryFactory.of("update-balance", b));
         repositoryDerby.getTransaction().commit();
     }
-
+    
     @Test
     public void whenTransferHaventFunds()
     {
         catcher.expect(InsufficientFundsException.class);
-        Account a = repositoryDerby.get(QueryFactory.of("accountsByName", "name", JOHN));
-        Account b = repositoryDerby.get(QueryFactory.of("accountsByName", "name", PAUL));
-        a.transfer(1200, b);
+        try
+        {
+            repositoryDerby.getTransaction().begin();
+            Account a = repositoryDerby.get(QueryFactory.of("accountsByName", "name", JOHN));
+            Account b = repositoryDerby.get(QueryFactory.of("accountsByName", "name", PAUL));
+            a.transfer(1200, b);
+        }
+        catch (InsufficientFundsException e)
+        {
+            repositoryDerby.getTransaction().rollback();
+            throw e;
+        }
     }
-
+    
     @Test
     public void whenTransferMoney()
     {
+        repositoryDerby.getTransaction().begin();
         Account a = repositoryDerby.get(QueryFactory.of("accountsByName", "name", JOHN));
         Account b = repositoryDerby.get(QueryFactory.of("accountsByName", "name", PAUL));
         Account c = repositoryDerby.get(QueryFactory.of("accountsByName", "name", RINGO));
@@ -130,10 +141,11 @@ public class BankTransactionTest extends BaseJdbc
         repositoryDerby.update(QueryFactory.of("update-balance", d));
         repositoryDerby.getTransaction().commit();
     }
-
+    
     @Test
     public void whenTransferMoneyWithRollback()
     {
+        repositoryDerby.getTransaction().begin();
         Account a = repositoryDerby.get(QueryFactory.of("accountsByName", "name", JOHN));
         Account b = repositoryDerby.get(QueryFactory.of("accountsByName", "name", PAUL));
         Account c = repositoryDerby.get(QueryFactory.of("accountsByName", "name", RINGO));
@@ -148,5 +160,5 @@ public class BankTransactionTest extends BaseJdbc
         repositoryDerby.update(QueryFactory.of("update-balance", d));
         repositoryDerby.getTransaction().rollback();
     }
-
+    
 }
