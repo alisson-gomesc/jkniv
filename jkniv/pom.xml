@@ -612,7 +612,7 @@
     </developer>
   </developers>
   <scm>
-    <connection>scm:git:git://github.com/alisson-gomesc/jkniv</connection>
+    <connection>scm:git://github.com/alisson-gomesc/jkniv</connection>
     <url>https://github.com/alisson-gomesc/jkniv.git</url>
   </scm>
   <licenses>
