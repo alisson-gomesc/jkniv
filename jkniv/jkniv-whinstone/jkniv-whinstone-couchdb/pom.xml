@@ -6,7 +6,7 @@
   <parent>
     <groupId>net.sf.jkniv</groupId>
     <artifactId>jkniv</artifactId>
-    <version>0.6.0.M48</version>
+    <version>0.6.0.M49</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
