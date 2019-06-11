@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.sqlegance.statement;
 
+import java.sql.ResultSet;
+
 /**
  * Flags to indicate the type of <code>ResultSet</code> objects with the given  concurrency.
  * 
@@ -29,12 +31,17 @@ package net.sf.jkniv.sqlegance.statement;
 public enum ResultSetConcurrency
 {
     /** Be concurrency CONCUR_READ_ONLY */
-    DEFAULT, 
+    DEFAULT(ResultSet.CONCUR_READ_ONLY),
     /**  */
-    CONCUR_READ_ONLY, 
+    CONCUR_READ_ONLY(ResultSet.CONCUR_READ_ONLY), 
     /**  */
-    CONCUR_UPDATABLE;
+    CONCUR_UPDATABLE(ResultSet.CONCUR_UPDATABLE);
 
+    private int value;
+    private ResultSetConcurrency(int value)
+    {
+        this.value = value;
+    }
     /**
      * 
      * @param type String that represent enum ignoring case
@@ -54,4 +61,8 @@ public enum ResultSetConcurrency
         return rs;
     }
 
+    public int getConcurrencyMode ()
+    {
+        return this.value;
+    }
 }

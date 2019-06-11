@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.sqlegance.statement;
 
+import java.sql.ResultSet;
+
 /**
  * Flags to indicate the type of <code>ResultSet</code> objects with the given type.
  * 
@@ -29,14 +31,20 @@ package net.sf.jkniv.sqlegance.statement;
 public enum ResultSetType
 {
     /** Be type TYPE_FORWARD_ONLY  */
-    DEFAULT, 
+    DEFAULT(ResultSet.TYPE_FORWARD_ONLY), 
     /**  */
-    TYPE_FORWARD_ONLY, 
+    TYPE_FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY), 
     /**  */
-    TYPE_SCROLL_SENSITIVE, 
+    TYPE_SCROLL_SENSITIVE(ResultSet.TYPE_SCROLL_SENSITIVE), 
     /**  */
-    TYPE_SCROLL_INSENSITIVE;
+    TYPE_SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE);
 
+    private int scrollType;
+    
+    private ResultSetType(int v)
+    {
+        this.scrollType = v;
+    }
     /**
      * @param type String that represent enum ignoring case
      * @return the value of <code>type</code>, type of not found return <code>DEFAULT</code> enum.  
@@ -55,4 +63,8 @@ public enum ResultSetType
         return rs;
     }
 
+    public int getTypeScroll()
+    {
+        return scrollType;
+    }
 }

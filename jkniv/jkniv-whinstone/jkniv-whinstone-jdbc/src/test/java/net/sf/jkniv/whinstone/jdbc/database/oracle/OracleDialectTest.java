@@ -30,6 +30,7 @@ import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.jdbc.dialect.Oracle12cDialect;
 import net.sf.jkniv.whinstone.jdbc.dialect.OracleDialect;
 import net.sf.jkniv.whinstone.jdbc.dialect.SqlDialectAbstractTest;
 
@@ -155,5 +156,13 @@ public class OracleDialectTest extends SqlDialectAbstractTest
     }
     
 
+    @Test
+    public void whenInheritanceProperties()
+    {
+        SqlDialect ora = new OracleDialect();
+        SqlDialect ora12 = new Oracle12cDialect();
+        assertThat(ora.supportsLimit(), is(true));
+        assertThat(ora12.supportsLimit(), is(true));
+    }
 
 }

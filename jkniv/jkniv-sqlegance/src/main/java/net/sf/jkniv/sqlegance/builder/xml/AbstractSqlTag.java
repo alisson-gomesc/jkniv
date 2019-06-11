@@ -221,8 +221,8 @@ public abstract class AbstractSqlTag implements SqlTag
         this.returnTypeClass = forName(returnType);
         this.stats = stats;
         Class<? extends Annotation> entityAnnotation = (Class<? extends Annotation>) forName("javax.persistence.Entity");
-            if (returnTypeClass != null && entityAnnotation != null)
-                this.returnTypeManaged = returnTypeClass.isAnnotationPresent(entityAnnotation);
+        if (returnTypeClass != null && entityAnnotation != null)
+            this.returnTypeManaged = returnTypeClass.isAnnotationPresent(entityAnnotation);
 
         //this.timeToLive = -1;//testing 30*1000; 
 

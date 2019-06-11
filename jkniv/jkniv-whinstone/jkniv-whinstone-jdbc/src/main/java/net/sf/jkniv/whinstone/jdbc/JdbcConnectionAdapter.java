@@ -16,6 +16,7 @@ import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
+import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
 import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
 import net.sf.jkniv.sqlegance.statement.ResultSetType;
@@ -228,27 +229,20 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
     private PreparedStatement prepareStatement(Queryable queryable)
     {
         PreparedStatement stmt = null;
-        int rsType = ResultSet.TYPE_FORWARD_ONLY;
-        int rsConcurrency = ResultSet.CONCUR_READ_ONLY;
-        int rsHoldability = ResultSet.CLOSE_CURSORS_AT_COMMIT;
         Sql isql = queryable.getDynamicSql();
-        if (isql.getResultSetType() == ResultSetType.TYPE_SCROLL_INSENSITIVE)
-            rsType = ResultSet.TYPE_SCROLL_INSENSITIVE;
-        else if (isql.getResultSetType() == ResultSetType.TYPE_SCROLL_SENSITIVE)
-            rsType = ResultSet.TYPE_SCROLL_SENSITIVE;
-        
-        if (isql.getResultSetConcurrency() == ResultSetConcurrency.CONCUR_UPDATABLE)
-            rsConcurrency = ResultSet.CONCUR_UPDATABLE;
-        if (isql.getResultSetHoldability() == ResultSetHoldability.HOLD_CURSORS_OVER_COMMIT)
-            rsHoldability = ResultSet.HOLD_CURSORS_OVER_COMMIT;
+        if (LOG.isTraceEnabled())
+            LOG.trace("Preparing SQL statement [{}] type [{}], concurrency [{}], holdability [{}] with [{}] parameters",
+                    queryable.getName(), isql.getResultSetType(), isql.getResultSetConcurrency(), isql.getResultSetHoldability(),
+                    queryable.getParamsNames().length);
+        stmt = queryable.getDynamicSql().getSqlDialect().prepare(conn, isql, queryable.query());
+        /*
+        SqlDialect dialect = queryable.getDynamicSql().getSqlDialect();
+        int rsType = isql.getResultSetType().getTypeScroll();
+        int rsConcurrency = isql.getResultSetConcurrency().getConcurrencyMode();
+        int rsHoldability = isql.getResultSetHoldability().getHoldability();
         
         try
         {
-            if (LOG.isTraceEnabled())
-                LOG.trace("Preparing SQL statement [{}] type [{}], concurrency [{}], holdability [{}] with [{}] parameters",
-                        queryable.getName(), isql.getResultSetType(), isql.getResultSetConcurrency(), isql.getResultSetHoldability(),
-                        queryable.getParamsNames().length);
-            
             if (queryable.getDynamicSql().isInsertable())
             {
                 Insertable insertTag = isql.asInsertable();
@@ -260,13 +254,14 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
             }
             if (stmt == null)
             {
-                if (queryable.getDynamicSql().getSqlDialect().supportsStmtHoldability())
+                if (dialect.supportsStmtHoldability())
                     stmt = conn.prepareStatement(queryable.query(), rsType, rsConcurrency, rsHoldability);
                 else
                 {
                     // SQLServer doesn't support Holdability
                     stmt = conn.prepareStatement(queryable.query(), rsType, rsConcurrency);
-                    conn.setHoldability(rsHoldability);
+                    if (dialect.supportsConnHoldability())
+                        conn.setHoldability(rsHoldability);
                 }
             }
             if (isql.getTimeout() > 0)
@@ -275,7 +270,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
         catch (SQLException sqle)
         {
             throw new RepositoryException("Cannot prepare statement [" + sqle.getMessage() + "]", sqle);
-        }
+        }*/
         return stmt;
     }
     

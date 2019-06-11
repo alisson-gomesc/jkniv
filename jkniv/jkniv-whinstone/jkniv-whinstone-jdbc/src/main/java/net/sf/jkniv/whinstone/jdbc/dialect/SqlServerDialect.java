@@ -40,7 +40,7 @@ import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
  * </ul>
  *
  * @author Alisson Gomes 
- *
+ * @since 0.6.0
  */
 public class SqlServerDialect extends AnsiDialect
 {
@@ -66,12 +66,18 @@ public class SqlServerDialect extends AnsiDialect
         return true;
     }
     
+    @Override
+    public boolean supportsStmtHoldability()
+    {
+        return false;
+    }
+    
     /**
      *  LIMIT clause for SqlServer, where TOP is a parameter from
      *  String.format
      *  
      *  @return Return query pattern: 
-     *  
+     *  <pre>
      *   {@code
      *   WITH query AS (
      *           SELECT inner_query.*
@@ -80,7 +86,7 @@ public class SqlServerDialect extends AnsiDialect
      *         )
      *        SELECT * FROM query WHERE _jkniv_rownum_ >= 3 AND _jkniv_rownum_ < 5 + 3
      *   }
-     * 
+     * </pre>
      */
     @Override
     public String getSqlPatternPaging()
@@ -97,13 +103,6 @@ public class SqlServerDialect extends AnsiDialect
         return pagingSelect.toString();
 
     }
-    
-    @Override
-    public boolean supportsStmtHoldability()
-    {
-        return false;
-    }
-
     
     //@Override protected void buildSqlLimits()
     @Override
@@ -136,7 +135,6 @@ public class SqlServerDialect extends AnsiDialect
         return sqlTextPaginated;
     }
     
-    /// hibernate code
     /**
      * Adds {@code TOP} expression. Parameter value is bind in
      * {@link #bindLimitParametersAtStartOfQuery(PreparedStatement, int)} method.
@@ -211,5 +209,4 @@ public class SqlServerDialect extends AnsiDialect
         } while ( cur < len && depth != 0 && pos != -1 );
         return depth == 0 ? pos : -1;
     }
-
 }

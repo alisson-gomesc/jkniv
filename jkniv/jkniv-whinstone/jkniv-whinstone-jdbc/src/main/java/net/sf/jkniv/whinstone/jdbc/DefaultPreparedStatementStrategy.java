@@ -79,26 +79,18 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
     public PreparedStatement prepareStatement(Connection conn)
     {
         PreparedStatement stmt = null;
-        int rsType = ResultSet.TYPE_FORWARD_ONLY;
-        int rsConcurrency = ResultSet.CONCUR_READ_ONLY;
-        int rsHoldability = ResultSet.CLOSE_CURSORS_AT_COMMIT;
         Sql isql = queryable.getDynamicSql();
-        if (isql.getResultSetType() == ResultSetType.TYPE_SCROLL_INSENSITIVE)
-            rsType = ResultSet.TYPE_SCROLL_INSENSITIVE;
-        else if (isql.getResultSetType() == ResultSetType.TYPE_SCROLL_SENSITIVE)
-            rsType = ResultSet.TYPE_SCROLL_SENSITIVE;
-        
-        if (isql.getResultSetConcurrency() == ResultSetConcurrency.CONCUR_UPDATABLE)
-            rsConcurrency = ResultSet.CONCUR_UPDATABLE;
-        if (isql.getResultSetHoldability() == ResultSetHoldability.HOLD_CURSORS_OVER_COMMIT)
-            rsHoldability = ResultSet.HOLD_CURSORS_OVER_COMMIT;
-        
+        if (LOG.isTraceEnabled())
+            LOG.trace("Preparing SQL statement type [{}], concurrency [{}], holdability [{}] with [{}] parameters",
+                    isql.getResultSetType(), isql.getResultSetConcurrency(), isql.getResultSetHoldability(),
+                    paramsNames.length);
+        stmt = queryable.getDynamicSql().getSqlDialect().prepare(conn, isql, queryable.query());
+        /*
+        int rsType = isql.getResultSetType().getTypeScroll();
+        int rsConcurrency = isql.getResultSetConcurrency().getConcurrencyMode();
+        int rsHoldability = isql.getResultSetHoldability().getHoldability();        
         try
         {
-            if (LOG.isTraceEnabled())
-                LOG.trace("Preparing SQL statement type [{}], concurrency [{}], holdability [{}] with [{}] parameters",
-                        isql.getResultSetType(), isql.getResultSetConcurrency(), isql.getResultSetHoldability(),
-                        paramsNames.length);
             
             if (queryable.getDynamicSql().getSqlDialect().supportsStmtHoldability())
                 stmt = conn.prepareStatement(sql, rsType, rsConcurrency, rsHoldability);
@@ -108,10 +100,6 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
                 stmt = conn.prepareStatement(sql, rsType, rsConcurrency);
                 conn.setHoldability(rsHoldability);
             }
-            
-            //if (paramsNames.length > 0)
-            //    setValues(stmt);
-            
             if (isql.getTimeout() > 0)
                 stmt.setQueryTimeout(isql.getTimeout());
         }
@@ -119,6 +107,7 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
         {
             throw new RepositoryException("Cannot prepare statement [" + sqle.getMessage() + "]", sqle);
         }
+        */
         return stmt;
     }
     

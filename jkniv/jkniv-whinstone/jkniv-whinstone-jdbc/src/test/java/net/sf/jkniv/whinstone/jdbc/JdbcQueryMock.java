@@ -27,6 +27,9 @@ import net.sf.jkniv.sqlegance.builder.xml.NoSqlStats;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.params.ParamParserFactory;
+import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
+import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
+import net.sf.jkniv.sqlegance.statement.ResultSetType;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
 import net.sf.jkniv.whinstone.Repository;
@@ -94,7 +97,10 @@ public class JdbcQueryMock
             given(this.sql.getSqlType()).willReturn(SqlType.SELECT);
             given(this.sql.asSelectable()).willReturn((Selectable) this.sql);
             given(this.sql.getCache()).willReturn(NoCache.getInstance());
-            
+            given(this.sql.getResultSetType()).willReturn(ResultSetType.DEFAULT);
+            given(this.sql.getResultSetConcurrency()).willReturn(ResultSetConcurrency.DEFAULT);
+            given(this.sql.getResultSetHoldability()).willReturn(ResultSetHoldability.DEFAULT);
+
             given(sql.getReturnType()).willReturn(returnType.getName());
             doReturn(returnType).when(sql).getReturnTypeAsClass();
             

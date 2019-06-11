@@ -19,6 +19,7 @@ import javax.sql.DataSource;
 import net.sf.jkniv.cache.NoCache;
 import net.sf.jkniv.sqlegance.Deletable;
 import net.sf.jkniv.sqlegance.Insertable;
+import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.RepositoryType;
 import net.sf.jkniv.sqlegance.Selectable;
@@ -31,6 +32,9 @@ import net.sf.jkniv.sqlegance.builder.xml.NoSqlStats;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.params.ParamParserFactory;
+import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
+import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
+import net.sf.jkniv.sqlegance.statement.ResultSetType;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
 import net.sf.jkniv.whinstone.Repository;
@@ -63,6 +67,7 @@ public class JdbcCommandMock
         try
         {
             given(this.dataSource.getConnection()).willReturn(this.connection);
+            given(this.connection.getAutoCommit()).willReturn(true);
             given(this.connection.prepareStatement(anyString(), anyInt(), anyInt())).willReturn(this.stmt);
             given(this.connection.prepareStatement(anyString(), anyInt(), anyInt(), anyInt())).willReturn(this.stmt);
             
@@ -122,7 +127,17 @@ public class JdbcCommandMock
     {
         return repository;
     }
-    
+
+    public JdbcCommandMock withSelectable()
+    {
+        this.sql = mock(Selectable.class);
+        given(this.sql.getSqlType()).willReturn(SqlType.SELECT);
+        given(this.sql.asSelectable()).willReturn((Selectable) this.sql);
+        given(this.sql.getSql(any())).willReturn("select id, name from t ");
+        withSql();
+        return this;
+    }
+
     public JdbcCommandMock withInsertable()
     {
         this.sql = mock(Insertable.class);
@@ -158,6 +173,9 @@ public class JdbcCommandMock
         given(this.sql.getSqlDialect()).willReturn(new AnsiDialect());
         given(this.sql.getParamParser()).willReturn(ParamParserFactory.getInstance(ParamMarkType.COLON));
         given(this.sql.getStats()).willReturn(NoSqlStats.getInstance());
+        given(this.sql.getResultSetType()).willReturn(ResultSetType.DEFAULT);
+        given(this.sql.getResultSetConcurrency()).willReturn(ResultSetConcurrency.DEFAULT);
+        given(this.sql.getResultSetHoldability()).willReturn(ResultSetHoldability.DEFAULT);
         //given(this.sql.getCache()).willReturn(NoCache.getInstance());
         
         given(sql.getReturnType()).willReturn(returnType.getName());
@@ -165,7 +183,21 @@ public class JdbcCommandMock
         given(this.sqlContext.getQuery(anyString())).willReturn(this.sql);
 
     }
+
     
+    public JdbcCommandMock withAutoCommit(boolean autoCommit)
+    {
+        try
+        {
+            given(this.connection.getAutoCommit()).willReturn(autoCommit);
+        }
+        catch (SQLException e)
+        {
+            throw new RepositoryException(e);
+        }
+        return this;
+    }
+
     /*
     public Repository buildFifteenFlatBook()
     {

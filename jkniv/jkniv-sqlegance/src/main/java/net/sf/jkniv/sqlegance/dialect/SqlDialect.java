@@ -19,6 +19,11 @@
  */
 package net.sf.jkniv.sqlegance.dialect;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+import net.sf.jkniv.sqlegance.Sql;
+
 /**
  * Represents a SQL syntax from a specific database.
  * 
@@ -59,9 +64,20 @@ public interface SqlDialect
      */
     boolean supportsRownum();
     
+    //boolean supportsFeature(SqlFeatureSupports feature);
+    
+    /**
+     * Return the limit of elements in an {@code INPUT} parameter the database supports.
+     *
+     * @return the limit of parameters from statement, default is a big number {@code Integer.MAX_VALUE}
+     */
+    int getLimitOfParameters();
+    
     String getSqlPatternCount();
     
     String getSqlPatternPaging();
+    
+    PreparedStatement prepare(Connection conn, Sql isql, String query);
     
     //Sql getISql();
     
@@ -81,6 +97,8 @@ public interface SqlDialect
     
     /* SQL Server supports holdability at the connection level only. Use the connection.setHoldability() method. */
     boolean supportsStmtHoldability();
+    
+    boolean supportsConnHoldability();
     
     /**
      * Build a paginate query accordingly data base dialect

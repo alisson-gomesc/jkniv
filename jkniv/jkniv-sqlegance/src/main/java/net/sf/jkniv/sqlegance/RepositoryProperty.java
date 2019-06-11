@@ -23,7 +23,7 @@ package net.sf.jkniv.sqlegance;
  * 
  * TODO properties to add
  *  add property to remove end line from queries, good for debug 
- *  add property to limit parameter at clause IN, default is 1000 
+ *  add property to limit parameter at clause IN, default is 1000 for oracle
  *  
  *  
  * @author Alisson Gomes

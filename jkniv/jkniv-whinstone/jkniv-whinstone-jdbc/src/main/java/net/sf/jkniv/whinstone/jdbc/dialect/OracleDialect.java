@@ -51,14 +51,10 @@ public class OracleDialect extends AnsiDialect
     {
         super();
     }
-    
-//    public OracleDialect(Queryable queryable)
-//    {
-//        super(queryable);
-//    }
         
     /**
      * Support LIMIT using rownum. Native clause not exists.
+     * @return supported by Oracle
      */
     @Override
     public boolean supportsLimit()
@@ -68,6 +64,7 @@ public class OracleDialect extends AnsiDialect
     
     /**
      * Support OFFSET using rownum. Native clause not exists.
+     * @return supported by Oracle
      */
     @Override
     public boolean supportsLimitOffset()
@@ -75,12 +72,22 @@ public class OracleDialect extends AnsiDialect
         return true;
     }
     
+    /**
+     * Supports ROWNUM at query statement
+     * @return supported by Oracle
+     */
     @Override
     public boolean supportsRownum()
     {
         return true;
     }
     
+    @Override
+    public int getLimitOfParameters()
+    {
+        return 1000;
+    }
+
     /**
      * @return  Return query pattern:
      * <code>

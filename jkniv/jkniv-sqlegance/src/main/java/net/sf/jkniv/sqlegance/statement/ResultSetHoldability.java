@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.sqlegance.statement;
 
+import java.sql.ResultSet;
+
 /**
  * Flags to indicate the type of <code>ResultSet</code> objects with the given holdability.
  * 
@@ -29,13 +31,19 @@ package net.sf.jkniv.sqlegance.statement;
  */
 public enum ResultSetHoldability
 {
-    /**  */
-    DEFAULT,
-    /**  */
-    HOLD_CURSORS_OVER_COMMIT, 
-    /**  */
-    CLOSE_CURSORS_AT_COMMIT;    
+    /** Open ResultSet objects with this holdability will be closed when the current transaction is commited. */
+    DEFAULT(ResultSet.CLOSE_CURSORS_AT_COMMIT),
+    /** Open ResultSet objects with this holdability will be closed when the current transaction is commited. */
+    HOLD_CURSORS_OVER_COMMIT(ResultSet.CLOSE_CURSORS_AT_COMMIT), 
+    /**  open ResultSet objects with this holdability will remain open when the current transaction is commited. */
+    CLOSE_CURSORS_AT_COMMIT(ResultSet.HOLD_CURSORS_OVER_COMMIT);    
+    
+    private int value;
 
+    private ResultSetHoldability(int value)
+    {
+        this.value = value;
+    }
     /**
      * @param type String that represent enum ignoring case
      * @return the value of <code>type</code>, type of not found return <code>DEFAULT</code> enum. 
@@ -54,4 +62,8 @@ public enum ResultSetHoldability
         return rs;
     }
 
+    public int getHoldability()
+    {
+        return this.value;
+    }
 }
