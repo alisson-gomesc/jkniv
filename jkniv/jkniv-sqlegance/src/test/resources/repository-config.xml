@@ -38,7 +38,7 @@
       <property name="jkniv.repository.limit_off_set" value="false"/>
       <property name="jkniv.repository.rownum" value="true"/>
       <property name="jkniv.repository.conn_holdability" value="false"/>
-      <property name="jkniv.repository.statement_holdability" value="true"/>
+      <property name="jkniv.repository.stmt_holdability" value="true"/>
       <property name="jkniv.repository.jdbc.max_parameters" value="255"/>
     </properties>
   </repository>

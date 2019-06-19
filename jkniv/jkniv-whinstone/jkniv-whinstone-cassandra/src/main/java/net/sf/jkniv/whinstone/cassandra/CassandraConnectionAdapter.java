@@ -42,6 +42,11 @@ import net.sf.jkniv.whinstone.cassandra.commands.UpdateCommand;
 import net.sf.jkniv.whinstone.cassandra.statement.CassandraStatementAdapter;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
+/**
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 class CassandraConnectionAdapter implements ConnectionAdapter
 {
     private static final transient Logger  LOG = LoggerFactory.getLogger();
@@ -84,6 +89,31 @@ class CassandraConnectionAdapter implements ConnectionAdapter
     @Override
     public void close() //throws SQLException
     {
+        /*
+        if (session != null && !session.isClosed())
+        {
+            LOG.info("Closing Cassandra Session");
+            session.close();
+        }   
+        if (cluster != null && !cluster.isClosed())
+        {
+            LOG.info("Closing Cassandra Cluster connection");
+            cluster.close();
+        }
+        if(stmtCache != null)
+        {
+            LOG.info("Clean-up [{}] PreparedStatements cached", stmtCache.size());
+            stmtCache.clear();
+        }
+        cluster = null;
+        session = null;
+        stmtCache = null;
+        */
+    }
+
+    //@Override
+    public void shutdown() //throws SQLException
+    {
         if (session != null && !session.isClosed())
         {
             LOG.info("Closing Cassandra Session");
@@ -103,7 +133,7 @@ class CassandraConnectionAdapter implements ConnectionAdapter
         session = null;
         stmtCache = null;
     }
-    
+
     @Override
     public boolean isClosed() throws SQLException
     {

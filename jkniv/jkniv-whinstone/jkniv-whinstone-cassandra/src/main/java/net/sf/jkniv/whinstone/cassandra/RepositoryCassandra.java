@@ -19,7 +19,6 @@
  */
 package net.sf.jkniv.whinstone.cassandra;
 
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -27,13 +26,6 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.ColumnDefinitions;
-import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
@@ -49,29 +41,15 @@ import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
-import net.sf.jkniv.sqlegance.Updateable;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.whinstone.Command;
+import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
-import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
-import net.sf.jkniv.whinstone.ResultSetParser;
-import net.sf.jkniv.whinstone.cassandra.result.FlatObjectResultRow;
-import net.sf.jkniv.whinstone.cassandra.result.MapResultRow;
-import net.sf.jkniv.whinstone.cassandra.result.NumberResultRow;
-import net.sf.jkniv.whinstone.cassandra.result.ObjectResultSetParser;
-import net.sf.jkniv.whinstone.cassandra.result.PojoResultRow;
-import net.sf.jkniv.whinstone.cassandra.result.ScalarResultRow;
-import net.sf.jkniv.whinstone.cassandra.result.StringResultRow;
-import net.sf.jkniv.whinstone.classification.Groupable;
-import net.sf.jkniv.whinstone.classification.GroupingBy;
-import net.sf.jkniv.whinstone.classification.NoGroupingBy;
-import net.sf.jkniv.whinstone.classification.Transformable;
-import net.sf.jkniv.whinstone.statement.StatementAdapter;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
 /**
@@ -83,7 +61,7 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
 class RepositoryCassandra implements Repository
 {
     private static final Logger     LOG     = LoggerFactory.getLogger(RepositoryCassandra.class);
-    private static final Assertable notNull = AssertsFactory.getNotNull();
+    private static final Assertable NOT_NULL = AssertsFactory.getNotNull();
     private QueryNameStrategy       strategyQueryName;
     private HandleableException     handlerException;
     private RepositoryConfig        repositoryConfig;
@@ -114,7 +92,7 @@ class RepositoryCassandra implements Repository
     
     RepositoryCassandra(Properties props, SqlContext sqlContext)
     {
-        notNull.verify(props, sqlContext);
+        NOT_NULL.verify(props, sqlContext);
         if (props.isEmpty() || !props.containsKey(RepositoryProperty.JDBC_URL.key()))
         {
             String jndiName = sqlContext.getRepositoryConfig().getJndiDataSource();
@@ -139,42 +117,98 @@ class RepositoryCassandra implements Repository
     @Override
     public <T> T get(Queryable queryable)
     {
+        NOT_NULL.verify(queryable);
+        T ret = handleGet(queryable, null);
+        return ret;
+    }
+
+    @Override
+    public <T> T get(Queryable queryable, Class<T> returnType)
+    {
+        NOT_NULL.verify(queryable, returnType);
+        Queryable queryableClone = QueryFactory.clone(queryable, returnType);
+        T ret = handleGet(queryableClone, null);
+        queryable.setTotal(queryableClone.getTotal());
+        return ret;
+    }
+
+    @Override
+    public <T, R> T get(Queryable queryable, ResultRow<T, R> customResultRow)
+    {
+        return handleGet(queryable, customResultRow);
+    }
+
+    /*
+    @Override
+    public <T> T get(Queryable queryable)
+    {
         return get(queryable, null, null);
     }
+    */
     
+    /*
     @Override
     public <T> T get(Queryable queryable, Class<T> returnType)
     {
         return get(queryable, returnType, null);
     }
+    */
     
+    /*
     @Override
     public <T, R> T get(Queryable queryable, ResultRow<T, R> customResultRow)
     {
         return get(queryable, null, customResultRow);
     }
+    */
     
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T get(T entity)
+    {
+        NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toGetName(entity);
+        Queryable queryable = QueryFactory.of(queryName, entity.getClass(), entity);
+        T ret = (T) handleGet(queryable, null);
+        return ret;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T get(Class<T> returnType, Object entity)
+    {
+        NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toGetName(entity);
+        Queryable queryable = QueryFactory.of(queryName, returnType, entity);
+        T ret = (T) handleGet(queryable, null);
+        return ret;
+    }
+
+    /*
     @Override
     public <T> T get(T entity)
     {
-        notNull.verify(entity);
+        NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toGetName(entity);
         Queryable queryable = QueryFactory.of(queryName, entity);
         return get(queryable, null, null);
     }
+    */
     
+    /*
     @Override
     public <T> T get(Class<T> returnType, Object entity)
     {
-        notNull.verify(returnType, entity);
+        NOT_NULL.verify(returnType, entity);
         String queryName = this.strategyQueryName.toGetName(entity);
         Queryable queryable = QueryFactory.of(queryName, entity);
         return get(queryable, returnType, null);
     }
+    */
     
     private <T, R> T get(Queryable queryable, Class<T> returnType, ResultRow<T, R> resultRow)
     {
-        notNull.verify(queryable);
+        NOT_NULL.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as get command", queryable);
         
@@ -197,7 +231,7 @@ class RepositoryCassandra implements Repository
     @Override
     public <T> T scalar(Queryable queryable)
     {
-        notNull.verify(queryable);
+        NOT_NULL.verify(queryable);
         T result = null;
         Map map = get(queryable, Map.class, null);
         if (map != null)
@@ -213,7 +247,7 @@ class RepositoryCassandra implements Repository
     @Override
     public boolean enrich(Queryable queryable)
     {
-        notNull.verify(queryable, queryable.getParams());
+        NOT_NULL.verify(queryable, queryable.getParams());
         boolean enriched = false;
         Object o = get(queryable);
         if (o != null)
@@ -228,6 +262,12 @@ class RepositoryCassandra implements Repository
     @Override
     public <T> List<T> list(Queryable queryable)
     {
+        return handleList(queryable, null);
+    }    
+    /*
+    @Override
+    public <T> List<T> list(Queryable queryable)
+    {
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as list command", queryable);
         
@@ -237,7 +277,25 @@ class RepositoryCassandra implements Repository
         
         return list;
     }
+    */
     
+    @Override
+    public <T> List<T> list(Queryable queryable, Class<T> overloadReturnType)
+    {
+        List<T> list = Collections.emptyList();
+        Queryable queryableClone = queryable;
+        if (overloadReturnType != null)
+            queryableClone = QueryFactory.clone(queryable, overloadReturnType);
+        list = handleList(queryableClone, null);
+        queryable.setTotal(queryableClone.getTotal());
+
+        if (isDebugEnabled)
+            LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
+
+        return list;
+    }
+
+    /*
     @Override
     public <T> List<T> list(Queryable queryable, Class<T> returnType)
     {
@@ -251,7 +309,15 @@ class RepositoryCassandra implements Repository
         
         return list;
     }
+    */
     
+    @Override
+    public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> customResultRow)
+    {
+        return handleList(queryable, customResultRow);                
+    }
+
+    /*
     @Override
     @SuppressWarnings("unchecked")
     public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> customResultRow)
@@ -266,7 +332,49 @@ class RepositoryCassandra implements Repository
         
         return list;
     }
+    */
     
+    private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    {
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as list command", queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new SelectHandler(this.adapterConn);
+        List<T> list = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .with(overloadResultRow)
+        .run();
+        if (isDebugEnabled)
+            LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
+        return list;
+    }
+    
+    private <T, R> T handleGet(Queryable q, ResultRow<T, R> overloadResultRow)
+    {
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as get command", q);
+
+        T ret = null;
+        Sql sql = sqlContext.getQuery(q.getName());
+        CommandHandler handler = new SelectHandler(this.adapterConn);
+        List<T> list = handler.with(q)
+        .with(sql)
+        .with(handlerException)
+        .with(overloadResultRow)
+        .run();
+        if (list.size() > 1)
+            throw new NonUniqueResultException("No unique result for query ["+q.getName()+"] with params ["+q.getParams()+"]");
+        else if (list.size() == 1)
+            ret = list.get(0);
+
+        if (isDebugEnabled)
+            LOG.debug("Executed [{}] query, fetched object {}", q.getName(), ret);
+        
+        return ret;
+    }
+
+
     @SuppressWarnings("unchecked")
     private <T, R> List<T> list(Queryable q, Class<T> overloadReturnType, ResultRow<T, R> customResultRow)
     {
@@ -309,7 +417,71 @@ class RepositoryCassandra implements Repository
     @Override
     public int add(Queryable queryable)
     {
-        notNull.verify(queryable);
+        NOT_NULL.verify(queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new AddHandler(this.adapterConn);
+        int rows = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return rows;
+    }
+    
+    @Override
+    public <T> T add(T entity)// FIXME design update must return a number
+    {
+        NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toAddName(entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as add command", queryName);
+
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new AddHandler(this.adapterConn);
+        handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return entity;
+    }
+
+    @Override
+    public int update(Queryable queryable)
+    {
+        NOT_NULL.verify(queryable);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as update command", queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new UpdateHandler(this.adapterConn);
+        int rows = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return rows;
+    }
+
+    @Override
+    public <T> T update(T entity)// FIXME design update must return a number
+    {
+        NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toUpdateName(entity);
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as update command", queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new UpdateHandler(this.adapterConn);
+        int rows = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return entity;
+    }
+
+    /*
+    @Override
+    public int add(Queryable queryable)
+    {
+        NOT_NULL.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as add command with dialect [{}]", queryable);//, this.repositoryConfig.getSqlDialect());
             
@@ -327,11 +499,12 @@ class RepositoryCassandra implements Repository
             LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
         return affected;
     }
-    
+    */
+    /*
     @Override
     public <T> T add(T entity)
     {
-        notNull.verify(entity);
+        NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toAddName(entity);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as add command", queryName);
@@ -352,11 +525,12 @@ class RepositoryCassandra implements Repository
             LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
         return entity;
     }
-    
+    */
+    /*
     @Override
     public int update(Queryable queryable)
     {
-        notNull.verify(queryable);
+        NOT_NULL.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as add command with dialect [{}]", queryable);
         
@@ -373,11 +547,12 @@ class RepositoryCassandra implements Repository
             LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
         return affected;
     }
-    
+    */
+    /*
     @Override
     public <T> T update(T entity)
     {
-        notNull.verify(entity);
+        NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toUpdateName(entity);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryName);
@@ -407,7 +582,39 @@ class RepositoryCassandra implements Repository
         
         return entity;
     }
+    */
     
+    @Override
+    public int remove(Queryable queryable)
+    {
+        NOT_NULL.verify(queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new RemoveHandler(this.adapterConn);
+        int rows = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return rows;
+    }
+    
+    @Override
+    public <T> int remove(T entity)
+    {
+        NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toRemoveName(entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as remove command", queryName);
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new RemoveHandler(this.adapterConn);
+        int rows = handler.with(queryable)
+        .with(sql)
+        .with(handlerException)
+        .run();
+        return rows;
+    }
+    
+    /*
     @Override
     public int remove(Queryable queryable)
     {
@@ -432,7 +639,7 @@ class RepositoryCassandra implements Repository
     @Override
     public <T> int remove(T entity)
     {
-        notNull.verify(entity);
+        NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toRemoveName(entity);
         Queryable queryable = QueryFactory.of(queryName, entity);
         if (isTraceEnabled)
@@ -452,7 +659,7 @@ class RepositoryCassandra implements Repository
             LOG.debug("{} records was affected by remove [{}] command", affected, queryable.getName());
         return affected;
     }
-    
+    */
     @Override
     public void flush()
     {
@@ -478,7 +685,8 @@ class RepositoryCassandra implements Repository
     {
         //        try
         //        {
-        adapterConn.close();
+        if (this.adapterConn instanceof CassandraConnectionAdapter)
+            ((CassandraConnectionAdapter)adapterConn).shutdown();
         //        }
         //        catch (SQLException e)
         //        {

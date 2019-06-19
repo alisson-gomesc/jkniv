@@ -22,15 +22,12 @@ package net.sf.jkniv.whinstone.cassandra;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.instanceOf;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
@@ -41,8 +38,6 @@ import net.sf.jkniv.whinstone.cassandra.result.CustomResultRow;
 @SuppressWarnings("rawtypes")
 public class CassandraRepositorySelectGetTest extends BaseJdbc
 {
-    @Autowired
-    Repository repository;
     private static final String PLATE = "OMN7176";
     private static final String COLOR = "white";
     

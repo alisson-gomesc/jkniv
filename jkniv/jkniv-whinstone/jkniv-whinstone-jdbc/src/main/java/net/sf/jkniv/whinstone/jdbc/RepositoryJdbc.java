@@ -217,23 +217,27 @@ class RepositoryJdbc implements Repository
     }
     
     @Override
-    public <T> T get(T object)
+    @SuppressWarnings("unchecked")
+    public <T> T get(T entity)
     {
-        NOT_NULL.verify(object);
-        Queryable queryable = QueryFactory.of("get", object.getClass(), object);
+        NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toGetName(entity);
+        Queryable queryable = QueryFactory.of(queryName, entity.getClass(), entity);
         T ret = (T) handleGet(queryable, null);
         return ret;
     }
 
     @Override
-    public <T> T get(Class<T> returnType, Object object)
+    @SuppressWarnings("unchecked")
+    public <T> T get(Class<T> returnType, Object entity)
     {
-        NOT_NULL.verify(object);
-        Queryable queryable = QueryFactory.of("get", returnType, object);
+        NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toGetName(entity);
+        Queryable queryable = QueryFactory.of(queryName, returnType, entity);
         T ret = (T) handleGet(queryable, null);
         return ret;
     }
-
+    
     @Override
     public <T, R> T get(Queryable queryable, ResultRow<T, R> customResultRow)
     {
@@ -344,15 +348,12 @@ class RepositoryJdbc implements Repository
     public <T> List<T> list(Queryable queryable)
     {
         return handleList(queryable, null);
-        //return __list__(queryable, null, null);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> customResultRow)
     {
         return handleList(queryable, customResultRow);                
-        //return list(queryable, null, (ResultRow<T, ResultSet>) customResultRow);
     }
 
     @Override
@@ -365,7 +366,6 @@ class RepositoryJdbc implements Repository
         list = handleList(queryableClone, null);
         queryable.setTotal(queryableClone.getTotal());
         return list;
-        //return list(queryable, returnType, null);
     }
     
     private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
