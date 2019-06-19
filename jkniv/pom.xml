@@ -614,6 +614,7 @@
   <scm>
     <connection>scm:git://github.com/alisson-gomesc/jkniv</connection>
     <url>https://github.com/alisson-gomesc/jkniv.git</url>
+    <tag>HEAD</tag>
   </scm>
   <licenses>
     <license>

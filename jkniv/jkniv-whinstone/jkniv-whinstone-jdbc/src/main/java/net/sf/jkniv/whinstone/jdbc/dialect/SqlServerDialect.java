@@ -24,6 +24,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 
 /**
  * Dialect to SQLServer
@@ -47,29 +49,9 @@ public class SqlServerDialect extends AnsiDialect
     public SqlServerDialect()
     {
         super();
-    }
-    
-//    public SqlServerDialect(Queryable queryable)
-//    {
-//        super(queryable);
-//    }
-    
-    @Override
-    public boolean supportsLimit()
-    {
-        return true;
-    }
-    
-    @Override
-    public boolean supportsLimitOffset()
-    {
-        return true;
-    }
-    
-    @Override
-    public boolean supportsStmtHoldability()
-    {
-        return false;
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, true));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, true));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.STMT_HOLDABILITY, false));
     }
     
     /**
@@ -114,7 +96,7 @@ public class SqlServerDialect extends AnsiDialect
             //sqlText = queryable.getSql().getSql(queryable.getParams());
             String pagingSelect = getSqlPatternPaging();
             //String sqlPreparedToTop = this.sql.replaceFirst("(?i)select", "");
-            if (supportsLimitOffset())
+            if (supportsFeature(SqlFeatureSupport.LIMIT_OFF_SET))
             {
                 StringBuilder sb = new StringBuilder(sqlText);
                 //final int orderByIndex = shallowIndexOfWord( sb, "order by", 0 );

@@ -19,6 +19,9 @@
  */
 package net.sf.jkniv.whinstone.jdbc.dialect;
 
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
+
 /**
  * Dialect to Derby version 10.7
  * 
@@ -41,29 +44,9 @@ public class Derby10o7Dialect extends Derby10o4Dialect
     public Derby10o7Dialect()
     {
         super();
-    }
-    
-//    public Derby10o7Dialect(Queryable queryable)
-//    {
-//        super(queryable);
-//    }
-
-    @Override
-    public boolean supportsLimit()
-    {
-        return true;
-    }
-    
-    @Override
-    public boolean supportsLimitOffset()
-    {
-        return true;
-    }
-    
-    @Override
-    public boolean supportsRownum()
-    {
-        return true;
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, true));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, true));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.ROWNUM, true));
     }
     
     @Override

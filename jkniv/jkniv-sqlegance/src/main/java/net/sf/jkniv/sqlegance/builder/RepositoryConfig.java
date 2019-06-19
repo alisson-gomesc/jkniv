@@ -44,6 +44,8 @@ import net.sf.jkniv.sqlegance.Statistical;
 import net.sf.jkniv.sqlegance.builder.xml.NoSqlStats;
 import net.sf.jkniv.sqlegance.builder.xml.SqlStats;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
@@ -430,6 +432,18 @@ public class RepositoryConfig
         String sqlDialectName = getProperty(RepositoryProperty.SQL_DIALECT);
         ObjectProxy<SqlDialect> proxy = ObjectProxyFactory.newProxy(sqlDialectName);
         sqlDialect = proxy.newInstance();
+        for (SqlFeatureSupport feature : SqlFeatureSupport.values())
+        {
+            String value = getProperty(RepositoryProperty.PREFIX+"."+feature.name().toLowerCase());
+            if (value != null)
+            {
+                boolean supported = Boolean.valueOf(value);
+                sqlDialect.addFeature(SqlFeatureFactory.newInstance(feature, supported));
+            }
+        }
+        String maxParameters = getProperty(RepositoryProperty.PREFIX+".jdbc.max_parameters");
+        if (maxParameters != null)
+            sqlDialect.setMaxOfParameters(Integer.valueOf(maxParameters));
     }
 
     @Override

@@ -19,31 +19,30 @@
  */
 package net.sf.jkniv.sqlegance.dialect;
 
-/**
- * TODO how is the better way to implements Generic verification for Features Supports for Database Dialect?
+/** 
+ * Database driver features. Define a feature supported to the specific database.
  * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
-enum SqlFeatureSupports
+public interface SqlFeature
 {
-    LIMIT,
-    LIMIT_OFF_SET,
-    ROWNUM,
-    SET_HOLDABILITY,
-    CONN_HOLDABILITY,
-    STATEMENT_HOLDABILITY,
-    CLOSE_CURSORS_AT_COMMIT;
+    /**
+     * verify if the database supports this feature.
+     * @return {@code true} when the feature is supported, {@code false} otherwise.
+     */
+    boolean supports();
     
-    private boolean supports;
-
-    SqlFeatureSupports()
-    {
-        this.supports = false;
-    }
+    /**
+     * The feature name
+     * @return name of feature
+     */
+    String name();
     
-    public boolean supports()
-    {
-        return supports;
-    }
+    /**
+     * The feature name
+     * @return name of feature
+     */
+    SqlFeatureSupport getSqlFeature();
+    
 }

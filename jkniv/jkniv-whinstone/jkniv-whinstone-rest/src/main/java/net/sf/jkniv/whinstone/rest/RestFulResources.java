@@ -380,6 +380,7 @@ public class RestFulResources extends BaseResource
      * </ul>
      * @param ctx context name for Sql Context
      * @param q queryable name
+     * @param ui provides access to application and request URI information
      * @param body request information using json
      * @return <code>HTTP 200 OK</code>, <code>HTTP 204 No Content</code> or <code>HTTP 409 Conflict</code> with
      * number of rows affected by update command.

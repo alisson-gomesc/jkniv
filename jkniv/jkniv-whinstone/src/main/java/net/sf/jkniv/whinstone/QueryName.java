@@ -33,6 +33,7 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.reflect.BasicType;
 import net.sf.jkniv.sqlegance.Sql;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.params.ParamParser;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
@@ -479,7 +480,7 @@ class QueryName implements Queryable
         if (pagingSelect)
         {
             this.sqlTextToCount = this.sql.getSqlDialect().buildQueryCount(sqlText);
-            if (sql.getSqlDialect().supportsLimit() && this.sqlTextPaginated == null)// TODO test paginate
+            if (sql.getSqlDialect().supportsFeature(SqlFeatureSupport.LIMIT) && this.sqlTextPaginated == null)// TODO test paginate
                 throw new IllegalStateException("SqlDialect [" + sql.getSqlDialect().name()
                         + "] supports paging query but the query cannot be build");
         }

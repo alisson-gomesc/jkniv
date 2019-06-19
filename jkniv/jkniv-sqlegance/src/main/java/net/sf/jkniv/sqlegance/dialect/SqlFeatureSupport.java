@@ -1,5 +1,5 @@
 /* 
- * JKNIV, whinstone one contract to access your database.
+ * JKNIV, SQLegance keeping queries maintainable.
  * 
  * Copyright (C) 2017, the original author or authors.
  *
@@ -17,31 +17,29 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.dialect;
-
-import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
-import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
-import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
+package net.sf.jkniv.sqlegance.dialect;
 
 /**
- * Dialect to Derby version 10.4
+ * TODO how is the better way to implements Generic verification for Features Supports for Database Dialect?
  * 
- * <ul>
- *  <li>Supports limits? false</li>
- *  <li>Supports limit off set? false</li>
- *  <li>Supports rownum? true</li>
- * </ul>
- *
  * @author Alisson Gomes
- *
+ * @since 0.6.0
  */
-public class Derby10o4Dialect extends AnsiDialect
+public enum SqlFeatureSupport
 {
-    public Derby10o4Dialect()
-    {
-        super();
-        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, false));
-        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, false));
-        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.ROWNUM, true));
-    }
+    UNKNOW,
+    /** Native syntax of SQL vendor support some form of limiting query results? */
+    LIMIT,
+    /** Native syntax of SQL vendor support some form of offset query results? */
+    LIMIT_OFF_SET,
+    /** Native syntax of SQL vendor support some form of enumerate the rows results? */
+    ROWNUM,
+    /** supports holdability at the connection level */
+    CONN_HOLDABILITY,
+    /** supports holdability at the statement level */
+    STMT_HOLDABILITY,
+    //SET_HOLDABILITY,
+    //CLOSE_CURSORS_AT_COMMIT
+    ;
+    
 }

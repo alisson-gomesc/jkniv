@@ -20,6 +20,8 @@
 package net.sf.jkniv.whinstone.jdbc.dialect;
 
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 
 /**
  * Dialect to INFORMIX
@@ -42,23 +44,8 @@ public class InformixDialect extends AnsiDialect
     public InformixDialect()
     {
         super();
-    }
-    
-//    public InformixDialect(Queryable queryable)
-//    {
-//        super(queryable);
-//    }
-    
-    @Override
-    public boolean supportsLimit()
-    {
-        return true;
-    }
-    
-    @Override
-    public boolean supportsLimitOffset()
-    {
-        return true;
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, true));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, true));    
     }
     
     /**
@@ -86,7 +73,7 @@ public class InformixDialect extends AnsiDialect
             //this.sql = queryable.getSql().getSql(queryable.getParams());
             String pagingSelect = getSqlPatternPaging();
             String sqlPreparedToSkip = sqlText.replaceFirst("select", "");
-            if (supportsLimitOffset())
+            if (supportsFeature(SqlFeatureSupport.LIMIT_OFF_SET))
                 sqlTextPaginated = String.format(pagingSelect, sqlPreparedToSkip, max,
                         offset);
             else

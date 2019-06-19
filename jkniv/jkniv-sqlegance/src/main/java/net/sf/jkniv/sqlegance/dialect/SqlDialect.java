@@ -43,35 +43,62 @@ public interface SqlDialect
      */
     String name();
     
-    /**
+    /*
      * Native syntax of SQL vendor support some form of limiting query results?
      *
      * @return <strong>True</strong> if this dialect supports some form of LIMIT, <strong>false</strong> otherwise.
-     */
+     *
     boolean supportsLimit();
     
-    /**
+    /*
      * Native syntax of SQL vendor support some form of offset query results?
      *
      * @return <strong>True</strong> if this dialect supports some form of OFFSET, <strong>false</strong> otherwise.
-     */
+     *
     boolean supportsLimitOffset();
     
-    /**
+    /*
      * Native syntax of SQL vendor support some form of enumerate the rows results?
      *
      * @return <strong>True</strong> if this dialect supports some form of ROWNUM, <strong>false</strong> otherwise.
-     */
+     *
     boolean supportsRownum();
     
-    //boolean supportsFeature(SqlFeatureSupports feature);
+
+    // SQL Server supports holdability at the connection level only. Use the connection.setHoldability() method. 
+    boolean supportsStmtHoldability();
+    
+    boolean supportsConnHoldability();
+    */
+    boolean supportsFeature(SqlFeatureSupport feature);
+    /*
+    Associates the specified value with the specified key in this map. 
+    If the map previously contained a mapping for the key, the old value is replaced.
+
+    Specified by: put(...) in Map, Overrides: put(...) in AbstractMap
+    Parameters:key key with which the specified value is to be associatedvalue 
+    value to be associated with the specified key
+    Returns:the previous value associated with key, or null if there was no mapping for key. (A null return can also indicate that the map previously associated null with key.)
+    */
+    /**
+     * Override a SQL ANSI feature
+     * @param sqlFeature override a {@link SqlFeature} supports.
+     * @return the previous value associated with key {@code sqlFeature}
+     */
+    SqlFeature addFeature(SqlFeature sqlFeature);
     
     /**
      * Return the limit of elements in an {@code INPUT} parameter the database supports.
      *
      * @return the limit of parameters from statement, default is a big number {@code Integer.MAX_VALUE}
      */
-    int getLimitOfParameters();
+    int getMaxOfParameters();
+    
+    /**
+     * Max number of parameters supported by JDBC driver
+     * @param max maximum value of parameter in the query
+     */
+    void setMaxOfParameters(int max);
     
     String getSqlPatternCount();
     
@@ -94,11 +121,6 @@ public interface SqlDialect
 //    Object[] getParamsValues();
     
 //    void setQueryable(Queryable queryable);
-    
-    /* SQL Server supports holdability at the connection level only. Use the connection.setHoldability() method. */
-    boolean supportsStmtHoldability();
-    
-    boolean supportsConnHoldability();
     
     /**
      * Build a paginate query accordingly data base dialect

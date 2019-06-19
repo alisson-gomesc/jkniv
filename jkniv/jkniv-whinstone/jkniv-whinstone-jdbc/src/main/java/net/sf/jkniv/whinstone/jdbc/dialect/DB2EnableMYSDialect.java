@@ -20,6 +20,8 @@
 package net.sf.jkniv.whinstone.jdbc.dialect;
 
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 
 /**
  * Dialect to DB2 with compatibility features for MySQL applications.
@@ -61,20 +63,10 @@ public class DB2EnableMYSDialect extends AnsiDialect
     public DB2EnableMYSDialect()
     {
         super();
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, true));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, true));
     }
         
-    @Override
-    public boolean supportsLimit()
-    {
-        return true;
-    }
-    
-    @Override
-    public boolean supportsLimitOffset()
-    {
-        return true;
-    }
-    
     /**
      *  LIMIT and OFFSET clause for DB2 with DB2_COMPATIBILITY_VECTOR=MYS enabled, 
      *  where LIMIT and OFFSET are parameter from String.format

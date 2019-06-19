@@ -22,6 +22,8 @@ package net.sf.jkniv.whinstone.jdbc.dialect;
 import java.util.regex.Matcher;
 
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 
 /**
  * Default dialect do Oracle
@@ -50,12 +52,15 @@ public class OracleDialect extends AnsiDialect
     public OracleDialect()
     {
         super();
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, true));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, true));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.ROWNUM, true));
     }
         
-    /**
+    /*
      * Support LIMIT using rownum. Native clause not exists.
      * @return supported by Oracle
-     */
+     *
     @Override
     public boolean supportsLimit()
     {
@@ -65,7 +70,7 @@ public class OracleDialect extends AnsiDialect
     /**
      * Support OFFSET using rownum. Native clause not exists.
      * @return supported by Oracle
-     */
+     *
     @Override
     public boolean supportsLimitOffset()
     {
@@ -75,15 +80,16 @@ public class OracleDialect extends AnsiDialect
     /**
      * Supports ROWNUM at query statement
      * @return supported by Oracle
-     */
+     *
     @Override
     public boolean supportsRownum()
     {
         return true;
     }
+    */
     
     @Override
-    public int getLimitOfParameters()
+    public int getMaxOfParameters()
     {
         return 1000;
     }
@@ -111,7 +117,7 @@ public class OracleDialect extends AnsiDialect
     public String buildQueryPaging(final String sqlText, int offset, int max)
     {
         String sqlTextPaginated = null;
-        if (supportsLimit())
+        if (supportsFeature(SqlFeatureSupport.LIMIT))
         {
             String pagingSelect = getSqlPatternPaging();
             Matcher matcher = sqlEndWithForUpdate(sqlText);

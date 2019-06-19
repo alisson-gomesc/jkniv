@@ -29,6 +29,7 @@ import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.SqlDialectAbstractTest;
 
@@ -103,7 +104,7 @@ public class AnsiDialectTest extends SqlDialectAbstractTest
     public void whenDatabaseSupportLimit()
     {
         Queryable q = newQueryable(getQueryName(),getSql(SQL_SELECT, SqlType.SELECT));
-        assertThat(q.getDynamicSql().getSqlDialect().supportsLimit(), is(false));
+        assertThat(q.getDynamicSql().getSqlDialect().supportsFeature(SqlFeatureSupport.LIMIT), is(false));
     }
 
     @Test
@@ -111,7 +112,7 @@ public class AnsiDialectTest extends SqlDialectAbstractTest
     public void whenDatabaseSupportOffset()
     {
         Queryable q = newQueryable(getQueryName(),getSql(SQL_SELECT, SqlType.SELECT));
-        assertThat(q.getDynamicSql().getSqlDialect().supportsLimitOffset(), is(false));
+        assertThat(q.getDynamicSql().getSqlDialect().supportsFeature(SqlFeatureSupport.LIMIT_OFF_SET), is(false));
     }
 
     @Test
@@ -119,7 +120,7 @@ public class AnsiDialectTest extends SqlDialectAbstractTest
     public void whenDatabaseSupportRownum()
     {
         Queryable q = newQueryable(getQueryName(),getSql(SQL_SELECT, SqlType.SELECT));
-        assertThat(q.getDynamicSql().getSqlDialect().supportsRownum(), is(false));
+        assertThat(q.getDynamicSql().getSqlDialect().supportsFeature(SqlFeatureSupport.ROWNUM), is(false));
     }
 
     @Test

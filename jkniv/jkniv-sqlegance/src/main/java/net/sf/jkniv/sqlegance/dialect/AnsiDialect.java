@@ -21,8 +21,8 @@ package net.sf.jkniv.sqlegance.dialect;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,9 +31,6 @@ import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Sql;
-import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
-import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
-import net.sf.jkniv.sqlegance.statement.ResultSetType;
 
 /**
  * Represents the support from SQL ANSI that are queries cross-platform.
@@ -81,6 +78,8 @@ public class AnsiDialect implements SqlDialect
             Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
     protected String             name;
+    private final HashMap<SqlFeatureSupport, SqlFeature>      sqlFeatures;
+    private int maxOfParameters;
     //protected Queryable          queryable;
     //protected String             sql;
     //protected String             sqlWithLimit;
@@ -91,6 +90,13 @@ public class AnsiDialect implements SqlDialect
     public AnsiDialect()
     {
         this.name = getClass().getSimpleName();
+        this.sqlFeatures = new HashMap<SqlFeatureSupport, SqlFeature>();
+        this.sqlFeatures.put(SqlFeatureSupport.LIMIT, SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT));
+        this.sqlFeatures.put(SqlFeatureSupport.LIMIT_OFF_SET, SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET));
+        this.sqlFeatures.put(SqlFeatureSupport.ROWNUM, SqlFeatureFactory.newInstance(SqlFeatureSupport.ROWNUM));
+        this.sqlFeatures.put(SqlFeatureSupport.STMT_HOLDABILITY, SqlFeatureFactory.newInstance(SqlFeatureSupport.STMT_HOLDABILITY));
+        this.sqlFeatures.put(SqlFeatureSupport.CONN_HOLDABILITY, SqlFeatureFactory.newInstance(SqlFeatureSupport.CONN_HOLDABILITY, true));
+        this.maxOfParameters = Integer.MAX_VALUE;
         //this.countParams = 0;
     }
     
@@ -115,12 +121,24 @@ public class AnsiDialect implements SqlDialect
         return this.name;
     }
     
-//    @Override
-//    public boolean supportsFeature(SqlFeatureSupports feature)
-//    {
-//        return feature.supports();
-//    }
+    @Override
+    public boolean supportsFeature(SqlFeatureSupport feature)
+    {
+        boolean answer = false;
+        
+        SqlFeature sqlFeature = sqlFeatures.get(feature);
+        if(sqlFeature != null)
+            answer = sqlFeature.supports();
+                
+        return answer;
+    }
     
+    @Override
+    public SqlFeature addFeature(SqlFeature sqlFeature) 
+    {
+        return this.sqlFeatures.put(sqlFeature.getSqlFeature(), sqlFeature);
+    }
+    /*
     @Override
     public boolean supportsLimit()
     {
@@ -139,10 +157,30 @@ public class AnsiDialect implements SqlDialect
         return false;
     }
     
+
     @Override
-    public int getLimitOfParameters()
+    public boolean supportsStmtHoldability()
     {
-        return Integer.MAX_VALUE;
+        return false;
+    }
+
+    @Override
+    public boolean supportsConnHoldability()
+    {
+        return true;
+    }
+    */
+    @Override
+    public int getMaxOfParameters()
+    {
+        return maxOfParameters;
+    }
+    
+    @Override
+    public void setMaxOfParameters(int max)
+    {
+        if (max > 0)
+            this.maxOfParameters = max;
     }
 
     @Override
@@ -155,10 +193,10 @@ public class AnsiDialect implements SqlDialect
     public String getSqlPatternPaging()
     {
         String pattern = "%1$s";
-        if (supportsLimit())
+        if (supportsFeature(SqlFeatureSupport.LIMIT))
         {
             pattern += " LIMIT %2$s";
-            if (supportsLimitOffset())
+            if (supportsFeature(SqlFeatureSupport.LIMIT_OFF_SET))
                 pattern += ", %3$s";
         }
         return pattern;//%1$s LIMIT %2$s, %3$s
@@ -215,18 +253,6 @@ public class AnsiDialect implements SqlDialect
 //    }
 
     @Override
-    public boolean supportsStmtHoldability()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean supportsConnHoldability()
-    {
-        return true;
-    }
-    
-    @Override
     public PreparedStatement prepare(Connection conn, Sql isql, String query)
     {
         PreparedStatement stmt = null;
@@ -246,13 +272,13 @@ public class AnsiDialect implements SqlDialect
             }
             if (stmt == null)
             {
-                if (supportsStmtHoldability())
+                if (supportsFeature(SqlFeatureSupport.STMT_HOLDABILITY))
                     stmt = conn.prepareStatement(query, rsType, rsConcurrency, rsHoldability);
                 else
                 {
                     // SQLServer doesn't support Holdability
                     stmt = conn.prepareStatement(query, rsType, rsConcurrency);
-                    if (supportsConnHoldability())
+                    if (supportsFeature(SqlFeatureSupport.CONN_HOLDABILITY))
                         conn.setHoldability(rsHoldability);
                 }
             }
@@ -271,7 +297,7 @@ public class AnsiDialect implements SqlDialect
     public String buildQueryPaging(final String sqlText, int offset, int max)
     {
         String sqlTextPaginated = null;
-        if (supportsLimit())
+        if (supportsFeature(SqlFeatureSupport.LIMIT))
         {
             String pagingSelectTemplate = getSqlPatternPaging();
             //sqlText = queryable.getSql().getSql(queryable.getParams());
@@ -284,7 +310,7 @@ public class AnsiDialect implements SqlDialect
                 forUpdate = sqlText.substring(matcher.start(), matcher.end());// select name from author ^for update^
                 sqlTextWithouForUpdate = sqlText.substring(0, matcher.start());// ^select name from author^ for update
             }
-            if (supportsLimitOffset())
+            if (supportsFeature(SqlFeatureSupport.LIMIT_OFF_SET))
                 sqlTextPaginated = String.format(pagingSelectTemplate, sqlTextWithouForUpdate, max, offset) + forUpdate;
             else
                 sqlTextPaginated = String.format(pagingSelectTemplate, sqlTextWithouForUpdate, max) + forUpdate;

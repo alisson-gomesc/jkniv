@@ -20,6 +20,8 @@
 package net.sf.jkniv.whinstone.jdbc.dialect;
 
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 
 /**
  *  Dialect to HSQLDB
@@ -43,25 +45,10 @@ public class HsqldbDialect extends AnsiDialect
     public HsqldbDialect()
     {
         super();
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, true));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, true));
     }
     
-//    public HsqldbDialect(Queryable queryable)
-//    {
-//        super(queryable);
-//    }
-
-    @Override
-    public boolean supportsLimit()
-    {
-        return true;
-    }
-
-    @Override
-    public boolean supportsLimitOffset()
-    {
-        return true;
-    }
-
     /**
      *  LIMIT and OFFSET clause for HSQLDB, where LIMIT and OFFSET are parameter from
      *  String.format

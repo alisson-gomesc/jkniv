@@ -20,6 +20,8 @@
 package net.sf.jkniv.whinstone.jdbc.dialect;
 
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 
 /**
  * Dialect to MYSQL
@@ -44,13 +46,11 @@ public class MySqlDialect extends AnsiDialect
     public MySqlDialect()
     {
         super();
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, true));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, true));
     }
-    
-//    public MySqlDialect(Queryable queryable)
-//    {
-//        super(queryable);
-//    }
-    
+
+    /*
     @Override
     public boolean supportsLimit()
     {
@@ -62,6 +62,7 @@ public class MySqlDialect extends AnsiDialect
     {
         return true;
     }
+    */
     
     /**
      *  LIMIT and OFFSET clause for MySQL, where LIMIT and OFFSET are parameter from

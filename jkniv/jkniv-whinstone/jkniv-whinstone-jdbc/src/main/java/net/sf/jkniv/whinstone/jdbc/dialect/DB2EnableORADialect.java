@@ -22,6 +22,8 @@ package net.sf.jkniv.whinstone.jdbc.dialect;
 import java.util.regex.Matcher;
 
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 
 /**
  * Dialect to DB2 with compatibility features for Oracle applications.
@@ -66,38 +68,15 @@ public class DB2EnableORADialect extends AnsiDialect
     public DB2EnableORADialect()
     {
         super();
-    }
-    
-    /**
-     * Support LIMIT using rownum. Native clause not exists.
-     */
-    @Override
-    public boolean supportsLimit()
-    {
-        return true;
-    }
-    
-    /**
-     * Support LIMIT using rownum. Native clause not exists.
-     */
-    @Override
-    public boolean supportsLimitOffset()
-    {
-        return true;
-    }
-    
-    /**
-     * To support rownum DB2_COMPATIBILITY_VECTOR must be enable.
-     * <code>
-     *  db2set DB2_COMPATIBILITY_VECTOR=ORA
-     *  db2stop
-     *  db2start
-     *  </code>
-     */
-    @Override
-    public boolean supportsRownum()
-    {
-        return true;
+        // Support LIMIT using rownum. Native clause not exists.
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, true));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, true));
+        //* To support rownum DB2_COMPATIBILITY_VECTOR must be enable.
+        //* <code>
+        //*  db2set DB2_COMPATIBILITY_VECTOR=ORA
+        //*  db2stop
+        //*  db2start
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.ROWNUM, true));
     }
     
     /**
@@ -119,7 +98,7 @@ public class DB2EnableORADialect extends AnsiDialect
     public String buildQueryPaging(final String sqlText, int offset, int max)
     {
         String sqlTextPaginated = null;
-        if (supportsLimit())
+        if (supportsFeature(SqlFeatureSupport.LIMIT))
         {
             String pagingSelect = getSqlPatternPaging();
             //sqlText = queryable.getSql().getSql(queryable.getParams());

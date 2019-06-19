@@ -20,21 +20,18 @@
 package net.sf.jkniv.whinstone.couchdb.dialect;
 
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.params.ParameterException;
 
 public class CouchDbDialect20 extends AnsiDialect
 {
-    @Override
-    public boolean supportsLimit()
+    public CouchDbDialect20()
     {
-        return true;
-    }
-    
-    @Override
-    public boolean supportsLimitOffset()
-    {
-        return true;
+        super();
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, true));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, true));
     }
     
     @Override

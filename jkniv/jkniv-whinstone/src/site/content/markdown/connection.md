@@ -116,3 +116,32 @@ A `repository-config.xml` is like a `persistence.xml` for JPA that define one or
 | SQLServer   | net.sf.jkniv.whinstone.jdbc.dialect.SqlServerDialect |
 | CouchDB     | net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect |
 
+
+### Override dialect properties
+
+Some dialect properties can be override to adapt the jdbc driver characteristics: 
+
+    <repository name="dialect-override" transaction-type="LOCAL">
+      <description>My jdbc datasource config overriding dialect</description>
+      <jndi-data-source>jdbc/dssample</jndi-data-source>
+      <properties>
+        <property name="jkniv.repository.limit" value="true"/>
+        <property name="jkniv.repository.limit_off_set" value="false"/>
+        <property name="jkniv.repository.rownum" value="true"/>
+        <property name="jkniv.repository.conn_holdability" value="false"/>
+        <property name="jkniv.repository.stmt_holdability" value="true"/>
+        <property name="jkniv.repository.jdbc.max_parameters" value="255"/>
+      </properties>
+    </repository>
+    
+    
+|Property | Type   | Default | Description |
+|---------|--------|-------|-------------|
+|limit    | boolean|`false` | SQL vendor support some form of limiting query results?|
+|limit_off_set | boolean| `false`|SQL vendor support some form of offset query results?| 
+|rownum| boolean| `false` |SQL vendor support some form of enumerate the rows results? | 
+|conn_holdability| boolean|`true`|supports holdability at the connection level |
+|stmt_holdability| boolean|`false`|supports holdability at the statement level  |
+|max_parameters |int|2147483647|  maximum number of parameters, any int value greater than 0 |
+
+

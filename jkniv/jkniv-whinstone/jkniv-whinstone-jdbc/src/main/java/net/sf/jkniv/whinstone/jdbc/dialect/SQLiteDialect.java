@@ -20,6 +20,8 @@
 package net.sf.jkniv.whinstone.jdbc.dialect;
 
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 
 /**
  * Dialect to SQLite
@@ -43,23 +45,8 @@ public class SQLiteDialect extends AnsiDialect
     public SQLiteDialect()
     {
         super();
-    }
-    
-//    public SQLiteDialect(Queryable queryable)
-//    {
-//        super(queryable);
-//    }
-    
-    @Override
-    public boolean supportsLimit()
-    {
-        return true;
-    }
-    
-    @Override
-    public boolean supportsLimitOffset()
-    {
-        return true;
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, true));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, true));
     }
     
     /**

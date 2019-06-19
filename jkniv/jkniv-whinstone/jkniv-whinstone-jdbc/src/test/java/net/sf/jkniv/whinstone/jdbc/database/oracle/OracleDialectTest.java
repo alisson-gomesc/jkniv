@@ -29,6 +29,7 @@ import org.junit.Test;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.jdbc.dialect.Oracle12cDialect;
 import net.sf.jkniv.whinstone.jdbc.dialect.OracleDialect;
@@ -118,7 +119,7 @@ public class OracleDialectTest extends SqlDialectAbstractTest
     public void whenDatabaseSupportLimit()
     {
         Queryable q = newQueryable(getQueryName(),getSql(SQL_SELECT, SqlType.SELECT));
-        assertThat(q.getDynamicSql().getSqlDialect().supportsLimit(), is(true));
+        assertThat(q.getDynamicSql().getSqlDialect().supportsFeature(SqlFeatureSupport.LIMIT), is(true));
     }
     
     @Test
@@ -126,7 +127,7 @@ public class OracleDialectTest extends SqlDialectAbstractTest
     public void whenDatabaseSupportOffset()
     {
         Queryable q = newQueryable(getQueryName(),getSql(SQL_SELECT, SqlType.SELECT));
-        assertThat(q.getDynamicSql().getSqlDialect().supportsLimitOffset(), is(true));
+        assertThat(q.getDynamicSql().getSqlDialect().supportsFeature(SqlFeatureSupport.LIMIT_OFF_SET), is(true));
     }
     
     @Test
@@ -134,7 +135,7 @@ public class OracleDialectTest extends SqlDialectAbstractTest
     public void whenDatabaseSupportRownum()
     {
         Queryable q = newQueryable(getQueryName(),getSql(SQL_SELECT, SqlType.SELECT));
-        assertThat(q.getDynamicSql().getSqlDialect().supportsRownum(), is(true));
+        assertThat(q.getDynamicSql().getSqlDialect().supportsFeature(SqlFeatureSupport.ROWNUM), is(true));
     }
     
     @Test
@@ -161,8 +162,24 @@ public class OracleDialectTest extends SqlDialectAbstractTest
     {
         SqlDialect ora = new OracleDialect();
         SqlDialect ora12 = new Oracle12cDialect();
-        assertThat(ora.supportsLimit(), is(true));
-        assertThat(ora12.supportsLimit(), is(true));
+        
+        assertThat(ora.getMaxOfParameters(), is(1000));
+        assertThat(ora12.getMaxOfParameters(), is(1000));
+        
+        assertThat(ora.supportsFeature(SqlFeatureSupport.LIMIT), is(true));
+        assertThat(ora12.supportsFeature(SqlFeatureSupport.LIMIT), is(true));
+
+        assertThat(ora.supportsFeature(SqlFeatureSupport.LIMIT_OFF_SET), is(true));
+        assertThat(ora12.supportsFeature(SqlFeatureSupport.LIMIT_OFF_SET), is(true));
+
+        assertThat(ora.supportsFeature(SqlFeatureSupport.ROWNUM), is(true));
+        assertThat(ora12.supportsFeature(SqlFeatureSupport.ROWNUM), is(true));
+
+        assertThat(ora.supportsFeature(SqlFeatureSupport.STMT_HOLDABILITY), is(false));
+        assertThat(ora12.supportsFeature(SqlFeatureSupport.STMT_HOLDABILITY), is(false));
+        
+        assertThat(ora.supportsFeature(SqlFeatureSupport.CONN_HOLDABILITY), is(true));
+        assertThat(ora12.supportsFeature(SqlFeatureSupport.CONN_HOLDABILITY), is(false));
     }
 
 }

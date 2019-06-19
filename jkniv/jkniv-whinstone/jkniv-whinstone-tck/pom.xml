@@ -84,10 +84,6 @@
       </plugin>
     </plugins>
   </build>
-  <scm>
-    <connection>scm:git:git://github.com/alisson-gomesc/jkniv</connection>
-    <url>https://github.com/alisson-gomesc/jkniv.git</url>
-  </scm>
   <licenses>
     <license>
       <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1</name>

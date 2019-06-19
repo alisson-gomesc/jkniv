@@ -26,6 +26,8 @@ import java.sql.SQLException;
 import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Sql;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 
 /**
  * Default dialect do Oracle
@@ -54,21 +56,16 @@ public class Oracle12cDialect extends OracleDialect
     public Oracle12cDialect()
     {
         super();
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.CONN_HOLDABILITY, false));
     }
 
-    @Override
-    public boolean supportsConnHoldability()
-    {
-        return false;
-    }
-    
     @Override
     public PreparedStatement prepare(Connection conn, Sql isql, String query)
     {
         PreparedStatement stmt = null;
         int rsType = isql.getResultSetType().getTypeScroll();
         int rsConcurrency = isql.getResultSetConcurrency().getConcurrencyMode();
-        int rsHoldability = isql.getResultSetHoldability().getHoldability();
+        //int rsHoldability = isql.getResultSetHoldability().getHoldability();
         try
         {            
             if (isql.isInsertable())

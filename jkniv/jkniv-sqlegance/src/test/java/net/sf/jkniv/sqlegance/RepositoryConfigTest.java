@@ -34,6 +34,7 @@ import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.sqlegance.builder.xml.NoSqlStats;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.sqlegance.logger.SimpleDataMasking;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
 
@@ -120,5 +121,31 @@ public class RepositoryConfigTest
         assertThat(config.getSqlDialect(), instanceOf(AnsiDialect.class));
         assertThat(config.getStatistical(), instanceOf(Statistical.class));
         assertThat(config.getStatistical(), instanceOf(NoSqlStats.class));
+        
+        assertThat(config.getSqlDialect().getMaxOfParameters(), is(Integer.MAX_VALUE));
+        assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.UNKNOW), is(false));
+        assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.LIMIT), is(false));
+        assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.LIMIT_OFF_SET), is(false));
+        assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.ROWNUM), is(false));
+        assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.CONN_HOLDABILITY), is(true));
+        assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.STMT_HOLDABILITY), is(false));
+    }
+    
+    @Test
+    public void whenRepositoryConfigOverrideSqlFeatureSupport()
+    {
+        RepositoryConfig config = new RepositoryConfig("dialect-override");
+        assertThat(config.getName(), is("dialect-override"));
+        assertThat(config.getDescription(), is("My jdbc datasource config overriding dialect"));
+        assertThat(config.getJndiDataSource(), is("jdbc/dssample"));
+
+        assertThat(config.getSqlDialect().getMaxOfParameters(), is(255));
+
+        assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.UNKNOW), is(true));
+        assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.LIMIT), is(true));
+        assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.LIMIT_OFF_SET), is(false));
+        assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.ROWNUM), is(true));
+        assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.CONN_HOLDABILITY), is(false));
+        assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.STMT_HOLDABILITY), is(true));
     }
 }

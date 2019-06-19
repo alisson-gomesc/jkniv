@@ -78,35 +78,35 @@ public enum RepositoryProperty
 
     /** property: <code>jkniv.repository.query_namestrategy</code> */
     QUERY_NAME_STRATEGY {
-        public String key() { return "jkniv.repository.query_namestrategy"; }
+        public String key() { return PREFIX+".query_namestrategy"; }
         
         public String defaultValue() { return "net.sf.jkniv.sqlegance.HashQueryNameStrategy"; }
     },
 
     /** property: <code>jkniv.repository.jdbc.dialect</code> */
     SQL_DIALECT {
-        public String key() { return "jkniv.repository.jdbc.dialect"; }
+        public String key() { return PREFIX+".jdbc.dialect"; }
         
         public String defaultValue() { return "net.sf.jkniv.sqlegance.dialect.AnsiDialect"; }
     },
 
-    /** property: <code>jkniv.repository.jdbc.dialect</code> */
+    /** property: <code>jkniv.repository.stats</code> */
     SQL_STATS {
-        public String key() { return "jkniv.repository.stats"; }
+        public String key() { return PREFIX+".stats"; }
         
         public String defaultValue() { return "false"; }
     },
 
     /** property: <code>jkniv.repository.debug_sql</code> */
     DEBUG_SQL {
-        public String key() { return "jkniv.repository.debug_sql"; }
+        public String key() { return PREFIX+".debug_sql"; }
         
         public String defaultValue() { return "NONE"; }
     },
 
     /** property: <code>jkniv.repository.data_masking</code> */
     DATA_MASKING {
-        public String key() { return "jkniv.repository.data_masking"; }
+        public String key() { return PREFIX+".data_masking"; }
         
         public String defaultValue() { return "net.sf.jkniv.sqlegance.logger.SimpleDataMasking"; }
     },
@@ -117,7 +117,7 @@ public enum RepositoryProperty
      *  Default is <b>false</b>.
      * property: <code>jkniv.repository.short_name_enable</code> */
     SHORT_NAME_ENABLE {
-        public String key() { return "jkniv.repository.short_name_enable"; }
+        public String key() { return PREFIX+".short_name_enable"; }
         
         public String defaultValue() { return "false"; }
     },
@@ -127,7 +127,7 @@ public enum RepositoryProperty
      *  Default is <b>false</b>.
      * property: <code>jkniv.repository.reloadable_xml_enable</code> */
     RELOADABLE_XML_ENABLE {
-        public String key() { return "jkniv.repository.reloadable_xml_enable"; }
+        public String key() { return PREFIX+".reloadable_xml_enable"; }
         
         public String defaultValue() { return "false"; }
     },
@@ -147,14 +147,14 @@ public enum RepositoryProperty
 
     /** property: <code>jkniv.repository.jdbc_adapter_factory</code>, default value is: <code>null</code> */
     JDBC_ADAPTER_FACTORY {
-        public String key() { return "jkniv.repository.jdbc_adapter_factory"; }
+        public String key() { return PREFIX+".jdbc_adapter_factory"; }
         
         public String defaultValue() { return null; }
     },
     
     /** property: <code>jkniv.repository.show_config</code> */
     SHOW_CONFIG {
-        public String key() { return "jkniv.repository.show_config"; }
+        public String key() { return PREFIX+".show_config"; }
         
         public String defaultValue() { return "false"; }
     },
@@ -171,4 +171,6 @@ public enum RepositoryProperty
     public abstract String key();
     
     public abstract String defaultValue();
+    
+    public static final String PREFIX = "jkniv.repository";
 }
