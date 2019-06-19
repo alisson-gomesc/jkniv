@@ -101,6 +101,7 @@ A `repository-config.xml` is like a `persistence.xml` for JPA that define one or
   
 |Database     | Dialect           |
 | ----------- | ----------------- |
+| CouchDB     | net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect |
 | DB2         | net.sf.jkniv.whinstone.jdbc.dialect.DB2Dialect |
 | DB2 compatibility MySQL | net.sf.jkniv.whinstone.jdbc.dialect.DB2EnableMYSDialect | 
 | DB2 compatibility Oracle | net.sf.jkniv.whinstone.jdbc.dialect.DB2EnableORADialect |
@@ -111,10 +112,10 @@ A `repository-config.xml` is like a `persistence.xml` for JPA that define one or
 | Ingres      | net.sf.jkniv.whinstone.jdbc.dialect.IngresDialect |
 | MySQL       | net.sf.jkniv.whinstone.jdbc.dialect.MySqlDialect |
 | Oracle      | net.sf.jkniv.whinstone.jdbc.dialect.OracleDialect |
+| Oracle 12   | net.sf.jkniv.whinstone.jdbc.dialect.Oracle12cDialect |
 | PostgreSQL  | net.sf.jkniv.whinstone.jdbc.dialect.PostgreSqlDialect |
 | SQLite      | net.sf.jkniv.whinstone.jdbc.dialect.SQLiteDialect |
 | SQLServer   | net.sf.jkniv.whinstone.jdbc.dialect.SqlServerDialect |
-| CouchDB     | net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect |
 
 
 ### Override dialect properties
