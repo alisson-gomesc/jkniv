@@ -25,20 +25,16 @@ import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.cassandra.statement.CassandraStatementAdapter;
 
-@SuppressWarnings("unchecked")
-public class SelectCommand implements Command
+public class DefaultCommand implements Command
 {
-    //private static final Logger LOG = LoggerFactory.getLogger(SelectCommand.class);
-    //private String body;
+    //private static final Logger                  LOG = LoggerFactory.getLogger(DeleteCommand.class);
     private CassandraStatementAdapter<?, String> stmt;
-    //private Queryable queryable;
     
-    public SelectCommand(CassandraStatementAdapter<?, String> stmt, Queryable queryable)
+    public DefaultCommand(CassandraStatementAdapter<?, String> stmt, Queryable queryable)
     {
         super();
-        //this.queryable = queryable;
         this.stmt = stmt;
-        //stmt.rows();
+        queryable.bind(stmt).on();
     }
     
     @Override
@@ -46,19 +42,19 @@ public class SelectCommand implements Command
     {
         return this;
     }
-
+    
     @Override
     public Command with(CommandHandler commandHandler)
     {
         return this;
     }
-
+    
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T execute()
     {
-        T list = (T) stmt.rows();
-      return list;
+        Integer rows = stmt.execute();
+        return (T) rows;
     }
-    
     
 }

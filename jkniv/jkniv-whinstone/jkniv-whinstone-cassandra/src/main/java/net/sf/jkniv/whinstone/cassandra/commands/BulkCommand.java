@@ -25,15 +25,18 @@ import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.cassandra.statement.CassandraStatementAdapter;
 
-public class DeleteCommand implements Command
+public class BulkCommand implements Command
 {
     //private static final Logger                  LOG = LoggerFactory.getLogger(DeleteCommand.class);
     private CassandraStatementAdapter<?, String> stmt;
+    private Queryable queryable;
     
-    public DeleteCommand(CassandraStatementAdapter<?, String> stmt, Queryable queryable)
+    public BulkCommand(CassandraStatementAdapter<?, String> stmt, Queryable queryable)
     {
         super();
         this.stmt = stmt;
+        this.queryable = queryable;
+        queryable.bind(stmt).onBatch();
     }
     
     @Override

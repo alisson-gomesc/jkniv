@@ -229,6 +229,7 @@ class RepositoryCassandra implements Repository
     }
     
     @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public <T> T scalar(Queryable queryable)
     {
         NOT_NULL.verify(queryable);

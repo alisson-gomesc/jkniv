@@ -54,7 +54,17 @@ public class SqlSelectTest extends BaseJdbc
 
     @Autowired
     Repository repositoryDerby;
-    
+
+    @Test 
+    public void whenSelectGetEntity()
+    {
+        FlatBook fb = new FlatBook();
+        fb.setIsbn("9788535920598");
+        FlatBook flatBook = repositoryDerby.get(fb);
+        assertThat(flatBook, instanceOf(FlatBook.class));
+        assertThat(flatBook.getName(), is("Claro Enigma"));
+    }
+
     @Test @Ignore("mockito")
     public void whenSelectWrongClassType()
     {
