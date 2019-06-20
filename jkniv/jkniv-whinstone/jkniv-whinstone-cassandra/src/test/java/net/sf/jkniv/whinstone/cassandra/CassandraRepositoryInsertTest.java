@@ -21,33 +21,29 @@ package net.sf.jkniv.whinstone.cassandra;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
-import static org.hamcrest.Matchers.*;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
-import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
-import net.sf.jkniv.whinstone.cassandra.result.CustomResultRow;
 
 public class CassandraRepositoryInsertTest extends BaseJdbc
 {
-    @Autowired
-    Repository repository;
+    //@Autowired
+    //Repository repository;
     Object[]   params =
     { "k001", new Date(), "CAR001", 20.000001F, -88.000001F, 2 };
     // (my_key,evt_date,object_id, lat, lng, warn)

@@ -62,7 +62,7 @@ class PositionalCollectionParams extends AbstractParam implements AutoBindParams
     }
     
     @Override
-    public int onBatch()
+    public int onBulk()
     {
         on();
         return stmtAdapter.execute();

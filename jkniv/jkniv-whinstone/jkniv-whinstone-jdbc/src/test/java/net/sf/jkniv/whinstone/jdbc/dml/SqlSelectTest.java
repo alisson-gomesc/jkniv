@@ -37,6 +37,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import net.sf.jkniv.sqlegance.QueryNotFoundException;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
@@ -46,6 +47,7 @@ import net.sf.jkniv.whinstone.jdbc.CustomResultRow;
 import net.sf.jkniv.whinstone.jdbc.domain.acme.Book;
 import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatAuthor;
 import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook;
+import net.sf.jkniv.whinstone.jdbc.domain.bank.Account;
 
 public class SqlSelectTest extends BaseJdbc
 {
@@ -63,6 +65,38 @@ public class SqlSelectTest extends BaseJdbc
         FlatBook flatBook = repositoryDerby.get(fb);
         assertThat(flatBook, instanceOf(FlatBook.class));
         assertThat(flatBook.getName(), is("Claro Enigma"));
+    }
+
+    @Test 
+    public void whenSelectGetEntityNotFound()
+    {
+        catcher.expect(QueryNotFoundException.class);
+        catcher.expectMessage("Query not found [Account#get]");
+        repositoryDerby.get(new Account());
+    }
+
+    @Test 
+    public void whenAddEntityNotFound()
+    {
+        catcher.expect(QueryNotFoundException.class);
+        catcher.expectMessage("Query not found [Account#add]");
+        repositoryDerby.add(new Account());
+    }
+
+    @Test 
+    public void whenUpdateEntityNotFound()
+    {
+        catcher.expect(QueryNotFoundException.class);
+        catcher.expectMessage("Query not found [Account#update]");
+        repositoryDerby.update(new Account());
+    }
+
+    @Test 
+    public void whenRemoveEntityNotFound()
+    {
+        catcher.expect(QueryNotFoundException.class);
+        catcher.expectMessage("Query not found [Account#remove]");
+        repositoryDerby.remove(new Account());
     }
 
     @Test @Ignore("mockito")

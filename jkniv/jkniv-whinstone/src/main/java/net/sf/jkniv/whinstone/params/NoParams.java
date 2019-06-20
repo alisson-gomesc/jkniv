@@ -45,7 +45,7 @@ class NoParams implements AutoBindParams
     }
 
     @Override
-    public int onBatch()
+    public int onBulk()
     {
         return stmtAdapter.execute();
     }

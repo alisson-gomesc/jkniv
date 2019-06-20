@@ -87,23 +87,24 @@ The library is 100% protected against [SQL injection](https://www.owasp.org/inde
 
 |Version| Features            | whinstone-jpa2 | whinstone-jdbc | whinstone-cassandra | whinstone-couchdb |
 |-------| ------------------- | -------------- | -------------- |---------------------|-------------------|
-|`0.6.0 version`| Auto Bind Parameters| ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     |
-|`0.6.0 version`| Auto Bind Result    | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     |
+|`0.6.0 version`| Auto Bind Parameters| ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk] |
+|`0.6.0 version`| Auto Bind Result    | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk] |
 |`0.6.0 version`| One-to-One          | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk](native) |
 |`0.6.0 version`| One-to-Many         | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk](native) |
-|`0.6.0 version`| JSR Bean Validation | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     |
-|`0.6.0 version`| Transaction         | ![close][chk]  | ![close][chk]  | ![open][clo]        | ![open][clo]      |
-|`0.6.0 version`| Paginate Query      | ![close][chk]  | ![close][chk]  | ![open][clo]        | ![open][clo]      |
-|`0.6.0 version`| Retrieving auto-generated keys| ![close][chk]| ![close][chk]| ![open][clo]  | ![close][chk]     |
-|`0.6.0 version`| Bulk Commands       | ![open][clo]   | ![close][chk]  | ![open][clo]        | ![close][chk]     |
-|`0.6.0 version`| Batch Commands      | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
-|`0.6.0 version`| Callback Methods    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![close][chk]     |
-|`0.6.0 version`| Query Cache         | ![open][clo]   | ![close][chk]  | ![close][chk]       | ![close][chk]     |
-|`0.6.0 version`| Query Statistics    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
-|`0.7.0 version`| Converter Annotation| ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
-|`0.7.0 version`| Triggers Events     | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
-|`0.7.0 version`| Stored Procedure    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
-|`0.7.0 version`| Jdk8 Timers         | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      |
+|`x.x.x version`| Many-to-Many        | ![close][chk](native)  | ![open][clo]  | ![open][clo] | ![open][clo]   |
+|`0.6.0 version`| JSR Bean Validation | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]   |
+|`0.6.0 version`| Transaction         | ![close][chk]  | ![close][chk]  | ![open][clo]        | ![open][clo]    |
+|`0.6.0 version`| Paginate Query      | ![close][chk]  | ![close][chk]  | ![open][clo]        | ![open][clo]    |
+|`0.6.0 version`| Retrieving auto-generated keys| ![close][chk]| ![close][chk]| ![open][clo]  | ![close][chk]   |
+|`0.6.0 version`| Bulk Commands       | ![open][clo]   | ![close][chk]  | ![open][clo]        | ![close][chk]   |
+|`0.6.0 version`| Callback Methods    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![close][chk]   |
+|`0.6.0 version`| Query Cache         | ![open][clo]   | ![close][chk]  | ![close][chk]       | ![close][chk]   |
+|`0.6.0 version`| Query Statistics    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]    |
+|`0.7.0 version`| Batch Commands      | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]    |
+|`0.7.0 version`| Converter Annotation| ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]    |
+|`0.7.0 version`| Triggers Events     | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]    |
+|`0.7.0 version`| Stored Procedure    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]    |
+|`0.7.0 version`| Jdk8 Timers         | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]    |
 
 
 ### Transaction supports

@@ -74,7 +74,7 @@ class NamedParamsOld extends AbstractParam implements AutoBindParams
     }
 
     @Override
-    public int onBatch()
+    public int onBulk()
     {
         throw new UnsupportedOperationException("Old implmentation doesn't supports auto bind implementation!");
     }

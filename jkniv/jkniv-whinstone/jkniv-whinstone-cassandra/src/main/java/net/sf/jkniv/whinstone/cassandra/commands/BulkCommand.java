@@ -29,14 +29,13 @@ public class BulkCommand implements Command
 {
     //private static final Logger                  LOG = LoggerFactory.getLogger(DeleteCommand.class);
     private CassandraStatementAdapter<?, String> stmt;
-    private Queryable queryable;
+    private Queryable                            queryable;
     
     public BulkCommand(CassandraStatementAdapter<?, String> stmt, Queryable queryable)
     {
         super();
         this.stmt = stmt;
         this.queryable = queryable;
-        queryable.bind(stmt).onBatch();
     }
     
     @Override
@@ -55,8 +54,7 @@ public class BulkCommand implements Command
     @SuppressWarnings("unchecked")
     public <T> T execute()
     {
-        Integer rows = stmt.execute();
+        Integer rows = queryable.bind(stmt).onBulk();
         return (T) rows;
     }
-    
 }

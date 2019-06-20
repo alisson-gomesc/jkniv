@@ -19,10 +19,7 @@
  */
 package net.sf.jkniv.whinstone.params;
 
-import java.sql.Statement;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import net.sf.jkniv.reflect.beans.MethodName;
 import net.sf.jkniv.reflect.beans.MethodNameFactory;
@@ -31,10 +28,9 @@ import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
-@SuppressWarnings("unchecked")
 class PositionalCollectionPojoParams extends AbstractParam implements AutoBindParams
 {
-	private final static MethodName SETTER =  MethodNameFactory.getInstanceSetter();
+	//private final static MethodName SETTER =  MethodNameFactory.getInstanceSetter();
 	private final static MethodName GETTER =  MethodNameFactory.getInstanceGetter();
 	private StatementAdapter<?, ?> stmtAdapter;
     private Iterator<Object>          it;
@@ -60,11 +56,11 @@ class PositionalCollectionPojoParams extends AbstractParam implements AutoBindPa
     @Override
     public void on()
     {
-        onBatch();//salient client don't get rows affected
+        onBulk();//salient client don't get rows affected
     }
 
     @Override
-    public int onBatch()
+    public int onBulk()
     {
         // FIXME implements batch using executeBatch
         int rowsAfftected = 0;

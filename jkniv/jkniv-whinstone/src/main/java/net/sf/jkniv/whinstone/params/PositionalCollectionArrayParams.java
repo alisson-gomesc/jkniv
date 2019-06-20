@@ -54,11 +54,11 @@ class PositionalCollectionArrayParams extends AbstractParam implements AutoBindP
     @Override
     public void on()
     {
-        onBatch();//salient client don't get rows affected
+        onBulk();//salient client don't get rows affected
     }
     
     @Override
-    public int onBatch()
+    public int onBulk()
     {
         // FIXME implements batch using executeBatch
         int rowsAfftected = 0;

@@ -21,11 +21,13 @@ package net.sf.jkniv.whinstone;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-
+import static org.hamcrest.Matchers.equalTo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -92,4 +94,23 @@ public class QueryableTest
         assertThat(treeMap.isTypeOfMap(), is(true));
 
     }
+    
+    
+    @Test
+    public void whenBulkArrayCollection()
+    {
+        List<Object[]> vehicles = new ArrayList<Object[]>();
+        vehicles.add(new Object[]{"NEW2001","A"});
+        vehicles.add(new Object[]{"NEW2002","A"});
+        vehicles.add(new Object[]{"NEW2003","A"});
+        vehicles.add(new Object[]{"NEW2004","A"});
+        vehicles.add(new Object[]{"NEW2005","A"});
+        Queryable treeMap = QueryFactory.of("Vehicle#add", vehicles);
+        assertThat(treeMap.isTypeOfArray(), is(false));
+        assertThat(treeMap.isTypeOfMap(), is(false));
+        assertThat(treeMap.isTypeOfCollection(), is(true));
+        assertThat(treeMap.isTypeOfCollectionFromArray(), is(true));
+
+    }
+
 }

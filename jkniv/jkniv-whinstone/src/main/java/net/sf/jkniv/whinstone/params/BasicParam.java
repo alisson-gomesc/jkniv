@@ -19,8 +19,6 @@
  */
 package net.sf.jkniv.whinstone.params;
 
-import javax.swing.text.StyleContext.SmallAttributeSet;
-
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
@@ -62,7 +60,7 @@ class BasicParam implements AutoBindParams
     }
 
     @Override
-    public int onBatch()
+    public int onBulk()
     {
         on();
         return stmtAdapter.execute();

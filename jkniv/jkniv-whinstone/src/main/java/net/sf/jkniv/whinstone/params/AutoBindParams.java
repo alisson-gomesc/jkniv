@@ -36,7 +36,28 @@ public interface AutoBindParams
      */
     public void on();
 
-    public int onBatch();
+
+    /**
+     * Grouping multiple {@code insert} |{@code update} | {@code delete} statements
+     * into a single Prepared Statement.
+     * 
+     * @return the number of rows affected.
+     * <p><b>Note:</b>
+     * <p><code>-2</code> no count of the number of rows it affected is available</p>
+     * <p><code>-3</code> indicating that an error occured while executing a batch statement</p>
+     */
+    public int onBulk();
+
+    /*
+     * Grouping multiple {@code insert} |{@code update} | {@code delete} statements
+     * into a single batch and having the whole batch sent to the database and 
+     * processed in one trip 
+     * @return the number of rows affected.
+     * <p><b>Note:</b>
+     * <p><code>-2</code> no count of the number of rows it affected is available</p>
+     * <p><code>-3</code> indicating that an error occured while executing a batch statement</p>
+     */
+    //public int onBatch();
 
     public StatementAdapterOld parameterized(String[] paramsNames);
 }

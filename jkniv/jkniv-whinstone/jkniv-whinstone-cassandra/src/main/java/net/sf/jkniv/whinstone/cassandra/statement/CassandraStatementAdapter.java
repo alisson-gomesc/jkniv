@@ -66,7 +66,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * //FIXME unsupported methodbound.set
  * 
  * @author Alisson Gomes
- *
+ * @since 0.6.0
  */
 public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
 {
@@ -87,6 +87,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     private KeyGeneratorType        keyGeneratorType;
     private Session                 session;
     
+    @SuppressWarnings("unchecked")
     public CassandraStatementAdapter(Session session, PreparedStatement stmt, Queryable queryable)
     {
         this.stmt = stmt;
@@ -106,22 +107,15 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         this.reset();
     }
     
-    /*
-    public PreparedStatementAdapter(PreparedStatement stmt)
+    /**
+     * Creates a new BoundStatement object for this prepared statement. 
+     * This method do not bind any values to any of the prepared variables.
+     */
+    public void reBound() 
     {
-        //this.queryable = null;
-        this.stmt = stmt;
-        this.sqlLogger = new SqlLogger(LogLevel.ALL, new SimpleDataMasking());// FIXME design retrieve SqlLogger another way 
-        this.index = 0;
-        this.indexIN = 0;
-        this.dtConverter = new SqlDateConverter();
-        this.oneToManies = Collections.emptySet();
-        this.groupingBy = Collections.emptyList();
-        this.scalar = false;
-        this.reset();
-        this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
+        this.bound = stmt.bind();
     }
-    */
+    
     @Override
     public StatementAdapter<T, Row> returnType(Class<T> returnType)
     {
@@ -241,7 +235,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         // TODO implements batch https://docs.datastax.com/en/drivers/python/3.2/api/cassandra/query.html
         // TODO implements batch https://docs.datastax.com/en/cql/3.3/cql/cql_using/useBatch.html
         // TODO implements batch https://docs.datastax.com/en/cql/3.3/cql/cql_using/useBatchGoodExample.html
-
+        // TODO https://www.datastax.com/dev/blog/client-side-improvements-in-cassandra-2-0
     }
     
     @SuppressWarnings(
@@ -290,57 +284,9 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         int before = (index+indexIN);
         index = 0;
         indexIN = 0;
+        reBound();
         return before;
     }
-    /*
-    @SuppressWarnings(
-    { "unchecked", "rawtypes" })
-    private void setValue(String name, Object paramValue)
-    {
-        log(name, paramValue);
-        try
-        {
-            if (name.toLowerCase().startsWith("in:"))
-            {
-                int j = 0;
-                Object[] paramsIN = (Object[]) paramValue;
-                if (paramsIN == null)
-                    throw new ParameterException("Cannot set parameter [" + name + "] from IN clause with NULL");
-                
-                for (; j < paramsIN.length; j++)
-                    stmt.setObject(j + index, paramsIN[j]);
-                indexIN = indexIN + j;
-            }
-            else
-            {
-                if (paramValue == null)
-                {
-                    stmt.setObject(currentIndex(), paramValue);
-                }
-                else if (paramValue.getClass().isEnum())
-                {
-                    ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(paramValue);
-                    stmt.setObject(currentIndex(), proxy.invoke("name"));
-                }
-                else if (paramValue instanceof Date)
-                {
-                    SqlDateConverter converter = new SqlDateConverter();
-                    java.sql.Timestamp timestamp = converter.convert(java.sql.Timestamp.class, paramValue);
-                    stmt.setObject(currentIndex(), timestamp);
-                }
-                else
-                {
-                    stmt.setObject(currentIndex(), paramValue);
-                }
-            }
-        }
-        catch (SQLException e)
-        {
-            throw new RepositoryException(
-                    "Cannot set parameter [" + name + "] value [" + sqlLogger.mask(name, paramValue) + "]", e);
-        }
-    }
-    */
     
     private void setValueIN(Object[] paramsIN) throws SQLException
     {
@@ -357,6 +303,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     }
     
     /*******************************************************************************/
+    @SuppressWarnings("rawtypes")
     private StatementAdapter<T, Row> bindInternal(Object value)
     {
         try

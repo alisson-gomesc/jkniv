@@ -100,7 +100,7 @@ public abstract class AbstractJdbcCommand implements Command
     
     protected int batchExecute()
     {
-        return queryable.bind(stmt).onBatch();
+        return queryable.bind(stmt).onBulk();
     }
     
     protected int simpleExecute()

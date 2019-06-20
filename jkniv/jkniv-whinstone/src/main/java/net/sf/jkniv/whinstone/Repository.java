@@ -180,7 +180,7 @@ public interface Repository
      * Add a new object to repository.
      * 
      * @param queryable name of query must be executed to add object to repository
-     * @return Return the numbers of objects inserted.
+     * @return Return the number of objects inserted.
      * @throws QueryNotFoundException when not found the query name
      */
     int add(Queryable queryable);
@@ -199,7 +199,7 @@ public interface Repository
      * Update many objects in repository.
      * 
      * @param queryable The Query name with yours parameters
-     * @return Return the numbers of objects updated.
+     * @return Return the number of objects updated.
      * @throws QueryNotFoundException when not found the query name
      * @throws IllegalArgumentException
      *             when the query is different from update sentence
@@ -219,7 +219,7 @@ public interface Repository
      * Execute a query to remove one or many objects from repository.
      * 
      * @param queryable The Query name with yours parameters
-     * @return the numbers of rows removed.
+     * @return the number of rows removed.
      * @throws IllegalArgumentException
      *             when the query is different from delete
      */
@@ -230,7 +230,7 @@ public interface Repository
      * @param entity object with the parameters 
      * @param <T> type of object returned
      * @throws IllegalArgumentException when entity is null
-     * @return the numbers of objects removed.
+     * @return the number of objects removed.
      */
     <T> int remove(T entity);
     
