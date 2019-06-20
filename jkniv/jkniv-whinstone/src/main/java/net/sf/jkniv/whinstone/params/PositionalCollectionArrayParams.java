@@ -19,15 +19,19 @@
  */
 package net.sf.jkniv.whinstone.params;
 
-import java.sql.Statement;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
-@SuppressWarnings("unchecked")
+/**
+ * Parameters are a collection of array where a named query isn't supported,
+ * so the query must contains positional values "?"
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ *
+ */
 class PositionalCollectionArrayParams extends AbstractParam implements AutoBindParams
 {
     private StatementAdapter<?, ?> stmtAdapter;
@@ -65,11 +69,15 @@ class PositionalCollectionArrayParams extends AbstractParam implements AutoBindP
         while (it.hasNext())
         {
             Object[] params = (Object[]) it.next();
-            for (Object o : params)
+            if ((paramsNames.length > 0 && params == null) || (paramsNames.length != params.length))
+                throw new ParameterNotFoundException(
+                        "Query [" + queryName + "] expect [" + paramsNames.length + "] parameter(s) but have "
+                                + (params == null ? "NULL" : String.valueOf(params.length)) + " value(s)");
+            
+            for (int i = 0; i < paramsNames.length; i++)
             {
-                stmtAdapter.bind(o);
+                stmtAdapter.bind(params[i]);
             }
-            //Statement.SUCCESS_NO_INFO;
             rowsAfftected += stmtAdapter.execute();
             stmtAdapter.reset();
         }

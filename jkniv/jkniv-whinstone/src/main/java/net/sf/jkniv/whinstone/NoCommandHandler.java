@@ -21,6 +21,7 @@ package net.sf.jkniv.whinstone;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.Sql;
+import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 
 /**
@@ -112,5 +113,10 @@ public class NoCommandHandler implements CommandHandler
     {
         return null;
     }
-    
+ 
+    @Override
+    public CommandHandler checkSqlType(SqlType expected)
+    {
+        return this;
+    }
 }

@@ -24,18 +24,25 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
+import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 
 public class CassandraRepositoryBulkTest extends BaseJdbc
 {
+    @Rule
+    public ExpectedException catcher = ExpectedException.none();
 
     // add operations
     @Test
@@ -45,8 +52,7 @@ public class CassandraRepositoryBulkTest extends BaseJdbc
         int rows = repositoryCas.add(QueryFactory.of("Vehicle#add", getCollectionOfPojo()));
         assertThat("Eventually consistent cannot reach how many rows was affected", rows, equalTo(-10));
     }
-
-
+    
     @Test
     public void whenAddBulkCollectionOfMap()
     {
@@ -54,15 +60,15 @@ public class CassandraRepositoryBulkTest extends BaseJdbc
         int rows = repositoryCas.add(QueryFactory.of("Vehicle#add", getCollectionOfMap()));
         assertThat("Eventually consistent cannot reach how many rows was affected", rows, equalTo(-10));
     }
-
+    
     @Test
     public void whenAddBulkCollectionOfArray()
     {
         Repository repositoryCas = getRepository();
-        int rows = repositoryCas.add(QueryFactory.of("Vehicle#add", getCollectionOfArray()));
+        int rows = repositoryCas.add(QueryFactory.of("Vehicle#add#pos", getCollectionOfArray()));
         assertThat("Eventually consistent cannot reach how many rows was affected", rows, equalTo(-10));
     }
-
+    
     @Test
     public void whenAddBulkArrayOfMap()
     {
@@ -70,7 +76,7 @@ public class CassandraRepositoryBulkTest extends BaseJdbc
         int rows = repositoryCas.add(QueryFactory.ofArray("Vehicle#add", getArrayOfMap()));
         assertThat("Eventually consistent cannot reach how many rows was affected", rows, equalTo(-10));
     }
-
+    
     @Test
     public void whenAddBulkArrayOfPojo()
     {
@@ -78,112 +84,137 @@ public class CassandraRepositoryBulkTest extends BaseJdbc
         int rows = repositoryCas.add(QueryFactory.ofArray("Vehicle#add", getArrayOfPojo()));
         assertThat("Eventually consistent cannot reach how many rows was affected", rows, equalTo(-10));
     }
-
+    
     // update operations
     @Test
     public void whenUpdateBulkCollectionOfPojo() throws SQLException
     {
         Repository repositoryCas = getRepository();
-        int rows = repositoryCas.update(QueryFactory.of("Vehicle#add", getCollectionOfPojo()));
+        int rows = repositoryCas.update(QueryFactory.of("Vehicle#update", getCollectionOfPojo()));
         assertThat("Eventually consistent cannot reach how many rows was affected", rows, equalTo(-10));
     }
-
-
+    
     @Test
     public void whenUpdateBulkCollectionOfMap()
     {
         Repository repositoryCas = getRepository();
-        int rows = repositoryCas.update(QueryFactory.of("Vehicle#add", getCollectionOfMap()));
+        int rows = repositoryCas.update(QueryFactory.of("Vehicle#update", getCollectionOfMap()));
         assertThat("Eventually consistent cannot reach how many rows was affected", rows, equalTo(-10));
     }
-
+    
     @Test
     public void whenUpdateBulkCollectionOfArray()
     {
         Repository repositoryCas = getRepository();
-        int rows = repositoryCas.update(QueryFactory.of("Vehicle#add", getCollectionOfArray()));
+        int rows = repositoryCas.update(QueryFactory.of("Vehicle#update#pos", getCollectionOfArray()));
         assertThat("Eventually consistent cannot reach how many rows was affected", rows, equalTo(-10));
     }
-
+    
     @Test
     public void whenUpdateBulkArrayOfMap()
     {
         Repository repositoryCas = getRepository();
-        int rows = repositoryCas.update(QueryFactory.ofArray("Vehicle#add", getArrayOfMap()));
+        int rows = repositoryCas.update(QueryFactory.ofArray("Vehicle#update", getArrayOfMap()));
         assertThat("Eventually consistent cannot reach how many rows was affected", rows, equalTo(-10));
     }
-
+    
     @Test
     public void whenUpdateBulkArrayOfPojo()
     {
         Repository repositoryCas = getRepository();
-        int rows = repositoryCas.update(QueryFactory.ofArray("Vehicle#add", getArrayOfPojo()));
+        int rows = repositoryCas.update(QueryFactory.ofArray("Vehicle#update", getArrayOfPojo()));
         assertThat("Eventually consistent cannot reach how many rows was affected", rows, equalTo(-10));
     }
-
+    
     // remove operations
     @Test
     public void whenRemoveBulkCollectionOfPojo() throws SQLException
     {
         Repository repositoryCas = getRepository();
-        int rows = repositoryCas.remove(QueryFactory.of("Vehicle#add", getCollectionOfPojo()));
+        int rows = repositoryCas.remove(QueryFactory.of("Vehicle#remove", getCollectionOfPojo()));
         assertThat("Eventually consistent cannot reach how many rows was affected", rows, equalTo(-10));
     }
-
-
+    
     @Test
     public void whenRemoveBulkCollectionOfMap()
     {
         Repository repositoryCas = getRepository();
-        int rows = repositoryCas.remove(QueryFactory.of("Vehicle#add", getCollectionOfMap()));
+        int rows = repositoryCas.remove(QueryFactory.of("Vehicle#remove", getCollectionOfMap()));
         assertThat("Eventually consistent cannot reach how many rows was affected", rows, equalTo(-10));
     }
-
+    
     @Test
     public void whenRemoveBulkCollectionOfArray()
     {
         Repository repositoryCas = getRepository();
-        int rows = repositoryCas.remove(QueryFactory.of("Vehicle#add", getCollectionOfArray()));
+        int rows = repositoryCas.remove(QueryFactory.of("Vehicle#remove#pos", getCollectionOfArrayToDelete()));
         assertThat("Eventually consistent cannot reach how many rows was affected", rows, equalTo(-10));
     }
-
+    
     @Test
     public void whenRemoveBulkArrayOfMap()
     {
         Repository repositoryCas = getRepository();
-        int rows = repositoryCas.remove(QueryFactory.ofArray("Vehicle#add", getArrayOfMap()));
+        int rows = repositoryCas.remove(QueryFactory.ofArray("Vehicle#remove", getArrayOfMap()));
         assertThat("Eventually consistent cannot reach how many rows was affected", rows, equalTo(-10));
     }
-
+    
     @Test
     public void whenRemoveBulkArrayOfPojo()
     {
         Repository repositoryCas = getRepository();
-        int rows = repositoryCas.remove(QueryFactory.ofArray("Vehicle#add", getArrayOfPojo()));
+        int rows = repositoryCas.remove(QueryFactory.ofArray("Vehicle#remove", getArrayOfPojo()));
         assertThat("Eventually consistent cannot reach how many rows was affected", rows, equalTo(-10));
+    }
+
+    @Test
+    public void whenCollectionOfArrayDoesntMatchLengthOfParameters()
+    {
+        catcher.expect(ParameterNotFoundException.class);
+        catcher.expectMessage("Query [Vehicle#remove#pos] expect [1] parameter(s) but have 4 value(s)");
+        Repository repositoryCas = getRepository();
+        repositoryCas.remove(QueryFactory.of("Vehicle#remove#pos", getCollectionOfArray()));
+    }
+
+    @Test
+    public void whenCollectionOfArrayDoesntMatchWithNullParameter()
+    {
+        catcher.expect(ParameterNotFoundException.class);
+        catcher.expectMessage("Query [Vehicle#remove#pos] expect [1] parameter(s) but have NULL value(s)");
+        Repository repositoryCas = getRepository();
+        List<Object[]> vehicles = new ArrayList<Object[]>();
+        vehicles.add(new Object[]{ "NEW3001" });
+        vehicles.add(null);
+        repositoryCas.remove(QueryFactory.of("Vehicle#remove#pos", vehicles));
     }
 
     private List<Vehicle> getCollectionOfPojo()
     {
-        List<Vehicle> vehicles= new ArrayList<Vehicle>();
-        vehicles.add(new Vehicle("NEW1001","A"));
-        vehicles.add(new Vehicle("NEW1002","B"));
-        vehicles.add(new Vehicle("NEW1003","C"));
-        vehicles.add(new Vehicle("NEW1004","D"));
-        vehicles.add(new Vehicle("NEW1005","E"));
+        List<Vehicle> vehicles = new ArrayList<Vehicle>();
+        vehicles.add(new Vehicle("NEW1001", "A"));
+        vehicles.add(new Vehicle("NEW1002", "B"));
+        vehicles.add(new Vehicle("NEW1003", "C"));
+        vehicles.add(new Vehicle("NEW1004", "D"));
+        vehicles.add(new Vehicle("NEW1005", "E"));
         return vehicles;
     }
     
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings(
+    { "rawtypes", "unchecked" })
     private List<Map> getCollectionOfMap()
     {
-        List<Map> vehicles= new ArrayList<Map>();
+        List<Map> vehicles = new ArrayList<Map>();
         Map m1 = new HashMap(), m2 = new HashMap(), m3 = new HashMap(), m4 = new HashMap(), m5 = new HashMap();
-        m1.put("plate","NEW2001"); m1.put("name","A");
-        m2.put("plate","NEW2002"); m1.put("name","A");
-        m3.put("plate","NEW2003"); m1.put("name","A");
-        m4.put("plate","NEW2004"); m1.put("name","A");
-        m5.put("plate","NEW2005"); m1.put("name","A");
+        m1.put("plate", "NEW2001");
+        m1.put("name", "A");
+        m2.put("plate", "NEW2002");
+        m1.put("name", "A");
+        m3.put("plate", "NEW2003");
+        m1.put("name", "A");
+        m4.put("plate", "NEW2004");
+        m1.put("name", "A");
+        m5.put("plate", "NEW2005");
+        m1.put("name", "A");
         vehicles.add(m1);
         vehicles.add(m2);
         vehicles.add(m3);
@@ -195,24 +226,46 @@ public class CassandraRepositoryBulkTest extends BaseJdbc
     private List<Object[]> getCollectionOfArray()
     {
         List<Object[]> vehicles = new ArrayList<Object[]>();
-        vehicles.add(new Object[]{"NEW3001","A"});
-        vehicles.add(new Object[]{"NEW3002","A"});
-        vehicles.add(new Object[]{"NEW3003","A"});
-        vehicles.add(new Object[]{"NEW3004","A"});
-        vehicles.add(new Object[]{"NEW3005","A"});
+        vehicles.add(new Object[]
+        { "A", "BLUE", Arrays.asList("SPEED"), "NEW3001" });
+        vehicles.add(new Object[]
+        { "A", "BLACK", Arrays.asList("SPEED"), "NEW3002" });
+        vehicles.add(new Object[]
+        { "A", "RED", Arrays.asList("SPEED"), "NEW3003" });
+        vehicles.add(new Object[]
+        { "A", "GRAY", Arrays.asList("SPEED"), "NEW3004" });
+        vehicles.add(new Object[]
+        { "A", "YELLOW", Arrays.asList("SPEED"), "NEW3005" });
         return vehicles;
     }
-    
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+
+    private List<Object[]> getCollectionOfArrayToDelete()
+    {
+        List<Object[]> vehicles = new ArrayList<Object[]>();
+        vehicles.add(new Object[]{ "NEW3001" });
+        vehicles.add(new Object[]{ "NEW3002" });
+        vehicles.add(new Object[]{ "NEW3003" });
+        vehicles.add(new Object[]{ "NEW3004" });
+        vehicles.add(new Object[]{ "NEW3005" });
+        return vehicles;
+    }
+
+    @SuppressWarnings(
+    { "rawtypes", "unchecked" })
     private Object[] getArrayOfMap()
     {
         Object[] vehicles = new Object[5];
         Map m1 = new HashMap(), m2 = new HashMap(), m3 = new HashMap(), m4 = new HashMap(), m5 = new HashMap();
-        m1.put("plate","NEW4001"); m1.put("name","A");
-        m2.put("plate","NEW4002"); m1.put("name","A");
-        m3.put("plate","NEW4003"); m1.put("name","A");
-        m4.put("plate","NEW4004"); m1.put("name","A");
-        m5.put("plate","NEW4005"); m1.put("name","A");
+        m1.put("plate", "NEW4001");
+        m1.put("name", "A");
+        m2.put("plate", "NEW4002");
+        m1.put("name", "A");
+        m3.put("plate", "NEW4003");
+        m1.put("name", "A");
+        m4.put("plate", "NEW4004");
+        m1.put("name", "A");
+        m5.put("plate", "NEW4005");
+        m1.put("name", "A");
         vehicles[0] = m1;
         vehicles[1] = m2;
         vehicles[2] = m3;
@@ -220,22 +273,28 @@ public class CassandraRepositoryBulkTest extends BaseJdbc
         vehicles[4] = m5;
         return vehicles;
     }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    
+    @SuppressWarnings(
+    { "rawtypes", "unchecked" })
     private Object[] getArrayOfPojo()
     {
         Object[] vehicles = new Object[5];
         Map m1 = new HashMap(), m2 = new HashMap(), m3 = new HashMap(), m4 = new HashMap(), m5 = new HashMap();
-        m1.put("plate","NEW2001"); m1.put("name","A");
-        m2.put("plate","NEW2002"); m1.put("name","A");
-        m3.put("plate","NEW2003"); m1.put("name","A");
-        m4.put("plate","NEW2004"); m1.put("name","A");
-        m5.put("plate","NEW2005"); m1.put("name","A");
-        vehicles[0] = new Vehicle("NEW5001","A");
-        vehicles[1] = new Vehicle("NEW5002","B");
-        vehicles[2] = new Vehicle("NEW5003","C");
-        vehicles[3] = new Vehicle("NEW5004","D");
-        vehicles[4] = new Vehicle("NEW5005","E");
+        m1.put("plate", "NEW2001");
+        m1.put("name", "A");
+        m2.put("plate", "NEW2002");
+        m1.put("name", "A");
+        m3.put("plate", "NEW2003");
+        m1.put("name", "A");
+        m4.put("plate", "NEW2004");
+        m1.put("name", "A");
+        m5.put("plate", "NEW2005");
+        m1.put("name", "A");
+        vehicles[0] = new Vehicle("NEW5001", "A");
+        vehicles[1] = new Vehicle("NEW5002", "B");
+        vehicles[2] = new Vehicle("NEW5003", "C");
+        vehicles[3] = new Vehicle("NEW5004", "D");
+        vehicles[4] = new Vehicle("NEW5005", "E");
         return vehicles;
     }
 }

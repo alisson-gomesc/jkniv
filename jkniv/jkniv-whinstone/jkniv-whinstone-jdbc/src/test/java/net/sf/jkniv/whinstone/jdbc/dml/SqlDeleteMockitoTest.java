@@ -112,12 +112,12 @@ public class SqlDeleteMockitoTest
         JdbcCommandMock jdbcMock = new JdbcCommandMock(FlatBook.class);
         Repository repository = jdbcMock.withDeletable().getRepository();
         List<Object[]> books = new ArrayList<Object[]>();
-        books.add(new String[0]);
-        books.add(new String[0]);
-        books.add(new String[0]);
-        books.add(new String[0]);
-        books.add(new String[0]);
-        books.add(new String[0]);
+        books.add(new String[]{"a"});
+        books.add(new String[]{"a"});
+        books.add(new String[]{"a"});
+        books.add(new String[]{"a"});
+        books.add(new String[]{"a"});
+        books.add(new String[]{"a"});
         
         int rows = repository.remove(QueryFactory.of("delete", books));
         assertThat("6 rows was affected", rows, equalTo(6));

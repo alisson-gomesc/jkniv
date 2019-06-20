@@ -276,5 +276,17 @@ public abstract class DefaultCommandHandler implements CommandHandler
         }
         OBJECTS_CALLBACKS.put(proxyParams.getTargetClass().getName(), objectCallback);
     }
-    
+
+    @Override
+    public CommandHandler checkSqlType(SqlType expected)
+    {
+        if (sql == null)
+            throw new IllegalArgumentException("Null Sql reference wasn't expected");
+        
+        if (sql.getSqlType() != expected)
+            throw new IllegalArgumentException("Cannot execute sql ["+sql.getName()+"] as "+sql.getSqlType()+", " + expected + " was expect");
+        
+        return this;
+    }
+
 }

@@ -374,6 +374,7 @@ class RepositoryJdbc implements Repository
         CommandHandler handler = new SelectHandler(this.connectionFactory.open(sql.getIsolation()));
         List<T> list = handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.SELECT)
         .with(handlerException)
         .with(overloadResultRow)
         .run();
@@ -387,6 +388,7 @@ class RepositoryJdbc implements Repository
         CommandHandler handler = new SelectHandler(this.connectionFactory.open(sql.getIsolation()));
         List<T> list = handler.with(q)
         .with(sql)
+        .checkSqlType(SqlType.SELECT)
         .with(handlerException)
         .with(overloadResultRow)
         .run();
@@ -486,6 +488,7 @@ class RepositoryJdbc implements Repository
         CommandHandler handler = new AddHandler(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.INSERT)
         .with(handlerException)
         .run();
         return rows;
@@ -504,6 +507,7 @@ class RepositoryJdbc implements Repository
         CommandHandler handler = new AddHandler(this.connectionFactory.open(sql.getIsolation()));
         handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.INSERT)
         .with(handlerException)
         .run();
         return entity;
@@ -595,6 +599,7 @@ class RepositoryJdbc implements Repository
         CommandHandler handler = new UpdateHandler(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.UPDATE)
         .with(handlerException)
         .run();
         return rows;
@@ -612,6 +617,7 @@ class RepositoryJdbc implements Repository
         CommandHandler handler = new UpdateHandler(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.UPDATE)
         .with(handlerException)
         .run();
         return entity;
@@ -683,6 +689,7 @@ class RepositoryJdbc implements Repository
         CommandHandler handler = new RemoveHandler(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.DELETE)
         .with(handlerException)
         .run();
         return rows;
@@ -700,6 +707,7 @@ class RepositoryJdbc implements Repository
         CommandHandler handler = new RemoveHandler(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.DELETE)
         .with(handlerException)
         .run();
         return rows;
@@ -828,11 +836,11 @@ class RepositoryJdbc implements Repository
         }
     }
     
-    private void checkSqlType(Sql isql, SqlType expected)
-    {
-        if (isql.getSqlType() != expected)
-            throw new IllegalArgumentException("Cannot execute sql ["+isql.getName()+"] as ["+isql.getSqlType()+"], exptected is "+ expected);
-    }
+//    private void checkSqlType(Sql isql, SqlType expected)
+//    {
+//        if (isql.getSqlType() != expected)
+//            throw new IllegalArgumentException("Cannot execute sql ["+isql.getName()+"] as ["+isql.getSqlType()+"], exptected is "+ expected);
+//    }
     
     /*
     private Connection getConnection(ISql isql)

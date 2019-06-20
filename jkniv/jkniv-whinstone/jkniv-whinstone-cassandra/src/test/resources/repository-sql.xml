@@ -37,8 +37,26 @@
    INSERT INTO VEHICLE(plate, name, color, alarms) VALUES (:plate, :name, :color, :alarms)
   </insert>
 
+  <insert id="Vehicle#add#pos">
+   INSERT INTO VEHICLE(name, color, alarms, plate) VALUES (:name, :color, :alarms, :plate)
+  </insert>
+
+  <update id="Vehicle#update">
+   update VEHICLE set name = :name, color = :color, alarms = :alarms
+   where plate = :plate
+  </update>
+
+  <update id="Vehicle#update#pos">
+   update VEHICLE set name = ?, color = ?, alarms = ?
+   where plate = ?
+  </update>
+
   <delete id="Vehicle#remove">
    DELETE FROM VEHICLE where plate = :plate
+  </delete>
+
+  <delete id="Vehicle#remove#pos">
+   DELETE FROM VEHICLE where plate = ?
   </delete>
 
   <select id="Vehicle#get" returnType="net.sf.jkniv.whinstone.cassandra.model.Vehicle">
@@ -54,7 +72,7 @@
   </select>
 
   <select id="simpleSelect" returnType="java.util.HashMap">
-    select my_key,evt_date,object_id,lat, lng, warn from dev_data_3t.TEST_DATA
+    select my_key, evt_date, object_id, lat, lng, warn from dev_data_3t.TEST_DATA
   </select>
 
   <select id="all-vehicles" returnType="java.util.HashMap">

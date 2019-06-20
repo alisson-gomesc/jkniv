@@ -49,6 +49,7 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
+import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.whinstone.CommandHandler;
@@ -212,6 +213,7 @@ class RepositoryCouchDb implements Repository
         CommandHandler handler = new SelectHandler(this.adapterConn);
         List<T> list = handler.with(q)
         .with(sql)
+        .checkSqlType(SqlType.SELECT)
         .with(handlerException)
         .with(overloadResultRow)
         .run();
@@ -371,6 +373,7 @@ class RepositoryCouchDb implements Repository
         CommandHandler handler = new SelectHandler(this.adapterConn);
         List<T> list = handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.SELECT)
         .with(handlerException)
         .with(overloadResultRow)
         .run();
@@ -386,6 +389,7 @@ class RepositoryCouchDb implements Repository
         CommandHandler handler = new AddHandler(this.adapterConn);
         int rows = handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.INSERT)
         .with(handlerException)
         .run();
         return rows;
@@ -419,6 +423,7 @@ class RepositoryCouchDb implements Repository
         CommandHandler handler = new AddHandler(this.adapterConn);
         handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.INSERT)
         .with(handlerException)
         .run();
         return entity;// FIXME design update must return a number
@@ -452,6 +457,7 @@ class RepositoryCouchDb implements Repository
         CommandHandler handler = new UpdateHandler(this.adapterConn);
         int rows = handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.UPDATE)
         .with(handlerException)
         .run();
         return rows;
@@ -485,6 +491,7 @@ class RepositoryCouchDb implements Repository
         CommandHandler handler = new UpdateHandler(this.adapterConn);
         handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.UPDATE)
         .with(handlerException)
         .run();
         return entity;// FIXME design update must return a number 
@@ -518,6 +525,7 @@ class RepositoryCouchDb implements Repository
         CommandHandler handler = new RemoveHandler(this.adapterConn);
         int rows = handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.DELETE)
         .with(handlerException)
         .run();
         return rows;
@@ -551,6 +559,7 @@ class RepositoryCouchDb implements Repository
         CommandHandler handler = new RemoveHandler(this.adapterConn);
         int rows = handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.DELETE)
         .with(handlerException)
         .run();
         return rows;

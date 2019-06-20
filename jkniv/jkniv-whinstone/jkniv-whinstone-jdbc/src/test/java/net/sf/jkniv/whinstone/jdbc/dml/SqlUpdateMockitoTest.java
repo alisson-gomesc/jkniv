@@ -112,12 +112,12 @@ public class SqlUpdateMockitoTest
         JdbcCommandMock jdbcMock = new JdbcCommandMock(FlatBook.class);
         Repository repository = jdbcMock.withUpdateable().getRepository();
         List<Object[]> books = new ArrayList<Object[]>();
-        books.add(new String[0]);
-        books.add(new String[0]);
-        books.add(new String[0]);
-        books.add(new String[0]);
-        books.add(new String[0]);
-        books.add(new String[0]);
+        books.add(new String[]{"a","b"});
+        books.add(new String[]{"a","b"});
+        books.add(new String[]{"a","b"});
+        books.add(new String[]{"a","b"});
+        books.add(new String[]{"a","b"});
+        books.add(new String[]{"a","b"});
         
         int rows = repository.update(QueryFactory.of("update", books));
         assertThat("6 rows was affected", rows, equalTo(6));

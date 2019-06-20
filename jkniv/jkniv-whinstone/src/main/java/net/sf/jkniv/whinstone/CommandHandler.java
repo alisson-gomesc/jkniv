@@ -21,6 +21,7 @@ package net.sf.jkniv.whinstone;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.Sql;
+import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 
 /**
@@ -123,4 +124,13 @@ public interface CommandHandler
      * @return the result of the command execution
      */
     <T> T run();
+    
+    
+    /**
+     * If the command isn't the sql type expected an illegal argument exception is throw.
+     * @param expected type of SQL expected
+     * @return a reference to this object.
+     * @throws IllegalArgumentException if {@link Sql} isn't the expected {@code SqlType}
+     */
+    CommandHandler checkSqlType(SqlType expected);
 }

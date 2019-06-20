@@ -206,6 +206,7 @@ class RepositoryCassandra implements Repository
     }
     */
     
+    /*
     private <T, R> T get(Queryable queryable, Class<T> returnType, ResultRow<T, R> resultRow)
     {
         NOT_NULL.verify(queryable);
@@ -227,6 +228,7 @@ class RepositoryCassandra implements Repository
         
         return ret;
     }
+    */
     
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -234,7 +236,7 @@ class RepositoryCassandra implements Repository
     {
         NOT_NULL.verify(queryable);
         T result = null;
-        Map map = get(queryable, Map.class, null);
+        Map map = get(queryable, Map.class);
         if (map != null)
         {
             if (map.size() > 1)
@@ -343,6 +345,7 @@ class RepositoryCassandra implements Repository
         CommandHandler handler = new SelectHandler(this.adapterConn);
         List<T> list = handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.SELECT)
         .with(handlerException)
         .with(overloadResultRow)
         .run();
@@ -361,6 +364,7 @@ class RepositoryCassandra implements Repository
         CommandHandler handler = new SelectHandler(this.adapterConn);
         List<T> list = handler.with(q)
         .with(sql)
+        .checkSqlType(SqlType.SELECT)
         .with(handlerException)
         .with(overloadResultRow)
         .run();
@@ -375,7 +379,7 @@ class RepositoryCassandra implements Repository
         return ret;
     }
 
-
+/*
     @SuppressWarnings("unchecked")
     private <T, R> List<T> list(Queryable q, Class<T> overloadReturnType, ResultRow<T, R> customResultRow)
     {
@@ -414,6 +418,7 @@ class RepositoryCassandra implements Repository
         
         return list;
     }
+    */
     
     @Override
     public int add(Queryable queryable)
@@ -423,6 +428,7 @@ class RepositoryCassandra implements Repository
         CommandHandler handler = new AddHandler(this.adapterConn);
         int rows = handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.INSERT)
         .with(handlerException)
         .run();
         return rows;
@@ -441,6 +447,7 @@ class RepositoryCassandra implements Repository
         CommandHandler handler = new AddHandler(this.adapterConn);
         handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.INSERT)
         .with(handlerException)
         .run();
         return entity;
@@ -456,6 +463,7 @@ class RepositoryCassandra implements Repository
         CommandHandler handler = new UpdateHandler(this.adapterConn);
         int rows = handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.UPDATE)
         .with(handlerException)
         .run();
         return rows;
@@ -473,6 +481,7 @@ class RepositoryCassandra implements Repository
         CommandHandler handler = new UpdateHandler(this.adapterConn);
         int rows = handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.UPDATE)
         .with(handlerException)
         .run();
         return entity;
@@ -593,6 +602,7 @@ class RepositoryCassandra implements Repository
         CommandHandler handler = new RemoveHandler(this.adapterConn);
         int rows = handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.DELETE)
         .with(handlerException)
         .run();
         return rows;
@@ -610,6 +620,7 @@ class RepositoryCassandra implements Repository
         CommandHandler handler = new RemoveHandler(this.adapterConn);
         int rows = handler.with(queryable)
         .with(sql)
+        .checkSqlType(SqlType.DELETE)
         .with(handlerException)
         .run();
         return rows;

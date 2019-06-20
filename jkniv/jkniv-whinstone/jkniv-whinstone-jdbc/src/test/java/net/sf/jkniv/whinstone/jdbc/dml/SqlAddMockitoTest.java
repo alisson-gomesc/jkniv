@@ -40,6 +40,7 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.JdbcCommandMock;
 import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook;
+import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 import net.sf.jkniv.whinstone.transaction.TransactionStatus;
 
 public class SqlAddMockitoTest
@@ -112,12 +113,12 @@ public class SqlAddMockitoTest
         JdbcCommandMock jdbcMock = new JdbcCommandMock(FlatBook.class);
         Repository repository = jdbcMock.withInsertable().getRepository();
         List<Object[]> books = new ArrayList<Object[]>();
-        books.add(new String[0]);
-        books.add(new String[0]);
-        books.add(new String[0]);
-        books.add(new String[0]);
-        books.add(new String[0]);
-        books.add(new String[0]);
+        books.add(new String[]{"a","b"});
+        books.add(new String[]{"a","b"});
+        books.add(new String[]{"a","b"});
+        books.add(new String[]{"a","b"});
+        books.add(new String[]{"a","b"});
+        books.add(new String[]{"a","b"});
         
         int rows = repository.add(QueryFactory.of("insert", books));
         assertThat("6 rows was affected", rows, equalTo(6));
@@ -125,7 +126,45 @@ public class SqlAddMockitoTest
         verify(jdbcMock.getStmt(), times(1)).close();
         verify(jdbcMock.getConnection(), times(2)).close();
     }
-    
+
+    @Test
+    public void whenBulkArrayCollectionDoesntMatchLengthOfParameters() throws SQLException
+    {
+        catcher.expect(ParameterNotFoundException.class);
+        catcher.expectMessage("Query [insert] expect [2] parameter(s) but have 0 value(s)");
+
+        JdbcCommandMock jdbcMock = new JdbcCommandMock(FlatBook.class);
+        Repository repository = jdbcMock.withInsertable().getRepository();
+        List<Object[]> books = new ArrayList<Object[]>();
+        books.add(new String[0]);
+        books.add(new String[0]);
+        
+        int rows = repository.add(QueryFactory.of("insert", books));
+        assertThat("6 rows was affected", rows, equalTo(6));
+        verify(jdbcMock.getStmt(), times(0)).executeUpdate();
+        verify(jdbcMock.getStmt(), times(0)).close();
+        verify(jdbcMock.getConnection(), times(0)).close();
+    }
+
+    @Test
+    public void whenCollectionOfArrayDoesntMatchWithNullParameter() throws SQLException
+    {
+        catcher.expect(ParameterNotFoundException.class);
+        catcher.expectMessage("Query [insert] expect [2] parameter(s) but have NULL value(s)");
+
+        JdbcCommandMock jdbcMock = new JdbcCommandMock(FlatBook.class);
+        Repository repository = jdbcMock.withInsertable().getRepository();
+        List<Object[]> books = new ArrayList<Object[]>();
+        books.add(new String[]{"a","b"});
+        books.add(null);
+        
+        int rows = repository.add(QueryFactory.of("insert", books));
+        assertThat("6 rows was affected", rows, equalTo(6));
+        verify(jdbcMock.getStmt(), times(0)).executeUpdate();
+        verify(jdbcMock.getStmt(), times(0)).close();
+        verify(jdbcMock.getConnection(), times(0)).close();
+    }
+
     @Test
     public void whenBulkArrayMap() throws SQLException
     {
