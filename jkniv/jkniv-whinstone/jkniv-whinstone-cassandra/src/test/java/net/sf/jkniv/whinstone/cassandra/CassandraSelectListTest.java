@@ -32,9 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
@@ -43,10 +41,8 @@ import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
 import net.sf.jkniv.whinstone.cassandra.result.CustomResultRow;
 
 @SuppressWarnings("rawtypes")
-public class CassandraRepositorySelectListTest extends BaseJdbc
+public class CassandraSelectListTest extends BaseJdbc
 {
-    @Autowired
-    Repository repository;
     Object[]   params =
     { "k001", new Date(), "CAR001", 20.000001F, -88.000001F, 2 };
     

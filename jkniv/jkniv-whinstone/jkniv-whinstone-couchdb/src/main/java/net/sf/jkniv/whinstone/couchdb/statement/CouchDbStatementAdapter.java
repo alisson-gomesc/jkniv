@@ -327,4 +327,10 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
         // there isn't statement to close
     }
 
+    @Override
+    public void setFetchSize(int rows)
+    {
+        LOG.warn("Couchdb doesn't support fetch size!");
+    }
+
 }

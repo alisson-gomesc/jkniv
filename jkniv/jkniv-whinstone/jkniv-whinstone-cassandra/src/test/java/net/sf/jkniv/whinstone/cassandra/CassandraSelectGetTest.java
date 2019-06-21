@@ -36,7 +36,7 @@ import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
 import net.sf.jkniv.whinstone.cassandra.result.CustomResultRow;
 
 @SuppressWarnings("rawtypes")
-public class CassandraRepositorySelectGetTest extends BaseJdbc
+public class CassandraSelectGetTest extends BaseJdbc
 {
     private static final String PLATE = "OMN7176";
     private static final String COLOR = "white";

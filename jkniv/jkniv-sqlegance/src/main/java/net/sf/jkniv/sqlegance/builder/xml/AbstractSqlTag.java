@@ -583,9 +583,8 @@ public abstract class AbstractSqlTag implements SqlTag
     @Override
     public void bind(SqlDialect sqlDialect)
     {
-        if (this.sqlDialect != null)
-            throw new IllegalStateException("Cannot re-assign SqlDialect for Sql object");
-        
+        //if (this.sqlDialect != null)
+        //    throw new IllegalStateException("Cannot re-assign SqlDialect for Sql object");
         this.sqlDialect = sqlDialect;
     }
 

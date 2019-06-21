@@ -113,6 +113,13 @@ public class CouchDbSqlContext implements SqlContext
     }
     
     @Override
+    public void setSqlDialect(SqlDialect sqlDialect)
+    {
+        sqlContext.setSqlDialect(sqlDialect);
+    }
+
+    
+    @Override
     public List<Sql> getPackage(String packageName)
     {
         return sqlContext.getPackage(packageName);

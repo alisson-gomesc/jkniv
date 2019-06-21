@@ -32,7 +32,7 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
 
-public class CassandraRepositoryEnricchTest extends BaseJdbc
+public class CassandraEnricchTest extends BaseJdbc
 {
     @Rule
     public ExpectedException catcher = ExpectedException.none();  

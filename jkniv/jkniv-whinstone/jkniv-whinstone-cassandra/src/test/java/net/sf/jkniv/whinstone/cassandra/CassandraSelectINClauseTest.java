@@ -41,7 +41,7 @@ import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.cassandra.result.CustomResultRow;
 
 @SuppressWarnings("rawtypes")
-public class CassandraRepositorySelectINClauseTest extends BaseJdbc
+public class CassandraSelectINClauseTest extends BaseJdbc
 {
     //@Autowired
     //Repository repository;

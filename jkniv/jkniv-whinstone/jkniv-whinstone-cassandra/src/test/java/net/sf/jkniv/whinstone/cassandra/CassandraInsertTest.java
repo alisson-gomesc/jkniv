@@ -21,69 +21,90 @@ package net.sf.jkniv.whinstone.cassandra;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.instanceOf;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
-import net.sf.jkniv.whinstone.cassandra.result.CustomResultRow;
 
-public class CassandraRepositoryUpdateTest extends BaseJdbc
+public class CassandraInsertTest extends BaseJdbc
 {
-    @Autowired
-    Repository repository;
+    //@Autowired
+    //Repository repository;
+    Object[]   params =
+    { "k001", new Date(), "CAR001", 20.000001F, -88.000001F, 2 };
     // (my_key,evt_date,object_id, lat, lng, warn)
     
-
     @Test
-    public void whenCassandraUpsert()
+    public void whenCassandraAdd()
     {
         int initialSize = select("simpleSelect");
-        Object[]   params = { "CAR001", 20.000001F, -88.000001F, 2, "k002", new Date() };        
+        
+        params[3] = new Float(((Float) params[3]).floatValue() + 0.000001F);
+        params[4] = new Float(((Float) params[4]).floatValue() + 0.000001F);
         Repository repositoryCas = getRepository();
-        Queryable q = QueryFactory.ofArray("simpleUpsert",params);
-        repositoryCas.update(q);
+        Queryable q = QueryFactory.ofArray("simpleInsert", params);
+        repositoryCas.add(q);
         int newSize = select("simpleSelect");
-
-        assertThat(initialSize+1, is(newSize));
+        
+        assertThat(initialSize + 1, is(newSize));
     }
     
     @Test
-    public void whenCassandraUpdateEntity()
+    public void whenCassandraAddEntity()
     {
         Repository repositoryCas = getRepository();
         Vehicle v = new Vehicle();
-        v.setPlate("UUU9999");
         v.setName("Livina");
-        v.setColor("green");
+        v.setPlate("AAA9999");
+        v.setColor("red");
         repositoryCas.remove(v);
-
+        int initialSize = select("all-vehicles");
         repositoryCas.add(v);
-        v.setColor("blue");
-        repositoryCas.update(v);
-        
-        Vehicle v2 = repositoryCas.get(v);
-        assertThat(v.getPlate(), is(v2.getPlate()));
-        assertThat(v.getColor(), is(v2.getColor()));
+        int newSize = select("all-vehicles");
+        assertThat(initialSize + 1, is(newSize));
     }
     
-
+    @Test
+    public void whenCassandraAddWithListColumn()
+    {
+        Vehicle vehicle = new Vehicle();
+        vehicle.setPlate("AAA9998");
+        vehicle.setName("AAA9998");
+        vehicle.setColor("white");
+        vehicle.setAlarms(Arrays.asList("SPEED", "PANIC"));
+        Repository repositoryCas = getRepository();
+        Queryable q = QueryFactory.of("vehicle", vehicle);
+        repositoryCas.add(q);
+        
+        Queryable query = QueryFactory.of("selectVehicle", vehicle);
+        
+        Vehicle v = repositoryCas.get(query);
+        
+        assertThat(v, instanceOf(Vehicle.class));
+        assertThat(v.getPlate(), is(vehicle.getPlate()));
+        assertThat(v.getAlarms().size(), is(2));
+        assertThat(v.getAlarms(), hasItems("SPEED", "PANIC"));
+    }
+    
     private int select(String select)
     {
         Queryable q = QueryFactory.of(select);
         List<Map> list = getRepository().list(q);
         return list.size();
     }
-
+    
 }

@@ -470,5 +470,16 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
         }
     }
     
-    
+    @Override
+    public void setFetchSize(int rows)
+    {
+        try
+        {
+            this.stmt.setFetchSize(rows);
+        }
+        catch (SQLException e)
+        {
+            this.handlerException.handle(e);// TODO design handlerException for Statement setFetchSize exception
+        }
+    }
 }

@@ -201,56 +201,6 @@ public class AnsiDialect implements SqlDialect
         }
         return pattern;//%1$s LIMIT %2$s, %3$s
     }
-    
-//    @Override
-//    public String query()
-//    {
-//        return (this.sqlWithLimit == null ? this.sql : this.sqlWithLimit);
-//    }
-    
-//    @Override
-//    public String queryCount()
-//    {
-//        return this.sqlToCount;
-//    }
-    
-//    @Override
-//    public Sql getISql()
-//    {
-//        return this.isql;
-//    }
-//
-//    @Override
-//    public Queryable getQueryable()
-//    {
-//        return this.queryable;
-//    }
-//    
-//    @Override
-//    public void setQueryable(Queryable queryable)
-//    {
-//        //this.isql = isql;
-//        this.queryable = queryable;
-//        init();
-//    }
-    
-//    @Override
-//    public int countParams() 
-//    {
-//        return countParams;
-//    }
-//    
-//    @Override
-//    public String[] getParamsNames()
-//    {
-//        return this.paramsNames;
-//    }
-//
-//    @Override
-//    public Object[] getParamsValues()
-//    {
-//        return queryable.values(this.paramsNames);
-//    }
 
     @Override
     public PreparedStatement prepare(Connection conn, Sql isql, String query)
@@ -260,7 +210,7 @@ public class AnsiDialect implements SqlDialect
         int rsConcurrency = isql.getResultSetConcurrency().getConcurrencyMode();
         int rsHoldability = isql.getResultSetHoldability().getHoldability();
         try
-        {            
+        {
             if (isql.isInsertable())
             {
                 Insertable insertTag = isql.asInsertable();
@@ -276,7 +226,7 @@ public class AnsiDialect implements SqlDialect
                     stmt = conn.prepareStatement(query, rsType, rsConcurrency, rsHoldability);
                 else
                 {
-                    // SQLServer doesn't support Holdability
+                    // SQLServer/Oracle12 doesn't support Holdability
                     stmt = conn.prepareStatement(query, rsType, rsConcurrency);
                     if (supportsFeature(SqlFeatureSupport.CONN_HOLDABILITY))
                         conn.setHoldability(rsHoldability);

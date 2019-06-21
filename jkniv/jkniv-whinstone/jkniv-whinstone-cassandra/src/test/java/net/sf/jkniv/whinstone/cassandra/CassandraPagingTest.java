@@ -1,0 +1,75 @@
+/* 
+ * JKNIV, whinstone one contract to access your database.
+ * 
+ * Copyright (C) 2017, the original author or authors.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software Foundation, Inc., 
+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+package net.sf.jkniv.whinstone.cassandra;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Test;
+
+import net.sf.jkniv.whinstone.QueryFactory;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.Repository;
+import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
+
+public class CassandraPagingTest extends BaseJdbc
+{
+    private static final int SIZE_PAGE = 5;
+
+    
+    @Test
+    public void whenSimplePagingQueryWorks()
+    {
+        Repository repositoryCas = getRepository();
+        Queryable q = QueryFactory.of("all-vehicles", 0, SIZE_PAGE);
+        List<Vehicle> list = repositoryCas.list(q);
+        assertThat(list.size(), is(SIZE_PAGE));
+    }
+    
+    @Test
+    public void whenPagingWithParamsQueryWorks()
+    {
+        Repository repositoryCas = getRepository();
+        Map<String, Integer> params = new HashMap<String, Integer>();
+        params.put("author1", 3);
+        params.put("author2", 4);
+        
+        Queryable q = QueryFactory.of("selectVehicle", params, 3, SIZE_PAGE);
+        List<Vehicle> list = repositoryCas.list(q);
+        assertThat(list.size(), is(SIZE_PAGE-1));
+        assertThat(q.getTotal(), is(7L));
+    }
+
+    @Test
+    public void whenPagingResultWithNoRecords()
+    {
+        Repository repositoryCas = getRepository();
+        Map<String, Integer> params = new HashMap<String, Integer>();
+        Queryable q = QueryFactory.of("selectVehicle", params, 3, SIZE_PAGE);
+        List<Vehicle> list = repositoryCas.list(q);
+        assertThat(list.size(), is(0));
+        assertThat(q.getTotal(), is(0L));
+    }
+
+}
