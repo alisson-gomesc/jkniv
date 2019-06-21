@@ -22,6 +22,7 @@ package net.sf.jkniv.whinstone.cassandra;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+<<<<<<< HEAD
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -98,6 +99,56 @@ public class CassandraPagingTest extends BaseJdbc
         List<Vehicle> list = repositoryCas.list(q);
         assertThat(list.size(), is(0));
         assertThat(q.getTotal(), is(Long.valueOf(Statement.SUCCESS_NO_INFO)));
+=======
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Test;
+
+import net.sf.jkniv.whinstone.QueryFactory;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.Repository;
+import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
+
+public class CassandraPagingTest extends BaseJdbc
+{
+    private static final int SIZE_PAGE = 5;
+
+    
+    @Test
+    public void whenSimplePagingQueryWorks()
+    {
+        Repository repositoryCas = getRepository();
+        Queryable q = QueryFactory.of("all-vehicles", 0, SIZE_PAGE);
+        List<Vehicle> list = repositoryCas.list(q);
+        assertThat(list.size(), is(SIZE_PAGE));
+    }
+    
+    @Test
+    public void whenPagingWithParamsQueryWorks()
+    {
+        Repository repositoryCas = getRepository();
+        Map<String, Integer> params = new HashMap<String, Integer>();
+        params.put("author1", 3);
+        params.put("author2", 4);
+        
+        Queryable q = QueryFactory.of("selectVehicle", params, 3, SIZE_PAGE);
+        List<Vehicle> list = repositoryCas.list(q);
+        assertThat(list.size(), is(SIZE_PAGE-1));
+        assertThat(q.getTotal(), is(7L));
+    }
+
+    @Test
+    public void whenPagingResultWithNoRecords()
+    {
+        Repository repositoryCas = getRepository();
+        Map<String, Integer> params = new HashMap<String, Integer>();
+        Queryable q = QueryFactory.of("selectVehicle", params, 3, SIZE_PAGE);
+        List<Vehicle> list = repositoryCas.list(q);
+        assertThat(list.size(), is(0));
+        assertThat(q.getTotal(), is(0L));
+>>>>>>> branch '0.6.0.M49' of https://github.com/alisson-gomesc/jkniv.git
     }
 
 }

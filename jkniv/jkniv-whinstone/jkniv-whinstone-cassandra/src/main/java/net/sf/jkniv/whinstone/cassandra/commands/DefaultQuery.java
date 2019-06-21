@@ -36,7 +36,10 @@ public class DefaultQuery implements Command
     {
         super();
         this.stmt = stmt;
+<<<<<<< HEAD
         queryable.setTotal(Statement.SUCCESS_NO_INFO);
+=======
+>>>>>>> branch '0.6.0.M49' of https://github.com/alisson-gomesc/jkniv.git
     }
     
     @Override
