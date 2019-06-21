@@ -34,7 +34,7 @@ import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
 
 @SuppressWarnings("rawtypes")
-public class CassandraRepositoryCacheTest extends BaseJdbc
+public class CassandraCacheTest extends BaseJdbc
 {
     
     @Test

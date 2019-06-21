@@ -150,4 +150,9 @@ public interface StatementAdapter<T, R>
    
     void close();
     
+    /**
+     * Set the number of rows that should be fetched when the statement hit the database.
+     * @param rows the number of rows to fetch
+     */
+    void setFetchSize(int rows);
 }

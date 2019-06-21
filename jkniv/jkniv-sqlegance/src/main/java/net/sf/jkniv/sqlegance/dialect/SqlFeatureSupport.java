@@ -20,7 +20,7 @@
 package net.sf.jkniv.sqlegance.dialect;
 
 /**
- * TODO how is the better way to implements Generic verification for Features Supports for Database Dialect?
+ * Database SQL vendor features support.
  * 
  * @author Alisson Gomes
  * @since 0.6.0
@@ -38,6 +38,10 @@ public enum SqlFeatureSupport
     CONN_HOLDABILITY,
     /** supports holdability at the statement level */
     STMT_HOLDABILITY,
+    /** breaks the query results into pages */
+    PAGE_QUERY,
+    /** allow random jumps between pages */
+    OFFSET_QUERY
     //SET_HOLDABILITY,
     //CLOSE_CURSORS_AT_COMMIT
     ;

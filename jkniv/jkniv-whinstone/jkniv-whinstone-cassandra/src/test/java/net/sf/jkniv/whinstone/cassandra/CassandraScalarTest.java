@@ -33,7 +33,7 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 
-public class CassandraRepositoryScalarTest extends BaseJdbc
+public class CassandraScalarTest extends BaseJdbc
 {
     @Rule
     public ExpectedException catcher = ExpectedException.none();  

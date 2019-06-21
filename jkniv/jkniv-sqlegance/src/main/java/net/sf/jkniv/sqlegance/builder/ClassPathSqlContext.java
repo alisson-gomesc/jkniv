@@ -400,6 +400,15 @@ class ClassPathSqlContext implements SqlContext
     {
         return this.repositoryConfig.getSqlDialect();
     }
+
+    @Override
+    public void setSqlDialect(SqlDialect sqlDialect)
+    {
+        for(Entry<String, Sql> entry : statements.entrySet())
+        {
+            entry.getValue().bind(sqlDialect);
+        }
+    }
     
     @Override
     public void close()

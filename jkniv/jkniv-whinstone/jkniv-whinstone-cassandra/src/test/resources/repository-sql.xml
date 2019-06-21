@@ -89,9 +89,21 @@
   </select>
 
   <select id="vehicles" returnType="net.sf.jkniv.whinstone.cassandra.model.Vehicle">
-  select plate, name, color, alarms from VEHICLE
-  <if test="plates != null">
-    where plate in (:in:plates)
-  </if>
+    select plate, name, color, alarms from VEHICLE
+    <if test="plates != null">
+      where plate in (:in:plates)
+    </if>
   </select>
+  
+  
+  <insert id="ColorFlat#add">
+   INSERT INTO COLOR (NAME, PRIORITY, CODE) VALUES (:name, :priority, :code);
+  </insert>
+  <delete id="ColorFlat#remove">
+   DELETE FROM COLOR where name = :name and priority = :priority
+  </delete>
+  <select id="colors-by-name">
+    SELECT NAME, PRIORITY, CODE from COLOR where name = :name
+  </select>
+  
 </statements>

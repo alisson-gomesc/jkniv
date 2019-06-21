@@ -23,14 +23,13 @@ import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.cassandra.statement.CassandraStatementAdapter;
+import net.sf.jkniv.whinstone.cassandra.statement.CassandraPreparedStatementAdapter;
 
 public class DefaultCommand implements Command
 {
-    //private static final Logger                  LOG = LoggerFactory.getLogger(DeleteCommand.class);
-    private CassandraStatementAdapter<?, String> stmt;
+    private CassandraPreparedStatementAdapter<?, String> stmt;
     
-    public DefaultCommand(CassandraStatementAdapter<?, String> stmt, Queryable queryable)
+    public DefaultCommand(CassandraPreparedStatementAdapter<?, String> stmt, Queryable queryable)
     {
         super();
         this.stmt = stmt;

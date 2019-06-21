@@ -28,6 +28,8 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.SimpleStatement;
+import com.datastax.driver.core.Statement;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
@@ -38,6 +40,7 @@ import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.cassandra.commands.BulkCommand;
 import net.sf.jkniv.whinstone.cassandra.commands.DefaultCommand;
 import net.sf.jkniv.whinstone.cassandra.commands.DefaultQuery;
+import net.sf.jkniv.whinstone.cassandra.statement.CassandraPreparedStatementAdapter;
 import net.sf.jkniv.whinstone.cassandra.statement.CassandraStatementAdapter;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
@@ -175,7 +178,7 @@ class CassandraConnectionAdapter implements ConnectionAdapter
         String positionalSql = queryable.getDynamicSql().getParamParser().replaceForQuestionMark(sql,
                 queryable.getParams());
         PreparedStatement stmt = session.prepare(positionalSql);
-        StatementAdapter<T, R> adapter = new CassandraStatementAdapter(session, stmt, queryable);
+        StatementAdapter<T, R> adapter = new CassandraPreparedStatementAdapter(session, stmt, queryable);
         return adapter;
     }
     
@@ -198,6 +201,7 @@ class CassandraConnectionAdapter implements ConnectionAdapter
         return false;
     }
     
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public <T, R> Command asSelectCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
@@ -207,9 +211,20 @@ class CassandraConnectionAdapter implements ConnectionAdapter
         if(LOG.isInfoEnabled())
             LOG.debug("Bind Native SQL\n{}", sql);
 
-        PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
-        StatementAdapter<T, R> stmt = new CassandraStatementAdapter(this.session, stmtPrep, queryable);
-        
+        StatementAdapter<T, R> stmt = null;
+        if (queryable.isPaging())
+        {
+            String[] names = queryable.getParamsNames();
+            Object[] params = queryable.values(names);
+            Statement statement = new SimpleStatement(sql, params);
+            stmt = new CassandraStatementAdapter(this.session, statement, queryable);
+            stmt.setFetchSize(queryable.getMax());
+        }
+        else
+        {
+            PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
+            stmt = new CassandraPreparedStatementAdapter(this.session, stmtPrep, queryable);
+        }
         queryable.bind(stmt).on();
         
         if (queryable.getReturnType() != null)
@@ -225,7 +240,7 @@ class CassandraConnectionAdapter implements ConnectionAdapter
         if (queryable.isScalar())
             stmt.scalar();
         
-        command = new DefaultQuery((CassandraStatementAdapter) stmt, queryable);
+        command = new DefaultQuery(stmt, queryable);
         return command;
     }
     
@@ -283,6 +298,7 @@ class CassandraConnectionAdapter implements ConnectionAdapter
         */
     }
     
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private <T,R> Command buildCommand(Queryable queryable)
     {
         Command command = null;
@@ -291,11 +307,11 @@ class CassandraConnectionAdapter implements ConnectionAdapter
             LOG.debug("Bind Native SQL\n{}",sql);
         
         PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
-        CassandraStatementAdapter<Number, ResultSet> stmt = new CassandraStatementAdapter<Number, ResultSet>(this.session, stmtPrep, queryable);
+        CassandraPreparedStatementAdapter<Number, ResultSet> stmt = new CassandraPreparedStatementAdapter<Number, ResultSet>(this.session, stmtPrep, queryable);
         if (queryable.getDynamicSql().isBatch() || queryable.isTypeOfBulk())
-            command = new BulkCommand((CassandraStatementAdapter) stmt, queryable);
+            command = new BulkCommand((CassandraPreparedStatementAdapter) stmt, queryable);
         else
-            command = new DefaultCommand((CassandraStatementAdapter) stmt, queryable);
+            command = new DefaultCommand((CassandraPreparedStatementAdapter) stmt, queryable);
         
         return command;        
     }

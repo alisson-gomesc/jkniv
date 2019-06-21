@@ -50,6 +50,7 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.cassandra.dialect.CassandraDialect;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
 /**
@@ -107,6 +108,8 @@ class RepositoryCassandra implements Repository
         
         this.sqlContext = sqlContext;
         this.repositoryConfig = this.sqlContext.getRepositoryConfig();
+        this.repositoryConfig.add(RepositoryProperty.SQL_DIALECT.key(), CassandraDialect.class.getName());
+        this.sqlContext.setSqlDialect(this.repositoryConfig.getSqlDialect());
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
         this.adapterConn = new CassandraSessionFactory(sqlContext.getRepositoryConfig().getProperties(),

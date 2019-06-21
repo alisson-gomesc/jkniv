@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.sqlegance;
+package net.sf.jkniv.sqlegance.builder;
 
 
 import static org.hamcrest.CoreMatchers.is;
@@ -29,8 +29,7 @@ import org.junit.Test;
 
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.SqlContext;
-import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
-import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
+import net.sf.jkniv.sqlegance.Statistical;
 import net.sf.jkniv.sqlegance.builder.xml.NoSqlStats;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
@@ -40,6 +39,8 @@ import net.sf.jkniv.sqlegance.transaction.TransactionType;
 
 public class RepositoryConfigTest
 {
+    //private SqlContext sqlContext = new ClassPathSqlContext("/repository-sql.xml");
+    
     @Test
     public void whenReadRepositoryConfigSuccessfully()
     {

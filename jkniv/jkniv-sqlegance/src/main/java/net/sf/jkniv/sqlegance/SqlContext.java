@@ -71,6 +71,8 @@ public interface SqlContext
     
     SqlDialect getSqlDialect();
 
+    void setSqlDialect(SqlDialect sqlDialect);
+
     /**
      * Closes this SQL context.
      * After close the SQL context the access to SQL is lost and 

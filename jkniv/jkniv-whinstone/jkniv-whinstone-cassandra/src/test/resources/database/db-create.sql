@@ -6,7 +6,7 @@ CREATE TABLE COLOR
 ( 
   NAME text,
   PRIORITY text,
-  CODE SMALLINT, 
+  CODE integer, 
  ,PRIMARY KEY( NAME, PRIORITY )
 );
 

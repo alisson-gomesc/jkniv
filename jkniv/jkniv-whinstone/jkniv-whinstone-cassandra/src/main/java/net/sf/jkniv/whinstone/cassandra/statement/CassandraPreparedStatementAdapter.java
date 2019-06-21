@@ -1,18 +1,24 @@
 package net.sf.jkniv.whinstone.cassandra.statement;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
 
+import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.ColumnDefinitions;
+import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
-import com.datastax.driver.core.Statement;
 
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.sqlegance.KeyGeneratorType;
@@ -61,50 +67,53 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
+public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter<T, Row>
 {
-    private static final Logger      LOG     = LoggerFactory.getLogger();
-    private static final DataMasking MASKING = LoggerFactory.getDataMasking();
+    private static final Logger  LOG = LoggerFactory.getLogger();
+    private static final DataMasking  MASKING = LoggerFactory.getDataMasking();
+
+    private final HandlerException  handlerException;
+    private final PreparedStatement stmt;
+    private BoundStatement          bound;
+    //private final SqlDateConverter  dtConverter;
     
-    private final HandlerException   handlerException;
-    private final Statement          stmt;
-    private int                      index, indexIN;
-    private Class<T>                 returnType;
-    private ResultRow<T, Row>        resultRow;
-    private boolean                  scalar;
-    private Set<OneToMany>           oneToManies;
-    private List<String>             groupingBy;
-    private KeyGeneratorType         keyGeneratorType;
-    private Session                  session;
+    private int                     index, indexIN;
+    private Class<T>                returnType;
+    private ResultRow<T, Row>       resultRow;
+    private boolean                 scalar;
+    private Set<OneToMany>          oneToManies;
+    private List<String>            groupingBy;
+    private KeyGeneratorType        keyGeneratorType;
+    private Session                 session;
     
     @SuppressWarnings("unchecked")
-    public CassandraStatementAdapter(Session session, Statement stmt, Queryable queryable)
+    public CassandraPreparedStatementAdapter(Session session, PreparedStatement stmt, Queryable queryable)
     {
         this.stmt = stmt;
         this.session = session;
-        //this.bound = stmt.bind();
+        this.bound = stmt.bind();
+        //this.dtConverter = new SqlDateConverter();
         this.oneToManies = Collections.emptySet();
         this.groupingBy = Collections.emptyList();
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
         
         this.returnType = (Class<T>) Map.class;
         if (queryable.getReturnType() != null)
-            returnType = (Class<T>) queryable.getReturnType();
+            returnType = (Class<T>)queryable.getReturnType();
         else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-            returnType = (Class<T>) queryable.getDynamicSql().getReturnTypeAsClass();
-        
+            returnType = (Class<T>)queryable.getDynamicSql().getReturnTypeAsClass();
+
         this.reset();
     }
     
-    /*
+    /**
      * Creates a new BoundStatement object for this prepared statement. 
      * This method do not bind any values to any of the prepared variables.
-     *
-    public void reBound()
+     */
+    public void reBound() 
     {
         this.bound = stmt.bind();
     }
-    */
     
     @Override
     public StatementAdapter<T, Row> returnType(Class<T> returnType)
@@ -157,8 +166,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     @Override
     public StatementAdapter<T, Row> bind(String name, Object value)
     {
-        return this;
-        /*
+        //this.index++;
         log(name, value);
         if (name.toLowerCase().startsWith("in:"))
         {
@@ -173,14 +181,12 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
             }
         }
         return bindInternal(value);
-        */
     }
     
     @Override
     public StatementAdapter<T, Row> bind(Object value)
     {
-        return this;
-        /*
+        //this.index = position;
         log(value);
         try
         {
@@ -206,12 +212,18 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
             this.handlerException.handle(e);// FIXME handler default message with custom params
         }
         return this;
-        */
     }
     
     @Override
     public StatementAdapter<T, Row> bind(Object... values)
     {
+        this.bound = stmt.bind(values);
+        this.index = values.length-1;
+        //        for (; index < values.length;)
+        //        {
+        //            Object v = values[index];
+        //            bind(index, v);
+        //        }
         return this;
     }
     
@@ -235,7 +247,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         List<T> list = Collections.emptyList();
         try
         {
-            rs = session.execute(stmt);
+            rs = session.execute(bound);
             JdbcColumn<Row>[] columns = getJdbcColumns(rs.getColumnDefinitions());
             setResultRow(columns);
             
@@ -261,27 +273,35 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     
     public int execute()
     {
-        session.execute(stmt);
-        return java.sql.Statement.SUCCESS_NO_INFO; // FIXME design Statement.SUCCESS_NO_INFO
+        session.execute(bound);
+        return Statement.SUCCESS_NO_INFO; // FIXME design Statement.SUCCESS_NO_INFO
     }
     
     @Override
     public int reset()
     {
-        int before = (index + indexIN);
+        int before = (index+indexIN);
         index = 0;
         indexIN = 0;
+        reBound();
         return before;
     }
-/*    
+    
     private void setValueIN(Object[] paramsIN) throws SQLException
     {
         int j = 0;
         for (; j < paramsIN.length; j++)
             bindInternal(paramsIN[j]);
+        //indexIN = indexIN + j;
+        /*
+        int j = 0;
+        for (; j < paramsIN.length; j++)
+            stmt.setObject(index+indexIN + j, paramsIN[j]);
+        indexIN = indexIN + j;
+         */
     }
-*/
-    /*
+    
+    /*******************************************************************************/
     @SuppressWarnings("rawtypes")
     private StatementAdapter<T, Row> bindInternal(Object value)
     {
@@ -320,23 +340,24 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
             else if (value instanceof List)
                 setInternalValue((List) value);
             else if (value instanceof Set)
-                setInternalValue((Set) value);
+                setInternalValue((Set) value);            
             else if (value instanceof Map)
-                setInternalValue((Map) value);
+                setInternalValue((Map) value);            
             else
             {
-                LOG.warn("CANNOT Set SQL Parameter from index [{}] with value of [{}] type of [{}]", (index + indexIN),
+                LOG.warn("CANNOT Set SQL Parameter from index [{}] with value of [{}] type of [{}]", (index+indexIN), 
                         value, (value == null ? "NULL" : value.getClass()));
+
+                //setValue(value);
             }
         }
         catch (SQLException e)
         {
-            this.handlerException.handle(e);
+            this.handlerException.handle(e);// FIXME handler default message with custom params
         }
         return this;
     }
-  */
-    /*
+    
     private void setInternalValue(com.datastax.driver.core.LocalDate value)
     {
         bound.setDate(currentIndex(), value);
@@ -412,26 +433,37 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         // FIXME design converter to allow save ordinal value or other value from enum
         bound.setString(currentIndex(), value.name());
     }
-    
+
     private void setInternalValue(List<?> value) throws SQLException
     {
         bound.setList(currentIndex(), value);
     }
-    
-    private void setInternalValue(Map<?, ?> value) throws SQLException
+
+    private void setInternalValue(Map<?,?> value) throws SQLException
     {
         bound.setMap(currentIndex(), value);
     }
-    
+
     private void setInternalValue(Set<?> value) throws SQLException
     {
         bound.setSet(currentIndex(), value);
     }
-*/    
+
+//    private void setInternalValue(Object[] paramsIN) throws SQLException
+//    {
+//        int j = 0;
+//        for (; j < paramsIN.length; j++)
+//        {
+//            bind(paramsIN[j]);
+//            indexIN = indexIN + j;
+//        }
+//    }
+
     private int currentIndex()
     {
-        return (index++ + (indexIN));
+        return ( index++ + (indexIN));
     }
+
     
     /*******************************************************************************/
     
@@ -474,16 +506,16 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     private void log(String name, Object value)
     {
         if (LOG.isDebugEnabled())
-            LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]",
-                    (index + indexIN), name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
+            LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", (index+indexIN), name,
+                    MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
     private void log(Object value)
     {
-        String name = String.valueOf(index + indexIN);
+        String name = String.valueOf(index+indexIN);
         if (LOG.isDebugEnabled())
-            LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]",
-                    (index + indexIN), name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
+            LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", (index+indexIN), name,
+                    MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
     /**
@@ -509,7 +541,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         }
         return columns;
     }
-    
+
     @Override
     public void close()
     {
@@ -519,6 +551,6 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     @Override
     public void setFetchSize(int rows)
     {
-        stmt.setFetchSize(rows);
+        LOG.warn("Cassandra " + stmt.getClass() + " doesn't support fetch size!");
     }
 }

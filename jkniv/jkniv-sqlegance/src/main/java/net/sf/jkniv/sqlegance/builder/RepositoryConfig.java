@@ -20,13 +20,12 @@
 package net.sf.jkniv.sqlegance.builder;
 
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +72,7 @@ public class RepositoryConfig
     private static final String                 XPATH_JNDI_DS_NODE     = XPATH_ROOT_NODE + XPATH_REPO_NODE
             + "[@name='%s']/jndi-data-source[1]";
     
-    private static final Assertable             notNull                = AssertsFactory.getNotNull();
+    private static final Assertable             NOT_NULL                = AssertsFactory.getNotNull();
     //private static final Map<String, SqlLogger> loggers                = new HashMap<String, SqlLogger>();
     private String                              name;
     private String                              description;
@@ -104,7 +103,8 @@ public class RepositoryConfig
     private RepositoryConfig(String name, boolean defaultRepo)
     {
         if (!defaultRepo)
-            notNull.verify(name);
+            NOT_NULL.verify(name);
+        
         this.name = name;
         this.properties = new Properties();
         this.load();
@@ -299,6 +299,14 @@ public class RepositoryConfig
     }
     */
     
+    public void add(String key,  String value)
+    {
+        Properties props = new Properties();
+        props.put(key, value);
+        add(props);
+    }
+    
+    
     public void add(Properties props)
     {
         if (props != null)
@@ -314,6 +322,7 @@ public class RepositoryConfig
             }
         }
     }
+
     
     /*
     public void add(DataSource ds)

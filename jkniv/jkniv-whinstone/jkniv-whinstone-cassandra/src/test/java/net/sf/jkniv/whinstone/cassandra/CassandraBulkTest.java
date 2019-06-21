@@ -39,7 +39,7 @@ import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 
-public class CassandraRepositoryBulkTest extends BaseJdbc
+public class CassandraBulkTest extends BaseJdbc
 {
     @Rule
     public ExpectedException catcher = ExpectedException.none();

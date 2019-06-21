@@ -46,7 +46,7 @@ public class BaseJdbc //extends BaseSpringJUnit4
     }
     
     
-    protected Repository getRepository()
+    protected static Repository getRepository()
     {
         return new RepositoryCassandra(config);
     }

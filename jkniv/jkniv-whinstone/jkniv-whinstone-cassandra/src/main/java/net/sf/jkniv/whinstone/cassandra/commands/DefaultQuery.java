@@ -19,26 +19,24 @@
  */
 package net.sf.jkniv.whinstone.cassandra.commands;
 
+import java.sql.Statement;
+
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.cassandra.statement.CassandraStatementAdapter;
+import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class DefaultQuery implements Command
 {
-    //private static final Logger LOG = LoggerFactory.getLogger(SelectCommand.class);
-    //private String body;
-    private CassandraStatementAdapter<?, String> stmt;
-    //private Queryable queryable;
+    private StatementAdapter stmt;
     
-    public DefaultQuery(CassandraStatementAdapter<?, String> stmt, Queryable queryable)
+    public DefaultQuery(StatementAdapter stmt, Queryable queryable)
     {
         super();
-        //this.queryable = queryable;
         this.stmt = stmt;
-        //stmt.rows();
+        queryable.setTotal(Statement.SUCCESS_NO_INFO);
     }
     
     @Override
