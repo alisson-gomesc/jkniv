@@ -32,10 +32,9 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
-import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 import net.sf.jkniv.whinstone.params.ParameterException;
 
-public class CouchDbDialect21Test
+public class CouchDbDialect2Test
 {
     private static SqlContext sqlContext;
     @Rule

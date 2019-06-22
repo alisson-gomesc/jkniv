@@ -195,11 +195,11 @@ class CassandraConnectionAdapter implements ConnectionAdapter
         return session;
     }
     
-    @Override
-    public boolean supportsPagingByRoundtrip()
-    {
-        return false;
-    }
+//    @Override
+//    public boolean supportsPagingByRoundtrip()
+//    {
+//        return false;
+//    }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override

@@ -104,14 +104,14 @@ public class FullResponseFindCommand extends AbstractCommand implements CouchCom
                 LOG.error(errorFormat(httpPost, response.getStatusLine(), json));
                 throw new RepositoryException(response.getStatusLine().toString());
             }
-            commandHandler.postCommit();
+            //commandHandler.postCommit();
         }
         catch (Exception e) // ClientProtocolException | JsonParseException | JsonMappingException | IOException
         {
-            queryable.setTotal(Statement.EXECUTE_FAILED);
-            commandHandler.postException();
-            if (currentRow != null)
-                LOG.error("Failure to parser the current row {}", currentRow, e);
+            //queryable.setTotal(Statement.EXECUTE_FAILED);
+            //commandHandler.postException();
+            //if (currentRow != null)
+            //    LOG.error("Failure to parser the current row {}", currentRow, e);
             handlerException.handle(e);
         }
         finally

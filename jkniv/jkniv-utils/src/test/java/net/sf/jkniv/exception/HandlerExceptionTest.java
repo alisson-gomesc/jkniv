@@ -52,9 +52,9 @@ public class HandlerExceptionTest
     @Test
     public void whenHandleModifyOriginalMessageWithParams()
     {
-        catcher.expect(RuntimeException.class);
+        catcher.expect(MyUncheckedException.class);
         catcher.expectMessage("Foo null cannot be invoked");
-        HandleableException handler = new HandlerException();
+        HandleableException handler = new HandlerException(MyUncheckedException.class, "");
         handler.config(NullPointerException.class, "%s cannot be invoked");
         Foo foo = null;
         try 

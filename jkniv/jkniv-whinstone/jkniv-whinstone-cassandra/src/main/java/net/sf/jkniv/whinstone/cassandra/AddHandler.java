@@ -23,10 +23,14 @@ import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.DefaultCommandHandler;
 
+/**
+ * Cassandra Command to handler the {@code Add} life-cycle.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 class AddHandler extends DefaultCommandHandler
 {
-    //private static final Logger LOG = LoggerFactory.getLogger(AddHandler.class);
-    
     public AddHandler(ConnectionAdapter connAdapter)
     {
         super(connAdapter);

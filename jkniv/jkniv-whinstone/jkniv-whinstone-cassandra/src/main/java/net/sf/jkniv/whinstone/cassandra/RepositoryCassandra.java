@@ -31,6 +31,7 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.cache.Cacheable;
 import net.sf.jkniv.exception.HandleableException;
+import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.NonUniqueResultException;
@@ -114,7 +115,8 @@ class RepositoryCassandra implements Repository
         this.isTraceEnabled = LOG.isTraceEnabled();
         this.adapterConn = new CassandraSessionFactory(sqlContext.getRepositoryConfig().getProperties(),
                 sqlContext.getName()).open();
-        this.defineQueryNameStrategy();
+        this.configQueryNameStrategy();
+        this.configHandlerException();
     }
     
     @Override
@@ -733,10 +735,16 @@ class RepositoryCassandra implements Repository
         return prop;
     }
     
-    private void defineQueryNameStrategy()
+    private void configQueryNameStrategy()
     {
         String nameStrategy = repositoryConfig.getQueryNameStrategy();
         ObjectProxy<? extends QueryNameStrategy> proxy = ObjectProxyFactory.newProxy(nameStrategy);
         this.strategyQueryName = proxy.newInstance();
     }
+    
+    private void configHandlerException()
+    {
+        this.handlerException = new HandlerException(RepositoryException.class, "JDBC Error cannot execute SQL [%s]");
+    }
+
 }

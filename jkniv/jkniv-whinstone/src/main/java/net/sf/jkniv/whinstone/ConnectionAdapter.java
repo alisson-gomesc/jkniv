@@ -78,10 +78,10 @@ public interface ConnectionAdapter
     
     Object unwrap();
 
-    /**
+    /*
      * check if database needs a new round trip to get total paging
      * @return <b>true</b> when a new request to database must be done to get total of pages, <b>false</b> otherwise.
      */
-    boolean supportsPagingByRoundtrip();
+    //boolean supportsPagingByRoundtrip();
 
 }

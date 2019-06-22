@@ -137,7 +137,7 @@ public class HandlerException implements HandleableException
     */
     public void handle(Exception caught)
     {
-        if (caught.getClass().isAssignableFrom(this.defaultException))
+        if (this.defaultException.isAssignableFrom(caught.getClass()))
             throw (RuntimeException) caught;
         
         RuntimeException theException = prepareToThrowException(null, caught);
@@ -147,7 +147,7 @@ public class HandlerException implements HandleableException
     
     public void handle(Exception caught, String customMessage)
     {
-        if (caught.getClass().isAssignableFrom(this.defaultException))
+        if (this.defaultException.isAssignableFrom(caught.getClass()))
             throw (RuntimeException) caught;
 
         RuntimeException theException = prepareToThrowException(customMessage, caught);

@@ -212,11 +212,11 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
         return conn;
     }
     
-    @Override
-    public boolean supportsPagingByRoundtrip()
-    {
-        return true;
-    }
+//    @Override
+//    public boolean supportsPagingByRoundtrip()
+//    {
+//        return true;
+//    }
     
     /**
      * Creates a PreparedStatement object that will generate ResultSet objects with the given type, concurrency, and holdability.

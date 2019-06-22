@@ -20,14 +20,21 @@
 package net.sf.jkniv.whinstone;
 
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Collections;
 import java.util.List;
 
 import net.sf.jkniv.cache.Cacheable;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Selectable;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
+/**
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public abstract class DefaultQueryHandler extends DefaultCommandHandler
 {
     public DefaultQueryHandler(ConnectionAdapter connAdapter)
@@ -57,14 +64,23 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
         {
             if (entry == null)
             {
-                preCallback();
-                Command command = adapterConn.asSelectCommand(queryable, overloadResultRow);
-                list = command.execute();
-                postCallback();
-                if (selectable.hasCache() && !list.isEmpty())
-                    selectable.getCache().put(queryable, list);
-                
-                paging(list);
+                try
+                {
+                    preCallback();
+                    Command command = adapterConn.asSelectCommand(queryable, overloadResultRow);
+                    list = command.execute();
+                    postCallback();
+                    if (selectable.hasCache() && !list.isEmpty())
+                        selectable.getCache().put(queryable, list);
+                    
+                    paging(list);
+                }
+                catch(Exception e)
+                {
+                    queryable.setTotal(Statement.EXECUTE_FAILED);
+                    postException();
+                    handleableException.handle(e);                    
+                }
             }
             else
             {
@@ -90,9 +106,9 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
     
     private void paging(List<?> list)
     {
-        if (adapterConn.supportsPagingByRoundtrip())
+        if (queryable.isPaging())
         {
-            if (queryable.isPaging())
+            if (queryable.getDynamicSql().getSqlDialect().supportsFeature(SqlFeatureSupport.PAGING_ROUNDTRIP))
             {
                 StatementAdapter<Number, ResultSet> adapterStmtCount = adapterConn.newStatement(queryable.queryCount());
                 queryable.bind(adapterStmtCount).on();
@@ -110,7 +126,9 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
                 }
             }
             else
-                queryable.setTotal(list.size());
+                queryable.setTotal(Statement.SUCCESS_NO_INFO);
         }
+        else if (queryable.getTotal() < 0)
+            queryable.setTotal(list.size());
     }
 }

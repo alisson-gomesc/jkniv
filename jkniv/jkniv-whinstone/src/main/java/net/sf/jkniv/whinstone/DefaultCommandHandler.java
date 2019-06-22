@@ -20,6 +20,7 @@
 package net.sf.jkniv.whinstone;
 
 import java.lang.reflect.Method;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +38,13 @@ import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 
+/**
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public abstract class DefaultCommandHandler implements CommandHandler
 {
     final static Logger                              LOG               = LoggerFactory
@@ -111,11 +118,11 @@ public abstract class DefaultCommandHandler implements CommandHandler
     }
     
     @Override
-    @SuppressWarnings("rawtypes")
     public <T> T run()
     {
         NOT_NULL.verify(this.adapterConn, this.queryable, this.sql, this.handler);
         T t = null;
+        Number rows = 0;
         if (LOG.isTraceEnabled())
             LOG.trace("Executing [{}] as {} command", queryable, sql.getSqlType());
         try
@@ -124,20 +131,26 @@ public abstract class DefaultCommandHandler implements CommandHandler
             
             if (!queryable.isBoundSql())
                 queryable.bind(sql);
-            
-            preCallback();
-            this.command = handler.asCommand();
-            t = this.command.execute();
-            postCallback();
-            if (LOG.isDebugEnabled())
+            try
             {
-                Number rows = null;
-                if (t instanceof List)
-                    rows = ((List) t).size();
-                else if (t instanceof Number)
+                preCallback();
+                this.command = handler.asCommand();
+                t = this.command.execute();
+                if (t instanceof Number)
                     rows = (Number) t;
-                
-                LOG.debug("{} records was affected by {} [{}] query", rows, sql.getSqlType(), queryable.getName());
+                if (queryable.getDynamicSql().getSqlDialect().supportsFeature(SqlFeatureSupport.PAGING_ROUNDTRIP))
+                    queryable.setTotal(Statement.SUCCESS_NO_INFO);
+                else
+                    queryable.setTotal(rows.longValue());
+                if (LOG.isDebugEnabled())
+                    LOG.debug("{} records was affected by {} [{}] query", rows, sql.getSqlType(), queryable.getName());
+                postCallback();
+            }
+            catch (Exception e)
+            {
+                queryable.setTotal(Statement.EXECUTE_FAILED);
+                postException();
+                handleableException.handle(e);
             }
         }
         finally
@@ -276,7 +289,7 @@ public abstract class DefaultCommandHandler implements CommandHandler
         }
         OBJECTS_CALLBACKS.put(proxyParams.getTargetClass().getName(), objectCallback);
     }
-
+    
     @Override
     public CommandHandler checkSqlType(SqlType expected)
     {
@@ -284,9 +297,10 @@ public abstract class DefaultCommandHandler implements CommandHandler
             throw new IllegalArgumentException("Null Sql reference wasn't expected");
         
         if (sql.getSqlType() != expected)
-            throw new IllegalArgumentException("Cannot execute sql ["+sql.getName()+"] as "+sql.getSqlType()+", " + expected + " was expect");
+            throw new IllegalArgumentException("Cannot execute sql [" + sql.getName() + "] as " + sql.getSqlType()
+                    + ", " + expected + " was expect");
         
         return this;
     }
-
+    
 }

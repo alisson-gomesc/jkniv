@@ -38,10 +38,15 @@ public enum SqlFeatureSupport
     CONN_HOLDABILITY,
     /** supports holdability at the statement level */
     STMT_HOLDABILITY,
-    /** breaks the query results into pages */
-    PAGE_QUERY,
-    /** allow random jumps between pages */
-    OFFSET_QUERY
+    /** a page selected to mark the reader's place */
+    BOOKMARK_QUERY,
+    /** check if database needs a new round trip to get total of records */
+    PAGING_ROUNDTRIP
+    
+    /* breaks the query results into pages */
+    //PAGE_QUERY,
+    /* allow random jumps between pages */
+    //OFFSET_QUERY
     //SET_HOLDABILITY,
     //CLOSE_CURSORS_AT_COMMIT
     ;

@@ -48,6 +48,8 @@ public class CassandraDialect extends AnsiDialect
         super();
         addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, true));
         addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, false));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.BOOKMARK_QUERY, true));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.PAGING_ROUNDTRIP, false));
     }
 
     /*

@@ -80,6 +80,7 @@ class QueryName implements Queryable
     protected String     sqlTextToCount;
     protected String[]   paramsNames;
     protected int        countParams;
+    private String       bookmark;
     private boolean      boundSql;
     private boolean      boundParams;
     private boolean      cached;
@@ -686,5 +687,16 @@ class QueryName implements Queryable
     {
         return this.cached;        
     }
+    
+    @Override
+    public void setBookmark(String bookmark)
+    {
+        this.bookmark = bookmark;
+    }
 
+    @Override
+    public String getBookmark()
+    {
+        return this.bookmark;
+    }
 }

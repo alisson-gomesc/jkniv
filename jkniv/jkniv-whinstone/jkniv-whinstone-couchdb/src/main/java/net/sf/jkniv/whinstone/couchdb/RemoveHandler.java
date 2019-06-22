@@ -22,10 +22,14 @@ package net.sf.jkniv.whinstone.couchdb;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.DefaultCommandHandler;
 
+/**
+ * Couchdb Command to handler the {@code Remove} life-cycle.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public class RemoveHandler extends DefaultCommandHandler
 {
-    //private static final Logger         LOG = LoggerFactory.getLogger(RemoveHandler.class);
-    
     public RemoveHandler(HttpCookieConnectionAdapter adapterConn)
     {
         super(adapterConn);

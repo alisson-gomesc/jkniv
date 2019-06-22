@@ -36,7 +36,7 @@ public class DefaultQuery implements Command
     {
         super();
         this.stmt = stmt;
-        queryable.setTotal(Statement.SUCCESS_NO_INFO);
+        //queryable.setTotal(Statement.SUCCESS_NO_INFO);
     }
     
     @Override
@@ -57,6 +57,4 @@ public class DefaultQuery implements Command
         T list = (T) stmt.rows();
       return list;
     }
-    
-    
 }

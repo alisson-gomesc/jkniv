@@ -49,7 +49,7 @@ import net.sf.jkniv.whinstone.couchdb.model.orm.AuthorView;
 import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
 import net.sf.jkniv.whinstone.params.ParameterException;
 
-public class CouchDbRepositoryFindPaginationTest extends BaseJdbc
+public class CouchDbRepositoryPaginationTest extends BaseJdbc
 {
     @Rule
     public ExpectedException  catcher = ExpectedException.none();

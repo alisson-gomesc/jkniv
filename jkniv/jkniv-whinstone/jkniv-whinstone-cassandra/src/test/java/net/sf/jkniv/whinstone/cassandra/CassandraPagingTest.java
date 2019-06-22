@@ -42,6 +42,7 @@ import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
 public class CassandraPagingTest extends BaseJdbc
 {
     private static final int SIZE_PAGE = 5;
+    private static final long SUCCESS_NO_INFO = Long.valueOf(Statement.SUCCESS_NO_INFO);
 
     @BeforeClass
     public static void setUp()
@@ -72,7 +73,7 @@ public class CassandraPagingTest extends BaseJdbc
         Queryable q = QueryFactory.of("all-vehicles", 0, SIZE_PAGE);
         List<Vehicle> list = repositoryCas.list(q);
         assertThat(list.size(), is(SIZE_PAGE));
-        assertThat(q.getTotal(), is(Long.valueOf(Statement.SUCCESS_NO_INFO)));
+        assertThat(q.getTotal(), is(SUCCESS_NO_INFO));
     }
     
     @Test
@@ -85,7 +86,7 @@ public class CassandraPagingTest extends BaseJdbc
         Queryable q = QueryFactory.of("colors-by-name", params, 3, SIZE_PAGE);
         List<Vehicle> list = repositoryCas.list(q);
         assertThat(list.size(), is(SIZE_PAGE));
-        assertThat(q.getTotal(), is(Long.valueOf(Statement.SUCCESS_NO_INFO)));
+        assertThat(q.getTotal(), is(SUCCESS_NO_INFO));
     }
 
     @Test
@@ -97,7 +98,7 @@ public class CassandraPagingTest extends BaseJdbc
         Queryable q = QueryFactory.of("colors-by-name", params, 0, SIZE_PAGE);
         List<Vehicle> list = repositoryCas.list(q);
         assertThat(list.size(), is(0));
-        assertThat(q.getTotal(), is(Long.valueOf(Statement.SUCCESS_NO_INFO)));
+        assertThat(q.getTotal(), is(SUCCESS_NO_INFO));
     }
 
 }

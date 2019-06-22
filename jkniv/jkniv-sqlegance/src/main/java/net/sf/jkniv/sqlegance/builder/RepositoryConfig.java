@@ -443,7 +443,7 @@ public class RepositoryConfig
         sqlDialect = proxy.newInstance();
         for (SqlFeatureSupport feature : SqlFeatureSupport.values())
         {
-            String value = getProperty(RepositoryProperty.PREFIX+"."+feature.name().toLowerCase());
+            String value = getProperty(RepositoryProperty.PREFIX+".feature."+feature.name().toLowerCase());
             if (value != null)
             {
                 boolean supported = Boolean.valueOf(value);

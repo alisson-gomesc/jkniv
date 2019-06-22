@@ -238,11 +238,11 @@ class HttpCookieConnectionAdapter implements ConnectionAdapter
         throw new UnsupportedOperationException("CouchDb repository  doesn't implement this method yet!");
     }
     
-    @Override
-    public boolean supportsPagingByRoundtrip()
-    {
-        return false;
-    }
+//    @Override
+//    public boolean supportsPagingByRoundtrip()
+//    {
+//        return false;
+//    }
 
     
     @Override

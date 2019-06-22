@@ -33,12 +33,14 @@
     <description>My jdbc datasource config overriding dialect</description>
     <jndi-data-source>jdbc/dssample</jndi-data-source>
     <properties>
-      <property name="jkniv.repository.unknow" value="true"/>
-      <property name="jkniv.repository.limit" value="true"/>
-      <property name="jkniv.repository.limit_off_set" value="false"/>
-      <property name="jkniv.repository.rownum" value="true"/>
-      <property name="jkniv.repository.conn_holdability" value="false"/>
-      <property name="jkniv.repository.stmt_holdability" value="true"/>
+      <property name="jkniv.repository.feature.unknow" value="true"/>
+      <property name="jkniv.repository.feature.limit" value="true"/>
+      <property name="jkniv.repository.feature.limit_off_set" value="false"/>
+      <property name="jkniv.repository.feature.rownum" value="true"/>
+      <property name="jkniv.repository.feature.conn_holdability" value="false"/>
+      <property name="jkniv.repository.feature.stmt_holdability" value="true"/>
+      <property name="jkniv.repository.feature.bookmark_query" value="true"/>
+      <property name="jkniv.repository.feature.paging_roundtrip" value="false"/>
       <property name="jkniv.repository.jdbc.max_parameters" value="255"/>
     </properties>
   </repository>

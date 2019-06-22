@@ -22,6 +22,12 @@ package net.sf.jkniv.whinstone.couchdb;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.DefaultCommandHandler;
 
+/**
+ * Couchdb Command to handler the {@code Add} life-cycle.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public class AddHandler extends DefaultCommandHandler
 {
     public AddHandler(HttpCookieConnectionAdapter adapterConn)

@@ -172,11 +172,11 @@ public class DeleteCommand extends AbstractCommand implements CouchCommand
                 LOG.error(errorFormat(http, response.getStatusLine(), json));
                 throw new RepositoryException(response.getStatusLine().toString() +", "+ reason);
             }
-            commandHandler.postCommit();
+            //commandHandler.postCommit();
         }
         catch (Exception e) // ClientProtocolException | JsonParseException | JsonMappingException | IOException
         {
-            commandHandler.postException();
+            //commandHandler.postException();
             handlerException.handle(e);
         }
         finally

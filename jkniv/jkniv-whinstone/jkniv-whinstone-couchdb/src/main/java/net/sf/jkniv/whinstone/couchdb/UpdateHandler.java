@@ -22,10 +22,14 @@ package net.sf.jkniv.whinstone.couchdb;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.DefaultCommandHandler;
 
+/**
+ * Couchdb Command to handler the {@code Update} life-cycle.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public class UpdateHandler extends DefaultCommandHandler
 {
-    //private static final Logger         LOG = LoggerFactory.getLogger(UpdateHandler.class);
-    
     public UpdateHandler(HttpCookieConnectionAdapter adapterConn)
     {
         super(adapterConn);

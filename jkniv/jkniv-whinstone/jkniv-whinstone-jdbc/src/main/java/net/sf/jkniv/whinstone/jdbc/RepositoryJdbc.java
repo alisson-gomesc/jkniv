@@ -146,7 +146,7 @@ class RepositoryJdbc implements Repository
         Class<?>[] types = null;
         Class<? extends ConnectionFactory> adapterClassFactory = null;
 
-        this.handlerException = new HandlerException(RepositoryException.class, "JDBC Error cannot execute SQL [%s]");
+        configureHandlerException();
         this.sqlContext = sqlContext;
         
         this.repositoryConfig = this.sqlContext.getRepositoryConfig();
@@ -185,13 +185,14 @@ class RepositoryJdbc implements Repository
         this.connectionFactory = getJdbcAdapterFactory(classNameJdbcAdapter, adapterClassFactory, args, types);
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
-        defineQueryNameStrategy();
+        configQueryNameStrategy();
         if (LOG.isInfoEnabled())
             LOG.info("Repository JDBC was started with context [{}] using [{}] as JDBC Adapter", this.sqlContext.getName(), this.connectionFactory.getClass().getName());
         if (isDebugEnabled)
             showMetadata();
         
     }
+        
 /*
     private WorkJdbc currentWork()
     {
@@ -799,7 +800,7 @@ class RepositoryJdbc implements Repository
         sqlContext.close();
     }
     
-    private void defineQueryNameStrategy()
+    private void configQueryNameStrategy()
     {
         String nameStrategy = repositoryConfig.getQueryNameStrategy();
         ObjectProxy<? extends QueryNameStrategy> proxy = ObjectProxyFactory.newProxy(nameStrategy);
@@ -960,4 +961,10 @@ class RepositoryJdbc implements Repository
         }
         return factory.newInstance();
     }
+    
+    private void configureHandlerException()
+    {
+        this.handlerException = new HandlerException(RepositoryException.class, "JDBC Error cannot execute SQL [%s]");
+    }
+
 }

@@ -50,36 +50,34 @@ import net.sf.jkniv.sqlegance.Sql;
  */
 public class AnsiDialect implements SqlDialect
 {
-    private static final Assertable notNull = AssertsFactory.getNotNull();
+    private static final Assertable                      notNull                     = AssertsFactory.getNotNull();
     // find the pattern start with 'with'
-    private static final String  REGEX_START_WITH            = "^\\s*(with)\\s";
+    private static final String                          REGEX_START_WITH            = "^\\s*(with)\\s";
     // find the pattern start with 'select'
-    private static final String  REGEX_START_SELECT          = "^\\s*(select)\\s";
+    private static final String                          REGEX_START_SELECT          = "^\\s*(select)\\s";
     
     // find the pattern start with 'select distinct'
-    private static final String  REGEX_START_SELECT_DISTINCT = "^\\s*(select\\s+distinct|select)\\s";
+    private static final String                          REGEX_START_SELECT_DISTINCT = "^\\s*(select\\s+distinct|select)\\s";
     
     // find the pattern end with'for update'
-    private static final String  REGEX_ENDS_FORUPDATE        = "\\s+(for\\s+update)\\s*$";
+    private static final String                          REGEX_ENDS_FORUPDATE        = "\\s+(for\\s+update)\\s*$";
     
-    private static final String REGEX_ENDS_ORDERBY          = "\\s*(order\\s+by)\\s*[a-zA-Z0-9,_\\.\\)\\s]*$";
+    private static final String                          REGEX_ENDS_ORDERBY          = "\\s*(order\\s+by)\\s*[a-zA-Z0-9,_\\.\\)\\s]*$";
     
-
+    private static final Pattern                         patternWith                 = Pattern.compile(REGEX_START_WITH,
+            Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern                         patternSelect               = Pattern
+            .compile(REGEX_START_SELECT, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern                         patternSelectDistinct       = Pattern
+            .compile(REGEX_START_SELECT_DISTINCT, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern                         patternForUpdate            = Pattern
+            .compile(REGEX_ENDS_FORUPDATE, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    public static final Pattern                          patternORDER_BY             = Pattern
+            .compile(REGEX_ENDS_ORDERBY, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     
-    private static final Pattern patternWith                 = Pattern.compile(REGEX_START_WITH,
-            Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-    private static final Pattern patternSelect               = Pattern.compile(REGEX_START_SELECT,
-            Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-    private static final Pattern patternSelectDistinct       = Pattern.compile(REGEX_START_SELECT_DISTINCT,
-            Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-    private static final Pattern patternForUpdate            = Pattern.compile(REGEX_ENDS_FORUPDATE,
-            Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-    public static final Pattern patternORDER_BY              = Pattern.compile(REGEX_ENDS_ORDERBY, 
-            Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-
-    protected String             name;
-    private final HashMap<SqlFeatureSupport, SqlFeature>      sqlFeatures;
-    private int maxOfParameters;
+    protected String                                     name;
+    private final HashMap<SqlFeatureSupport, SqlFeature> sqlFeatures;
+    private int                                          maxOfParameters;
     //protected Queryable          queryable;
     //protected String             sql;
     //protected String             sqlWithLimit;
@@ -91,30 +89,39 @@ public class AnsiDialect implements SqlDialect
     {
         this.name = getClass().getSimpleName();
         this.sqlFeatures = new HashMap<SqlFeatureSupport, SqlFeature>();
-        this.sqlFeatures.put(SqlFeatureSupport.LIMIT, SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT));
-        this.sqlFeatures.put(SqlFeatureSupport.LIMIT_OFF_SET, SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET));
-        this.sqlFeatures.put(SqlFeatureSupport.ROWNUM, SqlFeatureFactory.newInstance(SqlFeatureSupport.ROWNUM));
-        this.sqlFeatures.put(SqlFeatureSupport.STMT_HOLDABILITY, SqlFeatureFactory.newInstance(SqlFeatureSupport.STMT_HOLDABILITY));
-        this.sqlFeatures.put(SqlFeatureSupport.CONN_HOLDABILITY, SqlFeatureFactory.newInstance(SqlFeatureSupport.CONN_HOLDABILITY, true));
+        this.sqlFeatures.put(SqlFeatureSupport.LIMIT, 
+                             SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT));
+        this.sqlFeatures.put(SqlFeatureSupport.LIMIT_OFF_SET,
+                             SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET));
+        this.sqlFeatures.put(SqlFeatureSupport.ROWNUM, 
+                             SqlFeatureFactory.newInstance(SqlFeatureSupport.ROWNUM));
+        this.sqlFeatures.put(SqlFeatureSupport.STMT_HOLDABILITY,
+                             SqlFeatureFactory.newInstance(SqlFeatureSupport.STMT_HOLDABILITY));
+        this.sqlFeatures.put(SqlFeatureSupport.CONN_HOLDABILITY,
+                             SqlFeatureFactory.newInstance(SqlFeatureSupport.CONN_HOLDABILITY, true));
+        this.sqlFeatures.put(SqlFeatureSupport.BOOKMARK_QUERY,
+                SqlFeatureFactory.newInstance(SqlFeatureSupport.BOOKMARK_QUERY));
+        this.sqlFeatures.put(SqlFeatureSupport.PAGING_ROUNDTRIP,
+                SqlFeatureFactory.newInstance(SqlFeatureSupport.PAGING_ROUNDTRIP, true));
         this.maxOfParameters = Integer.MAX_VALUE;
         //this.countParams = 0;
     }
     
-//    public AnsiDialect()
-//    {
-//        notNull.verify(queryable.getSql());
-//        this.name = getClass().getSimpleName();
-//        this.isql = isql;
-//        this.queryable = queryable;
-//        this.init();
-//    }
+    //    public AnsiDialect()
+    //    {
+    //        notNull.verify(queryable.getSql());
+    //        this.name = getClass().getSimpleName();
+    //        this.isql = isql;
+    //        this.queryable = queryable;
+    //        this.init();
+    //    }
     
-//    private void init()
-//    {
-//        buildSqlLimits();
-//        if (queryable.isPaging())
-//            buildSqlCount();
-//    }
+    //    private void init()
+    //    {
+    //        buildSqlLimits();
+    //        if (queryable.isPaging())
+    //            buildSqlCount();
+    //    }
     
     public String name()
     {
@@ -127,17 +134,18 @@ public class AnsiDialect implements SqlDialect
         boolean answer = false;
         
         SqlFeature sqlFeature = sqlFeatures.get(feature);
-        if(sqlFeature != null)
+        if (sqlFeature != null)
             answer = sqlFeature.supports();
-                
+        
         return answer;
     }
     
     @Override
-    public SqlFeature addFeature(SqlFeature sqlFeature) 
+    public SqlFeature addFeature(SqlFeature sqlFeature)
     {
         return this.sqlFeatures.put(sqlFeature.getSqlFeature(), sqlFeature);
     }
+    
     /*
     @Override
     public boolean supportsLimit()
@@ -157,13 +165,13 @@ public class AnsiDialect implements SqlDialect
         return false;
     }
     
-
+    
     @Override
     public boolean supportsStmtHoldability()
     {
         return false;
     }
-
+    
     @Override
     public boolean supportsConnHoldability()
     {
@@ -182,7 +190,7 @@ public class AnsiDialect implements SqlDialect
         if (max > 0)
             this.maxOfParameters = max;
     }
-
+    
     @Override
     public String getSqlPatternCount()
     {
@@ -201,7 +209,7 @@ public class AnsiDialect implements SqlDialect
         }
         return pattern;//%1$s LIMIT %2$s, %3$s
     }
-
+    
     @Override
     public PreparedStatement prepare(Connection conn, Sql isql, String query)
     {
@@ -239,9 +247,9 @@ public class AnsiDialect implements SqlDialect
         {
             throw new RepositoryException("Cannot prepare statement [" + sqle.getMessage() + "]", sqle);
         }
-        return stmt;        
+        return stmt;
     }
-
+    
     //protected void buildSqlLimits()
     @Override
     public String buildQueryPaging(final String sqlText, int offset, int max)
@@ -318,25 +326,28 @@ public class AnsiDialect implements SqlDialect
         return matcher;
     }
     
-//    protected boolean isSelect()
-//    {
-//        return queryable.getSql().isSelect();
-//    }
-
+    //    protected boolean isSelect()
+    //    {
+    //        return queryable.getSql().isSelect();
+    //    }
+    
     /** 
      * Count the occurrences of the substring in string s.
      * @param str string to search in. Return 0 if this is null.
      * @param sub string to search for. Return 0 if this is null.
      * @return number of occurrences from {@code str}
      */
-    protected int countOccurrencesOf(String str, String sub) {
-        if (str == null || sub == null || str.length() == 0 || sub.length() == 0) {
+    protected int countOccurrencesOf(String str, String sub)
+    {
+        if (str == null || sub == null || str.length() == 0 || sub.length() == 0)
+        {
             return 0;
         }
         int count = 0;
         int pos = 0;
         int idx;
-        while ((idx = str.indexOf(sub, pos)) != -1) {
+        while ((idx = str.indexOf(sub, pos)) != -1)
+        {
             ++count;
             pos = idx + sub.length();
         }

@@ -130,6 +130,9 @@ public class RepositoryConfigTest
         assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.ROWNUM), is(false));
         assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.CONN_HOLDABILITY), is(true));
         assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.STMT_HOLDABILITY), is(false));
+        
+        assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY), is(false));
+        assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.PAGING_ROUNDTRIP), is(true));
     }
     
     @Test
@@ -148,5 +151,8 @@ public class RepositoryConfigTest
         assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.ROWNUM), is(true));
         assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.CONN_HOLDABILITY), is(false));
         assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.STMT_HOLDABILITY), is(true));
+        assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY), is(true));
+        assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.PAGING_ROUNDTRIP), is(false));
+        
     }
 }

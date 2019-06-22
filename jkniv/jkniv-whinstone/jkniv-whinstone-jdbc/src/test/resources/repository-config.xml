@@ -6,10 +6,10 @@
     <description>My jdbc datasource config</description>
     <jndi-data-source>java:comp/env/jdbc/whinstone</jndi-data-source>
     <properties>
-      <property name="jkniv.repository.jdbc.stmt_strategy"          value="net.sf.jkniv.whinstone.jdbc.DefaultPreparedStatementStrategy" />
-      <property name="jkniv.repository.query_namestrategy"          value="net.sf.jkniv.sqlegance.HashQueryNameStrategy" />
-      <property name="jkniv.repository.jdbc.dialect"                value="net.sf.jkniv.whinstone.jdbc.dialect.Derby10o7Dialect" />
-      <property name="jkniv.repository.jdbc_adapter_factory"        value="net.sf.jkniv.whinstone.jdbc.DataSourceAdapter" />
+      <property name="jkniv.repository.jdbc.stmt_strategy"   value="net.sf.jkniv.whinstone.jdbc.DefaultPreparedStatementStrategy" />
+      <property name="jkniv.repository.query_namestrategy"   value="net.sf.jkniv.sqlegance.HashQueryNameStrategy" />
+      <property name="jkniv.repository.jdbc.dialect"         value="net.sf.jkniv.whinstone.jdbc.dialect.Derby10o7Dialect" />
+      <property name="jkniv.repository.jdbc_adapter_factory" value="net.sf.jkniv.whinstone.jdbc.DataSourceAdapter" />
       <!-- 
       <property name="user" value="derbwhinstone" />
       <property name="password" value="derbwhinstone" />
@@ -21,10 +21,10 @@
     <description>My DataSource with Spring Adapter</description>
     <jndi-data-source>java:comp/env/jdbc/whinstone</jndi-data-source>
     <properties>
-      <property name="jkniv.repository.jdbc.stmt_strategy"          value="net.sf.jkniv.whinstone.jdbc.DefaultPreparedStatementStrategy" />
-      <property name="jkniv.repository.query_namestrategy"          value="net.sf.jkniv.sqlegance.HashQueryNameStrategy" />
-      <property name="jkniv.repository.jdbc.dialect"                value="net.sf.jkniv.whinstone.jdbc.dialect.Derby10o7Dialect" />
-      <property name="jkniv.repository.jdbc_adapter_factory"        value="net.sf.jkniv.whinstone.jdbc.SpringDataSourceAdapter" />
+      <property name="jkniv.repository.jdbc.stmt_strategy"   value="net.sf.jkniv.whinstone.jdbc.DefaultPreparedStatementStrategy" />
+      <property name="jkniv.repository.query_namestrategy"   value="net.sf.jkniv.sqlegance.HashQueryNameStrategy" />
+      <property name="jkniv.repository.jdbc.dialect"         value="net.sf.jkniv.whinstone.jdbc.dialect.Derby10o7Dialect" />
+      <property name="jkniv.repository.jdbc_adapter_factory" value="net.sf.jkniv.whinstone.jdbc.SpringDataSourceAdapter" />
     </properties>
   </repository>
 
@@ -32,14 +32,14 @@
     <description>My Driver Manager Adapter</description>
     <jndi-data-source>java:comp/env/jdbc/whinstone</jndi-data-source>
     <properties>
-      <property name="jkniv.repository.jdbc.stmt_strategy"          value="net.sf.jkniv.whinstone.jdbc.DefaultPreparedStatementStrategy" />
-      <property name="jkniv.repository.query_namestrategy"          value="net.sf.jkniv.sqlegance.HashQueryNameStrategy" />
-      <property name="jkniv.repository.jdbc.dialect"                value="net.sf.jkniv.whinstone.jdbc.dialect.Derby10o7Dialect" />
-      <property name="jkniv.repository.jdbc_adapter_factory"        value="net.sf.jkniv.whinstone.jdbc.DriverManagerAdapter" />
-      <property name="driver" value="oracle.jdbc.driver.OracleDriver" />
-      <property name="url" value="jdbc:oracle:thin:@127.0.0.1:1521/XE" />
-      <property name="user" value="orawhinstone" />
-      <property name="password" value="orawhinstone" />
+      <property name="jkniv.repository.jdbc.stmt_strategy"   value="net.sf.jkniv.whinstone.jdbc.DefaultPreparedStatementStrategy" />
+      <property name="jkniv.repository.query_namestrategy"   value="net.sf.jkniv.sqlegance.HashQueryNameStrategy" />
+      <property name="jkniv.repository.jdbc.dialect"         value="net.sf.jkniv.whinstone.jdbc.dialect.Derby10o7Dialect" />
+      <property name="jkniv.repository.jdbc_adapter_factory" value="net.sf.jkniv.whinstone.jdbc.DriverManagerAdapter" />
+      <property name="driver"                                value="oracle.jdbc.driver.OracleDriver" />
+      <property name="url"                                   value="jdbc:oracle:thin:@127.0.0.1:1521/XE" />
+      <property name="user"                                  value="orawhinstone" />
+      <property name="password"                              value="orawhinstone" />
     </properties>
   </repository>
 

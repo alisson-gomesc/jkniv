@@ -302,6 +302,20 @@ public interface Queryable
      * mark the query result as cache
      */
     void cached();
+
+    /**
+     * Get a record of which page selected to mark the reader's place
+     * @return A string that enables you to specify which page of results you require
+     * @see <a href="https://docs.datastax.com/en/developer/java-driver/3.2/manual/paging/#saving-and-reusing-the-paging-state">Saving and reusing the paging state</a>
+     * @see <a href="https://docs.couchdb.org/en/stable/api/database/find.html#pagination">Find Pagination</a>
+     */
+    String getBookmark();
+    
+    /**
+     * Define a page selected to mark the reader's place
+     * @param bookmark A string that enables you to specify which page of results you require
+     */
+    void setBookmark(String bookmark);
     
     // FIXME design when invoked return type it's overload the sql the list or get method cannot change de value
     // return IllegalStateException when this happen

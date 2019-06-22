@@ -46,8 +46,8 @@ public interface Command
     Command with(CommandHandler commandHandler);
     
     /**
-     * Execute the database command
-     * @return the result of the command execution
+     * Execute the database statement could be a {@code Command} or a {@code Query}
+     * @return the result of the statement execution
      */
     <T> T execute();
 }

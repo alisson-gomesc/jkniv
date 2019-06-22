@@ -23,10 +23,14 @@ import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.DefaultCommandHandler;
 
+/**
+ * JDBC Command to handler the {@code Remove} life-cycle.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 class RemoveHandler extends DefaultCommandHandler
 {
-    //private static final Logger         LOG = LoggerFactory.getLogger(RemoveHandler.class);
-    
     public RemoveHandler(ConnectionAdapter adapterConn)
     {
         super(adapterConn);

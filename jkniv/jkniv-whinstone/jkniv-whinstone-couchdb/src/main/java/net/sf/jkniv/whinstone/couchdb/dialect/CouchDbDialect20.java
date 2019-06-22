@@ -22,9 +22,36 @@ package net.sf.jkniv.whinstone.couchdb.dialect;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
-import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.params.ParameterException;
 
+/**
+ * Dialect to CouchDB
+ * 
+ * <p>
+ * Limit clause:
+ *  <pre>
+ *  {
+ *    "selector": {
+ *      "year": {"$gt": 2010}
+ *    },
+ *    "fields": ["_id", "_rev", "year", "title"],
+ *    "sort": [{"year": "asc"}],
+ *    "limit": 2,
+ *    "skip": 0
+ *  }
+ *  </pre>
+ * </p>
+ * 
+ * <ul>
+ *  <li>Supports limits? true</li>
+ *  <li>Supports limit off set? true</li>
+ *  <li>Supports rownum? false</li>
+ * </ul>
+ *
+ * @author Alisson Gomes 
+ * @since 0.6.0
+ * @see <a href="https://docs.couchdb.org/en/2.1.2/api/database/find.html">Find Pagination</a>
+ */
 public class CouchDbDialect20 extends AnsiDialect
 {
     public CouchDbDialect20()
@@ -32,6 +59,8 @@ public class CouchDbDialect20 extends AnsiDialect
         super();
         addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, true));
         addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, true));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.BOOKMARK_QUERY, false));//couchdb 2.1 has bookmark
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.PAGING_ROUNDTRIP, false));
     }
     
     @Override
@@ -41,7 +70,7 @@ public class CouchDbDialect20 extends AnsiDialect
         int offsetLimit = sqlText.indexOf("\"limit\"");
         if (offsetLimit > -1)
             throw new ParameterException("Query [" + sqlText
-                    + "] has a \"limit\" property defined, cannot use paging Queryable for this query.");
+                    + "] has a \"limit\" property defined, cannot use auto paging Queryable for this query.");
         
         int offsetBracket = sqlText.lastIndexOf("}");
         if (offsetBracket >= 0)

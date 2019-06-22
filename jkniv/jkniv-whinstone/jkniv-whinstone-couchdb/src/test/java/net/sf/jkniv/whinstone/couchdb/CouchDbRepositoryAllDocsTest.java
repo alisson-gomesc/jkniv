@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,8 @@ public class CouchDbRepositoryAllDocsTest extends BaseJdbc
     // TODO implements POST /{db}/_all_docs/queries
     // http://docs.couchdb.org/en/latest/api/database/bulk-api.html#post--db-_all_docs-queries
     
+    private static final long SUCCESS_NO_INFO = Long.valueOf(Statement.SUCCESS_NO_INFO);
+    
     @Test
     public void whenListAllDocs()
     {
@@ -50,7 +53,7 @@ public class CouchDbRepositoryAllDocsTest extends BaseJdbc
         assertThat((long)list.size(), greaterThanOrEqualTo(getTotalDocs()));
         assertThat(q.getTotal(), greaterThanOrEqualTo(getTotalDocs()));
         assertThat(list.get(0), instanceOf(Map.class));
-        System.out.println(list.get(0));
+        //System.out.println(list.get(0));
     }
 
     @Test
@@ -62,10 +65,11 @@ public class CouchDbRepositoryAllDocsTest extends BaseJdbc
         
         List<Map> list = repositoryDb.list(q);
         assertThat(list.size(), is(3));
-        assertThat(q.getTotal(), greaterThanOrEqualTo(getTotalDocs()));
+        //assertThat(q.getTotal(), greaterThanOrEqualTo(getTotalDocs()));
+        assertThat(q.getTotal(), is(SUCCESS_NO_INFO));
         assertThat(list.get(0), instanceOf(Map.class));
         //assertThat(list.get(0).get("id").toString(), is("3"));
-        System.out.println(list.get(0));
+        //System.out.println(list.get(0));
     }
     
     @Test
@@ -79,10 +83,11 @@ public class CouchDbRepositoryAllDocsTest extends BaseJdbc
         
         List<Map> list = repositoryDb.list(q);
         assertThat(list.size(), is(3));
-        assertThat(q.getTotal(), greaterThanOrEqualTo(getTotalDocs()));
+        //assertThat(q.getTotal(), greaterThanOrEqualTo(getTotalDocs()));
+        assertThat(q.getTotal(), is(SUCCESS_NO_INFO));
         assertThat(list.get(0), instanceOf(Map.class));
         //assertThat(list.get(0).get("id").toString(), is("7"));
-        System.out.println(list.get(0));
+        //System.out.println(list.get(0));
     }
     
     
