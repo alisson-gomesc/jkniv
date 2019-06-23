@@ -22,6 +22,7 @@ package net.sf.jkniv.whinstone.couchdb;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
@@ -64,8 +65,8 @@ public class CouchDbRepositoryPaginationTest extends BaseJdbc
         Queryable q = QueryFactory.of("authors-page-override", params, 0, 3);
         List<Map<String, ?>> list = repositoryDb.list(q);
         assertThat(q.getTotal(), is(-1L));
+        assertThat(q.getBookmark(), notNullValue());
     }
-
     
     @Test
     public void whenCouchDbListWithFindPagination()
@@ -79,8 +80,8 @@ public class CouchDbRepositoryPaginationTest extends BaseJdbc
         assertThat(list.size(), is(2));
         assertThat(q.getTotal(), is((long)Statement.SUCCESS_NO_INFO));
         assertThat(list.get(0), instanceOf(Map.class));
+        assertThat(q.getBookmark(), notNullValue());
     }
-
 
     @Test
     public void whenUseViewWithParams()

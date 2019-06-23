@@ -69,7 +69,7 @@ public class FindCommand extends AbstractCommand implements CouchCommand
         Class returnType = null;
         FindAnswer answer = null;
         List list = Collections.emptyList();
-        Object currentRow = null;
+        //Object currentRow = null;
         try
         {
             CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -100,12 +100,13 @@ public class FindCommand extends AbstractCommand implements CouchCommand
                 else
                     list =  answer.getDocs();
                 
-                if (queryable.isPaging())
-                {
+                setBookmark(answer.getBookmark(), queryable);
+                //if (queryable.isPaging())
+                //{
                     //if (answer.getBookmark() == null)
-                    queryable.setTotal(Statement.SUCCESS_NO_INFO);
-                }
-                else
+                //    queryable.setTotal(Statement.SUCCESS_NO_INFO);
+                //}
+                //else
                     queryable.setTotal(list.size());
             }
             else if (isNotFound(statusCode))

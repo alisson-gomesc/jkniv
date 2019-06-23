@@ -63,8 +63,8 @@ public class AnsiDialectTest extends SqlDialectAbstractTest
     @Override
     public void whenPagingSqlStartWithSelectDistinct()
     {
-        Queryable q = newQueryable(getQueryName(),getSql(SQL_SELECT, SqlType.SELECT));
-        assertThat(q.query(), is(SQL_SELECT));
+        Queryable q = newQueryable(getQueryName(),getSql(SQL_SELECT_DISTINCT, SqlType.SELECT));
+        assertThat(q.query(), is(SQL_SELECT_DISTINCT));
     }
 
     @Test

@@ -33,6 +33,7 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.reflect.BasicType;
 import net.sf.jkniv.sqlegance.Sql;
+import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.params.ParamParser;
@@ -472,15 +473,19 @@ class QueryName implements Queryable
         this.sql = sql;
         this.sqlText = sql.getSql(this.params);
         boolean pagingSelect = false;
+        SqlDialect sqlDialect = this.sql.getSqlDialect();
         if (sql.isSelectable() && isPaging())
         {
             pagingSelect = true;
-            this.sqlTextPaginated = this.sql.getSqlDialect().buildQueryPaging(sqlText, this.offset, this.max);
+            if(sqlDialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY))
+                this.sqlTextPaginated = sqlDialect.buildQueryPaging(sqlText, this.offset, this.max, this.bookmark);
+            else
+                this.sqlTextPaginated = sqlDialect.buildQueryPaging(sqlText, this.offset, this.max);
         }
         replaceForQuestionMark();
-        if (pagingSelect)
+        if (pagingSelect && sqlDialect.supportsFeature(SqlFeatureSupport.PAGING_ROUNDTRIP))
         {
-            this.sqlTextToCount = this.sql.getSqlDialect().buildQueryCount(sqlText);
+            this.sqlTextToCount = sqlDialect.buildQueryCount(sqlText);
             if (sql.getSqlDialect().supportsFeature(SqlFeatureSupport.LIMIT) && this.sqlTextPaginated == null)// TODO test paginate
                 throw new IllegalStateException("SqlDialect [" + sql.getSqlDialect().name()
                         + "] supports paging query but the query cannot be build");

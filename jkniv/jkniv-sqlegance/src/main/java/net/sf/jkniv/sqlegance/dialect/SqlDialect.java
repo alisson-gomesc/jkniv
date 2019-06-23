@@ -43,43 +43,8 @@ public interface SqlDialect
      */
     String name();
     
-    /*
-     * Native syntax of SQL vendor support some form of limiting query results?
-     *
-     * @return <strong>True</strong> if this dialect supports some form of LIMIT, <strong>false</strong> otherwise.
-     *
-    boolean supportsLimit();
-    
-    /*
-     * Native syntax of SQL vendor support some form of offset query results?
-     *
-     * @return <strong>True</strong> if this dialect supports some form of OFFSET, <strong>false</strong> otherwise.
-     *
-    boolean supportsLimitOffset();
-    
-    /*
-     * Native syntax of SQL vendor support some form of enumerate the rows results?
-     *
-     * @return <strong>True</strong> if this dialect supports some form of ROWNUM, <strong>false</strong> otherwise.
-     *
-    boolean supportsRownum();
-    
-
-    // SQL Server supports holdability at the connection level only. Use the connection.setHoldability() method. 
-    boolean supportsStmtHoldability();
-    
-    boolean supportsConnHoldability();
-    */
     boolean supportsFeature(SqlFeatureSupport feature);
-    /*
-    Associates the specified value with the specified key in this map. 
-    If the map previously contained a mapping for the key, the old value is replaced.
-
-    Specified by: put(...) in Map, Overrides: put(...) in AbstractMap
-    Parameters:key key with which the specified value is to be associatedvalue 
-    value to be associated with the specified key
-    Returns:the previous value associated with key, or null if there was no mapping for key. (A null return can also indicate that the map previously associated null with key.)
-    */
+    
     /**
      * Override a SQL ANSI feature
      * @param sqlFeature override a {@link SqlFeature} supports.
@@ -106,22 +71,6 @@ public interface SqlDialect
     
     PreparedStatement prepare(Connection conn, Sql isql, String query);
     
-    //Sql getISql();
-    
-//    String query();
-    
-//    String queryCount();
-    
-//    Queryable getQueryable();
-    
- //   int countParams();
-    
-//    String[] getParamsNames();
-    
-//    Object[] getParamsValues();
-    
-//    void setQueryable(Queryable queryable);
-    
     /**
      * Build a paginate query accordingly data base dialect
      * @param sqlText final SQL with parameters to bind
@@ -130,6 +79,8 @@ public interface SqlDialect
      * @return paginate query for specific data base dialect
      */
     String buildQueryPaging(final String sqlText, int offset, int max);
+    
+    String buildQueryPaging(final String sqlText, int offset, int max, String bookmark);
     
     String buildQueryCount(final String sqlText);
 }

@@ -61,10 +61,10 @@ public class FullResponseFindCommand extends AbstractCommand implements CouchCom
     {
         String json = null;
         CloseableHttpResponse response = null;
-        Class returnType = null;
+        //Class returnType = null;
         FindAnswer answer = null;
         List list = Collections.emptyList();
-        Object currentRow = null;
+        //Object currentRow = null;
         try
         {
             CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -78,20 +78,21 @@ public class FullResponseFindCommand extends AbstractCommand implements CouchCom
             int statusCode = response.getStatusLine().getStatusCode();
             if (isOk(statusCode))
             {
-                returnType = queryable.getReturnType();
+                //returnType = queryable.getReturnType();
                 answer = JsonMapper.mapper(json, FindAnswer.class);
                 if (answer.getWarning() != null)
                     LOG.warn("Query [{}] warnning message: {}", queryable.getName(), answer.getWarning());
                                     
                 list = new ArrayList();
                 list.add(answer);
-                if (queryable.isPaging())
-                {
+                //if (queryable.isPaging())
+               // {
                     //if (answer.getBookmark() == null)
-                    queryable.setTotal(Statement.SUCCESS_NO_INFO);
-                }
-                else
-                    queryable.setTotal(answer.getDocs().size());
+               //     queryable.setTotal(Statement.SUCCESS_NO_INFO);
+               // }
+               // else
+                setBookmark(answer.getBookmark(), queryable);
+                queryable.setTotal(answer.getDocs().size());
             }
             else if (isNotFound(statusCode))
             {

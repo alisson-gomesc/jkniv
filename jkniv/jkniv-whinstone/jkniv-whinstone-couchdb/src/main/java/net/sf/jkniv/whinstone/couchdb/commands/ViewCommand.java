@@ -113,6 +113,7 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
                 }
                 else
                     list = answer.getRows();
+                
                 if(queryable.isPaging())
                     queryable.setTotal(answer.getTotalRows());
                 else

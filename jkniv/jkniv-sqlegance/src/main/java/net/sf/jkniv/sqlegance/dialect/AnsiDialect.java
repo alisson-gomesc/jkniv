@@ -278,6 +278,12 @@ public class AnsiDialect implements SqlDialect
         return sqlTextPaginated;
     }
     
+    @Override
+    public String buildQueryPaging(final String sqlText, int offset, int max, String bookmark)
+    {
+        return buildQueryPaging(sqlText, offset, max);
+    }
+    
     /*
     protected void replaceForQuestionMark()
     {

@@ -59,7 +59,8 @@ public class CouchDbDialect20 extends AnsiDialect
         super();
         addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, true));
         addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, true));
-        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.BOOKMARK_QUERY, false));//couchdb 2.1 has bookmark
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.BOOKMARK_QUERY, true));//couchdb 2.0 doesn't support bookmark
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.CONN_HOLDABILITY, false));
         addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.PAGING_ROUNDTRIP, false));
     }
     
@@ -74,14 +75,32 @@ public class CouchDbDialect20 extends AnsiDialect
         
         int offsetBracket = sqlText.lastIndexOf("}");
         if (offsetBracket >= 0)
-            bodyWithLimitAndSkip = sqlText.substring(0, offsetBracket) + "\n,\"limit\": " + max + ", \"skip\": " + offset + " }";
+            bodyWithLimitAndSkip = sqlText.substring(0, offsetBracket) 
+                                    + "\n,\"limit\": " + max + ", \"skip\": " + offset + " }";
         return bodyWithLimitAndSkip;        
     }
-    
+
+    @Override
+    public String buildQueryPaging(final String sqlText, int offset, int max, String bookmark)
+    {
+        String bodyWithLimitAndSkip = sqlText;
+        int offsetLimit = sqlText.indexOf("\"limit\"");
+        if (offsetLimit > -1)
+            throw new ParameterException("Query [" + sqlText
+                    + "] has a \"limit\" property defined, cannot use auto paging Queryable for this query.");
+        
+        int offsetBracket = sqlText.lastIndexOf("}");
+        if (offsetBracket >= 0)
+            bodyWithLimitAndSkip = sqlText.substring(0, offsetBracket) 
+                                    + "\n,\"limit\": " + max + ", \"skip\": " + offset + 
+                                    (bookmark != null ? ", \"bookmark\": \"" + bookmark + "\"": "")
+                                    + " }";
+        return bodyWithLimitAndSkip;        
+    }
+
     @Override
     public String buildQueryCount(String sqlText)
     {
         return sqlText;
     }
-    
 }

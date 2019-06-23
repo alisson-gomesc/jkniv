@@ -20,14 +20,12 @@
 package net.sf.jkniv.whinstone.couchdb.commands;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -35,19 +33,15 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
-import net.sf.jkniv.sqlegance.QueryNotFoundException;
 import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.NoCommandHandler;
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.params.ParameterException;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 
 /**
@@ -299,6 +293,12 @@ public abstract class AbstractCommand implements CouchCommand
             if (proxy.hasMethod("setId"))
                 proxy.invoke("setId", id);
         }
+    }
+    
+    protected void setBookmark(String bookmark, Queryable queryable)
+    {
+        if (bookmark != null && queryable.getDynamicSql().getSqlDialect().supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY))
+            queryable.setBookmark(bookmark);
     }
     
     private Object getProperty(Queryable queryable, String name)
