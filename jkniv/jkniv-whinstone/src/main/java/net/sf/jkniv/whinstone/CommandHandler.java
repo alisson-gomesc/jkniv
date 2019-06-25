@@ -121,6 +121,7 @@ public interface CommandHandler
     
     /**
      * Execute the database command
+     * @param <T> Generic type of return, example: rows affected by a command or list of objects.
      * @return the result of the command execution
      */
     <T> T run();

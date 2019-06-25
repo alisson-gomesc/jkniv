@@ -28,8 +28,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
  * Default Command execute simple {@code INSERT}, {@code UPDATE} and {@code DELETE} SQL instructions.
- * 
- *  <b>Note: </b><p>
+ * <p><b>Note: </b>
  *  <ul>
  *   <li> {@code SELECT} are handle by {@link DefaultJdbcQuery}</li>
  *   <li> Bulk operations are handle by {@link BulkJdbcCommand}</li>

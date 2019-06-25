@@ -53,6 +53,7 @@ public class ProcedureTag extends AbstractSqlTag implements SqlTag, Storable
      * 
      * @param id Name/Identify from tag.
      * @param languageType type of language from tag.
+     * @param stats statistical for procedures
      */
     public ProcedureTag(String id, LanguageType languageType, Statistical stats)
     {

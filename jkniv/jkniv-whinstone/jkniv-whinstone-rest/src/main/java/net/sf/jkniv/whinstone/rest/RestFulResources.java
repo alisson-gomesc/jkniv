@@ -60,46 +60,47 @@ import net.sf.jkniv.whinstone.Repository;
  */
 //@PermitAll
 @Path("{context}")
-@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
+@Consumes(
+{ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 @Produces(MediaType.APPLICATION_JSON)
 @SuppressWarnings("unchecked")
 public class RestFulResources extends BaseResource
 {
-    private static final Logger LOG = LoggerFactory.getLogger(RestFulResources.class);
+    private static final Logger     LOG     = LoggerFactory.getLogger(RestFulResources.class);
     //protected static final SimpleNameRegistry modelTypes = new SimpleNameRegistry();
     //protected static final SimpleNameRegistry reportJaspers = new SimpleNameRegistry();
-    private final static Assertable notNull = AssertsFactory.getNotNull(); 
-    private final static Assertable isNull = AssertsFactory.getIsNull();
+    private final static Assertable notNull = AssertsFactory.getNotNull();
+    private final static Assertable isNull  = AssertsFactory.getIsNull();
     
     /**
      * Provider a way to reference a class type with a shortname
      * @param className entity represented
      */
-    static void registryModel(String className) 
+    static void registryModel(String className)
     {
-        notNull.verify(className);   
+        notNull.verify(className);
         modelTypes.registry(className);
         LOG.debug("Class {} was registered", className);
     }
-
+    
     /**
      * Provider a way to reference a class type with a shortname
      * @param className entity represented
      */
-    static void registryReport(String className) 
+    static void registryReport(String className)
     {
         notNull.verify(className);
         reportJaspers.registry(className);
         LOG.debug("Jasper file {} was registered", className);
     }
     
-    static void registryTransformers(String className) 
+    static void registryTransformers(String className)
     {
         notNull.verify(className);
         transformers.registry(className);
         LOG.debug("Transform class {} was registered", className);
     }
-
+    
     static void registrySqlContext(String name)
     {
         notNull.verify(name);
@@ -119,7 +120,7 @@ public class RestFulResources extends BaseResource
         BaseResource.transformers.cleanup();
         for (Repository repo : BaseResource.repositories.values())
             repo.close();
-            
+        
         BaseResource.repositories.clear();
     }
     
@@ -131,11 +132,10 @@ public class RestFulResources extends BaseResource
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Path("ping")
-    public Response ping() 
+    public Response ping()
     {
         return Response.ok().entity("pong").build();
     }
-    
     
     /**
      * Execute query <code>q</code> against the database with all parameters from URL string <code>ui</code>
@@ -147,9 +147,10 @@ public class RestFulResources extends BaseResource
      */
     @GET
     @Path("list/{q}")
-    public Response list(@PathParam("context") String ctx, @PathParam("q") String q, @Context UriInfo ui) {
+    public Response list(@PathParam("context") String ctx, @PathParam("q") String q, @Context UriInfo ui)
+    {
         Queryable queryable = buildQueryable(q, ui);
-        List<?>  resources = getRepository(ctx).list(queryable);
+        List<?> resources = getRepository(ctx).list(queryable);
         return buildSimpleResponse(resources);
     }
     
@@ -165,7 +166,9 @@ public class RestFulResources extends BaseResource
      */
     @GET
     @Path("list/{q}/{m}")
-    public Response list(@PathParam("context") String ctx, @PathParam("q") String q, @PathParam("m") String m, @Context UriInfo ui) {
+    public Response list(@PathParam("context") String ctx, @PathParam("q") String q, @PathParam("m") String m,
+            @Context UriInfo ui)
+    {
         Class<?> clazz = modelTypes.getType(m);
         Class<?> clazzTransform = transformers.getType(m);
         Queryable queryable = null;
@@ -178,7 +181,7 @@ public class RestFulResources extends BaseResource
         else
             queryable = buildQueryable(q, clazz, ui);
         
-        List<?>  resources = getRepository(ctx).list(queryable);
+        List<?> resources = getRepository(ctx).list(queryable);
         Response response = null;
         
         if (transform != null)
@@ -188,7 +191,7 @@ public class RestFulResources extends BaseResource
         
         return response;
     }
-
+    
     /**
      * Execute query <code>q</code> against the database with all parameters from URL string <code>ui</code>
      * converted for model type <code>m</code>
@@ -202,17 +205,18 @@ public class RestFulResources extends BaseResource
      */
     @GET
     @Path("list/{q}/{m}/{t}")
-    public Response list(@PathParam("context") String ctx, @PathParam("q") String q, @PathParam("m") String m, @PathParam("t") String t, @Context UriInfo ui) {
+    public Response list(@PathParam("context") String ctx, @PathParam("q") String q, @PathParam("m") String m,
+            @PathParam("t") String t, @Context UriInfo ui)
+    {
         Class<?> clazz = modelTypes.getType(m);
         Class<?> clazzTransform = transformers.getType(t);
         Queryable queryable = buildQueryable(q, clazz, ui);
-        List<?>  resources = getRepository(ctx).list(queryable);
+        List<?> resources = getRepository(ctx).list(queryable);
         TransformReturn<?> transform = (TransformReturn<?>) ObjectProxyFactory.newProxy(clazzTransform).newInstance();
-        List<?>  newResources = transform.transform(resources);
+        List<?> newResources = transform.transform(resources);
         return buildSimpleResponse(newResources);
     }
-
-
+    
     /**
      * Execute query <code>q</code> against the database with all parameters from URL string <code>ui</code>
      * @param ctx context name for Sql Context
@@ -223,12 +227,13 @@ public class RestFulResources extends BaseResource
      */
     @GET
     @Path("get/{q}")
-    public Response get(@PathParam("context") String ctx, @PathParam("q") String q, @Context UriInfo ui) {
+    public Response get(@PathParam("context") String ctx, @PathParam("q") String q, @Context UriInfo ui)
+    {
         Queryable queryable = buildQueryable(q, ui);
         Object resource = getRepository(ctx).get(queryable);
         return buildSimpleResponse(resource);
     }
-
+    
     /**
      * Execute query <code>q</code> against the database with all parameters from URL string <code>ui</code>
      * converted for model type <code>m</code>.
@@ -241,7 +246,9 @@ public class RestFulResources extends BaseResource
      */
     @GET
     @Path("get/{q}/{m}")
-    public Response get(@PathParam("context") String ctx, @PathParam("q") String q, @PathParam("m") String m, @Context UriInfo ui) {
+    public Response get(@PathParam("context") String ctx, @PathParam("q") String q, @PathParam("m") String m,
+            @Context UriInfo ui)
+    {
         Class<?> clazz = modelTypes.getType(m);
         Class<?> clazzTransform = transformers.getType(m);
         Queryable queryable = null;
@@ -264,29 +271,32 @@ public class RestFulResources extends BaseResource
         
         return response;
     }
-
+    
     //HTTP 201 Created
     //HTTP 409 Conflict
     @POST
     @Path("add/{q}")
-    public Response add(@PathParam("context") String ctx, @PathParam("q") String q, @Context UriInfo ui) {
+    public Response add(@PathParam("context") String ctx, @PathParam("q") String q, @Context UriInfo ui)
+    {
         Queryable queryable = buildQueryable(q, ui);
         Integer rowsAffected = getRepository(ctx).add(queryable);
         return buildSimpleResponse(rowsAffected);
         //return buildSimpleResponse(rowsAffected, queryable);
     }
-
+    
     //HTTP 201 Created
     //HTTP 409 Conflict
     @POST
     @Path("add/{q}/{m}")
-    public Response add(@PathParam("context") String ctx, @PathParam("q") String q, @PathParam("m") String m, @Context UriInfo ui) {
+    public Response add(@PathParam("context") String ctx, @PathParam("q") String q, @PathParam("m") String m,
+            @Context UriInfo ui)
+    {
         Class<?> clazz = modelTypes.getType(m);
         Queryable queryable = buildQueryable(q, clazz, ui);
         Object object = getRepository(ctx).add(queryable.getParams());
         return buildSimpleResponse(object);// FIXME HTTP status
     }
-
+    
     /**
      * {@code PUT} HTTP verb to process the update requests. 
      * <ul>
@@ -300,22 +310,26 @@ public class RestFulResources extends BaseResource
      * @param body request information using json
      * @return <code>HTTP 200 OK</code>, <code>HTTP 204 No Content</code> or <code>HTTP 409 Conflict</code> with
      * number of rows affected by update command.
+     * @throws JsonParseException  for parsing problems
+     * @throws JsonMappingException for mapping of content problems
+     * @throws IOException for  interrupted I/O operations problems
      */
     @PUT
     @Path("update/{q}")
-    public Response update(@PathParam("context") String ctx, @PathParam("q") String q, @Context UriInfo ui, String body) throws JsonParseException, JsonMappingException, IOException 
+    public Response update(@PathParam("context") String ctx, @PathParam("q") String q, @Context UriInfo ui, String body)
+            throws JsonParseException, JsonMappingException, IOException
     {
-        Map<String,Object> params = marshallToMap(ui.getQueryParameters());
+        Map<String, Object> params = marshallToMap(ui.getQueryParameters());
         if (isNotEmpty(body))
         {
-            Map<String,Object> bodyParams = JsonMapper.mapper(body, HashMap.class);
+            Map<String, Object> bodyParams = JsonMapper.mapper(body, HashMap.class);
             params.putAll(bodyParams);
         }
         Queryable queryable = buildQueryable(q, params);
         Integer rowsAffected = getRepository(ctx).update(queryable);
         return buildSimpleResponse(rowsAffected);
     }
-
+    
     /**
      * {@code PUT} HTTP verb to process the update requests. 
      * <ul>
@@ -330,33 +344,34 @@ public class RestFulResources extends BaseResource
      * @param body request information using json
      * @return <code>HTTP 200 OK</code>, <code>HTTP 204 No Content</code> or <code>HTTP 409 Conflict</code> with
      * number of rows affected by update command.
+     * @throws JsonParseException  for parsing problems
+     * @throws JsonMappingException for mapping of content problems
+     * @throws IOException for  interrupted I/O operations problems
      */
     @PUT
     @Path("update/{q}/{m}")
-    public Response update(@PathParam("context") String ctx, @PathParam("q") String q, @PathParam("m") String m, @Context UriInfo ui, String body)  
-            throws JsonParseException, JsonMappingException, IOException
+    public Response update(@PathParam("context") String ctx, @PathParam("q") String q, @PathParam("m") String m,
+            @Context UriInfo ui, String body) throws JsonParseException, JsonMappingException, IOException
     {
         Class<?> clazz = modelTypes.getType(m);
         ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(clazz);
         marshallToProxy(proxy, ui.getQueryParameters());
         if (isNotEmpty(body))
         {
-            Map<String,Object> bodyParams = JsonMapper.mapper(body, HashMap.class);
+            Map<String, Object> bodyParams = JsonMapper.mapper(body, HashMap.class);
             proxy.merge(bodyParams);
         }
         Queryable queryable = buildQueryable(q, proxy.getInstance());
         Integer rowsAffected = getRepository(ctx).update(queryable);
         return buildSimpleResponse(rowsAffected);
     }
-
+    
     //HTTP 201 Created
     //HTTP 409 Conflict
     @PUT
     @Path("update/{q}/{m}/{id}")
-    public Response update(@PathParam("q") String q, 
-                           @PathParam("m") String m, 
-                           @PathParam("id") String id, 
-                           @Context UriInfo ui) 
+    public Response update(@PathParam("q") String q, @PathParam("m") String m, @PathParam("id") String id,
+            @Context UriInfo ui)
     {
         throw new UnsupportedOperationException("update/{q}/{m}/{id} NOT implemented YET!");
         /*
@@ -369,8 +384,7 @@ public class RestFulResources extends BaseResource
         //return buildSimpleResponse(rowsAffected, queryable);// FIXME design HTTP status
          */
     }
-
-
+    
     /**
      * {@code PUT} HTTP verb to process the update requests. 
      * <ul>
@@ -390,14 +404,15 @@ public class RestFulResources extends BaseResource
      */
     @PUT
     @Path("updateAll/{q}")
-    public Response updateAll(@PathParam("context") String ctx, @PathParam("q") String q, 
-                              @Context UriInfo ui, 
-                              String body) throws JsonParseException, JsonMappingException, IOException 
+    public Response updateAll(@PathParam("context") String ctx, @PathParam("q") String q, @Context UriInfo ui,
+            String body) throws JsonParseException, JsonMappingException, IOException
     {
         List<Map<String, Object>> params = null;
         if (isNotEmpty(body))
         {
-            params = JsonMapper.mapper(body, new TypeReference<List<Map<String, Object>>>(){});
+            params = JsonMapper.mapper(body, new TypeReference<List<Map<String, Object>>>()
+            {
+            });
         }
         if (params == null || params.isEmpty())
             throw new UnsupportedOperationException("List of data is mandatory to HTTP updateAll request");
@@ -447,7 +462,7 @@ public class RestFulResources extends BaseResource
      */
     @DELETE
     @Path("{q}")
-    public Response remove(@PathParam("context") String ctx, @PathParam("q") String q, @Context UriInfo ui) 
+    public Response remove(@PathParam("context") String ctx, @PathParam("q") String q, @Context UriInfo ui)
     {
         Integer rowsAffected = 0;
         Repository repository = getRepository(ctx);
@@ -455,7 +470,7 @@ public class RestFulResources extends BaseResource
         if (repository.containsQuery(q))
         {
             queryable = buildQueryable(q, ui);
-            rowsAffected = repository.remove(queryable);            
+            rowsAffected = repository.remove(queryable);
         }
         else
         {
@@ -467,7 +482,7 @@ public class RestFulResources extends BaseResource
         return buildSimpleResponse(rowsAffected);
         //return buildSimpleResponse(rowsAffected, queryable);// FIXME design HTTP status
     }
-
+    
     // HTTP 204 No Content
     // HTTP 403 Forbidden (Resource has constraint to delete)
     // HTTP 409 Conflict
@@ -475,9 +490,10 @@ public class RestFulResources extends BaseResource
     // HTTP 404 Not Found (Resource not exists)
     @DELETE
     @Path("{q}/{m}")
-    public Response remove(@PathParam("context") String ctx, @PathParam("q") String q, @PathParam("m") String m, @Context UriInfo ui) 
+    public Response remove(@PathParam("context") String ctx, @PathParam("q") String q, @PathParam("m") String m,
+            @Context UriInfo ui)
     {
-        if(true)
+        if (true)
             throw new UnsupportedOperationException("Bad implementation FIXME design");
         Class<?> clazz = modelTypes.getType(m);
         Queryable queryable = buildQueryable(q, clazz, ui);
@@ -485,7 +501,7 @@ public class RestFulResources extends BaseResource
         return buildSimpleResponse(rowsAffected);
         //return buildSimpleResponse(rowsAffected, queryable);// FIXME design HTTP status
     }
-/*
+    /*
     // HTTP 204 No Content
     // HTTP 403 Forbidden (Resource has constraint to delete)
     // HTTP 409 Conflict
@@ -500,9 +516,9 @@ public class RestFulResources extends BaseResource
         return buildSimpleResponse(rowsAffected, queryable);// FIXME design HTTP status
     }
     */
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
-
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+    
     private boolean isNotEmpty(String s)
     {
         return s != null && !"".equals(s);

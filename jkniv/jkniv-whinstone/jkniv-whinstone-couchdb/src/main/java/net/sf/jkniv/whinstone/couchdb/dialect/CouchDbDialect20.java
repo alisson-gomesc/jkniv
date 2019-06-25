@@ -40,7 +40,6 @@ import net.sf.jkniv.whinstone.params.ParameterException;
  *    "skip": 0
  *  }
  *  </pre>
- * </p>
  * 
  * <ul>
  *  <li>Supports limits? true</li>

@@ -33,7 +33,7 @@ public class SqlFeatureFactory
     /**
      * Create a new instance of {@link SqlFeature}
      * @param name of feature
-     * @param supports
+     * @param supports <b>true</b> if that feature is supported by a dialect.
      * @return new instance of {@link SqlFeature}
      */
     public static SqlFeature newInstance(SqlFeatureSupport name, boolean supports) 

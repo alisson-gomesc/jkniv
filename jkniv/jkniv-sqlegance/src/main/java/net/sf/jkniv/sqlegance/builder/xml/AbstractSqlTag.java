@@ -189,6 +189,7 @@ public abstract class AbstractSqlTag implements SqlTag
      * @param resultSetHoldability TODO javadoc
      * @param returnType v
      * @param validateType TODO javadoc
+     * @param stats statistical for procedures
      */
     @SuppressWarnings("unchecked")
     public AbstractSqlTag(String id, 

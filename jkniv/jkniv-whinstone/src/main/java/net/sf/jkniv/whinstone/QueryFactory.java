@@ -151,6 +151,7 @@ public class QueryFactory
      * @param name query name
      * @param clazz return type that overload return type from XML
      * @param params parameters of query
+     * @param <T> class type of overload return
      * @return Queryable object with parameters and unlimited result
      */
     public static <T> Queryable of(String name, Class<T> clazz, Object params)

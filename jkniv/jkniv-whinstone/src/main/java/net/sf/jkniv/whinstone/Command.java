@@ -47,6 +47,7 @@ public interface Command
     
     /**
      * Execute the database statement could be a {@code Command} or a {@code Query}
+     * @param <T> Generic type of return, example: rows affected by a command or list of objects.
      * @return the result of the statement execution
      */
     <T> T execute();

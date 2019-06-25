@@ -57,6 +57,7 @@ public class FindAnswer
      * Runtime convert original docs from couchdb answer to
      * list of {@code clazz}
      * @param clazz type of to be converted
+     * @param <T> class type of documents
      * @return list of {@code clazz} instances or empty
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
