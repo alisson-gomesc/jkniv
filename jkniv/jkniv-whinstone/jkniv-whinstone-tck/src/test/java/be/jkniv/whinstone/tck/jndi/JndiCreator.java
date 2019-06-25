@@ -23,7 +23,7 @@ import javax.naming.NamingException;
 
 import org.springframework.mock.jndi.SimpleNamingContextBuilder;
 
-import be.jkniv.whinstone.tck.BaseJdbc;
+import be.jkniv.whinstone.tck.BaseCouchdb;
 
 public class JndiCreator
 {
@@ -31,7 +31,7 @@ public class JndiCreator
     public static void bind()
     {
         final SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
-        builder.bind("java:comp/env/props/couchdb", BaseJdbc.config);
+        builder.bind("java:comp/env/props/couchdb", BaseCouchdb.config);
         try
         {
             builder.activate();

@@ -2,7 +2,7 @@
 <repository-config xmlns="http://jkniv.sf.net/schema/sqlegance/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/config http://jkniv.sf.net/schema/sqlegance/sqlegance-config-0.6.xsd">
 
-  <repository name="whin-jdbc" transaction-type="LOCAL">
+  <repository name="whin-jdbc" type="JDBC" transaction-type="LOCAL">
     <description>My jdbc datasource config</description>
     <jndi-data-source>java:comp/env/jdbc/whinstone</jndi-data-source>
     <properties>

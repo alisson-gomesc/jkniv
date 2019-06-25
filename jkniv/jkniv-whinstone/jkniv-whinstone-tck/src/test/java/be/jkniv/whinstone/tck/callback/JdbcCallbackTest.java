@@ -1,21 +1,37 @@
 package be.jkniv.whinstone.tck.callback;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
-
-import java.util.List;
-import java.util.Map;
 
 import org.junit.Test;
 
-import be.jkniv.whinstone.tck.BaseCouchdb;
+import be.jkniv.whinstone.tck.BaseJdbc;
 import be.jkniv.whinstone.tck.model.StatsCallback;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 
-public class CouchdbCallbackTest extends BaseCouchdb
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.junit.Test;
+
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.Repository;
+
+public class JdbcCallbackTest extends BaseJdbc
 {
     @Test
     public void whenCallbackForAdd()
@@ -88,5 +104,4 @@ public class CouchdbCallbackTest extends BaseCouchdb
         assertThat(model.getTotalUpdate(), is(0));
         assertThat(model.getTotalRemove(), is(1));        
     }
-
 }
