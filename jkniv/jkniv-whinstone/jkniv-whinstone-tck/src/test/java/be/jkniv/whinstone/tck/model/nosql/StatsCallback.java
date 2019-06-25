@@ -1,15 +1,11 @@
-package be.jkniv.whinstone.tck.model;
-
-import java.util.Date;
+package be.jkniv.whinstone.tck.model.nosql;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import net.sf.jkniv.whinstone.CallbackScope;
 import net.sf.jkniv.whinstone.PreCallBack;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class StatsCallback
 {
     @JsonProperty("_id")
@@ -26,7 +22,7 @@ public class StatsCallback
     private int    totalRemove;
     @JsonProperty("totalSelect")
     private int    totalSelect;
-    
+
     public StatsCallback()
     {
         this.name = "default";

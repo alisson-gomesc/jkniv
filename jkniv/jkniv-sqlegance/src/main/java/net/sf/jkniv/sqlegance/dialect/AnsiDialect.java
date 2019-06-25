@@ -100,28 +100,14 @@ public class AnsiDialect implements SqlDialect
         this.sqlFeatures.put(SqlFeatureSupport.CONN_HOLDABILITY,
                              SqlFeatureFactory.newInstance(SqlFeatureSupport.CONN_HOLDABILITY, true));
         this.sqlFeatures.put(SqlFeatureSupport.BOOKMARK_QUERY,
-                SqlFeatureFactory.newInstance(SqlFeatureSupport.BOOKMARK_QUERY));
+                             SqlFeatureFactory.newInstance(SqlFeatureSupport.BOOKMARK_QUERY));
         this.sqlFeatures.put(SqlFeatureSupport.PAGING_ROUNDTRIP,
-                SqlFeatureFactory.newInstance(SqlFeatureSupport.PAGING_ROUNDTRIP, true));
+                             SqlFeatureFactory.newInstance(SqlFeatureSupport.PAGING_ROUNDTRIP, true));
+        this.sqlFeatures.put(SqlFeatureSupport.SEQUENCE,
+                             SqlFeatureFactory.newInstance(SqlFeatureSupport.SEQUENCE));
         this.maxOfParameters = Integer.MAX_VALUE;
         //this.countParams = 0;
     }
-    
-    //    public AnsiDialect()
-    //    {
-    //        notNull.verify(queryable.getSql());
-    //        this.name = getClass().getSimpleName();
-    //        this.isql = isql;
-    //        this.queryable = queryable;
-    //        this.init();
-    //    }
-    
-    //    private void init()
-    //    {
-    //        buildSqlLimits();
-    //        if (queryable.isPaging())
-    //            buildSqlCount();
-    //    }
     
     public String name()
     {
@@ -245,7 +231,7 @@ public class AnsiDialect implements SqlDialect
         }
         catch (SQLException sqle)
         {
-            throw new RepositoryException("Cannot prepare statement [" + sqle.getMessage() + "]", sqle);
+            throw new RepositoryException("Cannot prepare statement [" + sqle.getMessage() + "]\n"+query, sqle);
         }
         return stmt;
     }

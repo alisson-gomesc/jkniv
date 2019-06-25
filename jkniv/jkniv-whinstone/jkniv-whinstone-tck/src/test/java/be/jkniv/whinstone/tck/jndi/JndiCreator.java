@@ -31,7 +31,8 @@ public class JndiCreator
     public static void bind()
     {
         final SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
-        builder.bind("java:comp/env/props/couchdb", BaseCouchdb.config);
+        bindCouchdb(builder);
+        bindJdbc(builder);
         try
         {
             builder.activate();
@@ -40,6 +41,19 @@ public class JndiCreator
         {
             ex.printStackTrace();
         }
+    }
+    
+    public static void bindCouchdb(final SimpleNamingContextBuilder builder)
+    {
+        builder.bind("java:comp/env/props/couchdb", BaseCouchdb.config);
+    }
+    
+    public static void bindJdbc(final SimpleNamingContextBuilder builder)
+    {
+        org.apache.commons.dbcp.BasicDataSource datasource = new org.apache.commons.dbcp.BasicDataSource();
+        datasource.setUrl("jdbc:derby:memory:derbwhinstone;create=true");
+        datasource.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
+        builder.bind("java:comp/env/props/jdbc/whin-jdbc", datasource);
     }
     
 }

@@ -5,10 +5,11 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import be.jkniv.whinstone.tck.BaseJdbc;
-import be.jkniv.whinstone.tck.model.StatsCallback;
+import be.jkniv.whinstone.tck.model.rdbms.StatsCallback;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
@@ -33,16 +34,17 @@ import net.sf.jkniv.whinstone.Repository;
 
 public class JdbcCallbackTest extends BaseJdbc
 {
-    @Test
+    @Test 
     public void whenCallbackForAdd()
     {
         Repository repositoryDb = getRepository();
         StatsCallback model = new StatsCallback();
         model.setName("Callback stuff");
-        Queryable q = QueryFactory.of("add", model);
+        Queryable q = QueryFactory.of("Author#add", model);
         int rows = repositoryDb.add(q);
         
         assertThat(rows, is(1));
+        assertThat(model.getId(), greaterThan(1L));
         assertThat(model.getTotalAdd(), is(1));
         assertThat(model.getTotalSelect(), is(0));
         assertThat(model.getTotalUpdate(), is(0));
@@ -71,11 +73,12 @@ public class JdbcCallbackTest extends BaseJdbc
         Repository repositoryDb = getRepository();
         StatsCallback model = new StatsCallback();
         model.setName("Callback stuff");
-        Queryable q = QueryFactory.of("add", model);
+        Queryable q = QueryFactory.of("Author#add", model);
         int rows = repositoryDb.add(q);
-        repositoryDb.update(model);
+        int rowsUpdated = repositoryDb.update(QueryFactory.of("Author#update", model));
 
         assertThat(rows, is(1));
+        assertThat(rowsUpdated, is(1));
         assertThat(model.getTotalAdd(), is(1));
         assertThat(model.getTotalSelect(), is(0));
         assertThat(model.getTotalUpdate(), is(1));
@@ -88,7 +91,7 @@ public class JdbcCallbackTest extends BaseJdbc
         Repository repositoryDb = getRepository();
         StatsCallback model = new StatsCallback();
         model.setName("Callback stuff");
-        Queryable q = QueryFactory.of("add", model);
+        Queryable q = QueryFactory.of("Author#add", model);
         int rows = repositoryDb.add(q);
         
         assertThat(rows, is(1));
@@ -97,7 +100,7 @@ public class JdbcCallbackTest extends BaseJdbc
         assertThat(model.getTotalUpdate(), is(0));
         assertThat(model.getTotalRemove(), is(0));
         
-        rows = repositoryDb.remove(model);
+        rows = repositoryDb.remove(QueryFactory.of("Author#remove", model));
         assertThat(rows, is(1));
         assertThat(model.getTotalAdd(), is(1));
         assertThat(model.getTotalSelect(), is(0));

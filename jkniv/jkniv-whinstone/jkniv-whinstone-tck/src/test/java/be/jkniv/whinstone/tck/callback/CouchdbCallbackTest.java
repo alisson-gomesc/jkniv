@@ -10,7 +10,7 @@ import java.util.Map;
 import org.junit.Test;
 
 import be.jkniv.whinstone.tck.BaseCouchdb;
-import be.jkniv.whinstone.tck.model.StatsCallback;
+import be.jkniv.whinstone.tck.model.nosql.StatsCallback;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;

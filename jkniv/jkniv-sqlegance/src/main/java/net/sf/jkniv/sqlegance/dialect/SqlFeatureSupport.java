@@ -41,7 +41,9 @@ public enum SqlFeatureSupport
     /** a page selected to mark the reader's place */
     BOOKMARK_QUERY,
     /** check if database needs a new round trip to get total of records */
-    PAGING_ROUNDTRIP
+    PAGING_ROUNDTRIP,
+    /** Mechanism for generating unique identification */
+    SEQUENCE
     
     /* breaks the query results into pages */
     //PAGE_QUERY,
