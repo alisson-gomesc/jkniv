@@ -9,6 +9,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import be.jkniv.whinstone.tck.BaseJdbc;
+import be.jkniv.whinstone.tck.model.Author;
 import be.jkniv.whinstone.tck.model.rdbms.StatsCallback;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
@@ -42,7 +43,7 @@ public class JdbcCallbackTest extends BaseJdbc
         model.setName("Callback stuff");
         Queryable q = QueryFactory.of("Author#add", model);
         int rows = repositoryDb.add(q);
-        
+
         assertThat(rows, is(1));
         assertThat(model.getId(), greaterThan(1L));
         assertThat(model.getTotalAdd(), is(1));
