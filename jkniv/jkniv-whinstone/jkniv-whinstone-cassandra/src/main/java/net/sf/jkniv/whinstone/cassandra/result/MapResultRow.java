@@ -44,7 +44,8 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  */
 public class MapResultRow<T> implements ResultRow<T, Row>
 {
-    private final static Logger LOG = LoggerFactory.getLogger();
+    //private final static Logger LOG = LoggerFactory.getLogger();
+    private static final Logger      SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
     private final Class<T> returnType;
     private JdbcColumn<Row>[] columns;
     private final Transformable<T> transformable;
@@ -82,8 +83,8 @@ public class MapResultRow<T> implements ResultRow<T, Row>
             jdbcObject = column.getBytes(row);
         else
             jdbcObject = column.getValue(row);
-        if(LOG.isTraceEnabled())
-            LOG.trace("Using sensitive key [{}] for type [{}] with value [{}]", column.getAttributeName(), (jdbcObject == null ? "null" : jdbcObject.getClass()), jdbcObject);
+        if(SQLLOG.isTraceEnabled())
+            SQLLOG.trace("Using sensitive key [{}] for type [{}] with value [{}]", column.getAttributeName(), (jdbcObject == null ? "null" : jdbcObject.getClass()), jdbcObject);
         map.put(column.getAttributeName(), jdbcObject);
     }
     

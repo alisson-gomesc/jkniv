@@ -34,6 +34,7 @@ import net.sf.jkniv.sqlegance.Sql;
  * {@code Repository}.
  * 
  * @author Alisson Gomes 
+ * @since 0.6.0
  */
 public interface SqlDialect
 {
@@ -80,7 +81,20 @@ public interface SqlDialect
      */
     String buildQueryPaging(final String sqlText, int offset, int max);
     
+    /**
+     * Build a paginate query accordingly data base dialect
+     * @param sqlText final SQL with parameters to bind
+     * @param offset number from first row from query result
+     * @param max maximum number of rows from query result.
+     * @param bookmark a page selected marked the reader's place
+     * @return paginate query for specific data base dialect
+     */
     String buildQueryPaging(final String sqlText, int offset, int max, String bookmark);
     
+    /**
+     * Build a paginate query to count the total of records from {@code sqlText}
+     * @param sqlText original SQL to discover the total of records
+     * @return query that count the total of records from {@code sqlText}
+     */
     String buildQueryCount(final String sqlText);
 }

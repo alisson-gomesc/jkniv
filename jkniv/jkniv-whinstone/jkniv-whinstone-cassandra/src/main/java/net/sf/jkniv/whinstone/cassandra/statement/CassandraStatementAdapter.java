@@ -9,6 +9,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 
 import com.datastax.driver.core.ColumnDefinitions;
+import com.datastax.driver.core.PagingState;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
@@ -63,7 +64,8 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  */
 public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
 {
-    private static final Logger      LOG     = LoggerFactory.getLogger();
+    private static final Logger LOG    = LoggerFactory.getLogger();
+    private static final Logger SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
     private static final DataMasking MASKING = LoggerFactory.getDataMasking();
     
     private final HandlerException   handlerException;
@@ -76,6 +78,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     private List<String>             groupingBy;
     private KeyGeneratorType         keyGeneratorType;
     private Session                  session;
+    private Queryable                queryable;
     
     @SuppressWarnings("unchecked")
     public CassandraStatementAdapter(Session session, Statement stmt, Queryable queryable)
@@ -86,7 +89,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         this.oneToManies = Collections.emptySet();
         this.groupingBy = Collections.emptyList();
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
-        
+        this.queryable = queryable;
         this.returnType = (Class<T>) Map.class;
         if (queryable.getReturnType() != null)
             returnType = (Class<T>) queryable.getReturnType();
@@ -235,6 +238,11 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         List<T> list = Collections.emptyList();
         try
         {
+            if (queryable.getBookmark() != null)
+            {
+                PagingState pagingState = PagingState.fromString(queryable.getBookmark());
+                stmt.setPagingState(pagingState);
+            }
             rs = session.execute(stmt);
             JdbcColumn<Row>[] columns = getJdbcColumns(rs.getColumnDefinitions());
             setResultRow(columns);
@@ -246,6 +254,10 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
             }
             rsParser = new ObjectResultSetParser(resultRow, grouping);
             list = rsParser.parser(rs);
+            PagingState pagingState = rs.getExecutionInfo().getPagingState();
+            LOG.info("AvailableWithoutFetching={}, FullyFetched={}, Exhausted={}", rs.getAvailableWithoutFetching(), rs.isFullyFetched(), rs.isExhausted());
+            if (pagingState != null)
+                queryable.setBookmark(pagingState.toString());
         }
         catch (SQLException e)
         {
@@ -473,16 +485,16 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     
     private void log(String name, Object value)
     {
-        if (LOG.isDebugEnabled())
-            LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]",
+        if (SQLLOG.isDebugEnabled())
+            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]",
                     (index + indexIN), name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
     private void log(Object value)
     {
         String name = String.valueOf(index + indexIN);
-        if (LOG.isDebugEnabled())
-            LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]",
+        if (SQLLOG.isDebugEnabled())
+            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]",
                     (index + indexIN), name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     

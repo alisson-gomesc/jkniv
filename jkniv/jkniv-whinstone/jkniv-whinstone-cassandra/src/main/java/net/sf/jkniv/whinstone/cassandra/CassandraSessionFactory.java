@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.Metadata;
+import com.datastax.driver.core.ProtocolVersion;
 import com.datastax.driver.core.Session;
 
 import net.sf.jkniv.sqlegance.RepositoryProperty;
@@ -54,12 +55,21 @@ public class CassandraSessionFactory implements ConnectionFactory
         String keyspace =  props.getProperty(RepositoryProperty.JDBC_SCHEMA.key());
         String username =  props.getProperty(RepositoryProperty.JDBC_USER.key());
         String password =  props.getProperty(RepositoryProperty.JDBC_PASSWORD.key());
+        String protocol =  props.getProperty(RepositoryProperty.PROTOCOL_VERSION.key());
+        ProtocolVersion version = getProtocolVersion(protocol);
         
         this.contextName = contextName;
         if (username != null)
-            cluster = Cluster.builder().addContactPoints(urls).withCredentials(username, password).build();
+            cluster = Cluster.builder()
+                        .addContactPoints(urls)
+                        .withCredentials(username, password)
+                        .withProtocolVersion(version)
+                        .build();
         else
-            cluster = Cluster.builder().addContactPoints(urls).build();
+            cluster = Cluster.builder()
+                        .withProtocolVersion(version)
+                        .addContactPoints(urls)
+                        .build();
             
         final Metadata metadata = cluster.getMetadata();
         if (LOG.isInfoEnabled())
@@ -71,6 +81,23 @@ public class CassandraSessionFactory implements ConnectionFactory
         }
         Session session = cluster.connect(keyspace);    
         this.conn = new CassandraConnectionAdapter(cluster, session, contextName);
+    }
+    
+    private ProtocolVersion getProtocolVersion(String protocol)
+    {
+        ProtocolVersion version = null;
+        for(ProtocolVersion v : ProtocolVersion.values())
+        {
+            if (v.name().equals(protocol))
+                version = v;
+        }
+        if (version == null)
+        {
+            if (protocol != null)
+                LOG.warn("Property {} has invalid value [{}] using protocol {}", RepositoryProperty.PROTOCOL_VERSION.key(), protocol, ProtocolVersion.NEWEST_SUPPORTED);
+            version = ProtocolVersion.NEWEST_SUPPORTED;
+        }
+        return version;
     }
     
     @Override

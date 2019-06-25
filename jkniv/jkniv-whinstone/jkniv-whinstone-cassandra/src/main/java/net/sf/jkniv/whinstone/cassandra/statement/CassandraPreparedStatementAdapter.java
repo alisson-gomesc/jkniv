@@ -70,6 +70,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter<T, Row>
 {
     private static final Logger  LOG = LoggerFactory.getLogger();
+    private static final Logger SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
     private static final DataMasking  MASKING = LoggerFactory.getDataMasking();
 
     private final HandlerException  handlerException;
@@ -250,7 +251,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
             rs = session.execute(bound);
             JdbcColumn<Row>[] columns = getJdbcColumns(rs.getColumnDefinitions());
             setResultRow(columns);
-            
+            LOG.info("AvailableWithoutFetching={}, FullyFetched={}, Exhausted={}", rs.getAvailableWithoutFetching(), rs.isFullyFetched(), rs.isExhausted());
             Transformable<T> transformable = resultRow.getTransformable();
             if (!groupingBy.isEmpty())
             {
@@ -505,16 +506,16 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     
     private void log(String name, Object value)
     {
-        if (LOG.isDebugEnabled())
-            LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", (index+indexIN), name,
+        if (SQLLOG.isDebugEnabled())
+            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", (index+indexIN), name,
                     MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
     private void log(Object value)
     {
         String name = String.valueOf(index+indexIN);
-        if (LOG.isDebugEnabled())
-            LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", (index+indexIN), name,
+        if (SQLLOG.isDebugEnabled())
+            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", (index+indexIN), name,
                     MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     

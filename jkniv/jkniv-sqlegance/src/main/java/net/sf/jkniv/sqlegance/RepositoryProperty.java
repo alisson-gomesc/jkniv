@@ -159,6 +159,15 @@ public enum RepositoryProperty
         public String defaultValue() { return "false"; }
     },
 
+
+    /** property: <code>jkniv.repository.protocol_version</code> , default value is: <code>V4</code> */
+    PROTOCOL_VERSION {
+        public String key() { return PREFIX+".protocol_version"; }
+        
+        public String defaultValue() { return "V4"; }
+    },
+
+
     
     
 //    /** <code>jkniv.repository.ttl_sql</code> */

@@ -56,11 +56,11 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  */
 public class PojoResultRow<T> implements ResultRow<T, Row>
 {
-    private final static Logger     LOG    = LoggerFactory.getLogger(PojoResultRow.class);
-    private static final Logger     SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
-    private static final DataMasking  MASKING = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getDataMasking();
-    private final static MethodName SETTER = MethodNameFactory.getInstanceSetter();
-    private final static MethodName GETTER = MethodNameFactory.getInstanceGetter();
+    private final static Logger      LOG    = LoggerFactory.getLogger(PojoResultRow.class);
+    private static final Logger      SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
+    private static final DataMasking MASKING = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getDataMasking();
+    private final static MethodName  SETTER = MethodNameFactory.getInstanceSetter();
+    private final static MethodName  GETTER = MethodNameFactory.getInstanceGetter();
     private final Class<T>          returnType;
     private final Set<OneToMany>    oneToManies;
     private final Transformable<T>  transformable;
@@ -138,7 +138,7 @@ public class PojoResultRow<T> implements ResultRow<T, Row>
             if (proxy.hasMethod(method))
                 reflect.inject(method, jdbcObject);
             else
-                LOG.info("Method [{}] doesn't exists for [{}] to set value [{}]", method,
+                LOG.warn("Method [{}] doesn't exists for [{}] to set value [{}]", method,
                         proxy.getTargetClass().getName(), jdbcObject);
         }
     }

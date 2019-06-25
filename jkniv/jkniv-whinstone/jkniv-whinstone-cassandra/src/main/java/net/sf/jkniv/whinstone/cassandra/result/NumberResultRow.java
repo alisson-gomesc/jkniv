@@ -27,6 +27,7 @@ import com.datastax.driver.core.Row;
 
 import net.sf.jkniv.reflect.NumberFactory;
 import net.sf.jkniv.reflect.Numerical;
+import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.cassandra.LoggerFactory;
@@ -42,7 +43,8 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  */
 public class NumberResultRow<T> implements ResultRow<T, Row>
 {
-    private static final Logger  LOG = LoggerFactory.getLogger();
+    private static final Logger      SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
+    private static final DataMasking MASKING = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getDataMasking();
     private JdbcColumn<Row>[] columns;
     private final Numerical numerical;
 
@@ -66,8 +68,16 @@ public class NumberResultRow<T> implements ResultRow<T, Row>
         else
             jdbcObject = columns[0].getValue(rs);
         
-        if(LOG.isTraceEnabled())
-            LOG.trace("Column index [0] named [{}] type of [{}] with value [{}]", columns[0].getAttributeName(), numerical.getClass().getCanonicalName(), jdbcObject);
+        if(SQLLOG.isTraceEnabled())
+            SQLLOG.trace("Mapping index [0] column [{}] type of [{}] to value [{}]", 
+                columns[0].getAttributeName(), 
+                (numerical != null ? numerical.getClass().getCanonicalName() : "null"), 
+                MASKING.mask(columns[0].getAttributeName(), jdbcObject));
+        
+//        if(SQLLOG.isTraceEnabled())
+//            SQLLOG.trace("Column index [0] named [{}] type of [{}] with value [{}]", 
+//                    columns[0].getAttributeName(), 
+//                    numerical.getClass().getCanonicalName(), jdbcObject);
         return (T) numerical.valueOf(jdbcObject);
     }
 

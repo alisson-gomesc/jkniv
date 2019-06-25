@@ -43,6 +43,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
 {
     private static final Logger  LOG = LoggerFactory.getLogger();
+    private static final Logger SQLLOG = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
     private static final DataMasking  MASKING = LoggerFactory.getDataMasking();
 
     private final PreparedStatement stmt;
@@ -406,16 +407,16 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
     
     private void log(String name, Object value)
     {
-            if (LOG.isDebugEnabled())
-                LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index,
+        if (SQLLOG.isDebugEnabled())
+            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index,
                         name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
     private void log(Object value)
     {
-            String name = String.valueOf(index+indexIN);
-            if (LOG.isDebugEnabled())
-                LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index,
+        String name = String.valueOf(index+indexIN);
+        if (SQLLOG.isDebugEnabled())
+            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index,
                         name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
 

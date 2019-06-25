@@ -130,7 +130,7 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
             if (proxy.hasMethod(method))
                 reflect.inject(method, jdbcObject);
             else
-                LOG.info("Method [{}] doesn't exists for [{}] to set value [{}]", method,
+                LOG.warn("Method [{}] doesn't exists for [{}] to set value [{}]", method,
                         proxy.getTargetClass().getName(), jdbcObject);
         }
     }

@@ -20,6 +20,7 @@
 package net.sf.jkniv.whinstone.cassandra;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.sql.Statement;
@@ -35,13 +36,12 @@ import org.junit.Test;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
-import net.sf.jkniv.whinstone.cassandra.model.Color;
 import net.sf.jkniv.whinstone.cassandra.model.ColorFlat;
 import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
 
 public class CassandraPagingTest extends BaseJdbc
 {
-    private static final int SIZE_PAGE = 5;
+    private static final int SIZE_PAGE = 10, LOAD = 100;
     private static final long SUCCESS_NO_INFO = Long.valueOf(Statement.SUCCESS_NO_INFO);
 
     @BeforeClass
@@ -49,7 +49,7 @@ public class CassandraPagingTest extends BaseJdbc
     {
         Repository repositoryCas = getRepository();
         List<ColorFlat> colors = new ArrayList<ColorFlat>();
-        for(int i=0; i<100; i++)
+        for(int i=0; i<LOAD; i++)
             colors.add(new ColorFlat("magenta", "Color"+i));
         
         repositoryCas.add(QueryFactory.of("ColorFlat#add", colors));
@@ -60,7 +60,7 @@ public class CassandraPagingTest extends BaseJdbc
     {
         Repository repositoryCas = getRepository();
         List<ColorFlat> colors = new ArrayList<ColorFlat>();
-        for(int i=0; i<100; i++)
+        for(int i=0; i<LOAD; i++)
             colors.add(new ColorFlat("magenta", "Color"+i));
         
         repositoryCas.remove(QueryFactory.of("ColorFlat#remove", colors));
@@ -74,6 +74,7 @@ public class CassandraPagingTest extends BaseJdbc
         List<Vehicle> list = repositoryCas.list(q);
         assertThat(list.size(), is(SIZE_PAGE));
         assertThat(q.getTotal(), is(SUCCESS_NO_INFO));
+        // FIXME paging cassandra PageState assertThat(q.getBookmark(), notNullValue());
     }
     
     @Test
@@ -83,10 +84,11 @@ public class CassandraPagingTest extends BaseJdbc
         Map<String, String> params = new HashMap<String, String>();
         params.put("name", "magenta");
         
-        Queryable q = QueryFactory.of("colors-by-name", params, 3, SIZE_PAGE);
+        Queryable q = QueryFactory.of("colors-by-name", params,0, SIZE_PAGE);
         List<Vehicle> list = repositoryCas.list(q);
         assertThat(list.size(), is(SIZE_PAGE));
         assertThat(q.getTotal(), is(SUCCESS_NO_INFO));
+        // FIXME paging cassandra PageState assertThat(q.getBookmark(), notNullValue());
     }
 
     @Test
@@ -99,6 +101,7 @@ public class CassandraPagingTest extends BaseJdbc
         List<Vehicle> list = repositoryCas.list(q);
         assertThat(list.size(), is(0));
         assertThat(q.getTotal(), is(SUCCESS_NO_INFO));
+        // FIXME paging cassandra PageState assertThat(q.getBookmark(), notNullValue());
     }
 
 }

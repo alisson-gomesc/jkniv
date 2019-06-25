@@ -22,7 +22,6 @@ package net.sf.jkniv.whinstone.cassandra.result;
 import java.sql.SQLException;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.datastax.driver.core.Row;
 
@@ -30,6 +29,7 @@ import net.sf.jkniv.reflect.Injectable;
 import net.sf.jkniv.reflect.InjectableFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.ObjectTransform;
@@ -48,7 +48,8 @@ import net.sf.jkniv.whinstone.classification.Transformable;
 public class FlatObjectResultRow<T> implements ResultRow<T, Row>
 {
     private final static Logger LOG = LoggerFactory.getLogger(FlatObjectResultRow.class);
-    //private final SqlLogger    sqlLogger;
+    private static final Logger      SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
+    private static final DataMasking MASKING = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getDataMasking();
     private final Class<T>     returnType;
     private final Transformable<T> transformable;
     private JdbcColumn<Row>[] columns;
@@ -64,7 +65,6 @@ public class FlatObjectResultRow<T> implements ResultRow<T, Row>
         this.returnType = returnType;
         this.columns = columns;
         this.transformable = (Transformable<T>) new ObjectTransform();
-        //this.sqlLogger = log;
     }
     
     public T row(Row rs, int rownum) throws SQLException
@@ -84,6 +84,12 @@ public class FlatObjectResultRow<T> implements ResultRow<T, Row>
             jdbcObject = column.getBytes(rs);
         else
             jdbcObject = column.getValue(rs);
+        
+        if (SQLLOG.isTraceEnabled())
+            SQLLOG.trace("Mapping index [{}] column [{}] type of [{}] to value [{}]", 
+                column.getIndex(), column.getAttributeName(), 
+                (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), 
+                MASKING.mask(column.getAttributeName(), jdbcObject));
         
         if (column.isNestedAttribute())
             reflect.inject(column.getAttributeName(), jdbcObject);

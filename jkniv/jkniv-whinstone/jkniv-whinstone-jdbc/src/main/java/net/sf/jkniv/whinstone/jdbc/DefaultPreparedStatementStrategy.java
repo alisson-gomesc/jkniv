@@ -21,7 +21,6 @@ package net.sf.jkniv.whinstone.jdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -30,9 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Sql;
-import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
-import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
-import net.sf.jkniv.sqlegance.statement.ResultSetType;
 import net.sf.jkniv.whinstone.Queryable;
 
 /**

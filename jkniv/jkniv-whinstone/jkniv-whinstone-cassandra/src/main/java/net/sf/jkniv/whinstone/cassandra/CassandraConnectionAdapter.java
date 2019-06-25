@@ -52,6 +52,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 class CassandraConnectionAdapter implements ConnectionAdapter
 {
     private static final transient Logger  LOG = LoggerFactory.getLogger();
+    private static final Logger SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
     private static final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
     private Session session;
     private Cluster cluster;
@@ -208,8 +209,8 @@ class CassandraConnectionAdapter implements ConnectionAdapter
         Class returnType = Map.class;
         DefaultQuery command = null;
         String sql = queryable.query();
-        if(LOG.isInfoEnabled())
-            LOG.debug("Bind Native SQL\n{}", sql);
+        if(SQLLOG.isInfoEnabled())
+            SQLLOG.info("Bind Native SQL\n{}", sql);
 
         StatementAdapter<T, R> stmt = null;
         if (queryable.isPaging())
@@ -248,54 +249,18 @@ class CassandraConnectionAdapter implements ConnectionAdapter
     public <T, R> Command asUpdateCommand(Queryable queryable)
     {
         return buildCommand(queryable);
-        /*
-        DefaultCommand command = null;
-        String sql = queryable.query();
-        if(LOG.isInfoEnabled())
-            LOG.debug("Bind Native SQL\n{}",sql);
-
-        PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
-        CassandraStatementAdapter<Number, ResultSet> stmt = new CassandraStatementAdapter<Number, ResultSet>(this.session, stmtPrep, queryable);
-        queryable.bind(stmt).on();
-        command = new DefaultCommand((CassandraStatementAdapter) stmt, queryable);
-        return command;
-        */
     }
     
     @Override
     public <T, R> Command asDeleteCommand(Queryable queryable)//, ResultRow<T, R> overloadResultRow)
     {
         return buildCommand(queryable);
-        /*
-        DefaultCommand command = null;
-        String sql = queryable.query();
-        if(LOG.isInfoEnabled())
-            LOG.debug("Bind Native SQL\n{}",sql);
-
-        PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
-        CassandraStatementAdapter<Number, ResultSet> stmt = new CassandraStatementAdapter<Number, ResultSet>(this.session, stmtPrep, queryable);
-        //queryable.bind(stmt).on();
-        command = new DefaultCommand((CassandraStatementAdapter) stmt, queryable);
-        return command;
-        */
     }
     
     @Override
     public <T, R> Command asAddCommand(Queryable queryable)//, ResultRow<T, R> overloadResultRow)
     {
         return buildCommand(queryable);
-        /*
-        DefaultCommand command = null;
-        String sql = queryable.query();
-        if(LOG.isInfoEnabled())
-            LOG.debug("Bind Native SQL\n{}",sql);
-
-        PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
-        CassandraStatementAdapter<Number, ResultSet> stmt = new CassandraStatementAdapter<Number, ResultSet>(this.session, stmtPrep, queryable);
-        queryable.bind(stmt).on();
-        command = new DefaultCommand((CassandraStatementAdapter) stmt, queryable);
-        return command;
-        */
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -303,8 +268,8 @@ class CassandraConnectionAdapter implements ConnectionAdapter
     {
         Command command = null;
         String sql = queryable.query();
-        if(LOG.isInfoEnabled())
-            LOG.debug("Bind Native SQL\n{}",sql);
+        if(SQLLOG.isInfoEnabled())
+            SQLLOG.info("Bind Native SQL\n{}",sql);
         
         PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
         CassandraPreparedStatementAdapter<Number, ResultSet> stmt = new CassandraPreparedStatementAdapter<Number, ResultSet>(this.session, stmtPrep, queryable);

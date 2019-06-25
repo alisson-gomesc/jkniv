@@ -19,8 +19,6 @@
  */
 package net.sf.jkniv.whinstone.cassandra.commands;
 
-import java.sql.Statement;
-
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandHandler;
@@ -36,7 +34,6 @@ public class DefaultQuery implements Command
     {
         super();
         this.stmt = stmt;
-        //queryable.setTotal(Statement.SUCCESS_NO_INFO);
     }
     
     @Override
