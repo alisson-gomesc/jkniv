@@ -21,19 +21,13 @@ package net.sf.jkniv.whinstone.jdbc.commands;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandHandler;
-import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.jdbc.PreparedStatementStrategy;
-import net.sf.jkniv.whinstone.jdbc.params.PreparedStatementAdapterOld;
-import net.sf.jkniv.whinstone.params.AutoBindParams;
-import net.sf.jkniv.whinstone.params.PrepareParamsFactory;
-import net.sf.jkniv.whinstone.params.StatementAdapterOld;
+import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
  * 
@@ -44,41 +38,24 @@ public class AddSequenceKeyJdbcCommand extends AbstractJdbcCommand
 {
     private final Insertable isql;
     
-    public AddSequenceKeyJdbcCommand(Queryable queryable, Connection conn)
+    @SuppressWarnings("rawtypes")
+    public AddSequenceKeyJdbcCommand(StatementAdapter stmt, Queryable queryable, Connection conn)
     {
-        super(queryable, conn);
+        super(stmt, queryable, conn);
         this.isql = queryable.getDynamicSql().asInsertable();
     }
-    
-    @Override
-    public Command with(HandleableException handlerException)
-    {
-        this.handlerException = handlerException;
-        return this;
-    }
-    
-    @Override
-    public Command with(CommandHandler commandHandler)
-    {
-        this.commandHandler = commandHandler;
-        return this;
-    }
-    
+
     @Override
     public <T> T execute()
     {
         Integer affected = 0;
-        PreparedStatement stmt = null;
+        PreparedStatement stmt_off = null;
         try
         {
             // first get sequence after execute insert
             new SettingSequenceGeneratedKey(queryable, isql, conn, handlerException).set();
-            stmt = prepareInsertStatement();
-            StatementAdapterOld stmtAdapter = new PreparedStatementAdapterOld(stmt);
-            AutoBindParams prepareParams = PrepareParamsFactory.newPrepareParams(stmtAdapter, isql.getParamParser(),
-                    queryable);
-            prepareParams.parameterized(queryable.getParamsNames());
-            affected = stmt.executeUpdate();
+            queryable.bind(stmt).on();
+            affected = stmt.execute();
         }
         catch (Exception e)
         {
@@ -86,7 +63,8 @@ public class AddSequenceKeyJdbcCommand extends AbstractJdbcCommand
         }
         finally
         {
-            close(stmt);
+            stmt.close();
+            close(stmt_off);
         }
         return (T) affected;
     }

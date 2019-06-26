@@ -37,7 +37,7 @@
     <menu name="whinstone jdbc" inherit="top">
       <item name="Introduction" href="index.html" />
       <item name="Transaction" href="transaction.html" />
-      <item name="Auto Generated eys" href="auto-generate-keys.html" />
+      <item name="Auto Generated keys" href="auto-generate-keys.html" />
       <item name="Bulk Operations" href="bulk-operations.html" />
       <item name="Stored Procedures" href="stored.html" />
       <item name="Logging" href="logging.html" />

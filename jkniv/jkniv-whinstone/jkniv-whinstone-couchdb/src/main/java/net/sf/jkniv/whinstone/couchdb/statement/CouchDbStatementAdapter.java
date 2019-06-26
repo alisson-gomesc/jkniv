@@ -219,7 +219,8 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
         return Collections.emptyList();
     }
     
-    public ResultSetParser<T, String> generatedKeys()
+    @Override
+    public void bindKeys()
     {
         // FIXME UnsupportedOperationException
         throw new UnsupportedOperationException("CouchDb repository  doesn't implement this method yet!");

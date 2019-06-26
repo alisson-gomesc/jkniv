@@ -40,6 +40,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  */
 public class DefaultJdbcCommand extends AbstractJdbcCommand
 {
+    @SuppressWarnings("rawtypes")
     public DefaultJdbcCommand(StatementAdapter stmt, Queryable queryable, Connection conn)
     {
         super(stmt, queryable, conn);

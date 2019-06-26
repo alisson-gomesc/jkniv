@@ -172,6 +172,7 @@ class CassandraConnectionAdapter implements ConnectionAdapter
         throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
     }
     
+    /*
     @Override
     public <T, R> StatementAdapter<T, R> newStatement(Queryable queryable)
     {
@@ -182,6 +183,7 @@ class CassandraConnectionAdapter implements ConnectionAdapter
         StatementAdapter<T, R> adapter = new CassandraPreparedStatementAdapter(session, stmt, queryable);
         return adapter;
     }
+     */
     
     @Override
     public <T, R> StatementAdapter<T, R> newStatement(String sql)
@@ -189,7 +191,6 @@ class CassandraConnectionAdapter implements ConnectionAdapter
         // FIXME UnsupportedOperationException
         throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
     }
-    
     @Override
     public Object unwrap()
     {

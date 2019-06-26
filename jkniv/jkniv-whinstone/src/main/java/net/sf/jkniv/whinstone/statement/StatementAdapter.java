@@ -120,11 +120,10 @@ public interface StatementAdapter<T, R>
     KeyGeneratorType getKeyGeneratorType();
 
     /**
-     * generate keys
+     * bind the keys generated
      * @return instance of this object
-     * @deprecated Command must to know return type TODO change design
      */
-    ResultSetParser<T, R> generatedKeys();
+    void bindKeys();
     
     List<T> rows();
     

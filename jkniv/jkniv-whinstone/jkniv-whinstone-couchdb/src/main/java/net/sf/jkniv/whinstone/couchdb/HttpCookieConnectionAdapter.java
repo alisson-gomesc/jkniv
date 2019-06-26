@@ -125,9 +125,12 @@ class HttpCookieConnectionAdapter implements ConnectionAdapter
         throw new UnsupportedOperationException("CouchDb repository  doesn't implement this method yet!");
     }
     
+    /*
     @Override
     public <T, R> StatementAdapter<T, R> newStatement(Queryable queryable)
     {
+        if (true)
+            throw new UnsupportedOperationException("CoucDB Connection Adapter doesn't implements new statement yet");
         String sql = queryable.query(); 
         //queryable.getDynamicSql().getSql(queryable.getParams());
         //String positionalSql = queryable.getDynamicSql().getParamParser().replaceForQuestionMark(sql, queryable.getParams());
@@ -145,7 +148,13 @@ class HttpCookieConnectionAdapter implements ConnectionAdapter
         StatementAdapter<T, R> adapter = new CouchDbStatementAdapter(this.httpBuilder, sql, queryable.getDynamicSql().getParamParser());
         return adapter;
     }
-    
+     */
+        
+    @Override
+    public <T, R> StatementAdapter<T, R> newStatement(String sql)
+    {
+        throw new UnsupportedOperationException("CouchDb repository  doesn't implement this method yet!");
+    }
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public <T, R> Command asSelectCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
@@ -225,12 +234,6 @@ class HttpCookieConnectionAdapter implements ConnectionAdapter
         return command;
     }
 
-    @Override
-    public <T, R> StatementAdapter<T, R> newStatement(String sql)
-    {
-        throw new UnsupportedOperationException("CouchDb repository  doesn't implement this method yet!");
-    }
-    
     @Override
     public Object unwrap()
     {

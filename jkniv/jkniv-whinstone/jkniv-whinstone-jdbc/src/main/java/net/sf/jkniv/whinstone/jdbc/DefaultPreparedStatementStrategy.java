@@ -150,8 +150,6 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
         try
         {
             stmt = conn.prepareStatement(sqlCount);
-            //if (paramsNames.length > 0)
-            //    setValues(stmt);
         }
         catch (SQLException sqle)
         {

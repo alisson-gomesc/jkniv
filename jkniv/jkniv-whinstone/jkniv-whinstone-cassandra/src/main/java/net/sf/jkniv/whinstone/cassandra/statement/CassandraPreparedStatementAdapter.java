@@ -267,7 +267,8 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         return list;
     }
     
-    public ResultSetParser<T, Row> generatedKeys()
+    @Override
+    public void bindKeys()
     {
         throw new UnsupportedOperationException("No implemented operation generatedKeys for RepositoryCassandra!");
     }

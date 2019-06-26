@@ -65,7 +65,13 @@ public interface ConnectionAdapter
 
     <T, R> Command asAddCommand(Queryable queryable);
 
-    <T,R> StatementAdapter<T,R> newStatement(Queryable queryable);
+    /*
+     * 
+     * @param queryable TODO comments
+     * @return TODO comments
+     * @deprecated DESIGN IN REVIEW
+     */
+    //<T,R> StatementAdapter<T,R> newStatement(Queryable queryable);
     
     /**
      * create an adapter for a Prepared Statement
