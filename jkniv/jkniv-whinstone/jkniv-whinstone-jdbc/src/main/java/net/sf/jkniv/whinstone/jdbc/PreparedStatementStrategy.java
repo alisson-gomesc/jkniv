@@ -19,10 +19,6 @@
  */
 package net.sf.jkniv.whinstone.jdbc;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-
-
 /**
  * TODO docme
  * 
@@ -37,7 +33,7 @@ public interface PreparedStatementStrategy
     
 //    SqlLogger getSqlLogger();
     
-    /**
+    /*
      * Creates a PreparedStatement object that will generate ResultSet objects with the given type, 
      * concurrency, and holdability.
      * The parameters values is setting
@@ -46,9 +42,9 @@ public interface PreparedStatementStrategy
      * @throws net.sf.jkniv.sqlegance.RepositoryException wrapper SQLException
      * @see java.sql.SQLException
      */
-    PreparedStatement prepareStatement(Connection conn);
+    //PreparedStatement prepareStatement(Connection conn);
     
-    /**
+    /*
      * Creates a {@code PreparedStatement} object object capable of returning the auto-generated 
      * keys designated by the given array. The parameters values is setting
      * @param conn Opened connection to database
@@ -57,7 +53,7 @@ public interface PreparedStatementStrategy
      * @throws net.sf.jkniv.sqlegance.RepositoryException wrapper SQLException
      * @see java.sql.SQLException
      */
-    PreparedStatement prepareStatement(Connection conn, String[] columnNames);
+    //PreparedStatement prepareStatement(Connection conn, String[] columnNames);
     
-    PreparedStatement prepareStatementCount(Connection conn);
+    //PreparedStatement prepareStatementCount(Connection conn);
 }

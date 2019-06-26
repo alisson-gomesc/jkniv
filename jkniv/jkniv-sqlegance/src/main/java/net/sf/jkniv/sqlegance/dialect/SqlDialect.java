@@ -70,7 +70,7 @@ public interface SqlDialect
     
     String getSqlPatternPaging();
     
-    PreparedStatement prepare(Connection conn, Sql isql, String query);
+    //PreparedStatement prepare(Connection conn, Sql isql, String query);
     
     /**
      * Build a paginate query accordingly data base dialect

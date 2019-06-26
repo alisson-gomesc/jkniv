@@ -19,25 +19,18 @@
  */
 package net.sf.jkniv.whinstone.jdbc;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.whinstone.Queryable;
 
 /**
  * TODO javadoc
  * 
  * @author Alisson Gomes
- *
+ * @deprecated not used any more
  */
-public class DefaultPreparedStatementStrategy implements PreparedStatementStrategy
+class DefaultPreparedStatementStrategy implements PreparedStatementStrategy
 {
     private static final Logger LOG    = LoggerFactory.getLogger(DefaultPreparedStatementStrategy.class);
     private static final Logger SQLLOG = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
@@ -64,14 +57,14 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
             this.sqlCount = queryable.queryCount();
     }
     
-    /**
+    /*
      * Creates a PreparedStatement object that will generate ResultSet objects with the given type, concurrency, and holdability.
      * The parameters values is setting
      * @param conn Opened connection to database
      * @return a new PreparedStatement object, containing the pre-compiled SQL statement.
      * @throws net.sf.jkniv.sqlegance.RepositoryException wrapper SQLException
      * @see java.sql.SQLException
-     */
+     *
     public PreparedStatement prepareStatement(Connection conn)
     {
         PreparedStatement stmt = null;
@@ -81,33 +74,31 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
                     isql.getResultSetType(), isql.getResultSetConcurrency(), isql.getResultSetHoldability(),
                     paramsNames.length);
         stmt = queryable.getDynamicSql().getSqlDialect().prepare(conn, isql, queryable.query());
-        /*
-        int rsType = isql.getResultSetType().getTypeScroll();
-        int rsConcurrency = isql.getResultSetConcurrency().getConcurrencyMode();
-        int rsHoldability = isql.getResultSetHoldability().getHoldability();        
-        try
-        {
-            
-            if (queryable.getDynamicSql().getSqlDialect().supportsStmtHoldability())
-                stmt = conn.prepareStatement(sql, rsType, rsConcurrency, rsHoldability);
-            else
-            {
-                // SQLServer doesn't support Holdability
-                stmt = conn.prepareStatement(sql, rsType, rsConcurrency);
-                conn.setHoldability(rsHoldability);
-            }
-            if (isql.getTimeout() > 0)
-                stmt.setQueryTimeout(isql.getTimeout());
-        }
-        catch (SQLException sqle)
-        {
-            throw new RepositoryException("Cannot prepare statement [" + sqle.getMessage() + "]", sqle);
-        }
-        */
+//        int rsType = isql.getResultSetType().getTypeScroll();
+//        int rsConcurrency = isql.getResultSetConcurrency().getConcurrencyMode();
+//        int rsHoldability = isql.getResultSetHoldability().getHoldability();        
+//        try
+//        {
+//            
+//            if (queryable.getDynamicSql().getSqlDialect().supportsStmtHoldability())
+//                stmt = conn.prepareStatement(sql, rsType, rsConcurrency, rsHoldability);
+//            else
+//            {
+//                // SQLServer doesn't support Holdability
+//                stmt = conn.prepareStatement(sql, rsType, rsConcurrency);
+//                conn.setHoldability(rsHoldability);
+//            }
+//            if (isql.getTimeout() > 0)
+//                stmt.setQueryTimeout(isql.getTimeout());
+//        }
+//        catch (SQLException sqle)
+//        {
+//            throw new RepositoryException("Cannot prepare statement [" + sqle.getMessage() + "]", sqle);
+//        }
         return stmt;
     }
-    
-    /**
+*/    
+    /*
      * Creates a {@code PreparedStatement} object object capable of returning the auto-generated 
      * keys designated by the given array.
      * 
@@ -116,7 +107,8 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
      * @return a new PreparedStatement object, containing the pre-compiled SQL statement.
      * @throws net.sf.jkniv.sqlegance.RepositoryException wrapper SQLException
      * @see java.sql.SQLException
-     */
+     *
+    @Override
     public PreparedStatement prepareStatement(Connection conn, String[] columnNames)
     {
         PreparedStatement stmt = null;
@@ -143,7 +135,10 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
         }
         return stmt;
     }
+    */
     
+    /*
+    @Override
     public PreparedStatement prepareStatementCount(Connection conn)
     {
         PreparedStatement stmt = null;
@@ -157,6 +152,7 @@ public class DefaultPreparedStatementStrategy implements PreparedStatementStrate
         }
         return stmt;
     }
+    */
     
     /*
     public PreparedStatement prepareStatementCount(Connection conn)

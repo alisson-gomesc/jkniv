@@ -59,6 +59,7 @@ public class Oracle12cDialect extends OracleDialect
         addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.CONN_HOLDABILITY, false));
     }
 
+    /*
     @Override
     public PreparedStatement prepare(Connection conn, Sql isql, String query)
     {
@@ -88,4 +89,5 @@ public class Oracle12cDialect extends OracleDialect
         }
         return stmt;        
     }
+    */
 }

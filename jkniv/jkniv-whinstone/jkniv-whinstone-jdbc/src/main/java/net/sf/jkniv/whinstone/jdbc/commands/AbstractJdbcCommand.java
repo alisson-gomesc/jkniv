@@ -27,13 +27,9 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 
 import net.sf.jkniv.exception.HandleableException;
-import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.jdbc.DefaultPreparedStatementStrategy;
-import net.sf.jkniv.whinstone.jdbc.PreparedStatementStrategy;
-import net.sf.jkniv.whinstone.jdbc.statement.PreparedStatementAdapter;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 public abstract class AbstractJdbcCommand implements Command
@@ -41,21 +37,21 @@ public abstract class AbstractJdbcCommand implements Command
     private final static Logger LOG = org.slf4j.LoggerFactory.getLogger(AbstractJdbcCommand.class);
     protected HandleableException             handlerException;
     protected CommandHandler                  commandHandler;
-    protected final PreparedStatementStrategy stmtStrategy;
+    //protected final PreparedStatementStrategy stmtStrategy;
     protected final StatementAdapter<?, ResultSet> stmt;
     protected final Connection                conn;
     protected final Queryable                 queryable;
 
     protected AbstractJdbcCommand(Queryable queryable, Connection conn) 
     {
-        this.stmtStrategy = new DefaultPreparedStatementStrategy(queryable);
+        //this.stmtStrategy = new DefaultPreparedStatementStrategy(queryable);
         this.stmt = null;
         this.queryable = queryable;
         this.conn = conn;
     }
     protected AbstractJdbcCommand(StatementAdapter stmt, Queryable queryable, Connection conn) 
     {
-        this.stmtStrategy = new DefaultPreparedStatementStrategy(queryable);
+        //this.stmtStrategy = new DefaultPreparedStatementStrategy(queryable);
         this.stmt = stmt;
         this.queryable = queryable;
         this.conn = conn;
@@ -75,6 +71,8 @@ public abstract class AbstractJdbcCommand implements Command
         return this;
     }
 
+    /*
+    UNUSED
     protected PreparedStatement prepareInsertStatement()
     {
         Insertable isql = queryable.getDynamicSql().asInsertable();
@@ -90,14 +88,16 @@ public abstract class AbstractJdbcCommand implements Command
         }
         return stmt;
     }
-    
+    */
+    /*
+    UNUSED
     protected PreparedStatement prepareStatement()
     {
         PreparedStatement stmt = null;
         stmt = stmtStrategy.prepareStatement(conn);
         return stmt;
     }
-    
+    */
     protected int batchExecute()
     {
         return queryable.bind(stmt).onBulk();

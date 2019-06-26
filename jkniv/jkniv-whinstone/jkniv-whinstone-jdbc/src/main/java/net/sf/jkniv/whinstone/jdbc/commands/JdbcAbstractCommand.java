@@ -63,6 +63,8 @@ public abstract class JdbcAbstractCommand implements Command
         return this;
     }
 
+    /*
+    UNUSED
     protected PreparedStatement prepareStatement()
     {
         Insertable isql = queryable.getDynamicSql().asInsertable();
@@ -78,6 +80,7 @@ public abstract class JdbcAbstractCommand implements Command
         }
         return stmt;
     }
+    */
     
     protected void close(PreparedStatement stmt)
     {
