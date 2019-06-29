@@ -33,12 +33,13 @@ public class DataSourceAdapter extends AbstractJdbcAdapter
     private DataSource dataSource;
     private Isolation  defaultIsolation;
     
-    public DataSourceAdapter(DataSource ds, String contextName)//DataSource dataSource, Isolation defaultIsolation, String name)
+    public DataSourceAdapter(DataSource ds, String contextName)
     {
         super(contextName);
         this.dataSource = ds;
         this.defaultIsolation = Isolation.DEFAULT;
     }
+    
     
     /*
     public DataSourceConnection(RepositoryConfig config)//DataSource dataSource, Isolation defaultIsolation, String name)
@@ -88,7 +89,7 @@ public class DataSourceAdapter extends AbstractJdbcAdapter
                 LOG.trace("Getting new connection from DataSource");
                 Connection jdbcConn = dataSource.getConnection();
                 setIsolation(jdbcConn, isolation);
-                adapter = new JdbcConnectionAdapter(jdbcConn, contextName);
+                adapter = new JdbcConnectionAdapter(jdbcConn, contextName, handlerException);
             }
             catch (Exception e)//SQLException
             {

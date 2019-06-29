@@ -29,6 +29,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
@@ -45,6 +46,7 @@ public class HttpConnectionFactory implements ConnectionFactory
     private String              username;
     private String              password;
     private CouchDbAuthenticate auth;
+    private HandleableException handlerException;
     
     public HttpConnectionFactory(Properties props, String contextName)
     {
@@ -54,6 +56,13 @@ public class HttpConnectionFactory implements ConnectionFactory
         this.password = props.getProperty(RepositoryProperty.JDBC_PASSWORD.key());
         this.auth = new CouchDbAuthenticate(this.url, this.username, this.password);
         this.contextName = contextName;
+    }
+    
+    @Override
+    public ConnectionFactory with(HandleableException handlerException)
+    {
+        this.handlerException = handlerException;
+        return this;
     }
     
     @Override

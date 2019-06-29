@@ -373,6 +373,7 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
+      <!-- 
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
@@ -391,7 +392,8 @@
             </goals>
           </execution>
         </executions>
-      </plugin>      
+      </plugin>
+       -->      
       <!-- 
       <plugin>
           <groupId>org.apache.maven.plugins</groupId> 
@@ -612,18 +614,19 @@
           <linksource>true</linksource>
         </configuration>
       </plugin>
+      <!-- 
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <reportSets>
           <reportSet>
             <reports>
-              <!-- select non-aggregate reports -->
               <report>report</report>
             </reports>
           </reportSet>
         </reportSets>
       </plugin>
+       -->
     </plugins>
   </reporting>
   <organization>

@@ -14,6 +14,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import net.sf.jkniv.exception.HandleableException;
+import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.sqlegance.ConstraintException;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
@@ -24,6 +26,7 @@ public class HttpConnectionFactoryTest
     @Rule
     public ExpectedException catcher = ExpectedException.none();  
     private Properties props;
+    private final HandleableException handlerException = new HandlerException(RepositoryException.class, "Repository error %s");
     
     @Before
     public void setUp()
@@ -39,6 +42,7 @@ public class HttpConnectionFactoryTest
     public void whenOpenHttpConnection()
     {
         HttpConnectionFactory factory = new HttpConnectionFactory(props, "default");
+        factory.with(handlerException);
         ConnectionAdapter conn  = factory.open();
         assertThat(conn, notNullValue());
     }
@@ -50,6 +54,7 @@ public class HttpConnectionFactoryTest
         //catcher.expect(RepositoryException.class);
         //catcher.expectMessage("Access denied, unauthorized for user [admin] and url [http://127.0.0.1:5984]");
         HttpConnectionFactory factory = new HttpConnectionFactory(props, "default");
+        factory.with(handlerException);
         factory.open();
     }
 
@@ -57,6 +62,7 @@ public class HttpConnectionFactoryTest
     public void whenOpenHttpConnectionGetRequest()
     {
         HttpConnectionFactory factory = new HttpConnectionFactory(props, "default");
+        factory.with(handlerException);
         ConnectionAdapter conn = factory.open();
         
         //conn.

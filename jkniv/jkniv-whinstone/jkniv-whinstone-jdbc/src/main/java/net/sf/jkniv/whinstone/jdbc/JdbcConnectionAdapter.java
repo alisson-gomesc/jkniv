@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
+import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Selectable;
@@ -40,12 +41,14 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
     
     private final Connection          conn;
     private final String              contextName;
+    private final HandleableException handlerException;
     
-    public JdbcConnectionAdapter(Connection conn, String contextName)
+    public JdbcConnectionAdapter(Connection conn, String contextName, HandleableException handlerException)
     {
         NOT_NULL.verify(conn, contextName);
         this.conn = conn;
         this.contextName = contextName;
+        this.handlerException = handlerException;
     }
     
     @Override
@@ -485,7 +488,9 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
         
         StatementAdapter<T, R> stmt = this.newStatement(queryable);
         Selectable select = queryable.getDynamicSql().asSelectable();
-        stmt.resultRow(overloadResultRow).oneToManies(select.getOneToMany()).groupingBy(select.getGroupByAsList());
+        stmt.resultRow(overloadResultRow)
+            .oneToManies(select.getOneToMany())
+            .groupingBy(select.getGroupByAsList());
         
         command = new DefaultJdbcQuery(stmt, queryable, this.conn);
         return command;

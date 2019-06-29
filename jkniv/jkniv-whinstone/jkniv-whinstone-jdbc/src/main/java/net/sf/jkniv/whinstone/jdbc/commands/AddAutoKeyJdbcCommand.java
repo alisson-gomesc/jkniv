@@ -20,7 +20,6 @@
 package net.sf.jkniv.whinstone.jdbc.commands;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
@@ -30,9 +29,9 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * @author Alisson Gomes
  * @since 0.6.0
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class AddAutoKeyJdbcCommand extends AbstractJdbcCommand
 {
-    @SuppressWarnings("rawtypes")
     public AddAutoKeyJdbcCommand(StatementAdapter stmt, Queryable queryable, Connection conn)
     {
         super(stmt, queryable, conn);
@@ -42,21 +41,9 @@ public class AddAutoKeyJdbcCommand extends AbstractJdbcCommand
     public <T> T execute()
     {
         Integer affected = 0;
-        PreparedStatement stmt_off = null;
-        try
-        {
-            queryable.bind(stmt).on();
-            affected = stmt.execute();
-            stmt.bindKeys();
-        }
-        catch (Exception e)
-        {
-            handlerException.handle(e);
-        }
-        finally
-        {
-            close(stmt_off);
-        }
+        queryable.bind(stmt).on();
+        affected = stmt.execute();
+        stmt.bindKey();
         return (T) affected;
     }
 }

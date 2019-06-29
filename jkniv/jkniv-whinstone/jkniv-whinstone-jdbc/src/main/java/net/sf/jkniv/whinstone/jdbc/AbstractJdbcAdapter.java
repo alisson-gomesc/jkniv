@@ -33,8 +33,6 @@ import org.slf4j.LoggerFactory;
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.exception.HandleableException;
-import net.sf.jkniv.exception.HandlerException;
-import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.ConnectionFactory;
@@ -48,15 +46,23 @@ abstract class AbstractJdbcAdapter implements ConnectionFactory
 {
     protected transient Logger                LOG         = LoggerFactory.getLogger(getClass());
     private final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
-    protected static final HandleableException handlerException = new HandlerException(RepositoryException.class,
-            "Cannot get database connection");
+    //protected static final HandleableException handlerException = new HandlerException(RepositoryException.class,
+    //        "Cannot get database connection");
     
     protected final String                           contextName;
+    protected HandleableException handlerException;
     
     public AbstractJdbcAdapter(String contextName)
     {
         NOT_NULL.verify(contextName);
         this.contextName = contextName;
+    }
+    
+    @Override
+    public ConnectionFactory with(HandleableException handlerException)
+    {
+        this.handlerException = handlerException;
+        return this;
     }
     
     @Override

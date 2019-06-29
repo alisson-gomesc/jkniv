@@ -59,5 +59,8 @@ public interface AutoBindParams
      */
     //public int onBatch();
 
+    /**
+     * @deprecated use auto bind 
+     */
     public StatementAdapterOld parameterized(String[] paramsNames);
 }

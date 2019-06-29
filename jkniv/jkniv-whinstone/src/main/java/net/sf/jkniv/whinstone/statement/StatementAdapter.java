@@ -121,9 +121,10 @@ public interface StatementAdapter<T, R>
 
     /**
      * bind the keys generated
-     * @return instance of this object
      */
-    void bindKeys();
+    void bindKey();
+    
+    StatementAdapter<T, R> with(AutoKey generateKey);
     
     List<T> rows();
     

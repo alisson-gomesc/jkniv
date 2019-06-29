@@ -42,6 +42,7 @@ import net.sf.jkniv.whinstone.classification.Groupable;
 import net.sf.jkniv.whinstone.classification.GroupingBy;
 import net.sf.jkniv.whinstone.classification.NoGroupingBy;
 import net.sf.jkniv.whinstone.classification.Transformable;
+import net.sf.jkniv.whinstone.statement.AutoKey;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
@@ -268,9 +269,15 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     }
     
     @Override
-    public void bindKeys()
+    public void bindKey()
     {
         throw new UnsupportedOperationException("No implemented operation generatedKeys for RepositoryCassandra!");
+    }
+    
+    @Override
+    public StatementAdapter<T, Row> with(AutoKey generateKey)
+    {
+        return this;
     }
     
     public int execute()

@@ -17,35 +17,33 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone;
+package net.sf.jkniv.whinstone.statement;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 
-import net.sf.jkniv.sqlegance.SqlType;
-
-@Deprecated
-class CallbackMethods
+/**
+ * Bound the key(s) to a entity model.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
+public interface AutoKey<E>
 {
-    private SqlType      sqlType;
-    private List<Method> callbacks;
-    public static final CallbackMethods EMPTY = new CallbackMethods(SqlType.UNKNOWN, new ArrayList<Method>(1));
+    /**
+     * Get a unique identifier 
+     * @return unique identifier 
+     */
+    String getUId();
+ 
+    /**
+     * Get a identifier 
+     * @return identifier 
+     */
+    E getId();
     
-    public CallbackMethods(SqlType sqlType, List<Method> callbacks)
-    {
-        super();
-        this.sqlType = sqlType;
-        this.callbacks = callbacks;
-    }
-    
-    public SqlType getSqlType()
-    {
-        return sqlType;
-    }
-    
-    public List<Method> getCallbacks()
-    {
-        return callbacks;
-    }
+    Iterator<E> iterator();
+    /*
+     * Bound the key values to a entity model.
+     */
+    //public void bind();
 }

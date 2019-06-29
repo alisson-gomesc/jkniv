@@ -183,6 +183,7 @@ class RepositoryJdbc implements Repository
             types = new Class<?>[] {Properties.class, String.class};            
         }
         this.connectionFactory = getJdbcAdapterFactory(classNameJdbcAdapter, adapterClassFactory, args, types);
+        this.connectionFactory.with(handlerException);
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
         configQueryNameStrategy();

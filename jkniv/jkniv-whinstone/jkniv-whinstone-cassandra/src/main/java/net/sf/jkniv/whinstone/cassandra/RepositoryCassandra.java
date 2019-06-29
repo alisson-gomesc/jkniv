@@ -114,7 +114,7 @@ class RepositoryCassandra implements Repository
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
         this.adapterConn = new CassandraSessionFactory(sqlContext.getRepositoryConfig().getProperties(),
-                sqlContext.getName()).open();
+                sqlContext.getName()).with(handlerException).open();
         this.configQueryNameStrategy();
         this.configHandlerException();
     }

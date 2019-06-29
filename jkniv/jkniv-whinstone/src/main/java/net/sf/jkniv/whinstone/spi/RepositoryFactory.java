@@ -26,7 +26,7 @@ import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.whinstone.Repository;
 
 /**
- * Build a new instance of {@code Repository} Factory to construct the {@code Repository} 
+ * Build a new instance of {@code Repository} Factory to construct it 
  * according the data access technology like JPA, JDBC, CASSANDRA, COUCHDB, etc
  * 
  * @author Alisson Gomes

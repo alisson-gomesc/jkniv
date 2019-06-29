@@ -22,7 +22,6 @@ package net.sf.jkniv.whinstone.cassandra;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
@@ -35,6 +34,7 @@ import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.ProtocolVersion;
 import com.datastax.driver.core.Session;
 
+import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
@@ -48,6 +48,7 @@ public class CassandraSessionFactory implements ConnectionFactory
     // Application connection objects
     private Cluster             cluster;
     private CassandraConnectionAdapter conn;
+    private HandleableException handlerException;
     
     public CassandraSessionFactory(Properties props, String contextName)
     {
@@ -83,6 +84,7 @@ public class CassandraSessionFactory implements ConnectionFactory
         this.conn = new CassandraConnectionAdapter(cluster, session, contextName);
     }
     
+    
     private ProtocolVersion getProtocolVersion(String protocol)
     {
         ProtocolVersion version = null;
@@ -98,6 +100,13 @@ public class CassandraSessionFactory implements ConnectionFactory
             version = ProtocolVersion.NEWEST_SUPPORTED;
         }
         return version;
+    }
+    
+    @Override
+    public ConnectionFactory with(HandleableException handlerException)
+    {
+        this.handlerException = handlerException;
+        return this;
     }
     
     @Override

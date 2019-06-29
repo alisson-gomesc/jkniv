@@ -24,6 +24,7 @@ import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.ResultSetParser;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 import net.sf.jkniv.whinstone.couchdb.commands.JsonMapper;
+import net.sf.jkniv.whinstone.statement.AutoKey;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
@@ -220,10 +221,16 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     }
     
     @Override
-    public void bindKeys()
+    public void bindKey()
     {
         // FIXME UnsupportedOperationException
         throw new UnsupportedOperationException("CouchDb repository  doesn't implement this method yet!");
+    }
+    
+    @Override
+    public StatementAdapter<T, String> with(AutoKey generateKey)
+    {
+        return this;
     }
     
     public int execute()
