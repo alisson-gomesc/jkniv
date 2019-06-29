@@ -60,19 +60,23 @@ public class JdbcSequenceGeneratedKey implements AutoKey<Object>
         {
             handlerException.handle(e);
         }
-        if (keys.isEmpty())
-            keys.add(null);
     }
     
     @Override
     public Object getId()
     {
+        if (isEmpty())
+            return null;
+
         return (Long) this.keys.get(0);
     }
     
     @Override
     public String getUId()
     {
+        if (isEmpty())
+            return null;
+
         return String.valueOf(this.keys.get(0));
     }
     
@@ -81,4 +85,23 @@ public class JdbcSequenceGeneratedKey implements AutoKey<Object>
     {
         return this.keys.iterator();
     }
+    
+    @Override
+    public boolean hasItem()
+    {
+        return this.keys.size() > 0;
+    }
+
+    @Override
+    public boolean isEmpty()
+    {
+        return this.keys.isEmpty();
+    }
+
+    @Override
+    public int size()
+    {
+        return this.keys.size();
+    }
+
 }

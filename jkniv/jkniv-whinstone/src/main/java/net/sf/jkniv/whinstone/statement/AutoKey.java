@@ -42,6 +42,13 @@ public interface AutoKey<E>
     E getId();
     
     Iterator<E> iterator();
+    
+    boolean hasItem();
+    
+    boolean isEmpty();
+    
+    int size();
+    
     /*
      * Bound the key values to a entity model.
      */
