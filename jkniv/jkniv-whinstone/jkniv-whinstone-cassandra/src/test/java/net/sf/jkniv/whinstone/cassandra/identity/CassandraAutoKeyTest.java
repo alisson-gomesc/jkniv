@@ -6,7 +6,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.sql.Statement;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import net.sf.jkniv.whinstone.QueryFactory;
@@ -18,7 +17,7 @@ import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
 
 public class CassandraAutoKeyTest extends BaseJdbc
 {
-    @Test @Ignore("JDBC Error cannot execute SQL [null Invalid null value in condition for column plate")
+    @Test //@Ignore("JDBC Error cannot execute SQL [null Invalid null value in condition for column plate")
     public void whenGenerateKeyWithCassandraSequence()
     {
         Repository repositoryCas = getRepository();

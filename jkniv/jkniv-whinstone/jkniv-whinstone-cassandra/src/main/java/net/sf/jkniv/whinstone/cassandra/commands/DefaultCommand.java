@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.whinstone.cassandra.commands;
 
+import com.datastax.driver.core.Row;
+
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandHandler;
@@ -27,18 +29,22 @@ import net.sf.jkniv.whinstone.cassandra.statement.CassandraPreparedStatementAdap
 
 public class DefaultCommand implements Command
 {
-    private CassandraPreparedStatementAdapter<?, String> stmt;
+    protected final CassandraPreparedStatementAdapter<Number, Row> stmt;
+    protected final Queryable queryable;
+    protected HandleableException handlerException;
     
-    public DefaultCommand(CassandraPreparedStatementAdapter<?, String> stmt, Queryable queryable)
+    public DefaultCommand(CassandraPreparedStatementAdapter<Number, Row> stmt, Queryable queryable)
     {
         super();
         this.stmt = stmt;
-        queryable.bind(stmt).on();
+        this.queryable = queryable;
+        //queryable.bind(stmt).on();
     }
     
     @Override
-    public Command with(HandleableException handleableException)
+    public Command with(HandleableException handlerException)
     {
+        this.handlerException = handlerException;
         return this;
     }
     
@@ -52,6 +58,7 @@ public class DefaultCommand implements Command
     @SuppressWarnings("unchecked")
     public <T> T execute()
     {
+        queryable.bind(stmt).on();
         Integer rows = stmt.execute();
         return (T) rows;
     }

@@ -17,44 +17,45 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.commands;
+package net.sf.jkniv.whinstone.cassandra.commands;
 
-import java.sql.Connection;
+import com.datastax.driver.core.Row;
 
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.cassandra.statement.CassandraPreparedStatementAdapter;
 
 /**
- * Default Command execute simple {@code INSERT}, {@code UPDATE} and {@code DELETE} SQL instructions.
- * <p><b>Note: </b>
- *  <ul>
- *   <li> {@code SELECT} are handle by {@link DefaultJdbcQuery}</li>
- *   <li> Bulk operations are handle by {@link BulkJdbcCommand}</li>
- *  </ul>
- *  
+ * 
  * @author Alisson Gomes
  * @since 0.6.0
- *
  */
-@SuppressWarnings({"rawtypes","unchecked"})
-public class DefaultJdbcCommand extends AbstractJdbcCommand
+public class AddSequenceKeyJdbcCommand extends DefaultCommand
 {
-    public DefaultJdbcCommand(StatementAdapter stmt, Queryable queryable, Connection conn)
+    public AddSequenceKeyJdbcCommand(CassandraPreparedStatementAdapter<Number, Row> stmt, Queryable queryable)
     {
-        super(stmt, queryable, conn);
+        super(stmt, queryable);
     }
-    
+
+    @Override
     public <T> T execute()
     {
-        Integer rowsAffected = 0;
+        Integer affected = 0;
         try
         {
-            rowsAffected = simpleExecute();
+            // first get sequence after execute insert
+            stmt.bindKey();
+            queryable.bind(stmt).on();
+            affected = stmt.execute();
+        }
+        catch (Exception e)
+        {
+            handlerException.handle(e);
         }
         finally
         {
             stmt.close();
         }
-        return (T) rowsAffected;
+        return (T) affected;
     }
+    
 }

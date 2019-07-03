@@ -48,10 +48,11 @@ public class CassandraSessionFactory implements ConnectionFactory
     // Application connection objects
     private Cluster             cluster;
     private CassandraConnectionAdapter conn;
-    private HandleableException handlerException;
+    private final HandleableException handlerException;
     
-    public CassandraSessionFactory(Properties props, String contextName)
+    public CassandraSessionFactory(Properties props, String contextName, HandleableException handlerException)
     {
+        this.handlerException = handlerException;
         String[] urls = props.getProperty(RepositoryProperty.JDBC_URL.key(),"127.0.0.1").split(",");
         String keyspace =  props.getProperty(RepositoryProperty.JDBC_SCHEMA.key());
         String username =  props.getProperty(RepositoryProperty.JDBC_USER.key());
@@ -81,7 +82,7 @@ public class CassandraSessionFactory implements ConnectionFactory
                 LOG.info("Datacenter: {}; Host: {}; Rack: {}", host.getDatacenter(), host.getAddress(), host.getRack());
         }
         Session session = cluster.connect(keyspace);    
-        this.conn = new CassandraConnectionAdapter(cluster, session, contextName);
+        this.conn = new CassandraConnectionAdapter(cluster, session, contextName, handlerException);
     }
     
     
@@ -105,7 +106,7 @@ public class CassandraSessionFactory implements ConnectionFactory
     @Override
     public ConnectionFactory with(HandleableException handlerException)
     {
-        this.handlerException = handlerException;
+        //this.handlerException = handlerException;
         return this;
     }
     

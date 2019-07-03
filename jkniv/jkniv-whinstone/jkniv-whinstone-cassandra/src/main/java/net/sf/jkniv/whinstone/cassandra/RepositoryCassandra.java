@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
-import net.sf.jkniv.cache.Cacheable;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
@@ -38,13 +37,11 @@ import net.sf.jkniv.sqlegance.NonUniqueResultException;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
-import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
-import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.QueryFactory;
@@ -65,7 +62,7 @@ class RepositoryCassandra implements Repository
     private static final Logger     LOG     = LoggerFactory.getLogger(RepositoryCassandra.class);
     private static final Assertable NOT_NULL = AssertsFactory.getNotNull();
     private QueryNameStrategy       strategyQueryName;
-    private HandleableException     handlerException;
+    private final HandleableException     handlerException;
     private RepositoryConfig        repositoryConfig;
     private SqlContext              sqlContext;
     private ConnectionAdapter       adapterConn;
@@ -107,6 +104,7 @@ class RepositoryCassandra implements Repository
         else
             sqlContext.getRepositoryConfig().add(props);
         
+        this.handlerException = new HandlerException(RepositoryException.class, "Cassandra Error cannot execute SQL [%s]");
         this.sqlContext = sqlContext;
         this.repositoryConfig = this.sqlContext.getRepositoryConfig();
         this.repositoryConfig.add(RepositoryProperty.SQL_DIALECT.key(), CassandraDialect.class.getName());
@@ -114,9 +112,8 @@ class RepositoryCassandra implements Repository
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
         this.adapterConn = new CassandraSessionFactory(sqlContext.getRepositoryConfig().getProperties(),
-                sqlContext.getName()).with(handlerException).open();
+                sqlContext.getName(), handlerException).open();
         this.configQueryNameStrategy();
-        this.configHandlerException();
     }
     
     @Override
@@ -742,9 +739,4 @@ class RepositoryCassandra implements Repository
         this.strategyQueryName = proxy.newInstance();
     }
     
-    private void configHandlerException()
-    {
-        this.handlerException = new HandlerException(RepositoryException.class, "JDBC Error cannot execute SQL [%s]");
-    }
-
 }

@@ -22,10 +22,6 @@ package net.sf.jkniv.whinstone.jdbc.commands;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
-import net.sf.jkniv.exception.HandleableException;
-import net.sf.jkniv.sqlegance.Insertable;
-import net.sf.jkniv.whinstone.Command;
-import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
@@ -36,13 +32,10 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  */
 public class AddSequenceKeyJdbcCommand extends AbstractJdbcCommand
 {
-    private final Insertable isql;
-    
     @SuppressWarnings("rawtypes")
     public AddSequenceKeyJdbcCommand(StatementAdapter stmt, Queryable queryable, Connection conn)
     {
         super(stmt, queryable, conn);
-        this.isql = queryable.getDynamicSql().asInsertable();
     }
 
     @Override
@@ -53,7 +46,6 @@ public class AddSequenceKeyJdbcCommand extends AbstractJdbcCommand
         try
         {
             // first get sequence after execute insert
-            //new SettingSequenceGeneratedKey(queryable, isql, conn, handlerException).bind();
             stmt.bindKey();
             queryable.bind(stmt).on();
             affected = stmt.execute();

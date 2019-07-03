@@ -42,6 +42,7 @@ import net.sf.jkniv.whinstone.statement.AutoKey;
  * 
  * @author Alisson Gomes
  * @since 0.6.0
+ * @deprecated using JdbcAutoGenerateKey
  */
 class SettingSequenceGeneratedKey //implements AutoKey
 {

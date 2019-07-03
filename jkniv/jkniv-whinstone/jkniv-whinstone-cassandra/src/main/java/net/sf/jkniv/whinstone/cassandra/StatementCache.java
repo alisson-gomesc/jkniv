@@ -2,7 +2,6 @@ package net.sf.jkniv.whinstone.cassandra;
 
 import java.util.concurrent.TimeUnit;
 
-import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
 

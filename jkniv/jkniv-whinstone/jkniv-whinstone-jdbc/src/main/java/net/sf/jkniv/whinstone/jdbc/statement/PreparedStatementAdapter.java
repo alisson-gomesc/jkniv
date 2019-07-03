@@ -253,7 +253,7 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
         ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(queryable.getParams());
         Iterator<Object> it = autoKey.iterator();
         for(int i=0; i<properties.length; i++)
-            setValue(proxy, properties[i], it.next());
+            setValueOfKey(proxy, properties[i], it.next());
         
         /*
         try
@@ -300,6 +300,7 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
     }
     
     @Override
+    @SuppressWarnings("rawtypes")
     public StatementAdapter<T, ResultSet> with(AutoKey autoKey)
     {
         this.autoKey = autoKey;
@@ -394,7 +395,7 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
     }
     */
     
-    private void setValue(ObjectProxy<?> proxy, String property, Object value)
+    private void setValueOfKey(ObjectProxy<?> proxy, String property, Object value)
     {
         Object parsedValue = value;
         
