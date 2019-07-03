@@ -87,7 +87,7 @@ class HttpCookieConnectionAdapter implements ConnectionAdapter
     @Override
     public void close() //throws SQLException
     {
-        LOG.warn("CouchDb repository doesn't implement this method yet!");
+        LOG.debug("CouchDb repository doesn't implement close() method!");
     }
     
     @Override
