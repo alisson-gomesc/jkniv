@@ -139,9 +139,9 @@ public abstract class DefaultCommandHandler implements CommandHandler
                 if (t instanceof Number)
                     rows = (Number) t;
                 if (queryable.getDynamicSql().getSqlDialect().supportsFeature(SqlFeatureSupport.PAGING_ROUNDTRIP))
-                    queryable.setTotal(Statement.SUCCESS_NO_INFO);
-                else
                     queryable.setTotal(rows.longValue());
+                else
+                    queryable.setTotal(Statement.SUCCESS_NO_INFO);
                 if (LOG.isDebugEnabled())
                     LOG.debug("{} records was affected by {} [{}] query", rows, sql.getSqlType(), queryable.getName());
                 postCallback();

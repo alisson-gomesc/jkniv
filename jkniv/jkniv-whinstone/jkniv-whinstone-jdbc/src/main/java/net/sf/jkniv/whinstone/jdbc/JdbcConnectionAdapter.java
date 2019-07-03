@@ -37,6 +37,7 @@ import net.sf.jkniv.whinstone.transaction.TransactionSessions;
 
 public class JdbcConnectionAdapter implements ConnectionAdapter
 {
+    private static final Logger SQLLOG = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
     private static final Logger LOG = LoggerFactory.getLogger(JdbcConnectionAdapter.class);
     private static final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
     //private static final HandleableException handlerException = new HandlerException(RepositoryException.class,
@@ -215,16 +216,17 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
         PreparedStatement stmt = null;
         Sql isql = queryable.getDynamicSql();
         String[] paramsNames = queryable.getParamsNames();
-        String sql = queryable.query();
+        String query = queryable.query();
         try
         {
             if (LOG.isTraceEnabled())
                 LOG.trace("Preparing SQL statement type with [{}] column names", paramsNames.length);
             
+            SQLLOG.info(query);
             if (columnNames.length > 0)
-                stmt = conn.prepareStatement(sql, columnNames);
+                stmt = conn.prepareStatement(query, columnNames);
             else
-                stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             
             if (isql.getTimeout() > 0)
                 stmt.setQueryTimeout(isql.getTimeout());
@@ -373,6 +375,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
         String query = queryable.query();
         try
         {
+            SQLLOG.info(query);
             if (isql.isInsertable())
             {
                 Insertable insertTag = isql.asInsertable();
@@ -423,10 +426,12 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
             if (LOG.isTraceEnabled())
                 LOG.trace("Preparing SQL statement type with [{}] column names", queryable.getParamsNames().length);
             
+            String query = queryable.query();
+            SQLLOG.info(query);
             if (columnNames.length > 0)
-                stmt = conn.prepareStatement(queryable.query(), columnNames);
+                stmt = conn.prepareStatement(query, columnNames);
             else
-                stmt = conn.prepareStatement(queryable.query(), Statement.RETURN_GENERATED_KEYS);
+                stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             
             if (isql.getTimeout() > 0)
                 stmt.setQueryTimeout(isql.getTimeout());

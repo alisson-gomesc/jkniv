@@ -53,7 +53,8 @@ public class AddSequenceKeyJdbcCommand extends AbstractJdbcCommand
         try
         {
             // first get sequence after execute insert
-            new SettingSequenceGeneratedKey(queryable, isql, conn, handlerException).bind();
+            //new SettingSequenceGeneratedKey(queryable, isql, conn, handlerException).bind();
+            stmt.bindKey();
             queryable.bind(stmt).on();
             affected = stmt.execute();
         }
