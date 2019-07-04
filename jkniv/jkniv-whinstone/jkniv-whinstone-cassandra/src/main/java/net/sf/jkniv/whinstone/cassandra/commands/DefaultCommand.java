@@ -38,7 +38,6 @@ public class DefaultCommand implements Command
         super();
         this.stmt = stmt;
         this.queryable = queryable;
-        //queryable.bind(stmt).on();
     }
     
     @Override
@@ -62,5 +61,4 @@ public class DefaultCommand implements Command
         Integer rows = stmt.execute();
         return (T) rows;
     }
-    
 }
