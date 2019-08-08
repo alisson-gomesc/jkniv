@@ -28,4 +28,16 @@ public class CassandraAutoKeyTest extends BaseJdbc
         assertThat(affected, is(Statement.SUCCESS_NO_INFO));
         assertThat(v.getPlate(), notNullValue());
     }
+    
+    public void whenGenerateKeyWithCassandraIncrement()
+    {
+        Repository repositoryCas = getRepository();
+        Vehicle v = new Vehicle();
+        v.setName("Dodge Challenger");
+        Queryable queryable = QueryFactory.of("vechile-autokey-cassandra-case-increment", v);
+        int affected = repositoryCas.add(queryable);
+        assertThat(affected, is(Statement.SUCCESS_NO_INFO));
+        assertThat(v.getPlate(), notNullValue());
+    }
+
 }

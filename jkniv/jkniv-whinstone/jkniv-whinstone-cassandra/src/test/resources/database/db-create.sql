@@ -19,3 +19,13 @@ CREATE TABLE VEHICLE
   alarms list<text>
  ,PRIMARY KEY( plate )
 );
+
+
+CREATE TABLE sample_data
+( 
+  id uuid,
+  a text,
+  b text,
+  c text,
+  PRIMARY KEY(id)
+);
