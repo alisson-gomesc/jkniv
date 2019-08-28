@@ -28,7 +28,7 @@ import net.sf.jkniv.sqlegance.Statistical;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public abstract class AbstractStats implements Statistical
+abstract class AbstractStats implements Statistical
 {
     private AtomicLong max;
     private AtomicLong min;

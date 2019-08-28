@@ -5,7 +5,39 @@ Title: Changelog
 
 `Note: MILESTONES (.MXX) releases isn't public yet`
 
-## Release notes - jkniv-whinstone - Version 0.6.0.M48
+
+## Release notes: jkniv-whinstone - Version 0.6.0.M49
+    
+### New Feature
+
+<ul>
+ <li>[<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-90'>JKNIVWHIN-90</a>] -         [cassandra] foreach to execute multiple insert/update/delete
+ </li>
+ <li>[<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-93'>JKNIVWHIN-93</a>] -         [jdbc] Change behavior Diaclect by SQLFeatures configuration
+ </li>
+</ul>
+    
+### Improvement
+
+<ul>
+ <li>[<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-73'>JKNIVWHIN-73</a>] -         [couchdb] Paginate query using CouchDB
+ </li>
+</ul>
+
+        
+### Bug
+
+<ul>
+<li>[<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-85'>JKNIVWHIN-85</a>] -         [cassandra] Auto generate keys
+</li>
+<li>[<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-89'>JKNIVWHIN-89</a>] -         [jdbc] SQLFeatureNotSupportedException: Unsupported holdability value
+</li>
+<li>[<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-95'>JKNIVWHIN-95</a>] -         [jdbc] get(T entity) and  get(Class&lt;T&gt; returnType, Object entity) doesn&#39;t resolve queryname correctly
+</li>
+</ul>
+            
+            
+## Release notes: jkniv-whinstone - Version 0.6.0.M48
 
     
 ### New Feature

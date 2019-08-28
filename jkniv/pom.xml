@@ -7,7 +7,7 @@
   <packaging>pom</packaging>
   <name>jkniv</name>
   <artifactId>jkniv</artifactId>
-  <description>jkniv build  POM</description>
+  <description>jkniv build POM</description>
   <url>http://sourceforge.net/projects/jkniv/</url>
   <inceptionYear>2012</inceptionYear>
 
@@ -27,10 +27,6 @@
     <spring.version>4.2.5.RELEASE</spring.version>
   </properties>
 
-  <issueManagement> 
-   <system>jira</system> 
-   <url>https://jkniv-io.atlassian.net/projects/JKNIVSQL</url> 
-  </issueManagement>
 
   <modules>
     <module>jkniv-utils</module>
@@ -308,6 +304,22 @@
       
   </dependencies>
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.8.2</version>
+          <dependencies>
+            <dependency><!-- add support for ssh/scp -->
+              <groupId>org.apache.maven.wagon</groupId>
+              <artifactId>wagon-ssh</artifactId>
+              <version>3.3.3</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -582,7 +594,7 @@
       <distributionManagement>
         <site>
           <id>jkniv.sf.net</id>
-          <url>scp://shell.sourceforge.net/home/project-web/jkniv/htdocs/</url>
+          <url>scp://web.sourceforge.net/home/project-web/jkniv/htdocs</url>
         </site>
         <repository>
           <id>rw-artifactory</id>
@@ -596,6 +608,28 @@
         </snapshotRepository>
       </distributionManagement>
     </profile>
+    <!-- 
+    <profile>
+      <id>deploy-site</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-site-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>site-deploy</id>
+                <phase>site</phase>
+                <goals>
+                  <goal>deploy</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>    
+     -->
   </profiles>
   <reporting>
     <plugins>
