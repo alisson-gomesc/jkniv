@@ -23,5 +23,4 @@ public interface JpaEmFactory
     boolean close(EntityManager em);
     
     boolean close();
-    
 }

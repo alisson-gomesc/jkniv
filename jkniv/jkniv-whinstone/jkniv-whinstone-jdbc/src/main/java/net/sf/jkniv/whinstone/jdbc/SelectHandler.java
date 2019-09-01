@@ -1,7 +1,7 @@
 package net.sf.jkniv.whinstone.jdbc;
 
 import net.sf.jkniv.whinstone.Command;
-import net.sf.jkniv.whinstone.ConnectionAdapter;
+import net.sf.jkniv.whinstone.CommandAdapter;
 import net.sf.jkniv.whinstone.DefaultQueryHandler;
 
 /**
@@ -10,18 +10,18 @@ import net.sf.jkniv.whinstone.DefaultQueryHandler;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public class SelectHandler extends DefaultQueryHandler
+class SelectHandler extends DefaultQueryHandler
 {
-    public SelectHandler(ConnectionAdapter adapterConn)
+    public SelectHandler(CommandAdapter cmdAdapter)
     {
-        super(adapterConn);
+        super(cmdAdapter);
         with(this);
     }
     
     @Override
     public Command asCommand()
     {
-        Command c = getConnectionAdapter().asSelectCommand(queryable, overloadResultRow);
+        Command c = getCommandAdapter().asSelectCommand(queryable, overloadResultRow);
         c.with(this);
         c.with(this.handleableException);
         return c;

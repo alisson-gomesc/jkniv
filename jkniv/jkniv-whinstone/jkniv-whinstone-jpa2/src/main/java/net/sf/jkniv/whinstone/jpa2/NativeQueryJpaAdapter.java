@@ -8,7 +8,7 @@ import javax.persistence.Query;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.whinstone.Queryable;
 
-public class NativeQueryJpaAdapter extends AbstractQueryJpaAdapter
+class NativeQueryJpaAdapter extends AbstractQueryJpaAdapter
 {
     private Query queryJpa;
     

@@ -45,10 +45,9 @@ import net.sf.jkniv.whinstone.classification.Groupable;
 import net.sf.jkniv.whinstone.classification.GroupingBy;
 import net.sf.jkniv.whinstone.classification.Transformable.TransformableType;
 
-public abstract class AbstractQueryJpaAdapter implements QueryableJpaAdapter
+abstract class AbstractQueryJpaAdapter implements QueryableJpaAdapter
 {
     private static final Logger    LOG        = LoggerFactory.getLogger(AbstractQueryJpaAdapter.class);
-    //protected SqlLogger sqlLogger;
     private static final BasicType BASIC_TYPE = BasicType.getInstance();
     protected Queryable queryable;
     protected Sql isql;
@@ -56,12 +55,11 @@ public abstract class AbstractQueryJpaAdapter implements QueryableJpaAdapter
     private Query queryJpaForPaging;
     protected Query queryJpa;
     
-    public AbstractQueryJpaAdapter(EntityManager em, Queryable queryable, Sql isql)//, SqlLogger sqlLogger)
+    public AbstractQueryJpaAdapter(EntityManager em, Queryable queryable, Sql isqlsb)
     {
         this.em = em;
         this.queryable = queryable;
-        this.isql = isql;
-        //this.sqlLogger = sqlLogger;
+        this.isql = isqlsb;
     }
     
     /**

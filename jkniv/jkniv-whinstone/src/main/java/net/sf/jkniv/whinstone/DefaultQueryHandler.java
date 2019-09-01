@@ -37,9 +37,9 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  */
 public abstract class DefaultQueryHandler extends DefaultCommandHandler
 {
-    public DefaultQueryHandler(ConnectionAdapter connAdapter)
+    public DefaultQueryHandler(CommandAdapter cmdAdapter)
     {
-        super(connAdapter);
+        super(cmdAdapter);
     }
     
     @Override
@@ -67,7 +67,7 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
                 try
                 {
                     preCallback();
-                    Command command = adapterConn.asSelectCommand(queryable, overloadResultRow);
+                    Command command = cmdAdapter.asSelectCommand(queryable, overloadResultRow);
                     list = command.execute();
                     postCallback();
                     if (selectable.hasCache() && !list.isEmpty())
@@ -94,7 +94,7 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
         }
         finally
         {
-            this.adapterConn.close();
+            this.cmdAdapter.close();
         }
         //queryable.setTotal(list.size());
         if (LOG.isDebugEnabled())
@@ -110,7 +110,7 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
         {
             if (queryable.getDynamicSql().getSqlDialect().supportsFeature(SqlFeatureSupport.PAGING_ROUNDTRIP))
             {
-                StatementAdapter<Number, ResultSet> adapterStmtCount = adapterConn.newStatement(queryable.queryCount());
+                StatementAdapter<Number, ResultSet> adapterStmtCount = cmdAdapter.newStatement(queryable.queryCount());
                 queryable.bind(adapterStmtCount).on();
                 adapterStmtCount.returnType(Number.class).scalar();
                 try

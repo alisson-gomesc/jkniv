@@ -19,10 +19,6 @@
  */
 package net.sf.jkniv.whinstone.cassandra;
 
-import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -37,17 +33,14 @@ import com.datastax.driver.core.Session;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
-import net.sf.jkniv.whinstone.ConnectionAdapter;
-import net.sf.jkniv.whinstone.ConnectionFactory;
-import net.sf.jkniv.whinstone.transaction.Transactional;
+import net.sf.jkniv.whinstone.CommandAdapter;
 
-public class CassandraSessionFactory implements ConnectionFactory
+public class CassandraSessionFactory //implements ConnectionFactory
 {
     private static final Logger LOG = LoggerFactory.getLogger(CassandraSessionFactory.class);
     private final String contextName;
-    // Application connection objects
     private Cluster             cluster;
-    private CassandraConnectionAdapter conn;
+    private CassandraCommandAdapter conn;
     private final HandleableException handlerException;
     
     public CassandraSessionFactory(Properties props, String contextName, HandleableException handlerException)
@@ -82,7 +75,7 @@ public class CassandraSessionFactory implements ConnectionFactory
                 LOG.info("Datacenter: {}; Host: {}; Rack: {}", host.getDatacenter(), host.getAddress(), host.getRack());
         }
         Session session = cluster.connect(keyspace);    
-        this.conn = new CassandraConnectionAdapter(cluster, session, contextName, handlerException);
+        this.conn = new CassandraCommandAdapter(cluster, session, contextName, handlerException);
     }
     
     
@@ -103,78 +96,79 @@ public class CassandraSessionFactory implements ConnectionFactory
         return version;
     }
     
-    @Override
-    public ConnectionFactory with(HandleableException handlerException)
-    {
-        //this.handlerException = handlerException;
-        return this;
-    }
+//    @Override
+//    public ConnectionFactory with(HandleableException handlerException)
+//    {
+//        //this.handlerException = handlerException;
+//        return this;
+//    }
     
-    @Override
-    public ConnectionAdapter open()
+    
+    //@Override
+    public CommandAdapter open()
     {
         return conn;
     }
     
-    @Override
-    public ConnectionAdapter open(Isolation isolation)
+    //@Override
+    public CommandAdapter open(Isolation isolation)
     {
         LOG.warn("whinstone-cassandra doesn't support isolation attribute [{}]", isolation);
         return conn;
     }
     
-    @Override
-    public Transactional getTransactionManager()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    @Override
-    public String getContextName()
-    {
-        return contextName;
-    }
-    
-    @Override
-    public void close(ConnectionAdapter conn)
-    {
-//        try
-//        {
-            conn.close();
-//        }
-//        catch (SQLException e)
-//        {
-//            LOG.warn("Error to try close Cassandra session/cluster [{}]", conn, e);
-//        }
-    }
-    
-    @Override
-    public void close(PreparedStatement stmt)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    
-    @Override
-    public void close(Statement stmt)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    
-    @Override
-    public void close(ResultSet rs)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    
-    @Override
-    public void close(CallableStatement call)
-    {
-        // TODO Auto-generated method stub
-        
-    }
+//    @Override
+//    public Transactional getTransactionManager()
+//    {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+//    
+//    @Override
+//    public String getContextName()
+//    {
+//        return contextName;
+//    }
+//    
+//    @Override
+//    public void close(ConnectionAdapter conn)
+//    {
+////        try
+////        {
+//            conn.close();
+////        }
+////        catch (SQLException e)
+////        {
+////            LOG.warn("Error to try close Cassandra session/cluster [{}]", conn, e);
+////        }
+//    }
+//    
+//    @Override
+//    public void close(PreparedStatement stmt)
+//    {
+//        // TODO Auto-generated method stub
+//        
+//    }
+//    
+//    @Override
+//    public void close(Statement stmt)
+//    {
+//        // TODO Auto-generated method stub
+//        
+//    }
+//    
+//    @Override
+//    public void close(ResultSet rs)
+//    {
+//        // TODO Auto-generated method stub
+//        
+//    }
+//    
+//    @Override
+//    public void close(CallableStatement call)
+//    {
+//        // TODO Auto-generated method stub
+//        
+//    }
     
 }

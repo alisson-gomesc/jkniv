@@ -23,7 +23,7 @@ import net.sf.jkniv.whinstone.params.AutoBindParams;
 import net.sf.jkniv.whinstone.params.PrepareParamsFactory;
 import net.sf.jkniv.whinstone.params.StatementAdapterOld;
 
-public class QueryJpaFactory
+class QueryJpaFactory
 {
     private static final Logger  LOG              = LoggerFactory.getLogger(QueryJpaFactory.class);
     private static final Pattern PATTERN_ORDER_BY = Pattern.compile("order\\s+by\\s+[\\w|\\W|\\s|\\S]*",

@@ -21,7 +21,6 @@ package net.sf.jkniv.whinstone.couchdb;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -75,7 +74,7 @@ class RepositoryCouchDb implements Repository
     private HandleableException               handlerException;
     private RepositoryConfig                  repositoryConfig;
     private CouchDbSqlContext                 sqlContext;
-    private HttpCookieConnectionAdapter       adapterConn;
+    private HttpCookieCommandAdapter          cmdAdapter;
     private final static Map<String, Boolean> DOC_SCHEMA_UPDATED = new HashMap<String, Boolean>();
     private boolean                           isTraceEnabled;
     private boolean                           isDebugEnabled;
@@ -119,7 +118,7 @@ class RepositoryCouchDb implements Repository
         this.sqlContext = new CouchDbSqlContext(sqlContext);
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
-        this.adapterConn = (HttpCookieConnectionAdapter) new HttpConnectionFactory(
+        this.cmdAdapter = (HttpCookieCommandAdapter) new HttpConnectionFactory(
                 sqlContext.getRepositoryConfig().getProperties(), sqlContext.getName()).open();
         configHanlerException();
         this.cache = new MemoryCache<Queryable, Object>();
@@ -128,11 +127,11 @@ class RepositoryCouchDb implements Repository
     
     private void init()
     {
-        String hostContext = adapterConn.getHttpBuilder().getHostContext();
+        String hostContext = cmdAdapter.getHttpBuilder().getHostContext();
         if (!DOC_SCHEMA_UPDATED.containsKey(hostContext))
         {
             // TODO property to config behavior like auto ddl from hibernate
-            CouchDbSynchViewDesign _design = new CouchDbSynchViewDesign(this.adapterConn.getHttpBuilder(),
+            CouchDbSynchViewDesign _design = new CouchDbSynchViewDesign(this.cmdAdapter.getHttpBuilder(),
                     sqlContext);
             _design.update();
             DOC_SCHEMA_UPDATED.put(hostContext, Boolean.TRUE);
@@ -192,25 +191,13 @@ class RepositoryCouchDb implements Repository
     public <T, R> T get(Queryable queryable, ResultRow<T, R> customResultRow)
     {
         return handleGet(queryable, customResultRow);
-        //throw new UnsupportedOperationException("CouchDb Repository doesn't implement this method yet!");
-        //        notNull.verify(queryable, resultRow);
-        //        if (isTraceEnabled)
-        //            LOG.trace("Executing [{}] as get command", queryable);
-        //        
-        //        T ret = get(queryable, null, resultRow);
-        //        
-        //        if (isDebugEnabled)
-        //            LOG.debug("Executed [{}] query  {} rows fetched", queryable.getName(), (ret != null ? "1" : "0"), queryable.getTotal());
-        //        
-        //        return ret;
-        //        
     }
     
     private <T, R> T handleGet(Queryable q, ResultRow<T, R> overloadResultRow)
     {
         T ret = null;
         Sql sql = sqlContext.getQuery(q.getName());
-        CommandHandler handler = new SelectHandler(this.adapterConn);
+        CommandHandler handler = new SelectHandler(this.cmdAdapter);
         List<T> list = handler.with(q)
         .with(sql)
         .checkSqlType(SqlType.SELECT)
@@ -223,52 +210,6 @@ class RepositoryCouchDb implements Repository
             ret = list.get(0);
         
         return ret;
-
-        /*
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as get command", q);
-        
-        T ret = null;
-        Queryable queryable = QueryFactory.clone(q, overloadReturnType);
-        List<T> list = Collections.emptyList();
-        Selectable selectable = sqlContext.getQuery(queryable.getName()).asSelectable();
-        selectable.getValidateType().assertValidate(queryable.getParams());
-        
-        if (!queryable.isBoundSql())
-            queryable.bind(selectable);
-        
-        Cacheable.Entry entry = null;
-        
-        if(!queryable.isCacheIgnore())
-            entry = selectable.getCache().getEntry(queryable);
-
-        if (entry == null)
-        {
-            Command command = adapterConn.asSelectCommand(queryable, null);
-            list = command.execute();
-            if (list.size() > 1)
-                throw new NonUniqueResultException("No unique result for query ["+queryable.getName()+"] with params ["+queryable.getParams()+"]");
-
-            if (selectable.hasCache() && !list.isEmpty())
-                selectable.getCache().put(queryable, list);
-        }
-        else
-        {
-            q.cached();
-            q.setTotal(queryable.getTotal());
-            list = (List<T>) entry.getValue();
-            if (LOG.isDebugEnabled())
-                LOG.debug("{} object(s) was returned from [{}] cache using query [{}] since {} reach [{}] times", list.size(),
-                        selectable.getCache().getName(), selectable.getName(), entry.getTimestamp(), entry.hits());
-        }
-        if (list.size() == 1)
-            ret = list.get(0);
-        
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(),
-                    queryable.getTotal());
-        return ret;
-        */
     }
     
     @Override
@@ -326,51 +267,13 @@ class RepositoryCouchDb implements Repository
     @Override
     public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> customResultRow)
     {
-        return handleList(queryable, customResultRow);        
-        /*
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as list command", q);
-        
-        Queryable queryable = QueryFactory.clone(q, overloadReturnType);
-        List<T> list = Collections.emptyList();
-        Selectable selectable = sqlContext.getQuery(queryable.getName()).asSelectable();
-        selectable.getValidateType().assertValidate(queryable.getParams());
-        
-        if (!queryable.isBoundSql())
-            queryable.bind(selectable);
-
-        Cacheable.Entry entry = null;
-        
-        if(!queryable.isCacheIgnore())
-            entry = selectable.getCache().getEntry(queryable);
-        
-        if (entry == null)
-        {
-            Command command = adapterConn.asSelectCommand(queryable, overloadResultRow);
-            list = command.execute();
-            if (selectable.hasCache() && !list.isEmpty())
-                selectable.getCache().put(queryable, list);
-        }
-        else
-        {
-            q.cached();
-            list = (List<T>) entry.getValue();
-            if (LOG.isDebugEnabled())
-                LOG.debug("{} object(s) was returned from [{}] cache using query [{}] since {} reach [{}] times", list.size(),
-                        selectable.getCache().getName(), selectable.getName(), entry.getTimestamp(), entry.hits());
-        }
-        q.setTotal(queryable.getTotal());
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
-        
-        return list;
-        */
+        return handleList(queryable, customResultRow);
     }
     
     private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new SelectHandler(this.adapterConn);
+        CommandHandler handler = new SelectHandler(this.cmdAdapter);
         List<T> list = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.SELECT)
@@ -386,32 +289,13 @@ class RepositoryCouchDb implements Repository
     {
         notNull.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new AddHandler(this.adapterConn);
+        CommandHandler handler = new AddHandler(this.cmdAdapter);
         int rows = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.INSERT)
         .with(handlerException)
         .run();
         return rows;
-        /*
-        notNull.verify(queryable);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as add command with dialect [{}]", queryable, CouchDbDialect.class);
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.INSERT);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        
-        Command command = adapterConn.asAddCommand(queryable);
-        int affected = command.execute();
-        
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by add [{}] query", affected, queryable.getName());
-        return affected;
-        */
     }
     
     @Override
@@ -420,33 +304,13 @@ class RepositoryCouchDb implements Repository
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("add", entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new AddHandler(this.adapterConn);
+        CommandHandler handler = new AddHandler(this.cmdAdapter);
         handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.INSERT)
         .with(handlerException)
         .run();
         return entity;// FIXME design update must return a number
-        /*
-        notNull.verify(entity);
-        Queryable queryable = QueryFactory.of("add", entity);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as add command", queryable);
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.INSERT);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        
-        Command command = adapterConn.asAddCommand(queryable);
-        int affected = command.execute();
-        
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by add [{}] query", affected, queryable.getName());
-        return entity;
-        */
     }
     
     @Override
@@ -454,32 +318,13 @@ class RepositoryCouchDb implements Repository
     {
         notNull.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName()).asUpdateable();
-        CommandHandler handler = new UpdateHandler(this.adapterConn);
+        CommandHandler handler = new UpdateHandler(this.cmdAdapter);
         int rows = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.UPDATE)
         .with(handlerException)
         .run();
         return rows;
-        /*
-        notNull.verify(queryable);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as update query", queryable);
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.UPDATE);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        
-        Command command = adapterConn.asUpdateCommand(queryable);
-        int affected = command.execute();
-        
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by update [{}] query", affected, queryable.getName());
-        return affected;
-        */
     }
     
     @Override
@@ -488,33 +333,13 @@ class RepositoryCouchDb implements Repository
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("update", entity);
         Sql sql = sqlContext.getQuery(queryable.getName()).asUpdateable();
-        CommandHandler handler = new UpdateHandler(this.adapterConn);
+        CommandHandler handler = new UpdateHandler(this.cmdAdapter);
         handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.UPDATE)
         .with(handlerException)
         .run();
         return entity;// FIXME design update must return a number 
-        /*
-        notNull.verify(entity);
-        Queryable queryable = QueryFactory.of("update", entity);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as update query", queryable);
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.UPDATE);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        
-        Command command = adapterConn.asUpdateCommand(queryable);
-        int affected = command.execute();
-        
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by update [{}] query", affected, queryable.getName());
-        return entity;
-        */
     }
     
     @Override
@@ -522,32 +347,13 @@ class RepositoryCouchDb implements Repository
     {
         notNull.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new RemoveHandler(this.adapterConn);
+        CommandHandler handler = new RemoveHandler(this.cmdAdapter);
         int rows = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.DELETE)
         .with(handlerException)
         .run();
         return rows;
-        /*
-        notNull.verify(queryable);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as remove query", queryable);
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.DELETE);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        
-        Command command = adapterConn.asDeleteCommand(queryable);
-        int affected = command.execute();
-        
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by remove [{}] query", affected, queryable.getName());
-        return affected;
-        */
     }
     
     @Override
@@ -556,33 +362,13 @@ class RepositoryCouchDb implements Repository
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("remove", entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new RemoveHandler(this.adapterConn);
+        CommandHandler handler = new RemoveHandler(this.cmdAdapter);
         int rows = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.DELETE)
         .with(handlerException)
         .run();
         return rows;
-        /*
-        notNull.verify(entity);
-        Queryable queryable = QueryFactory.of("remove", entity);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as remove query", queryable);
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.DELETE);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        
-        Command command = adapterConn.asDeleteCommand(queryable);
-        int affected = command.execute();
-        
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by remove [{}] query", affected, queryable.getName());
-        return affected;
-        */
     }
     
     @Override
@@ -608,7 +394,7 @@ class RepositoryCouchDb implements Repository
     {
 //        try
 //        {
-            adapterConn.close();
+            cmdAdapter.close();
 //        }
 //        catch (SQLException e)
 //        {

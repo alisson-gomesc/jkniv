@@ -19,14 +19,12 @@
  */
 package net.sf.jkniv.whinstone.cassandra;
 
-import java.sql.SQLException;
 import java.util.Map;
 
 import org.slf4j.Logger;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SimpleStatement;
@@ -37,7 +35,7 @@ import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.whinstone.Command;
-import net.sf.jkniv.whinstone.ConnectionAdapter;
+import net.sf.jkniv.whinstone.CommandAdapter;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.cassandra.commands.AddSequenceKeyJdbcCommand;
@@ -55,7 +53,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-class CassandraConnectionAdapter implements ConnectionAdapter
+public class CassandraCommandAdapter implements CommandAdapter
 {
     private static final transient Logger  LOG = LoggerFactory.getLogger();
     private static final transient Logger SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
@@ -66,7 +64,7 @@ class CassandraConnectionAdapter implements ConnectionAdapter
     private final String contextName;
     private final HandleableException handlerException;
     
-    public CassandraConnectionAdapter(Cluster cluster, Session session, String contextName, HandleableException handlerException)
+    public CassandraCommandAdapter(Cluster cluster, Session session, String contextName, HandleableException handlerException)
     {
         NOT_NULL.verify(cluster, session, contextName);
         this.cluster = cluster;
@@ -83,43 +81,22 @@ class CassandraConnectionAdapter implements ConnectionAdapter
     }
 
     
-    @Override
-    public void commit() throws SQLException
-    {
-        // FIXME UnsupportedOperationException
-        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
-    }
+//    @Override
+//    public void commit() throws SQLException
+//    {
+//        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
+//    }
     
-    @Override
-    public void rollback() throws SQLException
-    {
-        // FIXME UnsupportedOperationException
-        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
-    }
+//    @Override
+//    public void rollback() throws SQLException
+//    {
+//        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
+//    }
     
     @Override
     public void close() //throws SQLException
     {
-        /*
-        if (session != null && !session.isClosed())
-        {
-            LOG.info("Closing Cassandra Session");
-            session.close();
-        }   
-        if (cluster != null && !cluster.isClosed())
-        {
-            LOG.info("Closing Cassandra Cluster connection");
-            cluster.close();
-        }
-        if(stmtCache != null)
-        {
-            LOG.info("Clean-up [{}] PreparedStatements cached", stmtCache.size());
-            stmtCache.clear();
-        }
-        cluster = null;
-        session = null;
-        stmtCache = null;
-        */
+        // Cassandra session is built in multi-thread
     }
 
     //@Override
@@ -145,40 +122,35 @@ class CassandraConnectionAdapter implements ConnectionAdapter
         stmtCache = null;
     }
 
-    @Override
-    public boolean isClosed() throws SQLException
-    {
-        // FIXME UnsupportedOperationException
-        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
-    }
+//    @Override
+//    public boolean isClosed() throws SQLException
+//    {
+//        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
+//    }
     
-    @Override
-    public boolean isAutoCommit() throws SQLException
-    {
-        // FIXME UnsupportedOperationException
-        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
-    }
+//    @Override
+//    public boolean isAutoCommit() throws SQLException
+//    {
+//        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
+//    }
     
-    @Override
-    public void autoCommitOn() throws SQLException
-    {
-        // FIXME UnsupportedOperationException
-        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
-    }
+//    @Override
+//    public void autoCommitOn() throws SQLException
+//    {
+//        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
+//    }
     
-    @Override
-    public void autoCommitOff() throws SQLException
-    {
-        // FIXME UnsupportedOperationException
-        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
-    }
+//    @Override
+//    public void autoCommitOff() throws SQLException
+//    {
+//        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
+//    }
     
-    @Override
-    public Object getMetaData()
-    {
-        // FIXME UnsupportedOperationException
-        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
-    }
+//    @Override
+//    public Object getMetaData()
+//    {
+//        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
+//    }
     
     /*
     @Override
@@ -199,16 +171,11 @@ class CassandraConnectionAdapter implements ConnectionAdapter
         // FIXME UnsupportedOperationException
         throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
     }
-    @Override
-    public Object unwrap()
-    {
-        return session;
-    }
     
 //    @Override
-//    public boolean supportsPagingByRoundtrip()
+//    public Object unwrap()
 //    {
-//        return false;
+//        return session;
 //    }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })

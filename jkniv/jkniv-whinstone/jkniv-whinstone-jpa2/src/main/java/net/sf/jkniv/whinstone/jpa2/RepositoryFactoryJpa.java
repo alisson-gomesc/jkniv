@@ -28,7 +28,6 @@ import net.sf.jkniv.whinstone.spi.RepositoryFactory;
 
 public class RepositoryFactoryJpa implements RepositoryFactory
 {
-    
     @Override
     public Repository newInstance()
     {

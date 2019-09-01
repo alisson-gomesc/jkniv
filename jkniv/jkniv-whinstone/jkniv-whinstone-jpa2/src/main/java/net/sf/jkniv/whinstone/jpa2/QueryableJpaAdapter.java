@@ -4,17 +4,20 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import net.sf.jkniv.whinstone.Queryable;
-
 /**
- * Adapter for different Queries from JPA, like: {@code Query}, {@code NativeQuery}, {@code NamedQuery}, {@code TypedQuery}.
+ * Adapter for different Queries from JPA, like: 
+ * <ul>
+ *  <li>{@code Query}</li>
+ *  <li>{@code NativeQuery}</li>
+ *  <li>{@code NamedQuery}</li>
+ *  <li>{@code TypedQuery}</li>
+ * </ul>
  * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
 public interface QueryableJpaAdapter
 {
-    
     <T> T getSingleResult();
     
     <T> List<T> getResultList();
@@ -25,12 +28,11 @@ public interface QueryableJpaAdapter
     
     int executeUpdate();
     
-    //void setTotalPaging(Queryable queryable);
+//    void setTotalPaging(Queryable queryable);
+//
 //    QueryableJpaAdapter setFirstResult(int offset);
 //    
 //    QueryableJpaAdapter setOffsetResult(int max);
 //    
 //    QueryableJpaAdapter setMaxResult(int max);
-
-    
 }

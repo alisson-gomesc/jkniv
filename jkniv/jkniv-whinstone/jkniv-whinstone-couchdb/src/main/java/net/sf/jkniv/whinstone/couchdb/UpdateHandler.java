@@ -20,6 +20,7 @@
 package net.sf.jkniv.whinstone.couchdb;
 
 import net.sf.jkniv.whinstone.Command;
+import net.sf.jkniv.whinstone.CommandAdapter;
 import net.sf.jkniv.whinstone.DefaultCommandHandler;
 
 /**
@@ -28,18 +29,18 @@ import net.sf.jkniv.whinstone.DefaultCommandHandler;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public class UpdateHandler extends DefaultCommandHandler
+class UpdateHandler extends DefaultCommandHandler
 {
-    public UpdateHandler(HttpCookieConnectionAdapter adapterConn)
+    public UpdateHandler(CommandAdapter cmdAdapter)
     {
-        super(adapterConn);
+        super(cmdAdapter);
         with(this);
     }
     
     @Override
     public Command asCommand()
     {
-        Command c = getConnectionAdapter().asUpdateCommand(queryable);
+        Command c = getCommandAdapter().asUpdateCommand(queryable);
         c.with(this);
         c.with(this.handleableException);
         return c;

@@ -17,38 +17,41 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone;
+package net.sf.jkniv.whinstone.jpa2.commands;
 
-import java.sql.SQLException;
-
+import net.sf.jkniv.exception.HandleableException;
+import net.sf.jkniv.whinstone.Command;
+import net.sf.jkniv.whinstone.CommandHandler;
+import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
-/**
- * Adapter to abstract the Jdbc Connection {@link java.sql.Connection} 
- * representing a connection/session to a specific database (RDBMS or NoSQL).
- * 
- * @author Alisson Gomes
- * @since 0.6.0 
- */
-public interface ConnectionAdapter extends CommandAdapter
+@SuppressWarnings({"unchecked","rawtypes"})
+public class DefaultQuery implements Command
 {
-    String getContextName();
+    private StatementAdapter stmt;
     
-    void commit() throws SQLException;
+    public DefaultQuery(StatementAdapter stmt, Queryable queryable)
+    {
+        super();
+        this.stmt = stmt;
+    }
     
-    void rollback() throws SQLException;
-    
-    void close(); //throws SQLException;
+    @Override
+    public Command with(HandleableException handleableException)
+    {
+        return this;
+    }
 
-    boolean isClosed() throws SQLException;
-    
-    boolean isAutoCommit() throws SQLException;
-    
-    void autoCommitOn() throws SQLException;
+    @Override
+    public Command with(CommandHandler commandHandler)
+    {
+        return this;
+    }
 
-    void autoCommitOff() throws SQLException;
-
-    Object getMetaData();
-    
-    Object unwrap();
+    @Override
+    public <T> T execute()
+    {
+        T list = (T) stmt.rows();
+      return list;
+    }
 }

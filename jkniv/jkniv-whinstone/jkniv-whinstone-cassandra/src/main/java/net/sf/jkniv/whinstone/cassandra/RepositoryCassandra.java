@@ -42,8 +42,8 @@ import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
+import net.sf.jkniv.whinstone.CommandAdapter;
 import net.sf.jkniv.whinstone.CommandHandler;
-import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
@@ -65,7 +65,7 @@ class RepositoryCassandra implements Repository
     private final HandleableException     handlerException;
     private RepositoryConfig        repositoryConfig;
     private SqlContext              sqlContext;
-    private ConnectionAdapter       adapterConn;
+    private CommandAdapter          cmdAdapter;
     private boolean                 isTraceEnabled;
     private boolean                 isDebugEnabled;
     
@@ -111,7 +111,7 @@ class RepositoryCassandra implements Repository
         this.sqlContext.setSqlDialect(this.repositoryConfig.getSqlDialect());
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
-        this.adapterConn = new CassandraSessionFactory(sqlContext.getRepositoryConfig().getProperties(),
+        this.cmdAdapter = new CassandraSessionFactory(sqlContext.getRepositoryConfig().getProperties(),
                 sqlContext.getName(), handlerException).open();
         this.configQueryNameStrategy();
     }
@@ -344,7 +344,7 @@ class RepositoryCassandra implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as list command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new SelectHandler(this.adapterConn);
+        CommandHandler handler = new SelectHandler(this.cmdAdapter);
         List<T> list = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.SELECT)
@@ -363,7 +363,7 @@ class RepositoryCassandra implements Repository
 
         T ret = null;
         Sql sql = sqlContext.getQuery(q.getName());
-        CommandHandler handler = new SelectHandler(this.adapterConn);
+        CommandHandler handler = new SelectHandler(this.cmdAdapter);
         List<T> list = handler.with(q)
         .with(sql)
         .checkSqlType(SqlType.SELECT)
@@ -427,7 +427,7 @@ class RepositoryCassandra implements Repository
     {
         NOT_NULL.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new AddHandler(this.adapterConn);
+        CommandHandler handler = new AddHandler(this.cmdAdapter);
         int rows = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.INSERT)
@@ -446,7 +446,7 @@ class RepositoryCassandra implements Repository
 
         Queryable queryable = QueryFactory.of(queryName, entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new AddHandler(this.adapterConn);
+        CommandHandler handler = new AddHandler(this.cmdAdapter);
         handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.INSERT)
@@ -462,7 +462,7 @@ class RepositoryCassandra implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new UpdateHandler(this.adapterConn);
+        CommandHandler handler = new UpdateHandler(this.cmdAdapter);
         int rows = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.UPDATE)
@@ -480,7 +480,7 @@ class RepositoryCassandra implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new UpdateHandler(this.adapterConn);
+        CommandHandler handler = new UpdateHandler(this.cmdAdapter);
         int rows = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.UPDATE)
@@ -601,7 +601,7 @@ class RepositoryCassandra implements Repository
     {
         NOT_NULL.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new RemoveHandler(this.adapterConn);
+        CommandHandler handler = new RemoveHandler(this.cmdAdapter);
         int rows = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.DELETE)
@@ -619,7 +619,7 @@ class RepositoryCassandra implements Repository
             LOG.trace("Executing [{}] as remove command", queryName);
         Queryable queryable = QueryFactory.of(queryName, entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new RemoveHandler(this.adapterConn);
+        CommandHandler handler = new RemoveHandler(this.cmdAdapter);
         int rows = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.DELETE)
@@ -699,8 +699,8 @@ class RepositoryCassandra implements Repository
     {
         //        try
         //        {
-        if (this.adapterConn instanceof CassandraConnectionAdapter)
-            ((CassandraConnectionAdapter)adapterConn).shutdown();
+        if (this.cmdAdapter instanceof CassandraCommandAdapter)
+            ((CassandraCommandAdapter)cmdAdapter).shutdown();
         //        }
         //        catch (SQLException e)
         //        {

@@ -30,25 +30,26 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * @author Alisson Gomes
  * @since 0.6.0 
  */
-public interface ConnectionAdapter extends CommandAdapter
+public interface CommandAdapter
 {
     String getContextName();
     
-    void commit() throws SQLException;
-    
-    void rollback() throws SQLException;
-    
+    <T,R> Command asSelectCommand(Queryable queryable, ResultRow<T, R> overloadResultRow);
+
+    <T, R> Command asUpdateCommand(Queryable queryable);
+
+    <T, R> Command asDeleteCommand(Queryable queryable);
+
+    <T, R> Command asAddCommand(Queryable queryable);
+
     void close(); //throws SQLException;
 
-    boolean isClosed() throws SQLException;
-    
-    boolean isAutoCommit() throws SQLException;
-    
-    void autoCommitOn() throws SQLException;
-
-    void autoCommitOff() throws SQLException;
-
-    Object getMetaData();
-    
-    Object unwrap();
+    /**
+     * create an adapter for a Prepared Statement
+     * @param sql statement
+     * @param <T> TODO documents T param
+     * @param <R> TODO documents R param
+     * @return Adapter for Prepared Statement
+     */
+    <T, R> StatementAdapter<T, R> newStatement(String sql);    
 }

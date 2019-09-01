@@ -51,7 +51,7 @@ public abstract class DefaultCommandHandler implements CommandHandler
             .getLogger(DefaultCommandHandler.class);
     static final Assertable                          NOT_NULL          = AssertsFactory.getNotNull();
     private final static Map<String, ObjectCallback> OBJECTS_CALLBACKS = new HashMap<String, ObjectCallback>();
-    ConnectionAdapter                                adapterConn;
+    CommandAdapter                                   cmdAdapter;
     CommandHandler                                   handler;
     Command                                          command;
     ObjectProxy<?>                                   proxyParams;
@@ -61,9 +61,9 @@ public abstract class DefaultCommandHandler implements CommandHandler
     protected ResultRow<?, ?>                        overloadResultRow;
     protected HandleableException                    handleableException;
     
-    public DefaultCommandHandler(ConnectionAdapter connAdapter)
+    public DefaultCommandHandler(CommandAdapter cmdAdapter)
     {
-        this.adapterConn = connAdapter;
+        this.cmdAdapter = cmdAdapter;
     }
     
     @Override
@@ -120,7 +120,7 @@ public abstract class DefaultCommandHandler implements CommandHandler
     @Override
     public <T> T run()
     {
-        NOT_NULL.verify(this.adapterConn, this.queryable, this.sql, this.handler);
+        NOT_NULL.verify(this.cmdAdapter, this.queryable, this.sql, this.handler);
         T t = null;
         Number rows = 0;
         if (LOG.isTraceEnabled())
@@ -155,14 +155,14 @@ public abstract class DefaultCommandHandler implements CommandHandler
         }
         finally
         {
-            this.adapterConn.close();
+            this.cmdAdapter.close();
         }
         return t;
     }
     
-    protected ConnectionAdapter getConnectionAdapter()
+    protected CommandAdapter getCommandAdapter()
     {
-        return this.adapterConn;
+        return this.cmdAdapter;
     }
     
     @Override

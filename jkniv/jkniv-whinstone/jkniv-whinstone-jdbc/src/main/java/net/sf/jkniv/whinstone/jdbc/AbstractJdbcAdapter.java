@@ -46,9 +46,6 @@ abstract class AbstractJdbcAdapter implements ConnectionFactory
 {
     protected transient Logger                LOG         = LoggerFactory.getLogger(getClass());
     private final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
-    //protected static final HandleableException handlerException = new HandlerException(RepositoryException.class,
-    //        "Cannot get database connection");
-    
     protected final String                           contextName;
     protected HandleableException handlerException;
     

@@ -20,7 +20,7 @@
 package net.sf.jkniv.whinstone.jdbc;
 
 import net.sf.jkniv.whinstone.Command;
-import net.sf.jkniv.whinstone.ConnectionAdapter;
+import net.sf.jkniv.whinstone.CommandAdapter;
 import net.sf.jkniv.whinstone.DefaultCommandHandler;
 
 /**
@@ -31,16 +31,16 @@ import net.sf.jkniv.whinstone.DefaultCommandHandler;
  */
 class UpdateHandler extends DefaultCommandHandler
 {
-    public UpdateHandler(ConnectionAdapter adapterConn)
+    public UpdateHandler(CommandAdapter cmdAdapter)
     {
-        super(adapterConn);
+        super(cmdAdapter);
         with(this);
     }
     
     @Override
     public Command asCommand()
     {
-        Command c = getConnectionAdapter().asUpdateCommand(queryable);
+        Command c = getCommandAdapter().asUpdateCommand(queryable);
         c.with(this);
         c.with(this.handleableException);
         return c;

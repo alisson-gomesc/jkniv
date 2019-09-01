@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import net.sf.jkniv.sqlegance.QueryNotFoundException;
 import net.sf.jkniv.whinstone.Queryable;
 
-public class NamedQueryJpaAdapter extends AbstractQueryJpaAdapter
+class NamedQueryJpaAdapter extends AbstractQueryJpaAdapter
 {
     private static final Logger    LOG        = net.sf.jkniv.whinstone.jpa2.LoggerFactory.getLogger();
 

@@ -7,7 +7,7 @@ import javax.persistence.EntityManager;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.whinstone.Queryable;
 
-public class TypedQueryJpaAdapter extends AbstractQueryJpaAdapter
+class TypedQueryJpaAdapter extends AbstractQueryJpaAdapter
 {
     
     public TypedQueryJpaAdapter(EntityManager em, Queryable queryable, Sql isql)

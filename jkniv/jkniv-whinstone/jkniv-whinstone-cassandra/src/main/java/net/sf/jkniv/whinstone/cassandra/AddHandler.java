@@ -20,7 +20,7 @@
 package net.sf.jkniv.whinstone.cassandra;
 
 import net.sf.jkniv.whinstone.Command;
-import net.sf.jkniv.whinstone.ConnectionAdapter;
+import net.sf.jkniv.whinstone.CommandAdapter;
 import net.sf.jkniv.whinstone.DefaultCommandHandler;
 
 /**
@@ -31,16 +31,16 @@ import net.sf.jkniv.whinstone.DefaultCommandHandler;
  */
 class AddHandler extends DefaultCommandHandler
 {
-    public AddHandler(ConnectionAdapter connAdapter)
+    public AddHandler(CommandAdapter cmdAdapter)
     {
-        super(connAdapter);
+        super(cmdAdapter);
         with(this);
     }
     
     @Override
     public Command asCommand()
     {
-        Command c = getConnectionAdapter().asAddCommand(queryable);
+        Command c = getCommandAdapter().asAddCommand(queryable);
         c.with(this);
         c.with(this.handleableException);
         return c;

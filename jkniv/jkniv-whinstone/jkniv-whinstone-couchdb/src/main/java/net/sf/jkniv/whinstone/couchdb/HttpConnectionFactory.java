@@ -32,11 +32,12 @@ import org.slf4j.LoggerFactory;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
+import net.sf.jkniv.whinstone.CommandAdapter;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.ConnectionFactory;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
-public class HttpConnectionFactory implements ConnectionFactory
+public class HttpConnectionFactory //implements ConnectionFactory
 {
     private static final Logger LOG         = LoggerFactory.getLogger(HttpConnectionFactory.class);
     private static final String AUTH_COOKIE = "Set-Cookie";
@@ -58,29 +59,30 @@ public class HttpConnectionFactory implements ConnectionFactory
         this.contextName = contextName;
     }
     
-    @Override
-    public ConnectionFactory with(HandleableException handlerException)
+    //@Override
+    //public ConnectionFactory with(HandleableException handlerException)
+    public HttpConnectionFactory with(HandleableException handlerException)
     {
         this.handlerException = handlerException;
         return this;
     }
     
-    @Override
-    public ConnectionAdapter open()
+  //  @Override
+    public CommandAdapter open()
     {
         //String token = auth.authenticate();
         HttpBuilder httpBuilder = new HttpBuilder(auth, this.url, this.schema, new RequestParams(this.schema));
-        return new HttpCookieConnectionAdapter(httpBuilder, contextName);
+        return new HttpCookieCommandAdapter(httpBuilder, contextName);
     }
     
     
-    @Override
-    public ConnectionAdapter open(Isolation isolation)
+    //@Override
+    public CommandAdapter open(Isolation isolation)
     {
         LOG.warn("whinstone-cassandra doesn't support isolation attribute [{}]", isolation);
         return open();
     }
-    
+    /*
     @Override
     public Transactional getTransactionManager()
     {
@@ -138,4 +140,5 @@ public class HttpConnectionFactory implements ConnectionFactory
     {
         return schema;
     }
+*/
 }

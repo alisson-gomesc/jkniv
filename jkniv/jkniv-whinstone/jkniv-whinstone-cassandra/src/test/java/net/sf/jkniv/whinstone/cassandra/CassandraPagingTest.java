@@ -74,6 +74,7 @@ public class CassandraPagingTest extends BaseJdbc
         List<Vehicle> list = repositoryCas.list(q);
         assertThat(list.size(), is(SIZE_PAGE));
         assertThat(q.getTotal(), is(SUCCESS_NO_INFO));
+        //assertThat(q.getBookmark(), notNullValue());
         // FIXME paging cassandra PageState assertThat(q.getBookmark(), notNullValue());
     }
     

@@ -1,9 +1,6 @@
 package net.sf.jkniv.whinstone.couchdb;
 
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.notNullValue;
 
 import java.util.Properties;
@@ -16,9 +13,9 @@ import org.junit.rules.ExpectedException;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
-import net.sf.jkniv.sqlegance.ConstraintException;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
+import net.sf.jkniv.whinstone.CommandAdapter;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 
 public class HttpConnectionFactoryTest
@@ -43,7 +40,7 @@ public class HttpConnectionFactoryTest
     {
         HttpConnectionFactory factory = new HttpConnectionFactory(props, "default");
         factory.with(handlerException);
-        ConnectionAdapter conn  = factory.open();
+        CommandAdapter conn  = factory.open();
         assertThat(conn, notNullValue());
     }
     
@@ -63,7 +60,7 @@ public class HttpConnectionFactoryTest
     {
         HttpConnectionFactory factory = new HttpConnectionFactory(props, "default");
         factory.with(handlerException);
-        ConnectionAdapter conn = factory.open();
+        CommandAdapter conn = factory.open();
         
         //conn.
     }
