@@ -436,19 +436,6 @@ class RepositoryJpa implements RepositoryJpaExtend
                 QueryJpaFactory.build(getEntityManager(), sqlContext, queryable, null);
         ret = queryableJpaAdapter.getSingleResult();
         return ret;
-        
-        /*
-        Query queryJpa = _getQueryJpa_(queryable);
-        try
-        {
-            ret = (T) queryJpa.getSingleResult();
-        }
-        catch (javax.persistence.NoResultException nre)
-        {
-            // null reference is returned
-        }
-        return ret;
-        */
     }
     
     public <T> T get(Queryable queryable, Class<T> returnType)
@@ -462,46 +449,12 @@ class RepositoryJpa implements RepositoryJpaExtend
                 returnType);
         ret = queryableJpaAdapter.getSingleResult();
         return ret;
-        /*
-        Object entity = get(queryable);
-        T answer = null;
-        if (returnType.isInstance(entity))
-            answer = (T) entity;
-        else
-        {
-            ObjectProxy<T> proxy = ObjectProxyFactory.newProxy(returnType);
-            //FIXME implements get another specific returnType
-            throw new UnsupportedOperationException("Cannot iterate over Jpa query. Not implemented.");
-        }
-        return answer;
-        */
     }
     
     public <T, R> T get(Queryable queryName, ResultRow<T, R> customResultRow)
     {
         throw new UnsupportedOperationException("Cannot iterate over Jpa query. Not implemented.");
     }
-    
-    /*
-     * Get a set of objects from repository using a query with name "T.list",
-     * where 'T' it's a generic type.
-     * 
-     * @return Return a set of object that matches with query. A empty list is
-     *         returned if the query no match anyone object.
-     *
-    public <T> List<T> list()
-    {
-        init();
-        List<T> ret = null;
-        IQuery q = getDefaultQuery(null);
-        LOG.trace("executing list method with query [" + q.getName() + "]");
-        Query queryJpa = getQueryJpa(q);
-        ret = queryJpa.getResultList();
-        if (ret == null)
-            ret = new ArrayList<T>();
-        LOG.trace("The query [" + q.getName() + "] found " + ret.size() + " objects");
-        return ret;
-    }*/
     
     /**
      * Get a set of objects from repository using a query.
@@ -542,56 +495,6 @@ class RepositoryJpa implements RepositoryJpaExtend
         
         List<T> ret = queryableJpaAdapter.getResultList();
         return ret;
-        //        List<T> ret = null;
-        //        SelectTag isql = null;
-        //        Query queryJpa = null;
-        //        List<String>  groupingBy = Collections.emptyList();
-        //        int totalBeforeGroup = 0;
-        //        boolean containQuery = sqlContext.containsQuery(queryable.getName());
-        //        if (containQuery)
-        //        {
-        //            isql = (SelectTag)sqlContext.getQuery(queryable.getName());
-        //            isql.getValidateType().assertValidate(queryable.getParams());
-        //            queryJpa = QueryFactory.newQuery(isql, getEntityManager(), queryable, sqlLogger);
-        //            groupingBy = isql.getGroupByAsList();
-        //        }
-        //        else
-        //        {
-        //            // read from orm.xml named query
-        //            queryJpa = QueryFactory.newNamedQuery(getEntityManager(), queryable);
-        //        }
-        //        
-        //        ret = queryJpa.getResultList();
-        //        if (containQuery && isql.getLanguageType() == LanguageType.NATIVE && isql.getReturnType() != null)
-        //        {
-        //            //ret = cast((List<Object[]>) ret, isql.getReturnType());
-        //        }
-        //        
-        //        if (containQuery)
-        //        {
-        //            setTotalObjectsOfQuery(queryable, isql);// FIXME implements count of total objects
-        //            if (queryable.getTotal() == -1)
-        //                queryable.setTotal(Long.valueOf(ret.size()));
-        //        }
-        //        else if (ret != null)
-        //            queryable.setTotal(Long.valueOf(ret.size()));
-        //        else
-        //            ret = new ArrayList<T>();
-        //        
-        //        totalBeforeGroup = ret.size();
-        //        if (!groupingBy.isEmpty() && !ret.isEmpty())
-        //        {
-        //            Class<T> returnedType = (Class<T>) ret.get(0).getClass();
-        //            Groupable<T, T> grouping = new GroupingBy<T, T>(groupingBy, returnedType, TransformableType.OBJECT);
-        //            for(T  row : ret)
-        //                grouping.classifier(row);
-        //
-        //            ret = grouping.asList();
-        //        }
-        //        if (isDebugEnabled)
-        //            LOG.debug("Executed [{}] query, {}/{} rows fetched transformed to -> {}", queryable.getName(), totalBeforeGroup, queryable.getTotal(), ret.size());
-        //
-        //        return ret;
     }
     
     public <T> T scalar(Queryable queryable)
@@ -643,7 +546,6 @@ class RepositoryJpa implements RepositoryJpaExtend
         .run();
         return list;
     }
-
     
     public Transactional getTransaction()
     {
@@ -672,7 +574,6 @@ class RepositoryJpa implements RepositoryJpaExtend
     {
         return sqlContext.containsQuery(name);
     }
-
     
     public CriteriaBuilder getCriteriaBuilder()
     {
@@ -707,19 +608,6 @@ class RepositoryJpa implements RepositoryJpaExtend
         }
         return rowsAffected;
     }
-    
-    /*
-     * Verify if query is paginated, that must return the total records of the
-     * query.
-     * 
-     * @param query The query
-     * @return Return true if the query is paginated, false otherwise.
-     *
-    private boolean isCountObjects(Queryable query)
-    {
-        return (query.getMax() < Integer.MAX_VALUE);
-    }
-    */
     
     private void setTotalObjectsOfQuery(Queryable queryable, Sql isql)
     {
@@ -842,43 +730,5 @@ class RepositoryJpa implements RepositoryJpaExtend
     private void configureHandlerException()
     {
         this.handlerException = new HandlerException(RepositoryException.class, "JPA Error cannot execute SQL [%s]");
-    }
-
-    //private Object[] getSimpleProperties(Object[] values) {
-    //    
-    //}
-    
-    /*
-    private void persistenceConfig()
-    {
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("META-INF/persistence.xml");
-    }
-    */
-    /*
-     * According JPA specification the entity manager an persistence context are
-     * not required to be thread-safe. This way the entity manager instance is recovered by JNDI.
-     * 
-     * @return
-     *
-    private EntityManager getEntityManager()
-    {
-        // EntityManager em = null;
-        try
-        {
-            if (em == null)
-                em = (EntityManager) ctx.lookup("java:comp/env/persistence/whinstone");
-            System.out.println("EntityManager is " + em);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            LOG.error("Cannot lookup [" + this.persistenceUnitName + "]", e);// TODO
-                                                                             // Auto-generated
-                                                                             // catch
-                                                                             // block
-        }
-        return em;
-    }
-    */
-    
+    }    
 }

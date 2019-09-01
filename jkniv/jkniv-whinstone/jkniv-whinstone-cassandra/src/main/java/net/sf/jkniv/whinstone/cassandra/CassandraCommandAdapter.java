@@ -53,7 +53,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public class CassandraCommandAdapter implements CommandAdapter
+class CassandraCommandAdapter implements CommandAdapter
 {
     private static final transient Logger  LOG = LoggerFactory.getLogger();
     private static final transient Logger SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
@@ -271,6 +271,6 @@ public class CassandraCommandAdapter implements CommandAdapter
     @Override
     public String toString()
     {
-        return "CassandraConnectionAdapter [session=" + session + ", cluster=" + cluster + "]";
+        return "CassandraCommandAdapter [session=" + session + ", cluster=" + cluster + "]";
     }
 }

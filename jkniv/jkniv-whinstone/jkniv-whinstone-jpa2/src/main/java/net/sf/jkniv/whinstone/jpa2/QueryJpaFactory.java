@@ -71,7 +71,7 @@ class QueryJpaFactory
         {
             String queryName = queryable.getName() + "#count";
             isqlCount = sqlContext.getQuery(queryName);
-            LOG.trace("executing count query [" + queryable.getName() + "#count" + "]");
+            LOG.trace("creating count query [{}] for {}", queryName, queryable.getName());
             Queryable queryCopy = QueryFactory.of(queryName, queryable.getParams(), 0, Integer.MAX_VALUE);
             queryJpa = QueryJpaFactory.newQuery(isqlCount, em, queryCopy);
         }
@@ -82,7 +82,7 @@ class QueryJpaFactory
             String sqlWithoutOrderBy = removeOrderBy(isql.getSql(queryable.getParams()));
             //String entityName = genericType.getSimpleName();
             String sql = "select count (*) from " + isql.getReturnType() + " where exists (" + sqlWithoutOrderBy + ")";
-            LOG.trace("try to count rows using dynamically query [" + sql + "]");
+            LOG.trace("creating counttry to count rows using dynamically query [" + sql + "]");
             Queryable queryCopy = QueryFactory.of(queryable.getName(), queryable.getParams(), 0,
                     Integer.MAX_VALUE);
             queryJpa = QueryJpaFactory.newQueryForCount(sql, isql.getLanguageType(), em, queryCopy,
@@ -146,7 +146,6 @@ class QueryJpaFactory
         }
         else if (languageType == LanguageType.NATIVE)
         {
-            
             query = em.createNativeQuery(sql);
         }
         else
@@ -165,12 +164,9 @@ class QueryJpaFactory
             throw new IllegalArgumentException("JPQL cannot have group by, just NATIVE or STORED, change the type ["
                     + type + "] from SQL [" + tag.getName() + "] to execute");
         }
-        
 //        if (tag.getLanguageType() == LanguageType.NATIVE && "".equals(tag.getReturnType()))
 //            throw new RepositoryException(
 //                    "JPA NATIVE ["+tag.getName()+"] query require returnType with appropriate constructor with parameters from");
-
-        
     }
     
 }

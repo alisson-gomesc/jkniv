@@ -46,7 +46,7 @@ import net.sf.jkniv.whinstone.couchdb.statement.CouchDbStatementAdapter;
 import net.sf.jkniv.whinstone.couchdb.statement.FindAnswer;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
-public class HttpCookieCommandAdapter implements CommandAdapter
+class HttpCookieCommandAdapter implements CommandAdapter
 {
     private static final transient Logger LOG = LoggerFactory.getLogger(HttpCookieCommandAdapter.class);
     private static final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
@@ -164,7 +164,7 @@ public class HttpCookieCommandAdapter implements CommandAdapter
     @Override
     public String toString()
     {
-        return "HttpConnectionAdapter [httpBuilder=" + httpBuilder + "]";
+        return "HttpCookieCommandAdapter [httpBuilder=" + httpBuilder + "]";
     }
 
     
