@@ -41,6 +41,8 @@ import net.sf.jkniv.sqlegance.KeyGeneratorType;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.sqlegance.dialect.SqlDialect;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
@@ -57,7 +59,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
     private static final DataMasking  MASKING = net.sf.jkniv.whinstone.jpa2.LoggerFactory.getDataMasking();
     private final Query               query;
     private int                       index;
-    private int                       indexIN;
+    //private int                       indexIN;
     
     private final HandleableException handlerException;
     private Queryable                 queryable;
@@ -73,8 +75,6 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
         this.query = query;
         this.queryable = queryable;
         this.handlerException = handlerException;
-        this.index = 0;
-        this.indexIN = 0;
         this.reset();
     }
     
@@ -98,11 +98,11 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
     @Override
     public StatementAdapter<T, ResultSet> bind(Object... values)
     {
-        for (; index < values.length; index++)
+        for (int j=0; j < values.length; j++)
         {
-            Object v = values[index];
+            Object v = values[j];
             log(index, v);
-            query.setParameter(index, v);
+            query.setParameter(++index, v);
         }
         return this;
     }
@@ -112,7 +112,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
     {
         int before = index;
         index = 0;
-        indexIN = 0;
+        //indexIN = 0;
         return before;
     }
     
@@ -233,6 +233,14 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
         try
         {
             TimerKeeper.start();
+            if (queryable.isPaging()) 
+            {
+                SqlDialect sqlDialect = queryable.getDynamicSql().getSqlDialect();
+                if (sqlDialect.supportsFeature(SqlFeatureSupport.LIMIT))
+                    query.setMaxResults(queryable.getMax());
+                    if (sqlDialect.supportsFeature(SqlFeatureSupport.LIMIT_OFF_SET))
+                        query.setFirstResult(queryable.getOffset());
+            }
             list = query.getResultList();
             if (queryable != null)// TODO design improve for use sql stats
                 queryable.getDynamicSql().getStats().add(TimerKeeper.clear());

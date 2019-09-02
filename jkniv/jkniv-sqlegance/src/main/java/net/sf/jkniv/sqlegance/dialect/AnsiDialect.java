@@ -132,38 +132,6 @@ public class AnsiDialect implements SqlDialect
         return this.sqlFeatures.put(sqlFeature.getSqlFeature(), sqlFeature);
     }
     
-    /*
-    @Override
-    public boolean supportsLimit()
-    {
-        return false;
-    }
-    
-    @Override
-    public boolean supportsLimitOffset()
-    {
-        return false;
-    }
-    
-    @Override
-    public boolean supportsRownum()
-    {
-        return false;
-    }
-    
-    
-    @Override
-    public boolean supportsStmtHoldability()
-    {
-        return false;
-    }
-    
-    @Override
-    public boolean supportsConnHoldability()
-    {
-        return true;
-    }
-    */
     @Override
     public int getMaxOfParameters()
     {
@@ -181,7 +149,7 @@ public class AnsiDialect implements SqlDialect
     public String getSqlPatternCount()
     {
         // using String.format argument index
-        return "select count(1) from (%1$s) jkniv_ct_tmp_table";// FIXME BUG when conflict alias name
+        return "select count(1) from (%1$s) jkniv_ct_tmp_table";// TODO BUG when conflict alias name
     }
     
     public String getSqlPatternPaging()
@@ -249,7 +217,7 @@ public class AnsiDialect implements SqlDialect
         if (matcher.find())
             sqlToCount = String.format(getSqlPatternCount(), sqlText.substring(0, matcher.start()));// ^select name from author^ for update
         else
-            sqlToCount = String.format(getSqlPatternCount(), sqlText);
+            sqlToCount = String.format(getSqlPatternCount(), removeOrderBy(sqlText));
         
         return sqlToCount;
     }
@@ -278,6 +246,25 @@ public class AnsiDialect implements SqlDialect
         return matcher;
     }
     
+    /**
+     * Remove the order by clause from the query.
+     * 
+     * @param hql
+     *            SQL, JPQL or HQL
+     * @return return the query without order by clause.
+     */
+    private String removeOrderBy(String hql)// TODO Single Responsibility
+    {
+        Matcher m = patternORDER_BY.matcher(hql);
+        StringBuffer sb = new StringBuffer();
+        while (m.find())
+        {
+            if (m.hitEnd())
+                m.appendReplacement(sb, "");
+        }
+        m.appendTail(sb);
+        return sb.toString();
+    }
     //    protected boolean isSelect()
     //    {
     //        return queryable.getSql().isSelect();

@@ -47,7 +47,6 @@ public class SelectInClauseTest extends BaseTest
     @Rule
     public ExpectedException catcher = ExpectedException.none();  
     private final String a = "Albert Camus", b = "Franz Kafka", c = "Martin Fowler";
-
     
     @Test
     public void whenSelectRecordsUsingInClauseWithArray()
@@ -84,7 +83,7 @@ public class SelectInClauseTest extends BaseTest
         assertThat(list.size(), is(1));
     }
 
-    @Test @Ignore("Fix clause IN with List")
+    @Test
     public void whenSelectRecordsUsingInClauseWithList()
     {
         Repository repository = getRepository();
@@ -100,13 +99,12 @@ public class SelectInClauseTest extends BaseTest
         assertThat(result.size(), is(9));
     }
 
-    @Test @Ignore("Fix clause IN with LinkedList")
+    @Test
     public void whenSelectRecordsUsingInClauseWithLinkedList()
     {
         Repository repository = getRepository();
         List<AuthorFlat> result = null;
         Queryable q = null;
-        
         
         LinkedList<String> linkedList = new LinkedList<String>();
         linkedList.add(a);
@@ -117,7 +115,7 @@ public class SelectInClauseTest extends BaseTest
         assertThat(result.size(), is(9));
     }
     
-    @Test @Ignore("Fix clause IN with Vector")
+    @Test
     public void whenSelectRecordsUsingInClauseWithVector()
     {
         Repository repository = getRepository();

@@ -21,8 +21,6 @@ package net.sf.jkniv.whinstone.jpa2;
 
 import java.sql.ResultSet;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -53,8 +51,6 @@ public class JpaCommandAdapter implements CommandAdapter
     private static final transient Logger     LOG      = LoggerFactory.getLogger();
     private static final transient Logger     SQLLOG   = net.sf.jkniv.whinstone.jpa2.LoggerFactory.getLogger();
     private static final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
-    private static final Pattern PATTERN_ORDER_BY = Pattern.compile("order\\s+by\\s+[\\w|\\W|\\s|\\S]*",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
     private final String                      contextName;
     private final HandleableException         handlerException;
     private JpaEmFactory                      emFactory;
@@ -179,35 +175,7 @@ public class JpaCommandAdapter implements CommandAdapter
         StatementAdapter<T, R> stmt = new JpaStatementAdapter(queryJpa, null, this.handlerException);
         return stmt;
     }
-    /*
-    private Query getQueryForPaging(SqlContext sqlContext, Queryable queryable, Sql isql)
-    {
-        Query queryJpa = null;
-        Sql sqlCount = null;
-        try
-        {
-            String queryName = queryable.getName() + "#count";
-            sqlCount = sqlContext.getQuery(queryName);
-            LOG.trace("creating count query [{}] for {}", queryName, queryable.getName());
-            Queryable queryCopy = QueryFactory.of(queryName, queryable.getParams(), 0, Integer.MAX_VALUE);
-            queryJpa = QueryJpaFactory.newQuery(sqlCount, emFactory.createEntityManager(), queryCopy);
-        }
-        catch (QueryNotFoundException e)
-        {
-            // but its very important remove the order clause, because cannot
-            // execute this way wrapping with "select count(*) ... where exists" and performance
-            String sqlWithoutOrderBy = removeOrderBy(isql.getSql(queryable.getParams()));
-            //String entityName = genericType.getSimpleName();
-            String sql = "select count (*) from " + isql.getReturnType() + " where exists (" + sqlWithoutOrderBy + ")";
-            LOG.trace("creating counttry to count rows using dynamically query [" + sql + "]");
-            Queryable queryCopy = QueryFactory.of(queryable.getName(), queryable.getParams(), 0,
-                    Integer.MAX_VALUE);
-            queryJpa = newQueryForCount(sql, isql.getLanguageType(), em, queryCopy,
-                    isql.getParamParser());
-        }
-        return queryJpa;
-    }
-    */
+    
     private Query build(String sql, LanguageType languageType, Class<?> overloadReturnedType, boolean isReturnTypeManaged)
     {
         EntityManager em = getEntityManager();
@@ -261,28 +229,7 @@ public class JpaCommandAdapter implements CommandAdapter
         return adapter;
         */
     }
-    
-    /**
-     * Remove the order by clause from the query.
-     * 
-     * @param hql
-     *            SQL, JPQL or HQL
-     * @return return the query without order by clause.
-     */
-    private String removeOrderBy(String hql)
-    {
-        Matcher m = PATTERN_ORDER_BY.matcher(hql);
-        StringBuffer sb = new StringBuffer();
-        while (m.find())
-        {
-            if (m.hitEnd())
-                m.appendReplacement(sb, "");
-        }
-        m.appendTail(sb);
-        return sb.toString();
-    }
 
-    
     private EntityManager getEntityManager()
     {
         EntityManager em = emFactory.createEntityManager();
