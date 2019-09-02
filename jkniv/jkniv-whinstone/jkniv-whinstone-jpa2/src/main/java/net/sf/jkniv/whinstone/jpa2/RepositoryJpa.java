@@ -19,6 +19,7 @@
  */
 package net.sf.jkniv.whinstone.jpa2;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +28,11 @@ import java.util.Properties;
 import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockTimeoutException;
+import javax.persistence.PersistenceException;
+import javax.persistence.PessimisticLockException;
+import javax.persistence.QueryTimeoutException;
+import javax.persistence.TransactionRequiredException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -49,12 +55,12 @@ import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
+import net.sf.jkniv.whinstone.CommandAdapter;
 import net.sf.jkniv.whinstone.CommandHandler;
-import net.sf.jkniv.whinstone.ConnectionFactory;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
-import net.sf.jkniv.whinstone.jpa2.SelectHandler;
+import net.sf.jkniv.whinstone.jpa2.dialect.JpaDialect;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
 /**
@@ -68,10 +74,12 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
  */
 class RepositoryJpa implements RepositoryJpaExtend
 {
-    private static final Logger                       LOG                  = LoggerFactory.getLogger(RepositoryJpa.class);
-    private static final Logger                       SQLLOG               = net.sf.jkniv.whinstone.jpa2.LoggerFactory.getLogger();
-    private static final Assertable                   NOT_NULL              = AssertsFactory.getNotNull();
-    private QueryNameStrategy                         xmlQueryName;
+    private static final Logger                       LOG                  = LoggerFactory
+            .getLogger(RepositoryJpa.class);
+    private static final Logger                       SQLLOG               = net.sf.jkniv.whinstone.jpa2.LoggerFactory
+            .getLogger();
+    private static final Assertable                   NOT_NULL             = AssertsFactory.getNotNull();
+    private QueryNameStrategy                         strategyQueryName;
     private final static Map<String, PersistenceInfo> cachePersistenceInfo = new HashMap<String, PersistenceInfo>();
     private PersistenceInfo                           persistenceInfo;
     private JpaEmFactory                              emFactory;
@@ -79,7 +87,7 @@ class RepositoryJpa implements RepositoryJpaExtend
     private boolean                                   isTraceEnabled;
     private boolean                                   isDebugEnabled;
     private HandleableException                       handlerException;
-    private ConnectionFactory                         connectionFactory;
+    private CommandAdapter                            cmdAdapter;
     
     /**
      * Create a JPA repository using default persistence unit name, where
@@ -105,11 +113,10 @@ class RepositoryJpa implements RepositoryJpaExtend
         String unitName = sqlContext.getName();
         this.persistenceInfo = getPersitenceInfo(unitName);
         sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
-        this.xmlQueryName = null;
-        this.emFactory = new JpaEmFactoryJndi(sqlContextName);
-        if (!emFactory.isActive())
-            this.emFactory = new JpaEmFactorySEenv(unitName);
-        
+        this.strategyQueryName = null;
+        //this.emFactory = new JpaEmFactoryJndi(sqlContextName);
+        //if (!emFactory.isActive())
+        ///    this.emFactory = new JpaEmFactorySEenv(unitName);
         this.init();
     }
     
@@ -119,10 +126,10 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.persistenceInfo = getPersitenceInfo("");
         this.sqlContext = SqlContextFactory.newInstance("/repository-sql.xml", this.persistenceInfo.getProperties());
         this.sqlContext.getRepositoryConfig().add(props);
-        this.xmlQueryName = null;
-        this.emFactory = new JpaEmFactoryJndi(persistenceInfo.getUnitName());
-        if (!emFactory.isActive())
-            this.emFactory = new JpaEmFactorySEenv(persistenceInfo.getUnitName());
+        this.strategyQueryName = null;
+        //this.emFactory = new JpaEmFactoryJndi(persistenceInfo.getUnitName());
+        //if (!emFactory.isActive())
+        //    this.emFactory = new JpaEmFactorySEenv(persistenceInfo.getUnitName());
         
         this.init();
     }
@@ -134,11 +141,10 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.sqlContext = sqlContext;
         this.sqlContext.getRepositoryConfig().add(props);
         this.sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
-        this.xmlQueryName = null;
-        this.emFactory = new JpaEmFactoryJndi(persistenceInfo.getUnitName());
-        if (!emFactory.isActive())
-            this.emFactory = new JpaEmFactorySEenv(persistenceInfo.getUnitName());
-        
+        this.strategyQueryName = null;
+        //this.emFactory = new JpaEmFactoryJndi(persistenceInfo.getUnitName());
+        //if (!emFactory.isActive())
+        //    this.emFactory = new JpaEmFactorySEenv(persistenceInfo.getUnitName());
         this.init();
     }
     
@@ -148,11 +154,10 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.persistenceInfo = getPersitenceInfo("");
         this.sqlContext = sqlContext;
         this.sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
-        this.xmlQueryName = null;
-        this.emFactory = new JpaEmFactoryJndi(persistenceInfo.getUnitName());
-        if (!emFactory.isActive())
-            this.emFactory = new JpaEmFactorySEenv(persistenceInfo.getUnitName());
-        
+        this.strategyQueryName = null;
+        //this.emFactory = new JpaEmFactoryJndi(persistenceInfo.getUnitName());
+        //if (!emFactory.isActive())
+        //    this.emFactory = new JpaEmFactorySEenv(persistenceInfo.getUnitName());
         this.init();
     }
     
@@ -162,11 +167,10 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.persistenceInfo = getPersitenceInfo(unitName);
         this.sqlContext = sqlContext;
         this.sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
-        this.xmlQueryName = null;
-        this.emFactory = new JpaEmFactoryJndi(unitName);
-        if (!emFactory.isActive())
-            this.emFactory = new JpaEmFactorySEenv(unitName);
-        
+        this.strategyQueryName = null;
+        //this.emFactory = new JpaEmFactoryJndi(unitName);
+        //if (!emFactory.isActive())
+        //    this.emFactory = new JpaEmFactorySEenv(unitName);
         this.init();
     }
     
@@ -185,9 +189,9 @@ class RepositoryJpa implements RepositoryJpaExtend
     {
         NOT_NULL.verify(em, sqlContext);
         this.persistenceInfo = PersistenceReader.getPersistenceInfo(sqlContext.getName());
-        this.emFactory = new JpaEmFactoryHard(em);
+        //this.emFactory = new JpaEmFactoryHard(em);
         //this.sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
-        this.xmlQueryName = null;
+        this.strategyQueryName = null;
         this.sqlContext = sqlContext;
         init();
     }
@@ -198,12 +202,16 @@ class RepositoryJpa implements RepositoryJpaExtend
                 .valueOf(sqlContext.getRepositoryConfig().getProperty(RepositoryProperty.SHOW_CONFIG));
         String queryNameStrategyClass = sqlContext.getRepositoryConfig().getQueryNameStrategy();
         ObjectProxy<QueryNameStrategy> proxy = ObjectProxyFactory.newProxy(queryNameStrategyClass);
-        this.xmlQueryName = proxy.newInstance();
+        this.strategyQueryName = proxy.newInstance();
         if (showConfig)
             showPersistenceConfig();
         isTraceEnabled = LOG.isTraceEnabled();
         isDebugEnabled = LOG.isDebugEnabled();
+        this.sqlContext.getRepositoryConfig().add(RepositoryProperty.SQL_DIALECT.key(), JpaDialect.class.getName());
+        this.sqlContext.setSqlDialect(this.sqlContext.getRepositoryConfig().getSqlDialect());
+        configureEntityManagerFactory();
         configureHandlerException();
+        this.cmdAdapter = new JpaCommandAdapter(this.sqlContext.getName(), emFactory, handlerException);
     }
     
     private EntityManager getEntityManager()
@@ -211,6 +219,13 @@ class RepositoryJpa implements RepositoryJpaExtend
         EntityManager em = emFactory.createEntityManager();
         LOG.trace("Lookup Entity Manager " + em);
         return em;
+    }
+    
+    private void configureEntityManagerFactory()
+    {
+        this.emFactory = new JpaEmFactoryJndi(persistenceInfo.getUnitName());
+        if (!emFactory.isActive())
+            this.emFactory = new JpaEmFactorySEenv(persistenceInfo.getUnitName());
     }
     
     /*
@@ -243,6 +258,7 @@ class RepositoryJpa implements RepositoryJpaExtend
      * 
      * @param entity Entity object to persist
      */
+    @Override
     public <T> T add(T entity)
     {
         NOT_NULL.verify(entity);
@@ -253,6 +269,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         return entity;
     }
     
+    @Override
     public int add(Queryable queryable)
     {
         if (isTraceEnabled)
@@ -274,6 +291,7 @@ class RepositoryJpa implements RepositoryJpaExtend
      * 
      * @param entity Entity object to delete
      */
+    @Override
     public <T> int remove(T entity)
     {
         NOT_NULL.verify(entity);
@@ -296,6 +314,7 @@ class RepositoryJpa implements RepositoryJpaExtend
      * @throws IllegalArgumentException
      *             when the query is different from delete
      */
+    @Override
     public int remove(Queryable queryable)
     {
         if (isTraceEnabled)
@@ -333,6 +352,7 @@ class RepositoryJpa implements RepositoryJpaExtend
      * @throws IllegalArgumentException
      *             when the query is different from update sentence
      */
+    @Override
     public int update(Queryable queryable)
     {
         if (isTraceEnabled)
@@ -355,6 +375,7 @@ class RepositoryJpa implements RepositoryJpaExtend
      * 
      * @param entity Entity object to update
      */
+    @Override
     public <T> T update(T entity)
     {
         NOT_NULL.verify(entity);
@@ -369,13 +390,19 @@ class RepositoryJpa implements RepositoryJpaExtend
      * Get one object instance from repository using a query with name "T.get",
      * where 'T' it's a generic type.
      * 
-     * @param object
+     * @param entity
      *            Properties values of clause where to get the object.
      * @return Return the object that matches with query. A null reference is
      *         returned if the query no match anyone object.
      */
-    public <T> T get(T object)
+    public <T> T get(T entity)
     {
+        NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toGetName(entity);
+        Queryable queryable = QueryFactory.of(queryName, entity.getClass(), entity);
+        T ret = (T) handleGet(queryable, null);
+        return ret;
+        /*
         // TODO test me case null object
         // TODO test me case !null object
         // TODO test me case return null object
@@ -399,13 +426,19 @@ class RepositoryJpa implements RepositoryJpaExtend
         catch (javax.persistence.NoResultException returnNull)
         {
         }
-        */
         return ret;
+         */
     }
     
     @Override
-    public <T> T get(Class<T> returnType, Object object)
+    public <T> T get(Class<T> returnType, Object entity)
     {
+        NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toGetName(entity);
+        Queryable queryable = QueryFactory.of(queryName, returnType, entity);
+        T ret = (T) handleGet(queryable, null);
+        return ret;
+        /*
         NOT_NULL.verify(object, returnType);
         T ret = null;
         Queryable queryable = getDefaultQuery(object);
@@ -415,6 +448,7 @@ class RepositoryJpa implements RepositoryJpaExtend
                 returnType);
         ret = queryableJpaAdapter.getSingleResult();
         return ret;
+        */
     }
     
     /**
@@ -425,21 +459,36 @@ class RepositoryJpa implements RepositoryJpaExtend
      * @return Return the object that matches with query. A null reference is
      *         returned if the query no match anyone object.
      */
-    public <T> T get(Queryable queryable)
+    public <T> T __get(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
         
         if (isTraceEnabled)
             LOG.trace("executing get method with query [" + queryable.getName() + "]");
         T ret = null;
-        QueryableJpaAdapter queryableJpaAdapter = 
-                QueryJpaFactory.build(getEntityManager(), sqlContext, queryable, null);
+        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable,
+                null);
         ret = queryableJpaAdapter.getSingleResult();
         return ret;
     }
     
+    @Override
+    public <T> T get(Queryable queryable)
+    {
+        NOT_NULL.verify(queryable);
+        T ret = handleGet(queryable, null);
+        return ret;
+    }
+    
+    @Override
     public <T> T get(Queryable queryable, Class<T> returnType)
     {
+        NOT_NULL.verify(queryable, returnType);
+        Queryable queryableClone = QueryFactory.clone(queryable, returnType);
+        T ret = handleGet(queryableClone, null);
+        queryable.setTotal(queryableClone.getTotal());
+        return ret;
+        /*
         NOT_NULL.verify(queryable, returnType);
         if (isTraceEnabled)
             LOG.trace("executing get method with query [" + queryable.getName() + "]");
@@ -449,11 +498,16 @@ class RepositoryJpa implements RepositoryJpaExtend
                 returnType);
         ret = queryableJpaAdapter.getSingleResult();
         return ret;
+        */
     }
     
-    public <T, R> T get(Queryable queryName, ResultRow<T, R> customResultRow)
+    @Override
+    public <T, R> T get(Queryable queryable, ResultRow<T, R> customResultRow)
     {
+        return handleGet(queryable, customResultRow);
+        /*
         throw new UnsupportedOperationException("Cannot iterate over Jpa query. Not implemented.");
+         */
     }
     
     /**
@@ -465,8 +519,12 @@ class RepositoryJpa implements RepositoryJpaExtend
      *         returned if the query no match anyone object.
      */
     @SuppressWarnings("unchecked")
+    @Override
     public <T> List<T> list(Queryable queryable)
     {
+        return handleList(queryable, null);
+
+        /*
         if (isTraceEnabled)
             LOG.trace("executing list method with query [" + queryable.getName() + "]");
         
@@ -476,29 +534,50 @@ class RepositoryJpa implements RepositoryJpaExtend
         List<T> ret = queryableJpaAdapter.getResultList();
         
         return ret;
+        */
     }
     
-    public <T, R> List<T> list(Queryable queryName, ResultRow<T, R> customResultRow)
+    @Override
+    public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> customResultRow)
     {
+        return handleList(queryable, customResultRow);
+        /*
         NOT_NULL.verify(customResultRow);
         throw new UnsupportedOperationException("Cannot iterate over Jpa query. Not implemented.");
+        */
     }
     
-    public <T> List<T> list(Queryable queryable, Class<T> returnType)
+    @Override
+    public <T> List<T> list(Queryable queryable, Class<T> overloadReturnType)
     {
-        NOT_NULL.verify(returnType);
+        List<T> list = Collections.emptyList();
+        Queryable queryableClone = queryable;
+        if (overloadReturnType != null)
+            queryableClone = QueryFactory.clone(queryable, overloadReturnType);
+        list = handleList(queryableClone, null);
+        queryable.setTotal(queryableClone.getTotal());
+        return list;
+        /*
+        NOT_NULL.verify(overloadReturnType);
         if (isTraceEnabled)
             LOG.trace("executing list method with query [" + queryable.getName() + "]");
         //throw new UnsupportedOperationException("Not implemented yet. list with Class<T> returnType.");
         QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable,
-                returnType);
+                overloadReturnType);
         
         List<T> ret = queryableJpaAdapter.getResultList();
         return ret;
+        */
     }
     
+    @Override
     public <T> T scalar(Queryable queryable)
     {
+        NOT_NULL.verify(queryable);
+        queryable.scalar();
+        T ret = handleGet(queryable, null);
+        return ret;
+        /*
         if (isTraceEnabled)
             LOG.trace("executing get method with query [" + queryable.getName() + "]");
         queryable.scalar();
@@ -513,45 +592,43 @@ class RepositoryJpa implements RepositoryJpaExtend
                     (ret != null ? ret.getClass().getName() : "NULL"));
         
         return ret;
+        */
     }
     
-    private <T, R> T handleGet(Queryable q, ResultRow<T, R> overloadResultRow)
+    private <T, R> T handleGet(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         T ret = null;
-        Sql sql = sqlContext.getQuery(q.getName());
-        CommandHandler handler = new SelectHandler(this.connectionFactory.open(sql.getIsolation()));
-        List<T> list = handler.with(q)
-        .with(sql)
-        .checkSqlType(SqlType.SELECT)
-        .with(handlerException)
-        .with(overloadResultRow)
-        .run();
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new SelectHandler(this.cmdAdapter);
+        List<T> list = handler.with(queryable).with(sql).checkSqlType(SqlType.SELECT).with(handlerException)
+                .with(overloadResultRow).run();
         if (list.size() > 1)
-            throw new NonUniqueResultException("No unique result for query ["+q.getName()+"] with params ["+q.getParams()+"]");
+            throw new NonUniqueResultException("No unique result for query [" + queryable.getName() + "] with params ["+ queryable.getParams() + "result fetch ["+list.size()+"] rows, Repository.get(..) method must return just one row]");
+            //throw new NonUniqueResultException("No unique result for query [" + queryable.getName() + "] with params ["+ queryable.getParams() + "]");
+            //throw new NonUniqueResultException("Query ["+queryable.getName()+"] result fetch ["+listGrouped.size()+"] rows, Repository.get(..) method must return just one row");
+
         else if (list.size() == 1)
             ret = list.get(0);
         
         return ret;
     }
-
+    
     private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new SelectHandler(this.connectionFactory.open(sql.getIsolation()));
-        List<T> list = handler.with(queryable)
-        .with(sql)
-        .checkSqlType(SqlType.SELECT)
-        .with(handlerException)
-        .with(overloadResultRow)
-        .run();
+        CommandHandler handler = new SelectHandler(this.cmdAdapter);
+        List<T> list = handler.with(queryable).with(sql).checkSqlType(SqlType.SELECT).with(handlerException)
+                .with(overloadResultRow).run();
         return list;
     }
     
+    @Override
     public Transactional getTransaction()
     {
         return emFactory.getTransaction();
     }
     
+    @Override
     public void close()
     {
         // FIXME implements Repository.close()
@@ -562,6 +639,7 @@ class RepositoryJpa implements RepositoryJpaExtend
     /**
      * Command to execute SQL statements that are in the buffer.
      */
+    @Override
     public void flush()
     {
         if (isTraceEnabled)
@@ -575,11 +653,13 @@ class RepositoryJpa implements RepositoryJpaExtend
         return sqlContext.containsQuery(name);
     }
     
+    @Override
     public CriteriaBuilder getCriteriaBuilder()
     {
         return getEntityManager().getCriteriaBuilder();
     }
     
+    @Override
     public <T> TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery)
     {
         return getEntityManager().createQuery(criteriaQuery);
@@ -663,9 +743,9 @@ class RepositoryJpa implements RepositoryJpaExtend
     {
         String queryName = null;
         if (object != null)
-            queryName = xmlQueryName.toGetName(object);
+            queryName = strategyQueryName.toGetName(object);
         else
-            queryName = xmlQueryName.toListName(getGenericType());
+            queryName = strategyQueryName.toListName(getGenericType());
         
         return QueryFactory.of(queryName, object);
     }
@@ -698,11 +778,11 @@ class RepositoryJpa implements RepositoryJpaExtend
         Map<String, Object> map = new TreeMap<String, Object>(em.getEntityManagerFactory().getProperties());
         // getEntityManager().getDelegate();
         map.putAll(em.getProperties());
-        if (SQLLOG.isInfoEnabled()) 
+        if (SQLLOG.isInfoEnabled())
         {
             DataMasking masking = this.sqlContext.getRepositoryConfig().getDataMasking();
             for (String s : map.keySet())
-                SQLLOG.info("{}={}",s , masking.mask(s, map.get(s)));
+                SQLLOG.info("{}={}", s, masking.mask(s, map.get(s)));
         }
     }
     
@@ -729,6 +809,32 @@ class RepositoryJpa implements RepositoryJpaExtend
     
     private void configureHandlerException()
     {
-        this.handlerException = new HandlerException(RepositoryException.class, "JPA Error cannot execute SQL [%s]");
-    }    
+        this.handlerException = new HandlerException(RepositoryException.class, "JPA Error cannot execute SQL: %s");
+        // JPA 2 throws Exceptions
+        /* @throws IllegalStateException if called for a Java
+        * Persistence query language UPDATE or DELETE statement */
+        this.handlerException.config(IllegalStateException.class,
+                "Cannot call SELECT statement with UPDATE or DELETE: %s");
+        
+        /* @throws QueryTimeoutException if the query execution exceeds
+        * the query timeout value set and only the statement is rolled back */
+        this.handlerException.config(QueryTimeoutException.class,
+                "A query times out and only the statement is rolled back, if a current transaction is active, will be not be marked for rollback: %s");
+        
+        /* @throws TransactionRequiredException if a lock mode other than NONE has been been set
+        *  and there is no transaction or the persistence context has not been joined to the transaction */
+        this.handlerException.config(TransactionRequiredException.class,
+                "A transaction is required but is not active: %s");
+        
+        /* @throws PessimisticLockException if pessimistic locking fails and the transaction is rolled back */
+        this.handlerException.config(PessimisticLockException.class,
+                "A pessimistic locking conflict occurs if a current transaction is active, will be not be marked for rollback: %s");
+        
+        /* @throws LockTimeoutException if pessimistic locking fails and only the statement is rolled back */
+        this.handlerException.config(LockTimeoutException.class,
+                "A pessimistic locking conflict occurs if a current transaction is active, will be not be marked for rollback: %s");
+        //pessimistic locking
+        /* @throws PersistenceException if the query execution exceeds the query timeout */
+        this.handlerException.config(PersistenceException.class, "The query %s exceeds the timeout value: %s");
+    }
 }

@@ -27,6 +27,7 @@ import java.util.List;
 import net.sf.jkniv.cache.Cacheable;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Selectable;
+import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
@@ -108,9 +109,10 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
     {
         if (queryable.isPaging())
         {
-            if (queryable.getDynamicSql().getSqlDialect().supportsFeature(SqlFeatureSupport.PAGING_ROUNDTRIP))
+            Sql dynamicSql = queryable.getDynamicSql(); 
+            if (dynamicSql.getSqlDialect().supportsFeature(SqlFeatureSupport.PAGING_ROUNDTRIP))
             {
-                StatementAdapter<Number, ResultSet> adapterStmtCount = cmdAdapter.newStatement(queryable.queryCount());
+                StatementAdapter<Number, ResultSet> adapterStmtCount = cmdAdapter.newStatement(queryable.queryCount(), dynamicSql.getLanguageType());
                 queryable.bind(adapterStmtCount).on();
                 adapterStmtCount.returnType(Number.class).scalar();
                 try

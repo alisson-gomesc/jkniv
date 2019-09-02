@@ -21,6 +21,7 @@ package net.sf.jkniv.whinstone;
 
 import java.sql.SQLException;
 
+import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
@@ -51,5 +52,5 @@ public interface CommandAdapter
      * @param <R> TODO documents R param
      * @return Adapter for Prepared Statement
      */
-    <T, R> StatementAdapter<T, R> newStatement(String sql);    
+    <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType);    
 }

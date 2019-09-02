@@ -34,6 +34,7 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.Insertable;
+import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandAdapter;
 import net.sf.jkniv.whinstone.Queryable;
@@ -166,7 +167,7 @@ class CassandraCommandAdapter implements CommandAdapter
      */
     
     @Override
-    public <T, R> StatementAdapter<T, R> newStatement(String sql)
+    public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
     {
         // FIXME UnsupportedOperationException
         throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");

@@ -19,21 +19,21 @@
  */
 package net.sf.jkniv.whinstone.jpa2.commands;
 
-import com.datastax.driver.core.Row;
+import java.sql.ResultSet;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.cassandra.statement.CassandraPreparedStatementAdapter;
+import net.sf.jkniv.whinstone.jpa2.statement.JpaStatementAdapter;
 
 public class DefaultCommand implements Command
 {
-    protected final CassandraPreparedStatementAdapter<Number, Row> stmt;
+    protected final JpaStatementAdapter<Number, ResultSet> stmt;
     protected final Queryable queryable;
     protected HandleableException handlerException;
     
-    public DefaultCommand(CassandraPreparedStatementAdapter<Number, Row> stmt, Queryable queryable)
+    public DefaultCommand(JpaStatementAdapter<Number, ResultSet> stmt, Queryable queryable)
     {
         super();
         this.stmt = stmt;

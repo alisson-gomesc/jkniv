@@ -37,33 +37,33 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 
 @SuppressWarnings("rawtypes")
-public class QueryableConstraintsTest  extends BaseTest
+public class QueryableConstraintsTest extends BaseTest
 {
     @Rule
-    public ExpectedException catcher = ExpectedException.none();  
-
+    public ExpectedException catcher = ExpectedException.none();
     
-    @Test @Ignore("java.lang.ClassCastException: java.lang.String cannot be cast to [Ljava.lang.Object;")
+    @Test //@Ignore("java.lang.ClassCastException: java.lang.String cannot be cast to [Ljava.lang.Object;")
     public void whenScalarReturnMoreOnRow()
     {
         Queryable q = QueryFactory.of("getScalarAuthorName");
-        catcher.expectMessage("Query ["+q.getName()+"] result fetch [5] rows, Repository.get(..) method must return just one row");
-        Repository repository = getRepository();
-
-        repository.scalar(q);
+        catcher.expectMessage("No unique result for query [" + q.getName() + "] with params [" + q.getParams()
+                + "result fetch [5] rows, Repository.get(..) method must return just one row]");
+        
+        getRepository().scalar(q);
     }
-
-    @Test @Ignore("was: java.lang.ClassCastException: java.lang.String cannot be cast to [Ljava.lang.Object;")
+    
+    @Test
     public void whenGetReturnMoreOnRow()
     {
         Queryable q = QueryFactory.of("getScalarAuthorName", Author.class);
         catcher.expect(NonUniqueResultException.class);
-        catcher.expectMessage("Query ["+q.getName()+"] result fetch [5] rows, Repository.get(..) method must return just one row");
-        Repository repository = getRepository();
-        repository.get(q); 
+        catcher.expectMessage("No unique result for query [" + q.getName() + "] with params [" + q.getParams()
+                + "result fetch [5] rows, Repository.get(..) method must return just one row]");
+        
+        getRepository().get(q);
     }
     
-    @Test @Ignore("java.lang.ClassCastException: java.lang.String cannot be cast to [Ljava.lang.Object;")
+    @Test
     public void whenGetScalarName()
     {
         Queryable q = QueryFactory.of("getScalarAuthorName", "id", 1);
@@ -73,6 +73,4 @@ public class QueryableConstraintsTest  extends BaseTest
         assertThat(name, is("Friedrich Nietzsche"));
         assertThat(q.isScalar(), is(true));
     }
-    
-
 }

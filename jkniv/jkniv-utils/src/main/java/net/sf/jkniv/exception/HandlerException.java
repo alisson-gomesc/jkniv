@@ -278,7 +278,7 @@ public class HandlerException implements HandleableException
     {
         String newMessage = "";
         if (hasParameterAtMessage(message))
-            newMessage = String.format(message, customMessage + " " + caught.getMessage()); //newMessage = String.format(message, customMessage);
+            newMessage = String.format(message, (customMessage != null? customMessage + " " : "") + caught.getMessage()); //newMessage = String.format(message, customMessage);
         else
             newMessage = message;
         return newMessage;

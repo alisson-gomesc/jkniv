@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -139,6 +140,7 @@ public class SelectOperationTest extends BaseTest
     
     @Test
     @Transactional
+    @Ignore("NEED refacory ORM query")
     public void selectORMQuery()
     {
         Repository repository = getRepository();

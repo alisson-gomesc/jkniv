@@ -78,10 +78,11 @@ class HttpCookieCommandAdapter implements CommandAdapter
     }
     
     @Override
-    public <T, R> StatementAdapter<T, R> newStatement(String sql)
+    public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
     {
         throw new UnsupportedOperationException("CouchDb repository  doesn't implement this method yet!");
     }
+    
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public <T, R> Command asSelectCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)

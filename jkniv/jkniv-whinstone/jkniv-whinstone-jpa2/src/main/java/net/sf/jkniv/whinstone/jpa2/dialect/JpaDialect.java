@@ -17,14 +17,14 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.cassandra.dialect;
+package net.sf.jkniv.whinstone.jpa2.dialect;
 
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 
 /**
- * Dialect to Cassandra
+ * Dialect to JPA
  * 
  * <p>
  * Limit clause:
@@ -33,7 +33,7 @@ import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
  * 
  * <ul>
  *  <li>Supports limits? true</li>
- *  <li>Supports limit off set? false</li>
+ *  <li>Supports limit off set? true</li>
  *  <li>Supports rownum? false</li>
  * </ul>
  *
@@ -41,16 +41,16 @@ import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
  * @author Alisson Gomes 
  * @since 0.6.0
  */
-public class CassandraDialect extends AnsiDialect
+public class JpaDialect extends AnsiDialect
 {
-    public CassandraDialect()
+    public JpaDialect()
     {
         super();
         addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, true));
-        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, false));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, true));
         addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.CONN_HOLDABILITY, false));
-        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.BOOKMARK_QUERY, true));
-        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.PAGING_ROUNDTRIP, false));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.BOOKMARK_QUERY, false));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.PAGING_ROUNDTRIP, true));
     }
 
     /*

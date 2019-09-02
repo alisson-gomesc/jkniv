@@ -103,13 +103,11 @@ abstract class AbstractQueryJpaAdapter implements QueryableJpaAdapter
         return rows;
     }
 
-
     @Override
     public void setQueryJpaForPaging(Query queryForPaging)
     {
         this.queryJpaForPaging = queryForPaging;
     }
-    
     
     @Override
     public Query getQueryJpaForPaging()
@@ -195,7 +193,6 @@ abstract class AbstractQueryJpaAdapter implements QueryableJpaAdapter
        return newList;
     }
 
-    
     protected void setTotalPaging(Queryable queryable)
     {
         if (queryJpaForPaging != null)
@@ -212,8 +209,8 @@ abstract class AbstractQueryJpaAdapter implements QueryableJpaAdapter
             }
         }
     }
-    /*
     
+    /*
     private Query getQueryForAutoCount(Queryable queryable, ISql isql) // TODO delete, logic was moved 
     {
         Query queryJpa = null;
@@ -242,15 +239,9 @@ abstract class AbstractQueryJpaAdapter implements QueryableJpaAdapter
     }
     */
 
-
     protected void checkSqlCommandType(Sql isql, SqlType expected)
     {
-        
         if (isql.getSqlType() != expected)
             throw new IllegalArgumentException("Cannot execute sql ["+isql.getName()+"] as ["+isql.getSqlType()+"], exptected is "+ expected);
-        
     }
-    
-
-
 }

@@ -36,7 +36,6 @@ public interface AutoBindParams
      */
     public void on();
 
-
     /**
      * Grouping multiple {@code insert} |{@code update} | {@code delete} statements
      * into a single Prepared Statement.
@@ -44,7 +43,7 @@ public interface AutoBindParams
      * @return the number of rows affected.
      * <p><b>Note:</b>
      * <p><code>-2</code> no count of the number of rows it affected is available</p>
-     * <p><code>-3</code> indicating that an error occured while executing a batch statement</p>
+     * <p><code>-3</code> indicating that an error occurred while executing a bulk statement</p>
      */
     public int onBulk();
 
@@ -55,7 +54,7 @@ public interface AutoBindParams
      * @return the number of rows affected.
      * <p><b>Note:</b>
      * <p><code>-2</code> no count of the number of rows it affected is available</p>
-     * <p><code>-3</code> indicating that an error occured while executing a batch statement</p>
+     * <p><code>-3</code> indicating that an error occurred while executing a batch statement</p>
      */
     //public int onBatch();
 

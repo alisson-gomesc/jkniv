@@ -59,15 +59,15 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
  */
 class RepositoryCassandra implements Repository
 {
-    private static final Logger     LOG     = LoggerFactory.getLogger(RepositoryCassandra.class);
-    private static final Assertable NOT_NULL = AssertsFactory.getNotNull();
-    private QueryNameStrategy       strategyQueryName;
-    private final HandleableException     handlerException;
-    private RepositoryConfig        repositoryConfig;
-    private SqlContext              sqlContext;
-    private CommandAdapter          cmdAdapter;
-    private boolean                 isTraceEnabled;
-    private boolean                 isDebugEnabled;
+    private static final Logger       LOG      = LoggerFactory.getLogger(RepositoryCassandra.class);
+    private static final Assertable   NOT_NULL = AssertsFactory.getNotNull();
+    private QueryNameStrategy         strategyQueryName;
+    private final HandleableException handlerException;
+    private RepositoryConfig          repositoryConfig;
+    private SqlContext                sqlContext;
+    private CommandAdapter            cmdAdapter;
+    private boolean                   isTraceEnabled;
+    private boolean                   isDebugEnabled;
     
     RepositoryCassandra()
     {
@@ -104,7 +104,8 @@ class RepositoryCassandra implements Repository
         else
             sqlContext.getRepositoryConfig().add(props);
         
-        this.handlerException = new HandlerException(RepositoryException.class, "Cassandra Error cannot execute SQL [%s]");
+        this.handlerException = new HandlerException(RepositoryException.class,
+                "Cassandra Error cannot execute SQL [%s]");
         this.sqlContext = sqlContext;
         this.repositoryConfig = this.sqlContext.getRepositoryConfig();
         this.repositoryConfig.add(RepositoryProperty.SQL_DIALECT.key(), CassandraDialect.class.getName());
@@ -123,7 +124,7 @@ class RepositoryCassandra implements Repository
         T ret = handleGet(queryable, null);
         return ret;
     }
-
+    
     @Override
     public <T> T get(Queryable queryable, Class<T> returnType)
     {
@@ -133,13 +134,13 @@ class RepositoryCassandra implements Repository
         queryable.setTotal(queryableClone.getTotal());
         return ret;
     }
-
+    
     @Override
     public <T, R> T get(Queryable queryable, ResultRow<T, R> customResultRow)
     {
         return handleGet(queryable, customResultRow);
     }
-
+    
     /*
     @Override
     public <T> T get(Queryable queryable)
@@ -174,7 +175,7 @@ class RepositoryCassandra implements Repository
         T ret = (T) handleGet(queryable, null);
         return ret;
     }
-
+    
     @Override
     @SuppressWarnings("unchecked")
     public <T> T get(Class<T> returnType, Object entity)
@@ -185,7 +186,7 @@ class RepositoryCassandra implements Repository
         T ret = (T) handleGet(queryable, null);
         return ret;
     }
-
+    
     /*
     @Override
     public <T> T get(T entity)
@@ -233,7 +234,8 @@ class RepositoryCassandra implements Repository
     */
     
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings(
+    { "rawtypes", "unchecked" })
     public <T> T scalar(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
@@ -268,7 +270,7 @@ class RepositoryCassandra implements Repository
     public <T> List<T> list(Queryable queryable)
     {
         return handleList(queryable, null);
-    }    
+    }
     /*
     @Override
     public <T> List<T> list(Queryable queryable)
@@ -293,13 +295,13 @@ class RepositoryCassandra implements Repository
             queryableClone = QueryFactory.clone(queryable, overloadReturnType);
         list = handleList(queryableClone, null);
         queryable.setTotal(queryableClone.getTotal());
-
+        
         if (isDebugEnabled)
             LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
-
+        
         return list;
     }
-
+    
     /*
     @Override
     public <T> List<T> list(Queryable queryable, Class<T> returnType)
@@ -319,9 +321,9 @@ class RepositoryCassandra implements Repository
     @Override
     public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> customResultRow)
     {
-        return handleList(queryable, customResultRow);                
+        return handleList(queryable, customResultRow);
     }
-
+    
     /*
     @Override
     @SuppressWarnings("unchecked")
@@ -345,12 +347,8 @@ class RepositoryCassandra implements Repository
             LOG.trace("Executing [{}] as list command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new SelectHandler(this.cmdAdapter);
-        List<T> list = handler.with(queryable)
-        .with(sql)
-        .checkSqlType(SqlType.SELECT)
-        .with(handlerException)
-        .with(overloadResultRow)
-        .run();
+        List<T> list = handler.with(queryable).with(sql).checkSqlType(SqlType.SELECT).with(handlerException)
+                .with(overloadResultRow).run();
         if (isDebugEnabled)
             LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
         return list;
@@ -360,28 +358,25 @@ class RepositoryCassandra implements Repository
     {
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as get command", q);
-
+        
         T ret = null;
         Sql sql = sqlContext.getQuery(q.getName());
         CommandHandler handler = new SelectHandler(this.cmdAdapter);
-        List<T> list = handler.with(q)
-        .with(sql)
-        .checkSqlType(SqlType.SELECT)
-        .with(handlerException)
-        .with(overloadResultRow)
-        .run();
+        List<T> list = handler.with(q).with(sql).checkSqlType(SqlType.SELECT).with(handlerException)
+                .with(overloadResultRow).run();
         if (list.size() > 1)
-            throw new NonUniqueResultException("No unique result for query ["+q.getName()+"] with params ["+q.getParams()+"]");
+            throw new NonUniqueResultException(
+                    "No unique result for query [" + q.getName() + "] with params [" + q.getParams() + "]");
         else if (list.size() == 1)
             ret = list.get(0);
-
+        
         if (isDebugEnabled)
             LOG.debug("Executed [{}] query, fetched object {}", q.getName(), ret);
         
         return ret;
     }
-
-/*
+    
+    /*
     @SuppressWarnings("unchecked")
     private <T, R> List<T> list(Queryable q, Class<T> overloadReturnType, ResultRow<T, R> customResultRow)
     {
@@ -428,11 +423,7 @@ class RepositoryCassandra implements Repository
         NOT_NULL.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new AddHandler(this.cmdAdapter);
-        int rows = handler.with(queryable)
-        .with(sql)
-        .checkSqlType(SqlType.INSERT)
-        .with(handlerException)
-        .run();
+        int rows = handler.with(queryable).with(sql).checkSqlType(SqlType.INSERT).with(handlerException).run();
         return rows;
     }
     
@@ -443,18 +434,14 @@ class RepositoryCassandra implements Repository
         String queryName = this.strategyQueryName.toAddName(entity);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as add command", queryName);
-
+        
         Queryable queryable = QueryFactory.of(queryName, entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new AddHandler(this.cmdAdapter);
-        handler.with(queryable)
-        .with(sql)
-        .checkSqlType(SqlType.INSERT)
-        .with(handlerException)
-        .run();
+        handler.with(queryable).with(sql).checkSqlType(SqlType.INSERT).with(handlerException).run();
         return entity;
     }
-
+    
     @Override
     public int update(Queryable queryable)
     {
@@ -463,14 +450,10 @@ class RepositoryCassandra implements Repository
             LOG.trace("Executing [{}] as update command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new UpdateHandler(this.cmdAdapter);
-        int rows = handler.with(queryable)
-        .with(sql)
-        .checkSqlType(SqlType.UPDATE)
-        .with(handlerException)
-        .run();
+        int rows = handler.with(queryable).with(sql).checkSqlType(SqlType.UPDATE).with(handlerException).run();
         return rows;
     }
-
+    
     @Override
     public <T> T update(T entity)// FIXME design update must return a number
     {
@@ -481,14 +464,10 @@ class RepositoryCassandra implements Repository
             LOG.trace("Executing [{}] as update command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new UpdateHandler(this.cmdAdapter);
-        int rows = handler.with(queryable)
-        .with(sql)
-        .checkSqlType(SqlType.UPDATE)
-        .with(handlerException)
-        .run();
+        int rows = handler.with(queryable).with(sql).checkSqlType(SqlType.UPDATE).with(handlerException).run();
         return entity;
     }
-
+    
     /*
     @Override
     public int add(Queryable queryable)
@@ -602,11 +581,7 @@ class RepositoryCassandra implements Repository
         NOT_NULL.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new RemoveHandler(this.cmdAdapter);
-        int rows = handler.with(queryable)
-        .with(sql)
-        .checkSqlType(SqlType.DELETE)
-        .with(handlerException)
-        .run();
+        int rows = handler.with(queryable).with(sql).checkSqlType(SqlType.DELETE).with(handlerException).run();
         return rows;
     }
     
@@ -620,11 +595,7 @@ class RepositoryCassandra implements Repository
         Queryable queryable = QueryFactory.of(queryName, entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new RemoveHandler(this.cmdAdapter);
-        int rows = handler.with(queryable)
-        .with(sql)
-        .checkSqlType(SqlType.DELETE)
-        .with(handlerException)
-        .run();
+        int rows = handler.with(queryable).with(sql).checkSqlType(SqlType.DELETE).with(handlerException).run();
         return rows;
     }
     
@@ -700,7 +671,7 @@ class RepositoryCassandra implements Repository
         //        try
         //        {
         if (this.cmdAdapter instanceof CassandraCommandAdapter)
-            ((CassandraCommandAdapter)cmdAdapter).shutdown();
+            ((CassandraCommandAdapter) cmdAdapter).shutdown();
         //        }
         //        catch (SQLException e)
         //        {

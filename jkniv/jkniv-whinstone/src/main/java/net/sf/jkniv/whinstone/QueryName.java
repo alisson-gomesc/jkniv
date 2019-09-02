@@ -52,8 +52,8 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  */
 class QueryName implements Queryable
 {
-    private static final transient Assertable notNull    = AssertsFactory.getNotNull();
-    private static final transient Assertable isNull    = AssertsFactory.getIsNull();
+    private static final transient Assertable NOT_NULL    = AssertsFactory.getNotNull();
+    private static final transient Assertable IS_NULL    = AssertsFactory.getIsNull();
     private static final BasicType  BASIC_TYPE = BasicType.getInstance();
     
     private enum TYPEOF_PARAM
@@ -468,8 +468,8 @@ class QueryName implements Queryable
     @Override
     public void bind(Sql sql)//TODO test Queryable.bind method
     {
-        isNull.verify(new IllegalStateException("Cannot re-assign new Sql to queryable ["+this.name+"] object"), this.sql);
-        notNull.verify(sql);
+        IS_NULL.verify(new IllegalStateException("Cannot re-assign new Sql to queryable ["+this.name+"] object"), this.sql);
+        NOT_NULL.verify(sql);
         this.sql = sql;
         this.sqlText = sql.getSql(this.params);
         boolean pagingSelect = false;
@@ -488,7 +488,7 @@ class QueryName implements Queryable
             this.sqlTextToCount = sqlDialect.buildQueryCount(sqlText);
             if (sql.getSqlDialect().supportsFeature(SqlFeatureSupport.LIMIT) && this.sqlTextPaginated == null)// TODO test paginate
                 throw new IllegalStateException("SqlDialect [" + sql.getSqlDialect().name()
-                        + "] supports paging query but the query cannot be build");
+                        + "] supports paging query but the COUNT query cannot be build");
         }
         this.boundSql = true;
     }
@@ -592,7 +592,7 @@ class QueryName implements Queryable
     
     void setReturnType(Class<?> clazz)
     {
-        isNull.verify(this.returnType);
+        IS_NULL.verify(this.returnType);
         this.returnType = clazz;
     }
     

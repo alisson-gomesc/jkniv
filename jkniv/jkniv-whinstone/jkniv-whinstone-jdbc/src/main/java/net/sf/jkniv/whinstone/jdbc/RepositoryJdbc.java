@@ -355,7 +355,7 @@ class RepositoryJdbc implements Repository
     @Override
     public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> customResultRow)
     {
-        return handleList(queryable, customResultRow);                
+        return handleList(queryable, customResultRow);
     }
 
     @Override
@@ -383,19 +383,19 @@ class RepositoryJdbc implements Repository
         return list;
     }
     
-    private <T, R> T handleGet(Queryable q, ResultRow<T, R> overloadResultRow)
+    private <T, R> T handleGet(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         T ret = null;
-        Sql sql = sqlContext.getQuery(q.getName());
+        Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new SelectHandler(this.connectionFactory.open(sql.getIsolation()));
-        List<T> list = handler.with(q)
+        List<T> list = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.SELECT)
         .with(handlerException)
         .with(overloadResultRow)
         .run();
         if (list.size() > 1)
-            throw new NonUniqueResultException("No unique result for query ["+q.getName()+"] with params ["+q.getParams()+"]");
+            throw new NonUniqueResultException("No unique result for query ["+queryable.getName()+"] with params ["+queryable.getParams()+"]");
         else if (list.size() == 1)
             ret = list.get(0);
         

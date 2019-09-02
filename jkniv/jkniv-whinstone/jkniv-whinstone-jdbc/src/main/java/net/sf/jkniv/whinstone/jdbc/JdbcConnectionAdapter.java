@@ -14,6 +14,7 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.Insertable;
+import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
@@ -240,7 +241,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
     
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public <T, R> StatementAdapter<T, R> newStatement(String sql)
+    public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
     {
         PreparedStatement stmt = null;
         StatementAdapter<T, R> adapter = null;
@@ -334,7 +335,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
         return stmt;
     }
     
-    public PreparedStatement buildNewStatement(Queryable queryable, Sql isql)
+    private PreparedStatement buildNewStatement(Queryable queryable, Sql isql)
     {
         PreparedStatement stmt = null;
         int rsType = isql.getResultSetType().getTypeScroll();
@@ -465,9 +466,9 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
     public <T, R> Command asSelectCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         Command command = null;
-        StatementAdapter<Number, ResultSet> adapterStmtCount = null;
-        if (queryable.isPaging())
-            adapterStmtCount = newStatement(queryable.queryCount());
+        //StatementAdapter<Number, ResultSet> adapterStmtCount = null;
+        //if (queryable.isPaging())
+        //    adapterStmtCount = newStatement(queryable.queryCount());
         
         StatementAdapter<T, R> stmt = this.newStatement(queryable);
         Selectable select = queryable.getDynamicSql().asSelectable();

@@ -53,17 +53,16 @@ public class HandlerExceptionTest
     public void whenHandleModifyOriginalMessageWithParams()
     {
         catcher.expect(MyUncheckedException.class);
-        catcher.expectMessage("Foo null cannot be invoked");
+        catcher.expectMessage("Hit IllegalStateException cannot be invoked");
         HandleableException handler = new HandlerException(MyUncheckedException.class, "");
-        handler.config(NullPointerException.class, "%s cannot be invoked");
-        Foo foo = null;
+        handler.config(IllegalStateException.class, "%s cannot be invoked");
         try 
         {
-            foo.toString();
+            throw new IllegalStateException("Hit IllegalStateException");
         }
-        catch(NullPointerException nullPointerException)
+        catch(IllegalStateException e)
         {
-            handler.handle(nullPointerException, "Foo");
+            handler.handle(e);
         }
     }
     
