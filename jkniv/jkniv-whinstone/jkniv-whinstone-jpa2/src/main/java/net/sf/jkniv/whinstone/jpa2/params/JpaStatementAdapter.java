@@ -10,6 +10,7 @@ import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.logger.LogLevel;
 import net.sf.jkniv.whinstone.params.StatementAdapterOld;
 
+@Deprecated
 public class JpaStatementAdapter implements StatementAdapterOld
 {
     private static final Logger LOG = LoggerFactory.getLogger(JpaStatementAdapter.class);

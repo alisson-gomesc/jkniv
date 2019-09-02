@@ -175,7 +175,6 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     @Override
     public StatementAdapter<T, Row> bind(String name, Object value)
     {
-        //this.index++;
         log(name, value);
         if (name.toLowerCase().startsWith("in:"))
         {
@@ -227,7 +226,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     public StatementAdapter<T, Row> bind(Object... values)
     {
         this.bound = stmt.bind(values);
-        this.index = values.length-1;
+        this.index += values.length-1;
         //        for (; index < values.length;)
         //        {
         //            Object v = values[index];

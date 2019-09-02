@@ -43,6 +43,7 @@ import net.sf.jkniv.whinstone.params.PrepareParamsFactory;
 import net.sf.jkniv.whinstone.params.StatementAdapterOld;
 
 @SuppressWarnings("unchecked")
+@Deprecated
 class QueryJpaAdapter extends AbstractQueryJpaAdapter
 {
     private static final Logger LOG = LoggerFactory.getLogger(QueryJpaAdapter.class);

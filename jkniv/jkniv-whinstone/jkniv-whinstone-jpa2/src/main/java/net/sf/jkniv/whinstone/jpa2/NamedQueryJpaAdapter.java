@@ -31,7 +31,7 @@ import net.sf.jkniv.whinstone.Queryable;
 
 class NamedQueryJpaAdapter extends AbstractQueryJpaAdapter
 {
-    private static final Logger    LOG        = net.sf.jkniv.whinstone.jpa2.LoggerFactory.getLogger();
+    private static final Logger    LOGSQL        = net.sf.jkniv.whinstone.jpa2.LoggerFactory.getLogger();
 
     public NamedQueryJpaAdapter(EntityManager em, Queryable queryable, Class<?> mandatoryReturnType)
     {
@@ -78,8 +78,8 @@ class NamedQueryJpaAdapter extends AbstractQueryJpaAdapter
         for (String s : params.keySet())
         {
             Object o = params.get(s);
-            if (LOG.isDebugEnabled())// TODO making data sqlLogger.mask
-                LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", i++,
+            if (LOGSQL.isDebugEnabled())// TODO making data sqlLogger.mask
+                LOGSQL.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", i++,
                         s, o, (o == null ? "NULL" : o.getClass()));
             
             query.setParameter(s, o);
@@ -91,8 +91,8 @@ class NamedQueryJpaAdapter extends AbstractQueryJpaAdapter
         int i = 1;
         for (Object o : params)
         {
-            if (LOG.isDebugEnabled())// TODO making data sqlLogger.mask
-                LOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", i,
+            if (LOGSQL.isDebugEnabled())// TODO making data sqlLogger.mask
+                LOGSQL.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", i,
                         "?", o, (o == null ? "NULL" : o.getClass()));
             query.setParameter(i++, o);
         }

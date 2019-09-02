@@ -34,6 +34,7 @@ import javax.persistence.Query;
  * 
  * @author Alisson Gomes
  * @since 0.6.0
+ * @deprecated
  */
 public interface QueryableJpaAdapter
 {

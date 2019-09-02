@@ -42,6 +42,7 @@ import net.sf.jkniv.whinstone.params.AutoBindParams;
 import net.sf.jkniv.whinstone.params.PrepareParamsFactory;
 import net.sf.jkniv.whinstone.params.StatementAdapterOld;
 
+@Deprecated
 class QueryJpaFactory
 {
     private static final Logger  LOG              = LoggerFactory.getLogger(QueryJpaFactory.class);

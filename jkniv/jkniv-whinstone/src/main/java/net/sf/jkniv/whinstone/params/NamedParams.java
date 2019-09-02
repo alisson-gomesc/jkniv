@@ -48,6 +48,13 @@ class NamedParams extends AbstractParam implements AutoBindParams
     @Override
     public void on()
     {
+        checkIfAllParamenterValuesIsHere();
+        Object[] values = queryable.values(this.paramsNames);
+        for(int i=0; i<this.paramsNames.length; i++)
+        {
+            stmtAdapter.bind(this.paramsNames[i], values[i]);
+        }
+        /*
         for (String s : paramsNames)
         {
             Object o = null;
@@ -59,11 +66,21 @@ class NamedParams extends AbstractParam implements AutoBindParams
                     o = (Object[]) paramValue;
                 else if (paramValue instanceof Collection)
                     o = ((Collection<?>) paramValue).toArray();
+                
+                stmtAdapter.bind((Object[])o);
             }
             else
+            {
                 o = queryable.getProperty(s);
-            stmtAdapter.bind(s, o);
+                stmtAdapter.bind(s, o);
+            }
         }
+        */
+    }
+    
+    private void checkIfAllParamenterValuesIsHere() 
+    {
+        queryable.values(queryable.getParamsNames());
     }
     
     @Override

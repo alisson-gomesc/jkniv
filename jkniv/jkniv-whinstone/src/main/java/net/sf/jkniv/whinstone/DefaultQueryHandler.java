@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import net.sf.jkniv.cache.Cacheable;
+import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
@@ -48,6 +49,7 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
     { "unchecked", "rawtypes" })
     public <T> T run()
     {
+        checkSqlConstraints();
         if (LOG.isTraceEnabled())
             LOG.trace("Executing [{}] as {} command", queryable, sql.getSqlType());
         
@@ -133,4 +135,16 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
         else if (queryable.getTotal() < 0)
             queryable.setTotal(list.size());
     }
+    
+    private void checkSqlConstraints()
+    {
+        Selectable selectable = this.sql.asSelectable();
+        LanguageType type = selectable.getLanguageType();
+        if ((type == LanguageType.JPQL || type == LanguageType.HQL) && selectable.getGroupBy().trim().length() > 0)
+        {
+            throw new IllegalArgumentException("JPQL cannot have group by, just NATIVE or STORED, change the type ["
+                    + type + "] from SQL [" + selectable.getName() + "] to execute");
+        }
+    }
+
 }

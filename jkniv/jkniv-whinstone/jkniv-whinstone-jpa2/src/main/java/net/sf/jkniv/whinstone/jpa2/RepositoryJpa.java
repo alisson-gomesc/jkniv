@@ -600,8 +600,13 @@ class RepositoryJpa implements RepositoryJpaExtend
         T ret = null;
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new SelectHandler(this.cmdAdapter);
-        List<T> list = handler.with(queryable).with(sql).checkSqlType(SqlType.SELECT).with(handlerException)
-                .with(overloadResultRow).run();
+        List<T> list = handler
+                .with(queryable)
+                .with(sql)
+                .checkSqlType(SqlType.SELECT)
+                .with(handlerException)
+                .with(overloadResultRow)
+                .run();
         if (list.size() > 1)
             throw new NonUniqueResultException("No unique result for query [" + queryable.getName() + "] with params ["+ queryable.getParams() + "result fetch ["+list.size()+"] rows, Repository.get(..) method must return just one row]");
             //throw new NonUniqueResultException("No unique result for query [" + queryable.getName() + "] with params ["+ queryable.getParams() + "]");
@@ -617,7 +622,11 @@ class RepositoryJpa implements RepositoryJpaExtend
     {
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new SelectHandler(this.cmdAdapter);
-        List<T> list = handler.with(queryable).with(sql).checkSqlType(SqlType.SELECT).with(handlerException)
+        List<T> list = handler
+                .with(queryable)
+                .with(sql)
+                .checkSqlType(SqlType.SELECT)
+                .with(handlerException)
                 .with(overloadResultRow).run();
         return list;
     }

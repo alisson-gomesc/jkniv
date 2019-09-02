@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.whinstone.jpa2.dialect;
 
+import java.util.regex.Matcher;
+
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
@@ -50,8 +52,21 @@ public class JpaDialect extends AnsiDialect
         addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, true));
         addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.CONN_HOLDABILITY, false));
         addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.BOOKMARK_QUERY, false));
-        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.PAGING_ROUNDTRIP, true));
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.PAGING_ROUNDTRIP, false));
     }
+    
+    @Override
+    public String buildQueryPaging(final String sqlText, int offset, int max)
+    {
+        return sqlText;
+    }
+    
+    @Override
+    public String buildQueryPaging(final String sqlText, int offset, int max, String bookmark)
+    {
+        return sqlText;
+    }
+    
 
     /*
      *  LIMIT clause for Cassandra, where LIMIT is parameter from String.format
@@ -67,4 +82,42 @@ public class JpaDialect extends AnsiDialect
         return "%1$s LIMIT %2$s";
     }
     */
+    
+    /*
+    @Override
+    public String getSqlPatternCount()
+    {
+        // using String.format argument index
+        return "select count(1) from (%1$s) jkniv_ct_tmp_table";// TODO BUG when conflict alias name
+    }
+
+    private Query getQueryForPaging(SqlContext sqlContext, Queryable queryable, Sql isql)
+    {
+        Query queryJpa = null;
+        Sql sqlCount = null;
+        try
+        {
+            String queryName = queryable.getName() + "#count";
+            sqlCount = sqlContext.getQuery(queryName);
+            LOG.trace("creating count query [{}] for {}", queryName, queryable.getName());
+            Queryable queryCopy = QueryFactory.of(queryName, queryable.getParams(), 0, Integer.MAX_VALUE);
+            queryJpa = QueryJpaFactory.newQuery(sqlCount, emFactory.createEntityManager(), queryCopy);
+        }
+        catch (QueryNotFoundException e)
+        {
+            // but its very important remove the order clause, because cannot
+            // execute this way wrapping with "select count(*) ... where exists" and performance
+            String sqlWithoutOrderBy = removeOrderBy(isql.getSql(queryable.getParams()));
+            //String entityName = genericType.getSimpleName();
+            String sql = "select count (*) from " + isql.getReturnType() + " where exists (" + sqlWithoutOrderBy + ")";
+            LOG.trace("creating counttry to count rows using dynamically query [" + sql + "]");
+            Queryable queryCopy = QueryFactory.of(queryable.getName(), queryable.getParams(), 0,
+                    Integer.MAX_VALUE);
+            queryJpa = newQueryForCount(sql, isql.getLanguageType(), em, queryCopy,
+                    isql.getParamParser());
+        }
+        return queryJpa;
+    }
+    */
+
 }

@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-public class PersistenceInfo
+class PersistenceInfo
 {
     private String              provider;
     private String              unitName;

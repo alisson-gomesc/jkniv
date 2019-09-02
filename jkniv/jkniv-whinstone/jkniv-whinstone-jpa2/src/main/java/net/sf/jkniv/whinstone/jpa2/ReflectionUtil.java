@@ -19,6 +19,7 @@
  */
 package net.sf.jkniv.whinstone.jpa2;
 
+@Deprecated
 class ReflectionUtil
 {   
     public static Object newInstance(String classname) {

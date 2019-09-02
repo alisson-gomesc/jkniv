@@ -59,17 +59,17 @@ public class CassandraSelectINClauseTest extends BaseJdbc
         assertThat(list.size(), is(2));
     }
 
-    @Test
+    @Test//
     public void whenSelectVehiclesUsingINAnotherParam()
     {
         Repository repository = getRepository();
-        String[] params = { "OMN7000", "OMN7001" };
-        Queryable q = QueryFactory.of("getVehiclesUsingINAnotherParam", "plates", params, "name", "fusca");
+        String[] plates = { "OMN7000", "OMN7001" };
+        Queryable q = QueryFactory.of("getVehiclesUsingINAnotherParam", "plates", plates, "name", "fusca");
         List<Map> list = repository.list(q);
         assertThat(list.size(), is(1));
     }
 
-    @Test
+    @Test//
     public void whenSelectVehiclesUsingINAnotherParamAfterIN()
     {
         Repository repository = getRepository();

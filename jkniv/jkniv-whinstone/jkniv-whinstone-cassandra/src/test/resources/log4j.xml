@@ -9,10 +9,6 @@
   </appender>
 
   <logger name="jkniv.whinstone.cassandra.SQL" additivity="false">
-    <level value="warn" />
-    <appender-ref ref="console" />
-  </logger>
-  <logger name="net.sf.jkniv.whinstone.cassandra" additivity="false">
     <level value="trace" />
     <appender-ref ref="console" />
   </logger>

@@ -204,9 +204,9 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
     @Override
     public StatementAdapter<T, ResultSet> bind(Object... values)
     {
-        for (; index < values.length;)
+        for (int j=0; j< values.length; j++)
         {
-            Object v = values[index];
+            Object v = values[j];
             bind(v);
         }
         return this;

@@ -36,6 +36,7 @@ import net.sf.jkniv.sqlegance.parser.ParameterParser;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 
+@Deprecated
 class QueryBuilder
 {
     private static final Logger LOG = LoggerFactory.getLogger(QueryBuilder.class);
