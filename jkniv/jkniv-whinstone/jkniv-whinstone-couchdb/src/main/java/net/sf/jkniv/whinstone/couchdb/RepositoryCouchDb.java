@@ -143,6 +143,7 @@ class RepositoryCouchDb implements Repository
     {
         this.handlerException = new HandlerException(RepositoryException.class, "CouchDB error at [%s]");
         // ClientProtocolException | JsonParseException | JsonMappingException | IOException
+        // FIXME Caused by: java.net.BindException: Address already in use: connect
         this.handlerException.config(ClientProtocolException.class, "Error to HTTP protocol [%s]");
         this.handlerException.config(JsonParseException.class, "Error to parser json non-well-formed content [%s]");
         this.handlerException.config(JsonMappingException.class, "Error to deserialization content [%s]");
@@ -212,11 +213,11 @@ class RepositoryCouchDb implements Repository
         Sql sql = sqlContext.getQuery(q.getName());
         CommandHandler handler = new SelectHandler(this.adapterConn);
         List<T> list = handler.with(q)
-        .with(sql)
-        .checkSqlType(SqlType.SELECT)
-        .with(handlerException)
-        .with(overloadResultRow)
-        .run();
+                .with(sql)
+                .checkSqlType(SqlType.SELECT)
+                .with(handlerException)
+                .with(overloadResultRow)
+                .run();
         if (list.size() > 1)
             throw new NonUniqueResultException("No unique result for query ["+q.getName()+"] with params ["+q.getParams()+"]");
         else if (list.size() == 1)
@@ -372,11 +373,11 @@ class RepositoryCouchDb implements Repository
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new SelectHandler(this.adapterConn);
         List<T> list = handler.with(queryable)
-        .with(sql)
-        .checkSqlType(SqlType.SELECT)
-        .with(handlerException)
-        .with(overloadResultRow)
-        .run();
+                .with(sql)
+                .checkSqlType(SqlType.SELECT)
+                .with(handlerException)
+                .with(overloadResultRow)
+                .run();
         return list;
     }
 
@@ -388,10 +389,10 @@ class RepositoryCouchDb implements Repository
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = new AddHandler(this.adapterConn);
         int rows = handler.with(queryable)
-        .with(sql)
-        .checkSqlType(SqlType.INSERT)
-        .with(handlerException)
-        .run();
+                .with(sql)
+                .checkSqlType(SqlType.INSERT)
+                .with(handlerException)
+                .run();
         return rows;
         /*
         notNull.verify(queryable);

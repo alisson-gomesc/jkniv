@@ -19,12 +19,9 @@
  */
 package net.sf.jkniv.cache;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +34,12 @@ import net.sf.jkniv.asserts.AssertsFactory;
  * This implementation provides a memory cache to keep the objects mapped keys to values.
  * The <tt>Cacheable</tt> doesn't permit {@code null} values.
  *
+ * Default policy parameters:
+ * <ul>
+ *  <li>Time-to-Live (TTL) default value is 10 minutes</li>
+ *  <li>Time-to-idle (TTI) default value is forever</li>
+ *  <li>Cache size default value is 1000 elements</li>
+ * </ul>
  * @param <K> the type of keys maintained by this map
  * @param <V> Type of objects stored in cache
  * 
@@ -91,14 +94,12 @@ public class MemoryCache<K, V> implements Cacheable<K, V>
     {
         return policy;
     }
-    
 
     @Override
     public void setPolicy(CachePolicy policy)
     {
         this.policy = policy;
     }
-    
     
     /* (non-Javadoc)
      * @see net.sf.jkniv.cache.Cacheable#put(java.lang.String, T)
@@ -112,18 +113,13 @@ public class MemoryCache<K, V> implements Cacheable<K, V>
         {
             if (this.keyMinorHit != null)
                 remove(this.keyMinorHit);
-            else
-            {
-                remove(this.cache.keySet().iterator().next());
-            }
-            this.keyMinorHit = key;
-            this.minorHit = entry;
         }
-        
-        Cacheable.Entry<V> old = this.cache.put(key, entry);
-        if (old != null)
-            return old.getValue();
-        
+        else
+        {
+            Cacheable.Entry<V> old = this.cache.put(key, entry);
+            if (old != null)
+                return old.getValue();
+        }
         return null;
     }
     
