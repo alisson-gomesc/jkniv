@@ -49,12 +49,11 @@ class NamedParams extends AbstractParam implements AutoBindParams
     public void on()
     {
         checkIfAllParamenterValuesIsHere();
-        Object[] values = queryable.values(this.paramsNames);
-        for(int i=0; i<this.paramsNames.length; i++)
-        {
-            stmtAdapter.bind(this.paramsNames[i], values[i]);
-        }
-        /*
+//        Object[] values = queryable.values(this.paramsNames);
+//        for(int i=0; i<this.paramsNames.length; i++)
+//        {
+//            stmtAdapter.bind(this.paramsNames[i], values[i]);
+//        }
         for (String s : paramsNames)
         {
             Object o = null;
@@ -75,7 +74,6 @@ class NamedParams extends AbstractParam implements AutoBindParams
                 stmtAdapter.bind(s, o);
             }
         }
-        */
     }
     
     private void checkIfAllParamenterValuesIsHere() 

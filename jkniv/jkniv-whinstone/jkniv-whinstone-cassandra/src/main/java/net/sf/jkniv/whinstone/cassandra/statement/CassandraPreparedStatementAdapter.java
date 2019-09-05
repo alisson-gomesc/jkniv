@@ -225,13 +225,13 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     @Override
     public StatementAdapter<T, Row> bind(Object... values)
     {
-        this.bound = stmt.bind(values);
-        this.index += values.length-1;
-        //        for (; index < values.length;)
-        //        {
-        //            Object v = values[index];
-        //            bind(index, v);
-        //        }
+        //this.bound = stmt.bind(values);
+        //this.index += values.length-1;
+        for (int j=0; j<values.length; j++)
+        {
+            Object v = values[j];
+            bind(v);
+        }
         return this;
     }
     

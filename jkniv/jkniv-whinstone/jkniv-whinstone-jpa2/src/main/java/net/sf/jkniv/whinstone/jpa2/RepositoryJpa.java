@@ -19,6 +19,7 @@
  */
 package net.sf.jkniv.whinstone.jpa2;
 
+import java.sql.Statement;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -259,7 +260,7 @@ class RepositoryJpa implements RepositoryJpaExtend
      * @param entity Entity object to persist
      */
     @Override
-    public <T> T add(T entity)
+    public <T> T add(T entity) // FIXME CommandHandler must be used (refactoring)
     {
         NOT_NULL.verify(entity);
         if (isTraceEnabled)
@@ -270,7 +271,7 @@ class RepositoryJpa implements RepositoryJpaExtend
     }
     
     @Override
-    public int add(Queryable queryable)
+    public int add(Queryable queryable)// FIXME CommandHandler must be used (refactoring)
     {
         if (isTraceEnabled)
             LOG.trace("executing add method with query [" + queryable.getName() + "]");
@@ -292,7 +293,7 @@ class RepositoryJpa implements RepositoryJpaExtend
      * @param entity Entity object to delete
      */
     @Override
-    public <T> int remove(T entity)
+    public <T> int remove(T entity)// FIXME CommandHandler must be used (refactoring)
     {
         NOT_NULL.verify(entity);
         if (isTraceEnabled)
@@ -302,7 +303,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         if (isDebugEnabled)
             LOG.debug("1 record [{}] MUST BE affected by remove command", entity);
         
-        return 1;
+        return Statement.SUCCESS_NO_INFO;
     }
     
     /**
@@ -315,7 +316,7 @@ class RepositoryJpa implements RepositoryJpaExtend
      *             when the query is different from delete
      */
     @Override
-    public int remove(Queryable queryable)
+    public int remove(Queryable queryable)// FIXME CommandHandler must be used (refactoring)
     {
         if (isTraceEnabled)
             LOG.trace("executing remove method with query [" + queryable.getName() + "]");
@@ -353,7 +354,7 @@ class RepositoryJpa implements RepositoryJpaExtend
      *             when the query is different from update sentence
      */
     @Override
-    public int update(Queryable queryable)
+    public int update(Queryable queryable)// FIXME CommandHandler must be used (refactoring)
     {
         if (isTraceEnabled)
             LOG.trace("executing update method with query [" + queryable.getName() + "]");
@@ -376,7 +377,7 @@ class RepositoryJpa implements RepositoryJpaExtend
      * @param entity Entity object to update
      */
     @Override
-    public <T> T update(T entity)
+    public <T> T update(T entity)// FIXME CommandHandler must be used (refactoring)
     {
         NOT_NULL.verify(entity);
         if (isTraceEnabled)
@@ -818,6 +819,14 @@ class RepositoryJpa implements RepositoryJpaExtend
     
     private void configureHandlerException()
     {
+        /*
+         * TODO exception design JPA remove method
+         * IllegalArgumentException - if the instance is not an entity or is a detached entity
+         * TransactionRequiredException - if invoked on a container-managed entity manager of 
+         * type PersistenceContextType.TRANSACTION and there is no transaction
+         */
+        
+        
         this.handlerException = new HandlerException(RepositoryException.class, "JPA Error cannot execute SQL: %s");
         // JPA 2 throws Exceptions
         /* @throws IllegalStateException if called for a Java

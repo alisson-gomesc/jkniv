@@ -67,8 +67,7 @@ public class SqlSelectGroupingByTest extends BaseJdbc
         List<FlatAuthor> result = null;
         Queryable q = null;
         
-        String[] array =
-        { a, b, c };
+        String[] array = { a, b, c };
         
         q = QueryFactory.ofArray("getBooksFromAuthorUsingIN", array);
         result = repositoryDerby.list(q);
