@@ -198,7 +198,7 @@ public abstract class DefaultCommandHandler implements CommandHandler
     }
     
     @Override
-    public CommandHandler postCommit()
+    public CommandHandler postCommit()// TODO Callback implmements POST_COMMIT
     {
         //        if (proxyParams != null)
         //        {
@@ -210,10 +210,10 @@ public abstract class DefaultCommandHandler implements CommandHandler
     }
     
     @Override
-    public CommandHandler postException()
+    public CommandHandler postException()// TODO Callback implmements POST_EXCEPTION
     {
         //        if (proxyParams != null)
-        //        {            
+        //        {
         //            CallbackMethods preCallbackMethods = CacheCallback.get(proxyParams.getTargetClass(), sql.getSqlType());
         //            for (Method m : preCallbackMethods.getCallbacks())
         //                proxyParams.invoke(m);

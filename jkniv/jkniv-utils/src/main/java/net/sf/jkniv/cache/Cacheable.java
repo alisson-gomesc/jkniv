@@ -60,7 +60,7 @@ public interface Cacheable<K, V>
      * @param key with which the specified value is to be associated
      * @param value to be associated with the specified key
      * @return the previous value associated with <tt>key</tt>, or
-     *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
+     *         <tt>null</tt> if there isn't mapping for <tt>key</tt>.
      * @throws IllegalArgumentException if some the <tt>key</tt> or <tt>value</tt> are {@code null}.
      */
     V put(K key, V value);
