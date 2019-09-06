@@ -114,7 +114,17 @@ public class CouchDbRepositoryGetTest extends BaseJdbc
         assertThat(ret, instanceOf(Author.class));
         assertThat(ret.getName(), is("Friedrich Nietzsche"));
     }
-    
+
+    @Test
+    public void whenGetWithReturnTypeInternalXml()
+    {
+        Author author = getRepository().get(QueryFactory.of("author-by-fixedname"));
+        
+        assertThat(author, notNullValue());
+        assertThat(author, instanceOf(Author.class));
+        assertThat(author.getName(), is("Friedrich Nietzsche"));
+    }
+
     @Test
     public void whenGetWithEntity()
     {
