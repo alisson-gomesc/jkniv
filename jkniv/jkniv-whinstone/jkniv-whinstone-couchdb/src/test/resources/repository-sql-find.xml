@@ -7,6 +7,12 @@
        http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
   
 
+  <select id="author-by-fixedname" returnType="net.sf.jkniv.whinstone.couchdb.model.orm.Author">
+    {
+     "selector": { "name": "Friedrich Nietzsche" }
+    }
+  </select>
+
   <select id="authorsBR">
     {
      "selector": {"nationality": "BR" }
