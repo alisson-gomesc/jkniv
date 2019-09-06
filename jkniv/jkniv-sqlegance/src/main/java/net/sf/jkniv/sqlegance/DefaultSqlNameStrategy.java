@@ -22,8 +22,6 @@ package net.sf.jkniv.sqlegance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.jkniv.sqlegance.builder.SqlFile;
-
 /**
  * 
  * @author Alisson Gomes

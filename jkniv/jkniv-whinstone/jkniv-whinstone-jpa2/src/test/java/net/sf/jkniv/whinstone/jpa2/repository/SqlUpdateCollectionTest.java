@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jpa2.params;
+package net.sf.jkniv.whinstone.jpa2.repository;
 
 //import static org.hamcrest.Matchers.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -42,17 +42,35 @@ import net.sf.jkniv.whinstone.jpa2.BaseTest;
 
 public class SqlUpdateCollectionTest extends BaseTest
 {
+    @Test @Transactional 
+    public void whenUpdateUsingQueryable()
+    {
+        Repository repository = getRepository();
+        Book params = getValuesBook().iterator().next();
+        Queryable queryUpdate = QueryFactory.of("Book#update", params);
+        Queryable queryIsbn = QueryFactory.of("Book#get", params);        
+        int rowsAffected = repository.update(queryUpdate);
+        assertThat(rowsAffected, is(1));
+        
+        Book book = repository.get(queryIsbn);
+        assertThat(book, notNullValue());
+        assertThat(book.getVisualization(), is(1));
+        assertThat(book.getIsbn(), is("978-1503250888"));
+        assertThat(book.getId(), is(1001L));
+        assertThat(book.getName(), is("Beyond Good and Evil"));
+    }
+
     @Test @Transactional
     public void whenUpdateUsingCollectionOfEntity()
     {
         Repository repository = getRepository();
         Collection<Book> params = getValuesBook();
-        Queryable qUpdate = QueryFactory.of("Book#update", params);
-        Queryable qIsbn = QueryFactory.of("Book#get", params.iterator().next());        
-        int rowsAffected = repository.update(qUpdate);
+        Queryable queryUpdate = QueryFactory.of("Book#update", params);
+        Queryable queryIsbn = QueryFactory.of("Book#get", params.iterator().next());        
+        int rowsAffected = repository.update(queryUpdate);
         assertThat(rowsAffected, is(10));
         
-        Book book = repository.get(qIsbn);
+        Book book = repository.get(queryIsbn);
         assertThat(book, notNullValue());
         assertThat(book.getVisualization(), is(10));
         assertThat(book.getIsbn(), is("978-1503250888"));

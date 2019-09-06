@@ -25,12 +25,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.nullValue;
 
+import java.util.Properties;
+
 import org.junit.Test;
 
 import net.sf.jkniv.sqlegance.RepositoryProperty;
+import net.sf.jkniv.sqlegance.RepositoryType;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.Statistical;
 import net.sf.jkniv.sqlegance.builder.xml.NoSqlStats;
+import net.sf.jkniv.sqlegance.builder.xml.SqlStats;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
@@ -153,6 +157,43 @@ public class RepositoryConfigTest
         assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.STMT_HOLDABILITY), is(true));
         assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY), is(true));
         assertThat(config.getSqlDialect().supportsFeature(SqlFeatureSupport.PAGING_ROUNDTRIP), is(false));
-        
     }
+    
+    @Test
+    public void whenAnotherTests()
+    {
+        RepositoryConfig config = new RepositoryConfig("whinstone-jdbc");
+        Properties props = new Properties();
+        props.put("A", "B");
+        config.add(props);
+        assertThat(config.getProperty("A"), is("B"));
+        config.add("B", "C");
+        assertThat(config.getProperty("B"), is("C"));
+        assertThat(config.hasProperties(), is(true));
+        
+        assertThat(config.getRepositoryType(), is(RepositoryType.JDBC));
+        
+        assertThat(config.toString(), instanceOf(String.class));
+    }
+    
+    @Test
+    public void whenRepositoryConfigUseStattistical()
+    {
+        RepositoryConfig config = new RepositoryConfig("whinstone-jdbc");
+        Properties props = new Properties();
+        props.put("A", "B");
+        config.add(props);
+        assertThat(config.getStatistical(), instanceOf(NoSqlStats.class));
+        
+        config.add(RepositoryProperty.SQL_STATS.key(), "true");
+        assertThat(config.getStatistical(), instanceOf(SqlStats.class));
+    }
+
+    @Test
+    public void whenRepositoryLookupDataSourceWithoutJndi()
+    {
+        RepositoryConfig config = new RepositoryConfig("whinstone-jdbc");
+        assertThat(config.lookup(), nullValue());
+    }
+
 }

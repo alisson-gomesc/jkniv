@@ -356,6 +356,19 @@ class RepositoryJpa implements RepositoryJpaExtend
     @Override
     public int update(Queryable queryable)// FIXME CommandHandler must be used (refactoring)
     {
+        /*
+        NOT_NULL.verify(queryable);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as update command", queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new UpdateHandler(this.cmdAdapter);
+        int rows = handler.with(queryable)
+                .with(sql)
+                .checkSqlType(SqlType.UPDATE)
+                .with(handlerException)
+                .run();
+        return rows;
+*/
         if (isTraceEnabled)
             LOG.trace("executing update method with query [" + queryable.getName() + "]");
         Sql isql = sqlContext.getQuery(queryable.getName());

@@ -21,18 +21,17 @@ package net.sf.jkniv.whinstone.jpa2;
 
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandAdapter;
-import net.sf.jkniv.whinstone.ConnectionAdapter;
-import net.sf.jkniv.whinstone.DefaultQueryHandler;
+import net.sf.jkniv.whinstone.DefaultCommandHandler;
 
 /**
- * JPA Command to handler the {@code Select} life-cycle.
+ * JDBC Command to handler the {@code Update} life-cycle.
  * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
-class SelectHandler extends DefaultQueryHandler
+class UpdateHandler extends DefaultCommandHandler
 {
-    public SelectHandler(CommandAdapter cmdAdapter)
+    public UpdateHandler(CommandAdapter cmdAdapter)
     {
         super(cmdAdapter);
         with(this);
@@ -41,7 +40,7 @@ class SelectHandler extends DefaultQueryHandler
     @Override
     public Command asCommand()
     {
-        Command c = getCommandAdapter().asSelectCommand(queryable, overloadResultRow);
+        Command c = getCommandAdapter().asUpdateCommand(queryable);
         c.with(this);
         c.with(this.handleableException);
         return c;
