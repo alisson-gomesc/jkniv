@@ -23,7 +23,7 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 
 /**
  * A {@code BoundException} is thrown if {@link Queryable} instance is re-used for
- * different SQL or return types overloaded, this exception indicate that values binding was associated.
+ * different SQL or return types overloaded, this exception mark that bind values was associated.
  * 
  * @author alisson
  * @since 0.6.0 

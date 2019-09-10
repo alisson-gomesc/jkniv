@@ -19,11 +19,6 @@
  */
 package net.sf.jkniv.sqlegance.dialect;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-
-import net.sf.jkniv.sqlegance.Sql;
-
 /**
  * Represents a SQL syntax from a specific database.
  * 
@@ -44,6 +39,11 @@ public interface SqlDialect
      */
     String name();
     
+    /**
+     * verify if dialect instance supports {@code feature} specified
+     * @param feature to check
+     * @return {@code true} when the dialect supports, {@code false} otherwise
+     */
     boolean supportsFeature(SqlFeatureSupport feature);
     
     /**
@@ -66,11 +66,20 @@ public interface SqlDialect
      */
     void setMaxOfParameters(int max);
     
+    /**
+     * The template to mount the {@code COUNT} SQL
+     * @return a string template, like that:
+     * {@code select count(1) from (%1$s) _alias_internal_table_} 
+     */
     String getSqlPatternCount();
     
+    /**
+     * The template to mount the SQL paginated, using LIMIT and OFFSET 
+     * clauses according the specific database
+     * @return a string template, like that:
+     *  {@code %1$s LIMIT %2$s, %3$s}
+     */
     String getSqlPatternPaging();
-    
-    //PreparedStatement prepare(Connection conn, Sql isql, String query);
     
     /**
      * Build a paginate query accordingly data base dialect

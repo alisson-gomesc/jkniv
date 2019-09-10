@@ -19,18 +19,12 @@
  */
 package net.sf.jkniv.sqlegance.dialect;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
-import net.sf.jkniv.sqlegance.Insertable;
-import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.Sql;
 
 /**
  * Represents the support from SQL ANSI that are queries cross-platform.
@@ -149,19 +143,20 @@ public class AnsiDialect implements SqlDialect
     public String getSqlPatternCount()
     {
         // using String.format argument index
-        return "select count(1) from (%1$s) jkniv_ct_tmp_table";// TODO BUG when conflict alias name
+        return "select count(1) from (%1$s) jkniv_ct_tmp_table";
     }
     
+    @Override
     public String getSqlPatternPaging()
     {
-        String pattern = "%1$s";
+        StringBuilder pattern = new StringBuilder("%1$s");
         if (supportsFeature(SqlFeatureSupport.LIMIT))
         {
-            pattern += " LIMIT %2$s";
+            pattern.append(" LIMIT %2$s");
             if (supportsFeature(SqlFeatureSupport.LIMIT_OFF_SET))
-                pattern += ", %3$s";
+                pattern.append(", %3$s");
         }
-        return pattern;//%1$s LIMIT %2$s, %3$s
+        return pattern.toString();//%1$s LIMIT %2$s, %3$s
     }
     
     //protected void buildSqlLimits()

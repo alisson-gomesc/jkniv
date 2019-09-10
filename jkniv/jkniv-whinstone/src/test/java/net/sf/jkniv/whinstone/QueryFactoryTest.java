@@ -43,9 +43,10 @@ public class QueryFactoryTest
         Queryable q = QueryFactory.of("query-name");
         assertThat(q, notNullValue());
         assertThat(q.getParams(), nullValue());
+        assertThat(q.getOffset(), is(0));
         assertThat(q.getMax(), is(Integer.MAX_VALUE));
         assertThat(q.getTotal(), is(-1L));
-        assertThat(q.getOffset(), is(0));
+        assertThat(q.isPaging(), is(false));
     }
     
     @Test
@@ -54,9 +55,10 @@ public class QueryFactoryTest
         Queryable q = QueryFactory.of("query-name", "id", 10L);
         assertThat(q, notNullValue());
         assertThat(q.getParams(), instanceOf(Map.class));
+        assertThat(q.getOffset(), is(0));
         assertThat(q.getMax(), is(Integer.MAX_VALUE));
         assertThat(q.getTotal(), is(-1L));
-        assertThat(q.getOffset(), is(0));
+        assertThat(q.isPaging(), is(false));
     }
     
     @Test
@@ -66,9 +68,10 @@ public class QueryFactoryTest
         Queryable q = QueryFactory.of("query-name", a);
         assertThat(q, notNullValue());
         assertThat(q.getParams(), instanceOf(AuthorFlat.class));
+        assertThat(q.getOffset(), is(0));
         assertThat(q.getMax(), is(Integer.MAX_VALUE));
         assertThat(q.getTotal(), is(-1L));
-        assertThat(q.getOffset(), is(0));
+        assertThat(q.isPaging(), is(false));
     }
     
     @Test
@@ -78,9 +81,10 @@ public class QueryFactoryTest
         assertThat(q, notNullValue());
         assertThat(q.getParams(), instanceOf(String.class));
         assertThat(q.getParams().toString(), is("Jose"));
+        assertThat(q.getOffset(), is(0));
         assertThat(q.getMax(), is(Integer.MAX_VALUE));
         assertThat(q.getTotal(), is(-1L));
-        assertThat(q.getOffset(), is(0));
+        assertThat(q.isPaging(), is(false));
     }
     
     @Test
@@ -92,9 +96,11 @@ public class QueryFactoryTest
         Queryable q = QueryFactory.ofArray("query-name", params);
         assertThat(q, notNullValue());
         assertThat(q.getParams(), instanceOf(String[].class));
+        assertThat(((String[])q.getParams()).length, is(3));
+        assertThat(q.getOffset(), is(0));
         assertThat(q.getMax(), is(Integer.MAX_VALUE));
         assertThat(q.getTotal(), is(-1L));
-        assertThat(q.getOffset(), is(0));
+        assertThat(q.isPaging(), is(false));
     }
     
     @Test
@@ -105,9 +111,10 @@ public class QueryFactoryTest
         Queryable q = QueryFactory.of("query-name", params);
         assertThat(q, notNullValue());
         assertThat(q.getParams(), instanceOf(List.class));
+        assertThat(((List<?>)q.getParams()).size(), is(3));
+        assertThat(q.getOffset(), is(0));
         assertThat(q.getMax(), is(Integer.MAX_VALUE));
         assertThat(q.getTotal(), is(-1L));
-        assertThat(q.getOffset(), is(0));
     }
     
     @Test
@@ -117,9 +124,9 @@ public class QueryFactoryTest
         Queryable q = QueryFactory.of("query-name", a, 5, 25);
         assertThat(q, notNullValue());
         assertThat(q.getParams(), instanceOf(AuthorFlat.class));
+        assertThat(q.getOffset(), is(5));
         assertThat(q.getMax(), is(25));
         assertThat(q.getTotal(), is(-1L));
-        assertThat(q.getOffset(), is(5));
     }
 
     @Test
@@ -130,17 +137,51 @@ public class QueryFactoryTest
         assertThat(q, notNullValue());
         assertThat(q.getName(), is("query-name"));
         assertThat(q.getParams(), instanceOf(AuthorFlat.class));
+        assertThat(q.getReturnType().getName(), is(AuthorFlat.class.getName()));
         assertThat(q.getMax(), is(Integer.MAX_VALUE));
         assertThat(q.getTotal(), is(-1L));
         assertThat(q.getOffset(), is(0));
+        assertThat(q.isPaging(), is(false));
     }
     
-    // FIXME The method of(String, Object[]) is ambiguous for the type QueryFactory
-    @Test @Ignore("The method of(String, Object[]) is ambiguous for the type QueryFactory")
-    public void whenAsQueryableWithPaginate()
+    @Test
+    public void whenAsQueryableWithParamsAndOffsetAndMax()
     {
-        QueryFactory.of("authors-page-override", 0, 3);
-        //QueryFactory.of("authors-page-override", 0, 3, "id", 1);
-        //QueryFactory.of("authors-page-override", 0, 3, "id", 1);
+        Queryable q = QueryFactory.of("authors-page-override", new AuthorFlat(), 5, 10);
+        assertThat(q.getOffset(), is(5));
+        assertThat(q.getMax(), is(10));
+        assertThat(q.getTotal(), is(-1L));
+        assertThat(q.isPaging(), is(true));
+        assertThat(q.getParams(), instanceOf(AuthorFlat.class));
     }
+    
+    @Test
+    public void whenCloneQuery()
+    {
+        Queryable q = QueryFactory.of("authors-page-override", 5, 10);
+        assertThat(q.getOffset(), is(5));
+        assertThat(q.getMax(), is(10));
+        assertThat(q.getTotal(), is(-1L));
+        assertThat(q.isScalar(), is(false));
+        assertThat(q.isPaging(), is(true));
+        assertThat(q.getReturnType(), nullValue());
+        
+        Queryable clone = QueryFactory.clone(q, null);
+        assertThat(clone.getOffset(), is(5));
+        assertThat(clone.getMax(), is(10));
+        assertThat(clone.getTotal(), is(-1L));
+        assertThat(clone.isScalar(), is(false));
+        assertThat(clone.isPaging(), is(true));
+        assertThat(clone.getReturnType(), nullValue());
+
+        Queryable clone2 = QueryFactory.clone(q, Map.class);
+        assertThat(clone2.getOffset(), is(5));
+        assertThat(clone2.getMax(), is(10));
+        assertThat(clone2.getTotal(), is(-1L));
+        assertThat(clone2.isScalar(), is(false));
+        assertThat(clone2.isPaging(), is(true));
+        assertThat(clone2.getReturnType().getName(), is(Map.class.getName()));
+
+    }
+
 }
