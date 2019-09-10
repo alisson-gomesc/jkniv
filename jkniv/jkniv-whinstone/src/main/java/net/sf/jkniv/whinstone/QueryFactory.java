@@ -27,7 +27,7 @@ import net.sf.jkniv.asserts.AssertsFactory;
 
 public class QueryFactory
 {
-    private static final Assertable notNull = AssertsFactory.getNotNull();
+    private static final Assertable NOT_NULL = AssertsFactory.getNotNull();
     
     QueryFactory() { /* no instance for this */ }
         
@@ -77,26 +77,26 @@ public class QueryFactory
 //    {
 //        return new QueryName(name, params, 0, Integer.MAX_VALUE);
 //    }
-    
-    /**
-     * Build a new {@code Queryable} object
-     * @param name query name
-     * @param offset the first row
-     * @param max row numbers
-     * @param args dynamically arguments to create {@code Queryable}.
-     * <p>
-     * 1o first param it's key name and 2o your value
-     * <p>
-     * 3o it's key 4o your value and so on.
-     * @return Queryable object with parameters with limited result by {@code max}
-     */
-    public static Queryable of(String name, int offset, int max, Object... args)
-    {
-        QueryName q = (QueryName) buildQueryable(name, args);
-        q.setOffset(offset);
-        q.setMax(max);
-        return q;
-    }
+//    
+//    /**
+//     * Build a new {@code Queryable} object
+//     * @param name query name
+//     * @param offset the first row
+//     * @param max row numbers
+//     * @param args dynamically arguments to create {@code Queryable}.
+//     * <p>
+//     * 1o first param it's key name and 2o your value
+//     * <p>
+//     * 3o it's key 4o your value and so on.
+//     * @return Queryable object with parameters with limited result by {@code max}
+//     */
+//    public static Queryable of(String name, int offset, int max, Object... args)
+//    {
+//        QueryName q = (QueryName) buildQueryable(name, args);
+//        q.setOffset(offset);
+//        q.setMax(max);
+//        return q;
+//    }
 
     /**
      * Build a new {@code Queryable} object
@@ -197,7 +197,7 @@ public class QueryFactory
         return q;
     }
     
-    /**
+    /*
      * TODO test me
      * @param name query name
      * @param returnType type of return that overload return type from XML
@@ -210,7 +210,7 @@ public class QueryFactory
      * <p>
      * 3o it's key 4o your value and so on.
      * @return Queryable object with parameters and limited result starting at {@code offset} and {@code max} rows. 
-     */
+     *
     public static <T> Queryable of(String name, Class<T> returnType, int offset, int max, Object... args)
     {
         QueryName q = (QueryName) buildQueryable(name, args);
@@ -219,7 +219,7 @@ public class QueryFactory
         q.setReturnType(returnType);
         return q;
     }
-   
+   */
     
     /**
      * Create new instance of {@code Queryable} without out pagination.
@@ -233,7 +233,7 @@ public class QueryFactory
      */
     private static Queryable buildQueryable(String name, Object... args)
     {
-        notNull.verify(args);
+        NOT_NULL.verify(args);
         Map<String, Object> params = new HashMap<String, Object>();
         int i = 0;
         String key = null;
@@ -258,42 +258,4 @@ public class QueryFactory
         
         return new QueryName(name, params);
     }
-    
-    /**
-     * Creates a Query object parameterized starting at first row and retrieve all rows, isolation default, no timeout and online (no batch).
-     * 
-     * @param name query name
-     * @param params parameters of query
-     * @return Queryable object with parameters and unlimited result
-     */
-    private static Queryable newInstance(String name, Object params)
-    {
-        return new QueryName(name, params, 0, Integer.MAX_VALUE);
-    }
-    
-    /**
-     * Creates a Query object parameterized starting at first row and retrieve all rows, isolation default, no timeout and online (no batch).
-     * 
-     * @param name a name of query
-     * @return Queryable object without parameters and unlimited result
-     */
-    private static Queryable newInstance(String name)
-    {
-        return new QueryName(name, null, 0, Integer.MAX_VALUE);
-    }
-    
-    /**
-     * Creates a Query object parameterized with: isolation default, no timeout and online (no batch).
-     * 
-     * @param name a name for query
-     * @param params parameters from query
-     * @param offset the first row
-     * @param max row numbers
-     * @return Queryable object with parameters and limited result starting at {@code offset} and {@code max} rows.
-     */
-    private static Queryable newInstance(String name, Object params, int offset, int max)
-    {
-        return new QueryName(name, params, offset, max);
-    }
-    
 }
