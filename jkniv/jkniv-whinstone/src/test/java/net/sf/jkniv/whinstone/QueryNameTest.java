@@ -287,5 +287,4 @@ public class QueryNameTest
         catcher.expectMessage("Cannot iterate over another type of object, just Arrays or Collections");
         QueryFactory.of("query-name", "A").iterator();
     }
-
 }
