@@ -1,5 +1,5 @@
 /* 
- * JKNIV, SQLegance keeping queries maintainable.
+ * JKNIV, whinstone one contract to access your database.
  * 
  * Copyright (C) 2017, the original author or authors.
  *
@@ -19,6 +19,9 @@
  */
 package net.sf.jkniv.whinstone.transaction;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
@@ -32,6 +35,7 @@ import net.sf.jkniv.whinstone.ConnectionAdapter;
  */
 public class TransactionContext
 {
+    private final static Logger LOG = LoggerFactory.getLogger(TransactionContext.class);
     private final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
     private final String               name;
     private final ConnectionAdapter    conn;
@@ -48,6 +52,7 @@ public class TransactionContext
         this.name = name;
         this.tx = tx;
         this.conn = conn;
+        //LOG.de
     }
     
     public boolean isActive()
