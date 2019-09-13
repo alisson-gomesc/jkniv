@@ -1,5 +1,5 @@
 /* 
- * JKNIV, SQLegance keeping queries maintainable.
+ * JKNIV, whinstone one contract to access your database.
  * 
  * Copyright (C) 2017, the original author or authors.
  *
@@ -204,7 +204,7 @@ public class QueryNameTest
         assertThat(QueryFactory.of("query-name", new AtomicLong(1L)).isTypeOfBasic(), is(true));
         //assertThat(QueryFactory.of("query-name", new AtomicBoolean(true)).isTypeOfBasic(), is(true));
         assertThat(QueryFactory.of("query-name", new AtomicLong(1L)).isTypeOfBasic(), is(true));
-        // new java 8 number types
+        // TODO new java 8 number types
         // "java.util.concurrent.atomic.DoubleAccumulator"
         // "java.util.concurrent.atomic.DoubleAdder"
         // "java.util.concurrent.atomic.LongAccumulator"
@@ -270,7 +270,6 @@ public class QueryNameTest
         assertThat(it.next().toString(), is("C"));
         assertThat(it.hasNext(), is(false));
     }   
-
 
     @Test
     public void whenQueryIteratorOverNull()

@@ -1,5 +1,5 @@
 /* 
- * JKNIV, SQLegance keeping queries maintainable.
+ * JKNIV, whinstone one contract to access your database.
  * 
  * Copyright (C) 2017, the original author or authors.
  *
@@ -19,7 +19,6 @@
  */
 package net.sf.jkniv.whinstone.transaction;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,18 +58,9 @@ public class TransactionSessions
     
     public static TransactionContext set(String contextName, Transactional tx, ConnectionAdapter conn)
     {
-        //final int timeout = 30;
-        //try
-        //{
-            if (tx == null)
-                throw new TransactionException("Cannot set a null connection to transaction context");
-            //if (conn.isClosed())
-            //    throw new TransactionException("Cannot set a closed connection to transaction context");
-        //}
-        //catch (SQLException sqle)
-        //{
-        //    throw new TransactionException(sqle);// TODO handler exception
-        //}
+        if (tx == null)
+            throw new TransactionException("Cannot set a null connection to transaction context");
+        
         Map<String, TransactionContext> transactionContext = RESOURCES.get();
         if (transactionContext == null)
         {
@@ -87,55 +77,6 @@ public class TransactionSessions
         return transactionContext.get(contextName);
     }
     
-    /*
-    private static void setTransactionStatus(String contextName, TransactionStatus status)
-    {
-        TransactionContext txCtx = get(contextName);
-        LOG.trace("Context[{}] setting transaction status from [{}] to [{}]", contextName, txCtx.getTransactional().getStatus(), status);
-        
-        txCtx.getTransactional().setStatus(status);
-        if (status == TransactionStatus.NO_TRANSACTION)
-        {
-            //setActualTransactionInactive();
-        }
-        else if (status == TransactionStatus.PREPARING)
-        {
-            
-        }
-        else if (status == TransactionStatus.PREPARED)
-        {
-            
-        }
-        else if (status == TransactionStatus.ACTIVE)
-        {
-            //setActualTransactionActive();
-        }
-        else if (status == TransactionStatus.COMMITTING)
-        {
-            
-        }
-        else if (status == TransactionStatus.COMMITTED)
-        {
-            close(contextName);
-        }
-        else if (status == TransactionStatus.MARKED_ROLLBACK)
-        {
-            
-        }
-        else if (status == TransactionStatus.ROLLING_BACK)
-        {
-            
-        }
-        else if (status == TransactionStatus.ROLLEDBACK)
-        {
-            close(contextName);
-        }
-        else if (status == TransactionStatus.UNKNOWN)
-        {
-            
-        }
-    }
-    */
     public static void close(String contextName)
     {
 //  ACTIVE | MARKED_ROLLBACK | PREPARED | COMMITED | ROLLBACK | UNKNOW | NO_TRANSACTION | PREPARING | COMMITING | ROLLING_BACK
@@ -150,9 +91,11 @@ public class TransactionSessions
             LOG.warn("Be careful transaction was finished with status [{}]", txStatus);
             releaseResource(contextName);
         }
-        else
+        else// ACTIVE? PREPARED? UNKNOWN? NO_TRANSACTION? ? COMMITTING ? ROLLING_BACK?
         {
-            // FIXME behavior pendent, whats happens another status?
+            LOG.error("Transaction was closed with status [{}]", txStatus);
+            releaseResource(contextName);
+            // FIXME transaction design, what's happens with status: ACTIVE? PREPARED? UNKNOWN? NO_TRANSACTION? ? COMMITTING ? ROLLING_BACK?
             //throw new TransactionException(" exists a connection bind to context name [" + name + "] for this thread!");
         }
         //setTransactionStatus(TransactionStatus.NO_TRANSACTION);
@@ -175,14 +118,9 @@ public class TransactionSessions
                 contexts.remove(contextName);
             }
         }
-//        catch (SQLException sqle)
-//        {
-//            LOG.warn("Erro to closing connection. Reason: " + sqle.getMessage());
-//        }
         finally
         {
             RESOURCES.remove();
         }
     }
-    
 }
