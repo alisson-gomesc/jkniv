@@ -28,13 +28,16 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.jkniv.asserts.Assertable;
+import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.sqlegance.SqlType;
 
 class ObjectCallback
 {
     private final static Logger LOG = LoggerFactory.getLogger(ObjectCallback.class);
+    private final static Assertable NOT_NULL = AssertsFactory.getNotNull();
     final static ObjectCallback EMPTY = new ObjectCallback(String.class);
-    private Class<?> clazz;
+    private Class<?> goalClass;
     private Map<SqlType, Set<Method>> preMethods;
     private Map<SqlType, Set<Method>> postMethods;
     private Map<SqlType, Method> commitMethod;
@@ -61,23 +64,24 @@ class ObjectCallback
         EMPTY.exceptionMethod.put(SqlType.DELETE, null);
     }
     
-    public ObjectCallback(Class<?> clazz)
+    public ObjectCallback(Class<?> goalClass)
     {
-        this.clazz = clazz;
+        NOT_NULL.verify(goalClass);
+        this.goalClass = goalClass;
         this.preMethods = new HashMap<SqlType, Set<Method>>();
         this.postMethods = new HashMap<SqlType, Set<Method>>();
         this.commitMethod = new HashMap<SqlType, Method>();
         this.exceptionMethod = new HashMap<SqlType, Method>();
     }
 
-    public Class<?> getClazz()
+    public Class<?> getGoalClass()
     {
-        return clazz;
+        return goalClass;
     }
 
-    public void setClazz(Class<?> clazz)
+    public void setGoalClass(Class<?> goalClass)
     {
-        this.clazz = clazz;
+        this.goalClass = goalClass;
     }
 
     public Set<Method> getPreMethods(SqlType sqlType)
@@ -157,7 +161,7 @@ class ObjectCallback
     @Override
     public String toString()
     {
-        return "ObjectCallback [clazz=" + clazz + ", preMethods=" + preMethods + ", postMethods=" + postMethods
+        return "ObjectCallback [clazz=" + goalClass + ", preMethods=" + preMethods + ", postMethods=" + postMethods
                 + ", commitMethod=" + commitMethod + ", rollbackMethod=" + exceptionMethod + "]";
     }
 }

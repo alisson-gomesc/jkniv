@@ -85,8 +85,16 @@ public abstract class DefaultCommandHandler implements CommandHandler
     {
         this.queryable = queryable;
         if (queryable.getParams() != null)
+        {
             this.proxyParams = ObjectProxyFactory.newProxy(queryable.getParams());
-        loadCallbackEvents();
+            CallbackProcessor processor = new CallbackProcessor(this.proxyParams);
+            if (!OBJECTS_CALLBACKS.containsKey(proxyParams.getTargetClass().getName()))
+            {
+                ObjectCallback objectCallback = processor.loadCallbackEvents();
+                OBJECTS_CALLBACKS.put(proxyParams.getTargetClass().getName(), objectCallback);
+            }
+        }
+        //loadCallbackEvents();
         return this;
     }
     
@@ -221,74 +229,6 @@ public abstract class DefaultCommandHandler implements CommandHandler
         return this;
     }
     
-    private void loadCallbackEvents()
-    {
-        if (proxyParams == null)
-            return;
-        
-        ObjectCallback objectCallback = OBJECTS_CALLBACKS.get(proxyParams.getTargetClass().getName());
-        if (objectCallback != null)
-            return;// target class already loaded
-            
-        objectCallback = new ObjectCallback(proxyParams.getTargetClass());
-        List<Method> precallbacks = proxyParams.getAnnotationMethods(PreCallBack.class);
-        List<Method> postcallbacks = proxyParams.getAnnotationMethods(PostCallBack.class);
-        for (Method m : precallbacks)
-        {
-            PreCallBack precallback = m.getAnnotation(PreCallBack.class);
-            for (CallbackScope scope : precallback.scope())
-            {
-                if (scope.isSelect())
-                    objectCallback.addPreMethod(SqlType.SELECT, m);
-                else if (scope.isAdd())
-                    objectCallback.addPreMethod(SqlType.INSERT, m);//preAdd.add(m);
-                else if (scope.isUpdate())
-                    objectCallback.addPreMethod(SqlType.UPDATE, m);//preUpdate.add(m);
-                else if (scope.isRemove())
-                    objectCallback.addPreMethod(SqlType.DELETE, m);//preRemove.add(m);
-            }
-        }
-        for (Method m : postcallbacks)
-        {
-            PostCallBack postcallback = m.getAnnotation(PostCallBack.class);
-            List<CallbackScope> scopes = Arrays.asList(postcallback.scope());
-            //boolean containsException = scopes.contains(CallbackScope.EXCEPTION);
-            //boolean containsCommit = scopes.contains(CallbackScope.COMMIT);
-            for (CallbackScope scope : postcallback.scope())
-            {
-                /*
-                if (containsCommit)
-                {
-                    if (scope.isAdd())
-                        objectCallback.addCommitMethod(SqlType.INSERT, m);
-                    else if (scope.isUpdate())
-                        objectCallback.addCommitMethod(SqlType.UPDATE, m);
-                    else if (scope.isRemove())
-                        objectCallback.addCommitMethod(SqlType.DELETE, m);
-                }
-                else if (containsException)
-                {
-                    if (scope.isSelect())
-                        objectCallback.addExceptionMethod(SqlType.SELECT, m);
-                    else if (scope.isAdd())
-                        objectCallback.addExceptionMethod(SqlType.INSERT, m);
-                    else if (scope.isUpdate())
-                        objectCallback.addExceptionMethod(SqlType.UPDATE, m);
-                    else if (scope.isRemove())
-                        objectCallback.addExceptionMethod(SqlType.DELETE, m);
-                }
-                else */if (scope.isSelect())
-                    objectCallback.addPostMethod(SqlType.SELECT, m);
-                else if (scope.isAdd())
-                    objectCallback.addPostMethod(SqlType.INSERT, m);
-                else if (scope.isUpdate())
-                    objectCallback.addPostMethod(SqlType.UPDATE, m);
-                else if (scope.isRemove())
-                    objectCallback.addPostMethod(SqlType.DELETE, m);//postRemove.add(m);
-            }
-        }
-        OBJECTS_CALLBACKS.put(proxyParams.getTargetClass().getName(), objectCallback);
-    }
     
     @Override
     public CommandHandler checkSqlType(SqlType expected)
