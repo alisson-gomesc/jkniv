@@ -34,7 +34,7 @@ class UpdateHandler extends DefaultCommandHandler
     public UpdateHandler(CommandAdapter cmdAdapter)
     {
         super(cmdAdapter);
-        with(this);
+        //with(this);
     }
     
     @Override

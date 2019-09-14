@@ -52,7 +52,7 @@ public abstract class DefaultCommandHandler implements CommandHandler
     static final Assertable                          NOT_NULL          = AssertsFactory.getNotNull();
     private final static Map<String, ObjectCallback> OBJECTS_CALLBACKS = new HashMap<String, ObjectCallback>();
     CommandAdapter                                   cmdAdapter;
-    CommandHandler                                   handler;
+    //CommandHandler                                   handler;
     Command                                          command;
     ObjectProxy<?>                                   proxyParams;
     protected Queryable                              queryable;
@@ -66,12 +66,12 @@ public abstract class DefaultCommandHandler implements CommandHandler
         this.cmdAdapter = cmdAdapter;
     }
     
-    @Override
-    public CommandHandler with(CommandHandler handler)
-    {
-        this.handler = handler;
-        return this;
-    }
+//    @Override
+//    public CommandHandler with(CommandHandler handler)
+//    {
+//        this.handler = handler;
+//        return this;
+//    }
     
     @Override
     public CommandHandler with(ResultRow<?, ?> overloadResultRow)
@@ -128,7 +128,7 @@ public abstract class DefaultCommandHandler implements CommandHandler
     @Override
     public <T> T run()
     {
-        NOT_NULL.verify(this.cmdAdapter, this.queryable, this.sql, this.handler);
+        NOT_NULL.verify(this.cmdAdapter, this.queryable, this.sql);
         T t = null;
         Number rows = 0;
         if (LOG.isTraceEnabled())
@@ -142,7 +142,7 @@ public abstract class DefaultCommandHandler implements CommandHandler
             try
             {
                 preCallback();
-                this.command = handler.asCommand();
+                this.command = asCommand();
                 t = this.command.execute();
                 if (t instanceof Number)
                     rows = (Number) t;

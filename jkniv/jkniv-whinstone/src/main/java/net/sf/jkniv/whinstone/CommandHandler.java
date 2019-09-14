@@ -61,12 +61,12 @@ public interface CommandHandler
      */
     CommandHandler with(RepositoryConfig repositoryConfig);
 
-    /**
+    /*
      * Configure this life-cycle of command handler
      * @param handler The Command Handler with life-cycle implementation
      * @return a reference to this object.
      */
-    CommandHandler with(CommandHandler handler);
+    //CommandHandler with(CommandHandler handler);
     
     /**
      * Configure the life-cycle with a custom result parser rows of query.

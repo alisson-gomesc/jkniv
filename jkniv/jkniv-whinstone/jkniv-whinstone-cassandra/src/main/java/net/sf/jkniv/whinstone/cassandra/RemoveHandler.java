@@ -34,7 +34,7 @@ class RemoveHandler extends DefaultCommandHandler
     public RemoveHandler(CommandAdapter cmdAdapter)
     {
         super(cmdAdapter);
-        with(this);
+        //with(this);
     }
     
     @Override

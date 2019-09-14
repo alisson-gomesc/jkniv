@@ -20,6 +20,7 @@
 package net.sf.jkniv.whinstone;
 
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -32,20 +33,25 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.sqlegance.SqlType;
 
+/**
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ *
+ */
 class ObjectCallback
 {
     private final static Logger LOG = LoggerFactory.getLogger(ObjectCallback.class);
     private final static Assertable NOT_NULL = AssertsFactory.getNotNull();
     final static ObjectCallback EMPTY = new ObjectCallback(String.class);
-    private Class<?> goalClass;
+    private Class<?> targetClass;
     private Map<SqlType, Set<Method>> preMethods;
     private Map<SqlType, Set<Method>> postMethods;
     private Map<SqlType, Method> commitMethod;
     private Map<SqlType, Method> exceptionMethod;
     
     static {
-        
-        final Set<Method> M = new HashSet<Method>();
+        final Set<Method> M = Collections.emptySet();
         EMPTY.preMethods.put(SqlType.SELECT, M);
         EMPTY.preMethods.put(SqlType.INSERT, M);
         EMPTY.preMethods.put(SqlType.UPDATE, M);
@@ -64,24 +70,19 @@ class ObjectCallback
         EMPTY.exceptionMethod.put(SqlType.DELETE, null);
     }
     
-    public ObjectCallback(Class<?> goalClass)
+    public ObjectCallback(Class<?> targetClass)
     {
-        NOT_NULL.verify(goalClass);
-        this.goalClass = goalClass;
+        NOT_NULL.verify(targetClass);
+        this.targetClass = targetClass;
         this.preMethods = new HashMap<SqlType, Set<Method>>();
         this.postMethods = new HashMap<SqlType, Set<Method>>();
         this.commitMethod = new HashMap<SqlType, Method>();
         this.exceptionMethod = new HashMap<SqlType, Method>();
     }
 
-    public Class<?> getGoalClass()
+    public Class<?> getTargetClass()
     {
-        return goalClass;
-    }
-
-    public void setGoalClass(Class<?> goalClass)
-    {
-        this.goalClass = goalClass;
+        return targetClass;
     }
 
     public Set<Method> getPreMethods(SqlType sqlType)
@@ -93,10 +94,10 @@ class ObjectCallback
         return methods;
     }
 
-    public void addPreMethod(SqlType sqlType, Set<Method> preMethods)
-    {
-        this.preMethods.put(sqlType, preMethods);
-    }
+//    public void addPreMethod(SqlType sqlType, Set<Method> preMethods)
+//    {
+//        this.preMethods.put(sqlType, preMethods);
+//    }
 
     public void addPreMethod(SqlType sqlType, Method m)
     {
@@ -118,10 +119,10 @@ class ObjectCallback
         return methods;
     }
 
-    public void addPostMethod(SqlType sqlType, Set<Method> postMethods)
-    {
-        this.postMethods.put(sqlType, postMethods);
-    }
+//    public void addPostMethod(SqlType sqlType, Set<Method> postMethods)
+//    {
+//        this.postMethods.put(sqlType, postMethods);
+//    }
 
     public void addPostMethod(SqlType sqlType, Method m)
     {
@@ -161,7 +162,7 @@ class ObjectCallback
     @Override
     public String toString()
     {
-        return "ObjectCallback [clazz=" + goalClass + ", preMethods=" + preMethods + ", postMethods=" + postMethods
+        return "ObjectCallback [clazz=" + targetClass + ", preMethods=" + preMethods + ", postMethods=" + postMethods
                 + ", commitMethod=" + commitMethod + ", rollbackMethod=" + exceptionMethod + "]";
     }
 }

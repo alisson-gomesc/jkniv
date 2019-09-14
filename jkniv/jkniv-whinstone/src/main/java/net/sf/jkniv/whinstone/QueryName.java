@@ -141,9 +141,9 @@ class QueryName implements Queryable
     }
     
     @Override
-    public Object getParams()
+    public <T> T getParams()
     {
-        return this.params;
+        return (T)this.params;
     }
     
     @Override

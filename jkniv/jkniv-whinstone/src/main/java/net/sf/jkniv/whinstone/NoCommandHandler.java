@@ -42,11 +42,11 @@ public class NoCommandHandler implements CommandHandler
     
     private NoCommandHandler() { }
     
-    @Override
-    public CommandHandler with(CommandHandler handler)
-    {
-        return this;
-    }
+//    @Override
+//    public CommandHandler with(CommandHandler handler)
+//    {
+//        return this;
+//    }
     
     @Override
     public CommandHandler with(ResultRow<?, ?> overloadResultRow)
