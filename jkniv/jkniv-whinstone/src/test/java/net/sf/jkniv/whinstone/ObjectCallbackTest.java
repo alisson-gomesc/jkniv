@@ -44,15 +44,16 @@ public class ObjectCallbackTest
     public ExpectedException  catcher = ExpectedException.none();
 
     @Test
-    public void whenSetClassGoal() 
+    public void whenSetTagertClass() 
     {
         ObjectCallback callback = new ObjectCallback(getClass());
-        assertThat(callback.getGoalClass().getName(), is(ObjectCallbackTest.class.getName()));
+        assertThat(callback.getTargetClass().getName(), is(ObjectCallbackTest.class.getName()));
+        callback.toString();
         //assertThat(callback.getGoalClass(), instanceOf(Class.forName(ObjectCallbackTest.class.getName())));
     }
 
     @Test
-    public void whenSetNullGoalClass() 
+    public void whenSetNullTargetClass() 
     {
         catcher.expect(IllegalArgumentException.class);
         catcher.expectMessage("[Assertion failed] - this argument is required; it must not be null");
@@ -77,6 +78,8 @@ public class ObjectCallbackTest
         assertThat(callback.getPreMethods(SqlType.UPDATE), contains(methodPreUpdate));
         assertThat(callback.getPreMethods(SqlType.SELECT), contains(methodPreSelect));
         assertThat(callback.getPreMethods(SqlType.DELETE), contains(methodPreDelete));
+        
+        assertThat(callback.getPreMethods(SqlType.DELETE), contains(methodPreDelete));
     }
 
     @Test
@@ -98,7 +101,30 @@ public class ObjectCallbackTest
         assertThat(callback.getPostMethods(SqlType.SELECT), contains(methodPostSelect));
         assertThat(callback.getPostMethods(SqlType.DELETE), contains(methodPostDelete));
     }
+    
+    @Test
+    public void whenReplaceCommitMethod() throws SecurityException, NoSuchMethodException 
+    {
+        ObjectCallback callback = new ObjectCallback(AuthorFlat.class);
+        Method methodPostInsert = AuthorFlat.class.getMethod("callMePostAdd");
+        Method methodPostUpdate = AuthorFlat.class.getMethod("callMePostUpdate");
+        callback.addCommitMethod(SqlType.INSERT, methodPostInsert);
+        callback.addCommitMethod(SqlType.INSERT, methodPostUpdate);
 
+        assertThat(callback.getCommitMethod(SqlType.INSERT), is(methodPostUpdate));
+    }
+
+    @Test
+    public void whenReplaceExceptionMethod() throws SecurityException, NoSuchMethodException 
+    {
+        ObjectCallback callback = new ObjectCallback(AuthorFlat.class);
+        Method methodPostInsert = AuthorFlat.class.getMethod("callMePostAdd");
+        Method methodPostUpdate = AuthorFlat.class.getMethod("callMePostUpdate");
+        callback.addExceptionMethod(SqlType.INSERT, methodPostInsert);
+        callback.addExceptionMethod(SqlType.INSERT, methodPostUpdate);
+
+        assertThat(callback.getExceptionMethod(SqlType.INSERT), is(methodPostUpdate));
+    }
 
     @Test
     public void whenObjectCallbackReturnEmptyData()
@@ -121,7 +147,23 @@ public class ObjectCallbackTest
         methods = callback.getPreMethods(SqlType.DELETE);
         assertThat(methods, notNullValue());
         assertThat(methods.isEmpty(), is(true));
+
+        methods = callback.getPostMethods(SqlType.SELECT);
+        assertThat(methods, notNullValue());
+        assertThat(methods.isEmpty(), is(true));
         
+        methods = callback.getPostMethods(SqlType.INSERT);
+        assertThat(methods, notNullValue());
+        assertThat(methods.isEmpty(), is(true));
+        
+        methods = callback.getPostMethods(SqlType.UPDATE);
+        assertThat(methods, notNullValue());
+        assertThat(methods.isEmpty(), is(true));
+        
+        methods = callback.getPostMethods(SqlType.DELETE);
+        assertThat(methods, notNullValue());
+        assertThat(methods.isEmpty(), is(true));
+
         method = callback.getCommitMethod(SqlType.SELECT);
         assertThat(method, nullValue());
         method = callback.getCommitMethod(SqlType.INSERT);

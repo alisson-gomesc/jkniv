@@ -74,47 +74,49 @@ public class AuthorFlat
         this.callback = callback;
     }
     
-    
-    @PreCallBack(scope=CallbackScope.ADD)
+    @PreCallBack(scope = CallbackScope.ADD)
     public void callMePreAdd()
     {
         this.callback.add("PRE-ADD");
     }
-
-    @PreCallBack(scope=CallbackScope.REMOVE)
+    
+    @PreCallBack(scope = CallbackScope.REMOVE)
     public void callMePreRemove()
     {
         this.callback.add("PRE-REMOVE");
     }
     
-    @PreCallBack(scope=CallbackScope.SELECT)
+    @PreCallBack(scope = CallbackScope.SELECT)
     public void callMePreSelect()
     {
         this.callback.add("PRE-SELECT");
     }
     
-    @PreCallBack(scope=CallbackScope.UPDATE)
+    @PreCallBack(scope = CallbackScope.UPDATE)
     public void callMePreUpdate()
     {
         this.callback.add("PRE-UPDATE");
     }
-
-    @PostCallBack(scope=CallbackScope.ADD)
+    
+    @PostCallBack(scope = CallbackScope.ADD)
     public void callMePostAdd()
     {
         this.callback.add("POST-ADD");
     }
-    @PostCallBack(scope=CallbackScope.REMOVE)
+    
+    @PostCallBack(scope = CallbackScope.REMOVE)
     public void callMePostRemove()
     {
         this.callback.add("POST-REMOVE");
     }
-    @PostCallBack(scope=CallbackScope.SELECT)
+    
+    @PostCallBack(scope = CallbackScope.SELECT)
     public void callMePostSelect()
     {
         this.callback.add("POST-SELECT");
     }
-    @PostCallBack(scope=CallbackScope.UPDATE)
+    
+    @PostCallBack(scope = CallbackScope.UPDATE)
     public void callMePostUpdate()
     {
         this.callback.add("POST-UPDATE");

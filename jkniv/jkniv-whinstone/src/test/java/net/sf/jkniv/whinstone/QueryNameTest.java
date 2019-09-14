@@ -76,7 +76,7 @@ public class QueryNameTest
     @Test
     public void whenBookmarkIsEmptyAndRecieveValue()
     {
-        Queryable q = QueryFactory.of("query-name");
+        Queryable q = QueryFactory.of("dummy");
         assertThat(q.getBookmark(), nullValue());
         q.setBookmark("yuhlsdmk1");
         assertThat(q.getBookmark(), is("yuhlsdmk1"));
@@ -85,10 +85,10 @@ public class QueryNameTest
     @Test
     public void whenQueryIsPage()
     {
-        Queryable queryNoPage = QueryFactory.of("query-name");
+        Queryable queryNoPage = QueryFactory.of("dummy");
         assertThat(queryNoPage.isPaging(), is(false));
         assertThat(queryNoPage.hasRowsOffset(), is(false));
-        Queryable queryWithPage = QueryFactory.of("query-name", 10, 10);
+        Queryable queryWithPage = QueryFactory.of("dummy", 10, 10);
         assertThat(queryWithPage.isPaging(), is(true));
         assertThat(queryWithPage.hasRowsOffset(), is(true));
     }
@@ -96,7 +96,7 @@ public class QueryNameTest
     @Test
     public void whenQueryIsCache()
     {
-        Queryable query = QueryFactory.of("query-name");
+        Queryable query = QueryFactory.of("dummy");
         assertThat(query.isCached(), is(false));
         assertThat(query.isCacheIgnore(), is(false));
         query.cached();
@@ -110,10 +110,10 @@ public class QueryNameTest
     @Test
     public void whenQueryReturnType()
     {
-        Queryable query = QueryFactory.of("query-name");
+        Queryable query = QueryFactory.of("dummy");
         assertThat(query.getReturnType(), nullValue());
 
-        query = QueryFactory.of("query-name", AuthorFlat.class);
+        query = QueryFactory.of("dummy", AuthorFlat.class);
         assertThat(query.getReturnType(), notNullValue());
         assertThat(query.getReturnType().getName(), is(AuthorFlat.class.getName()));
     }
@@ -121,17 +121,17 @@ public class QueryNameTest
     @Test
     public void whenQueryBoundParameters()
     {
-        Queryable query = QueryFactory.of("query-name");
+        Queryable query = QueryFactory.of("dummy");
         assertThat(query.isBoundParams(), is(false));
 
-        Queryable queryWithParams = QueryFactory.of("query-name", "id", 1);
+        Queryable queryWithParams = QueryFactory.of("dummy", "id", 1);
         assertThat(queryWithParams.isBoundParams(), is(false));
     }
 
     @Test
     public void whenQuerySettingProperties()
     {
-        Queryable query = QueryFactory.of("query-name");
+        Queryable query = QueryFactory.of("dummy");
         query.setMax(20);
         query.setOffset(5);
         query.setTotal(15);
@@ -145,7 +145,7 @@ public class QueryNameTest
     @Test
     public void whenBoundPagingSql()
     {
-        Queryable query = QueryFactory.of("query-name", 5, 10);
+        Queryable query = QueryFactory.of("dummy", 5, 10);
         given(this.sql.isSelectable()).willReturn(true);
         given(this.sql.getSqlDialect()).willReturn(this.dialect);
         given(this.sql.getParamParser()).willReturn(this.paramParser);
@@ -165,7 +165,7 @@ public class QueryNameTest
     {
         catcher.expect(IllegalStateException.class);
         catcher.expectMessage("Needs to bind Sql before to call Queryable.queryCount");
-        Queryable query = QueryFactory.of("query-name");
+        Queryable query = QueryFactory.of("dummy");
         query.queryCount();
     }
     
@@ -174,7 +174,7 @@ public class QueryNameTest
     {
         catcher.expect(IllegalStateException.class);
         catcher.expectMessage("Needs to bind Sql before to call Queryable.query");
-        Queryable query = QueryFactory.of("query-name");
+        Queryable query = QueryFactory.of("dummy");
         query.query();
     }
     
@@ -183,72 +183,72 @@ public class QueryNameTest
     {
         catcher.expect(IllegalStateException.class);
         catcher.expectMessage("Needs to bind Sql before to call Queryable.getParamsName");
-        Queryable query = QueryFactory.of("query-name");
+        Queryable query = QueryFactory.of("dummy");
         query.getParamsNames();
     }
  
     @Test
     public void whenQueryCheckTypeOfParameters()
     {
-        assertThat(QueryFactory.of("query-name", "Bob Dylan").isTypeOfBasic(), is(true));
-        assertThat(QueryFactory.of("query-name", Integer.valueOf("1")).isTypeOfBasic(), is(true));
-        assertThat(QueryFactory.of("query-name", Short.valueOf("1")).isTypeOfBasic(), is(true));
-        assertThat(QueryFactory.of("query-name", Long.valueOf("1")).isTypeOfBasic(), is(true));
-        assertThat(QueryFactory.of("query-name", Float.valueOf("1.0")).isTypeOfBasic(), is(true));
-        assertThat(QueryFactory.of("query-name", Double.valueOf("1.0")).isTypeOfBasic(), is(true));
-        assertThat(QueryFactory.of("query-name", Character.valueOf('B')).isTypeOfBasic(), is(true));
-        assertThat(QueryFactory.of("query-name", Boolean.TRUE).isTypeOfBasic(), is(true));
-        assertThat(QueryFactory.of("query-name", new BigDecimal("1.0")).isTypeOfBasic(), is(true));
-        assertThat(QueryFactory.of("query-name", new BigInteger("1")).isTypeOfBasic(), is(true));
-        assertThat(QueryFactory.of("query-name", new AtomicInteger(1)).isTypeOfBasic(), is(true));
-        assertThat(QueryFactory.of("query-name", new AtomicLong(1L)).isTypeOfBasic(), is(true));
-        //assertThat(QueryFactory.of("query-name", new AtomicBoolean(true)).isTypeOfBasic(), is(true));
-        assertThat(QueryFactory.of("query-name", new AtomicLong(1L)).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("dummy", "Bob Dylan").isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("dummy", Integer.valueOf("1")).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("dummy", Short.valueOf("1")).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("dummy", Long.valueOf("1")).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("dummy", Float.valueOf("1.0")).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("dummy", Double.valueOf("1.0")).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("dummy", Character.valueOf('B')).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("dummy", Boolean.TRUE).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("dummy", new BigDecimal("1.0")).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("dummy", new BigInteger("1")).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("dummy", new AtomicInteger(1)).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("dummy", new AtomicLong(1L)).isTypeOfBasic(), is(true));
+        //assertThat(QueryFactory.of("dummy", new AtomicBoolean(true)).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("dummy", new AtomicLong(1L)).isTypeOfBasic(), is(true));
         // TODO new java 8 number types
         // "java.util.concurrent.atomic.DoubleAccumulator"
         // "java.util.concurrent.atomic.DoubleAdder"
         // "java.util.concurrent.atomic.LongAccumulator"
         // "java.util.concurrent.atomic.LongAdder"
-        //assertThat(QueryFactory.of("query-name", new Date()).isTypeOfBasic(), is(true));
-        //assertThat(QueryFactory.of("query-name", Calendar.getInstance()).isTypeOfBasic(), is(true));
+        //assertThat(QueryFactory.of("dummy", new Date()).isTypeOfBasic(), is(true));
+        //assertThat(QueryFactory.of("dummy", Calendar.getInstance()).isTypeOfBasic(), is(true));
 
-        assertThat(QueryFactory.ofArray("query-name", "A", "B", "C").isTypeOfArray(), is(true));
-        assertThat(QueryFactory.ofArray("query-name", "A", "B", "C").isTypeOfArrayFromBasicTypes(), is(true));
+        assertThat(QueryFactory.ofArray("dummy", "A", "B", "C").isTypeOfArray(), is(true));
+        assertThat(QueryFactory.ofArray("dummy", "A", "B", "C").isTypeOfArrayFromBasicTypes(), is(true));
         
         
         Object[] paramAsArray = new Object[1];
         Map<String, Object> map = new HashMap<String, Object>();
         paramAsArray[0] = map;
-        assertThat(QueryFactory.ofArray("query-name", paramAsArray).isTypeOfArrayFromMap(), is(true));
+        assertThat(QueryFactory.ofArray("dummy", paramAsArray).isTypeOfArrayFromMap(), is(true));
         
         paramAsArray[0] = new AuthorFlat();
-        assertThat(QueryFactory.ofArray("query-name", paramAsArray).isTypeOfArrayFromPojo(), is(true));
+        assertThat(QueryFactory.ofArray("dummy", paramAsArray).isTypeOfArrayFromPojo(), is(true));
 
         
         List<Object> paramsAsList = new ArrayList<Object>();
         paramsAsList.add(new String[]{"A", "B", "C"});
-        assertThat(QueryFactory.of("query-name", Arrays.asList("A", "B", "C")).isTypeOfCollection(), is(true));
-        assertThat(QueryFactory.of("query-name", Arrays.asList("A", "B", "C")).isTypeOfBulk(), is(false));
-        assertThat(QueryFactory.of("query-name", Arrays.asList("A", "B", "C")).isTypeOfCollectionFromBasicTypes(), is(true));
-        assertThat(QueryFactory.of("query-name", paramsAsList).isTypeOfCollectionFromArray(), is(true));
-        assertThat(QueryFactory.of("query-name", paramsAsList).isTypeOfBulk(), is(true));
+        assertThat(QueryFactory.of("dummy", Arrays.asList("A", "B", "C")).isTypeOfCollection(), is(true));
+        assertThat(QueryFactory.of("dummy", Arrays.asList("A", "B", "C")).isTypeOfBulk(), is(false));
+        assertThat(QueryFactory.of("dummy", Arrays.asList("A", "B", "C")).isTypeOfCollectionFromBasicTypes(), is(true));
+        assertThat(QueryFactory.of("dummy", paramsAsList).isTypeOfCollectionFromArray(), is(true));
+        assertThat(QueryFactory.of("dummy", paramsAsList).isTypeOfBulk(), is(true));
         
         paramsAsList.clear(); paramsAsList.add(map);
-        assertThat(QueryFactory.of("query-name", paramsAsList).isTypeOfCollectionFromMap(), is(true));
-        assertThat(QueryFactory.of("query-name", paramsAsList).isTypeOfBulk(), is(true));
+        assertThat(QueryFactory.of("dummy", paramsAsList).isTypeOfCollectionFromMap(), is(true));
+        assertThat(QueryFactory.of("dummy", paramsAsList).isTypeOfBulk(), is(true));
         paramsAsList.clear(); paramsAsList.add(new AuthorFlat());
-        assertThat(QueryFactory.of("query-name", paramsAsList).isTypeOfCollectionFromPojo(), is(true));
-        assertThat(QueryFactory.of("query-name", paramsAsList).isTypeOfBulk(), is(true));
+        assertThat(QueryFactory.of("dummy", paramsAsList).isTypeOfCollectionFromPojo(), is(true));
+        assertThat(QueryFactory.of("dummy", paramsAsList).isTypeOfBulk(), is(true));
 
-        assertThat(QueryFactory.of("query-name", "A", "B", "C").isTypeOfMap(), is(true));
-        assertThat(QueryFactory.of("query-name").isTypeOfNull(), is(true));
+        assertThat(QueryFactory.of("dummy", "A", "B", "C").isTypeOfMap(), is(true));
+        assertThat(QueryFactory.of("dummy").isTypeOfNull(), is(true));
 
     }
 
     @Test
     public void whenQueryIteratorOverArray()
     {
-        Iterator<Object> it = QueryFactory.ofArray("query-name", "A", "B", "C").iterator();
+        Iterator<Object> it = QueryFactory.ofArray("dummy", "A", "B", "C").iterator();
         assertThat(it.hasNext(), is(true));
         assertThat(it.next().toString(), is("A"));
         assertThat(it.hasNext(), is(true));
@@ -261,7 +261,7 @@ public class QueryNameTest
     @Test
     public void whenQueryIteratorOverCollection()
     {
-        Iterator<Object> it = QueryFactory.of("query-name", Arrays.asList("A", "B", "C")).iterator();
+        Iterator<Object> it = QueryFactory.of("dummy", Arrays.asList("A", "B", "C")).iterator();
         assertThat(it.hasNext(), is(true));
         assertThat(it.next().toString(), is("A"));
         assertThat(it.hasNext(), is(true));
@@ -276,7 +276,7 @@ public class QueryNameTest
     {
         catcher.expect(NullPointerException.class);
         catcher.expectMessage("Cannot iterate over null reference");
-        QueryFactory.of("query-name").iterator();
+        QueryFactory.of("dummy").iterator();
     }   
 
     @Test
@@ -284,6 +284,6 @@ public class QueryNameTest
     {
         catcher.expect(UnsupportedOperationException.class);
         catcher.expectMessage("Cannot iterate over another type of object, just Arrays or Collections");
-        QueryFactory.of("query-name", "A").iterator();
+        QueryFactory.of("dummy", "A").iterator();
     }
 }
