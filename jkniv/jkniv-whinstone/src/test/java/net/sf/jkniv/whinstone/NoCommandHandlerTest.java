@@ -22,7 +22,6 @@ package net.sf.jkniv.whinstone;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-<<<<<<< HEAD
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -108,37 +107,5 @@ public class NoCommandHandlerTest
             {
             }
         };
-=======
-import org.junit.Test;
-
-import net.sf.jkniv.sqlegance.SqlType;
-
-/**
- * Dummy/Empty implementation for {@link CommandHandler}
- * 
- * @author Alisson Gomes
- * @since 0.6.0
- *
- */
-public class NoCommandHandlerTest
-{
-    @Test
-    public void whenUseNoCommandHander() 
-    {
-        CommandHandler command = NoCommandHandler.getInstance();
-        
-        assertThat(command.asCommand(), instanceOf(Command.class));
-        assertThat(command.checkSqlType(SqlType.SELECT), instanceOf(CommandHandler.class));
-        assertThat(command.checkSqlType(SqlType.INSERT), instanceOf(CommandHandler.class));
-        assertThat(command.checkSqlType(SqlType.DELETE), instanceOf(CommandHandler.class));
-        assertThat(command.checkSqlType(SqlType.UPDATE), instanceOf(CommandHandler.class));
-        assertThat(command.checkSqlType(SqlType.PROCEDURE), instanceOf(CommandHandler.class));
-        assertThat(command.checkSqlType(SqlType.UNKNOWN), instanceOf(CommandHandler.class));
-        assertThat(command.postCallback(), instanceOf(CommandHandler.class));
-        assertThat(command.postCommit(), instanceOf(CommandHandler.class));
-        assertThat(command.postException(), instanceOf(CommandHandler.class));
-        assertThat(command.preCallback(), instanceOf(CommandHandler.class));
-        assertThat(command.run(), nullValue());
->>>>>>> refs/remotes/origin/master
     }
 }

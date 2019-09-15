@@ -137,7 +137,7 @@ class HttpCookieCommandAdapter implements CommandAdapter
     }
 
     @Override
-    public <T, R> Command asDeleteCommand(Queryable queryable)
+    public <T, R> Command asRemoveCommand(Queryable queryable)
     {
         CouchCommand command = null;
         String sql = queryable.query();

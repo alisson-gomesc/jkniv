@@ -39,14 +39,14 @@ public interface CommandAdapter
 
     <T, R> Command asUpdateCommand(Queryable queryable);
 
-    <T, R> Command asDeleteCommand(Queryable queryable);
+    <T, R> Command asRemoveCommand(Queryable queryable);
 
     <T, R> Command asAddCommand(Queryable queryable);
 
     void close(); //throws SQLException;
 
     /**
-     * create an adapter for a Prepared Statement
+     * To create an adapter for a Prepared Statement
      * @param sql statement
      * @param <T> TODO documents T param
      * @param <R> TODO documents R param

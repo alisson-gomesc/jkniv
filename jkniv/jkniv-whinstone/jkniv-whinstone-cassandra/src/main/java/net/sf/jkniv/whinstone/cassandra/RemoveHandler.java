@@ -40,7 +40,7 @@ class RemoveHandler extends DefaultCommandHandler
     @Override
     public Command asCommand()
     {
-        Command c = getCommandAdapter().asDeleteCommand(queryable);
+        Command c = getCommandAdapter().asRemoveCommand(queryable);
         c.with(this);
         c.with(this.handleableException);
         return c;

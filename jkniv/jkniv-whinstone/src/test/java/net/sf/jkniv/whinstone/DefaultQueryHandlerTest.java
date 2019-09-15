@@ -19,10 +19,11 @@
  */
 package net.sf.jkniv.whinstone;
 
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,18 +48,17 @@ import net.sf.jkniv.whinstone.classification.Transformable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 @SuppressWarnings("unchecked")
-public class DefaultCommandHandlerTest
+public class DefaultQueryHandlerTest
 {
     @Rule
     public ExpectedException  catcher = ExpectedException.none();
-    CommandHandler commandHandler = newCommandHandler();
+    CommandHandler commandHandler = newQueryHandler();
 
     @Test
     public void whenCommandHaventSqlInstanceOf() 
     {
         catcher.expect(IllegalArgumentException.class);
         catcher.expectMessage("Null Sql reference wasn't expected");
-        
         assertThat(commandHandler.checkSqlType(SqlType.SELECT), instanceOf(CommandHandler.class));
     }
 
@@ -66,9 +66,9 @@ public class DefaultCommandHandlerTest
     public void whenCommandHasDiferentSqlType() 
     {
         catcher.expect(IllegalArgumentException.class);
-        catcher.expectMessage("Cannot execute sql [dummy] as INSERT, SELECT was expect");
+        catcher.expectMessage("Cannot execute sql [dummy] as SELECT, INSERT was expect");
 
-        Sql sql = TagFactory.newInsert("dummy", LanguageType.NATIVE, new AnsiDialect());
+        Sql sql = TagFactory.newSelect("dummy", LanguageType.NATIVE, new AnsiDialect());
         Queryable queryable = QueryFactory.of("dummy");
         queryable.bind(sql);
         commandHandler.with(new HandlerException());
@@ -77,71 +77,7 @@ public class DefaultCommandHandlerTest
         commandHandler.with(newResultRow());
         commandHandler.with(sql);
 
-        assertThat(commandHandler.checkSqlType(SqlType.SELECT), instanceOf(CommandHandler.class));
-    }
-
-
-    @Test
-    public void whenUseInsertCommandHander() 
-    {
-        assertThat(commandHandler.asCommand(), instanceOf(Command.class));
-        Sql sql = TagFactory.newInsert("dummy", LanguageType.NATIVE, new AnsiDialect());
-        Queryable queryable = QueryFactory.of("dummy");
-        commandHandler.with(new HandlerException());
-        commandHandler.with(queryable);
-        commandHandler.with(new RepositoryConfig());
-        commandHandler.with(newResultRow());
-        commandHandler.with(sql);
-        
         assertThat(commandHandler.checkSqlType(SqlType.INSERT), instanceOf(CommandHandler.class));
-        assertThat(commandHandler.postCallback(), instanceOf(CommandHandler.class));
-        assertThat(commandHandler.postCommit(), instanceOf(CommandHandler.class));
-        assertThat(commandHandler.postException(), instanceOf(CommandHandler.class));
-        assertThat(commandHandler.preCallback(), instanceOf(CommandHandler.class));
-        assertThat(commandHandler.run(), notNullValue());
-    }
-
-    @Test
-    public void whenUseUpdateCommandHander() 
-    {
-        assertThat(commandHandler.asCommand(), instanceOf(Command.class));
-        Sql sql = TagFactory.newUpdate("dummy", LanguageType.NATIVE, new AnsiDialect());
-        Queryable queryable = QueryFactory.of("dummy");
-        queryable.bind(sql);
-        commandHandler.with(new HandlerException());
-        commandHandler.with(queryable);
-        commandHandler.with(new RepositoryConfig());
-        commandHandler.with(newResultRow());
-        commandHandler.with(sql);
-        
-        assertThat(commandHandler.checkSqlType(SqlType.UPDATE), instanceOf(CommandHandler.class));
-        assertThat(commandHandler.postCallback(), instanceOf(CommandHandler.class));
-        assertThat(commandHandler.postCommit(), instanceOf(CommandHandler.class));
-        assertThat(commandHandler.postException(), instanceOf(CommandHandler.class));
-        assertThat(commandHandler.preCallback(), instanceOf(CommandHandler.class));
-        assertThat(commandHandler.run(), notNullValue());
-    }
-
-    @Test
-    public void whenUseDeleteCommandHander() 
-    {
-        assertThat(commandHandler.asCommand(), instanceOf(Command.class));
-        
-        Sql sql = TagFactory.newDelete("dummy", LanguageType.NATIVE, new AnsiDialect());
-        Queryable queryable = QueryFactory.of("dummy");
-        queryable.bind(sql);
-        commandHandler.with(new HandlerException());
-        commandHandler.with(queryable);
-        commandHandler.with(new RepositoryConfig());
-        commandHandler.with(newResultRow());
-        commandHandler.with(sql);
-        
-        assertThat(commandHandler.checkSqlType(SqlType.DELETE), instanceOf(CommandHandler.class));        
-        assertThat(commandHandler.postCallback(), instanceOf(CommandHandler.class));
-        assertThat(commandHandler.postCommit(), instanceOf(CommandHandler.class));
-        assertThat(commandHandler.postException(), instanceOf(CommandHandler.class));
-        assertThat(commandHandler.preCallback(), instanceOf(CommandHandler.class));
-        assertThat(commandHandler.run(), notNullValue());
     }
 
     @Test
@@ -171,7 +107,7 @@ public class DefaultCommandHandlerTest
     {
         //catcher.expect(RepositoryException.class);
         //catcher.expectMessage("SQL Exception");
-        commandHandler = newCommandHandlerRunException();
+        commandHandler = newQueryHandlerRunException();
         assertThat(commandHandler.asCommand(), instanceOf(Command.class));
         
         Sql sql = TagFactory.newSelect("dummy", LanguageType.NATIVE, new AnsiDialect());
@@ -210,69 +146,9 @@ public class DefaultCommandHandlerTest
         assertThat(authorFlat.getCallback(), hasItems("PRE-SELECT","POST-SELECT"));
     }
 
-    @Test
-    public void whenUseCommandHanderVerifyInsertCallback() 
+    private CommandHandler newQueryHandler()
     {
-        Sql sql = TagFactory.newInsert("dummy", LanguageType.NATIVE, new AnsiDialect());
-        Queryable queryable = QueryFactory.of("dummy", new AuthorFlat());
-        queryable.bind(sql);
-        commandHandler.with(new HandlerException());
-        commandHandler.with(queryable);
-        commandHandler.with(new RepositoryConfig());
-        commandHandler.with(newResultRow());
-        commandHandler.with(sql);
-        
-        assertThat(commandHandler.checkSqlType(SqlType.INSERT), instanceOf(CommandHandler.class));
-        assertThat(commandHandler.run(), notNullValue());
-        
-        AuthorFlat authorFlat = queryable.getParams();
-        assertThat(authorFlat.getCallback().size(), is(2));
-        assertThat(authorFlat.getCallback(), hasItems("PRE-ADD","POST-ADD"));
-    }
-    
-    @Test
-    public void whenUseCommandHanderVerifyUpdateCallback() 
-    {
-        Sql sql = TagFactory.newUpdate("dummy", LanguageType.NATIVE, new AnsiDialect());
-        Queryable queryable = QueryFactory.of("dummy", new AuthorFlat());
-        queryable.bind(sql);
-        commandHandler.with(new HandlerException());
-        commandHandler.with(queryable);
-        commandHandler.with(new RepositoryConfig());
-        commandHandler.with(newResultRow());
-        commandHandler.with(sql);
-        
-        assertThat(commandHandler.checkSqlType(SqlType.UPDATE), instanceOf(CommandHandler.class));
-        assertThat(commandHandler.run(), notNullValue());
-        
-        AuthorFlat authorFlat = queryable.getParams();
-        assertThat(authorFlat.getCallback().size(), is(2));
-        assertThat(authorFlat.getCallback(), hasItems("PRE-UPDATE","POST-UPDATE"));
-    }
-
-    @Test
-    public void whenUseCommandHanderVerifyDeleteCallback() 
-    {
-        Sql sql = TagFactory.newDelete("dummy", LanguageType.NATIVE, new AnsiDialect());
-        Queryable queryable = QueryFactory.of("dummy", new AuthorFlat());
-        queryable.bind(sql);
-        commandHandler.with(new HandlerException());
-        commandHandler.with(queryable);
-        commandHandler.with(new RepositoryConfig());
-        commandHandler.with(newResultRow());
-        commandHandler.with(sql);
-        
-        assertThat(commandHandler.checkSqlType(SqlType.DELETE), instanceOf(CommandHandler.class));
-        assertThat(commandHandler.run(), notNullValue());
-        
-        AuthorFlat authorFlat = queryable.getParams();
-        assertThat(authorFlat.getCallback().size(), is(2));
-        assertThat(authorFlat.getCallback(), hasItems("PRE-REMOVE","POST-REMOVE"));
-    }
-
-    private CommandHandler newCommandHandler()
-    {
-        CommandHandler handler = new DefaultCommandHandler(newCommandAdapter())
+        CommandHandler handler = new DefaultQueryHandler(newCommandAdapter())
         {
             @Override
             public Command asCommand()
@@ -304,9 +180,9 @@ public class DefaultCommandHandlerTest
         return handler;
     }
 
-    private CommandHandler newCommandHandlerRunException()
+    private CommandHandler newQueryHandlerRunException()
     {
-        CommandHandler handler = new DefaultCommandHandler(newCommandAdapter())
+        CommandHandler handler = new DefaultQueryHandler(newCommandAdapter())
         {
             @Override
             public Command asCommand()
@@ -393,7 +269,7 @@ public class DefaultCommandHandlerTest
             @Override
             public <T, R> Command asSelectCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
             {
-                return null;
+                return newCommandAsSelect();
             }
             
             @Override
@@ -406,6 +282,31 @@ public class DefaultCommandHandlerTest
             public <T, R> Command asAddCommand(Queryable queryable)
             {
                 return null;
+            }
+        };
+    }
+    
+    private Command newCommandAsSelect()
+    {
+        return new Command()
+        {
+            
+            @Override
+            public Command with(CommandHandler commandHandler)
+            {
+                return this;
+            }
+            
+            @Override
+            public Command with(HandleableException handlerException)
+            {
+                return this;
+            }
+            
+            @Override
+            public <T> T execute()
+            {
+                return (T) new ArrayList();
             }
         };
     }
