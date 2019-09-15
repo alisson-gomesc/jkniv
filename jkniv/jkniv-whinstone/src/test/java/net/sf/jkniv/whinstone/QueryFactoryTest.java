@@ -36,7 +36,6 @@ import net.sf.jkniv.domain.flat.AuthorFlat;
 
 public class QueryFactoryTest
 {
-    
     @Test
     public void whenAsQueryableNamed()
     {
@@ -213,6 +212,56 @@ public class QueryFactoryTest
         assertThat(clone.isCached(), is(false));
         assertThat(clone.getReturnType().getName(), is(Map.class.getName()));
     }
+
+//    @Test
+//    public void whenCloneQueryPaginatedOverringReturnType()
+//    {
+//        Queryable q = QueryFactory.of("authors-page-override", 5, 10);
+//        assertThat(q.getOffset(), is(5));
+//        assertThat(q.getMax(), is(10));
+//        assertThat(q.getTotal(), is(-1L));
+//        assertThat(q.isScalar(), is(false));
+//        assertThat(q.isPaging(), is(true));
+//        assertThat(q.getReturnType(), nullValue());
+//
+//        Queryable clone = QueryFactory.clone(q, Map.class);
+//        assertThat(clone.getOffset(), is(5));
+//        assertThat(clone.getMax(), is(10));
+//        assertThat(clone.getTotal(), is(-1L));
+//        assertThat(clone.isScalar(), is(false));
+//        assertThat(clone.isPaging(), is(true));
+//        assertThat(clone.isScalar(), is(false));
+//        assertThat(clone.isCached(), is(false));
+//        assertThat(clone.getReturnType().getName(), is(Map.class.getName()));
+//    }
+
+//    @Test
+//    public void whenCloneQueryWithScalarAndCacheActive()
+//    {
+//        Queryable q = QueryFactory.of("authors-page-override", 5, 10);
+//        assertThat(q.getOffset(), is(5));
+//        assertThat(q.getMax(), is(10));
+//        assertThat(q.getTotal(), is(-1L));
+//        assertThat(q.isScalar(), is(false));
+//        assertThat(q.isPaging(), is(true));
+//        assertThat(q.getReturnType(), nullValue());
+//
+//        Queryable clone = QueryFactory.clone(q, null);        
+//        q.cached();
+//        q.scalar();
+//
+//        Queryable clone = QueryFactory.clone(q, Map.class);
+//        assertThat(clone.getOffset(), is(5));
+//        assertThat(clone.getMax(), is(10));
+//        assertThat(clone.getTotal(), is(-1L));
+//        assertThat(clone.isScalar(), is(false));
+//        assertThat(clone.isPaging(), is(true));
+//
+//        assertThat(clone.isScalar(), is(false));
+//        assertThat(clone.isCached(), is(false));
+//        assertThat(clone.getReturnType(), nullValue());
+//    }
+//    
 
     @Test
     public void whenCloneQueryWithScalarAndCacheActive()

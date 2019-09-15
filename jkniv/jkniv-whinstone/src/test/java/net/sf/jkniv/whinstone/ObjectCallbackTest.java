@@ -77,6 +77,8 @@ public class ObjectCallbackTest
         assertThat(callback.getPreMethods(SqlType.UPDATE), contains(methodPreUpdate));
         assertThat(callback.getPreMethods(SqlType.SELECT), contains(methodPreSelect));
         assertThat(callback.getPreMethods(SqlType.DELETE), contains(methodPreDelete));
+        
+        assertThat(callback.getPreMethods(SqlType.DELETE), contains(methodPreDelete));
     }
 
     @Test
