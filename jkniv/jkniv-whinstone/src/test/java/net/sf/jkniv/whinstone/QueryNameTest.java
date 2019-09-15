@@ -188,6 +188,7 @@ public class QueryNameTest
     @Test
     public void whenQueryCheckTypeOfParameters()
     {
+<<<<<<< HEAD
         assertThat(QueryFactory.of("dummy", "Bob Dylan").isTypeOfBasic(), is(true));
         assertThat(QueryFactory.of("dummy", Integer.valueOf("1")).isTypeOfBasic(), is(true));
         assertThat(QueryFactory.of("dummy", Short.valueOf("1")).isTypeOfBasic(), is(true));
@@ -202,6 +203,22 @@ public class QueryNameTest
         assertThat(QueryFactory.of("dummy", new AtomicLong(1L)).isTypeOfBasic(), is(true));
         //assertThat(QueryFactory.of("dummy", new AtomicBoolean(true)).isTypeOfBasic(), is(true));
         assertThat(QueryFactory.of("dummy", new AtomicLong(1L)).isTypeOfBasic(), is(true));
+=======
+        assertThat(QueryFactory.of("query-name", "Bob Dylan").isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("query-name", Integer.valueOf("1")).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("query-name", Short.valueOf("1")).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("query-name", Long.valueOf("1")).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("query-name", Float.valueOf("1.0")).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("query-name", Double.valueOf("1.0")).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("query-name", Character.valueOf('B')).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("query-name", Boolean.TRUE).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("query-name", new BigDecimal("1.0")).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("query-name", new BigInteger("1")).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("query-name", new AtomicInteger(1)).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("query-name", new AtomicLong(1L)).isTypeOfBasic(), is(true));
+        //assertThat(QueryFactory.of("query-name", new AtomicBoolean(true)).isTypeOfBasic(), is(true));
+        assertThat(QueryFactory.of("query-name", new AtomicLong(1L)).isTypeOfBasic(), is(true));
+>>>>>>> refs/remotes/origin/master
         // TODO new java 8 number types
         // "java.util.concurrent.atomic.DoubleAccumulator"
         // "java.util.concurrent.atomic.DoubleAdder"
