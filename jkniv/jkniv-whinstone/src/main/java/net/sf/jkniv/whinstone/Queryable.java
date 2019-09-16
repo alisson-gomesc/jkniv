@@ -58,7 +58,7 @@ public interface Queryable
      * 
      * @return the parameters to use at query.
      */
-    Object getParams();
+    <T> T getParams();
     
     /**
      * Recover the value of the named parameter (can be nested), with no type conversions.

@@ -229,7 +229,7 @@ class CassandraCommandAdapter implements CommandAdapter
     }
     
     @Override
-    public <T, R> Command asDeleteCommand(Queryable queryable)//, ResultRow<T, R> overloadResultRow)
+    public <T, R> Command asRemoveCommand(Queryable queryable)//, ResultRow<T, R> overloadResultRow)
     {
         return buildCommand(queryable);
     }

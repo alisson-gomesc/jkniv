@@ -15,7 +15,7 @@ class SelectHandler extends DefaultQueryHandler
     public SelectHandler(CommandAdapter cmdAdapter)
     {
         super(cmdAdapter);
-        with(this);
+        //with(this);
     }
     
     @Override

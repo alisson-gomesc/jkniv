@@ -22,9 +22,18 @@ package net.sf.jkniv.whinstone;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.junit.Test;
 
+import net.sf.jkniv.domain.flat.AuthorFlat;
+import net.sf.jkniv.exception.HandlerException;
+import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.SqlType;
+import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
+import net.sf.jkniv.sqlegance.builder.xml.TagFactory;
+import net.sf.jkniv.whinstone.classification.Transformable;
 
 /**
  * Dummy/Empty implementation for {@link CommandHandler}
@@ -47,10 +56,56 @@ public class NoCommandHandlerTest
         assertThat(command.checkSqlType(SqlType.UPDATE), instanceOf(CommandHandler.class));
         assertThat(command.checkSqlType(SqlType.PROCEDURE), instanceOf(CommandHandler.class));
         assertThat(command.checkSqlType(SqlType.UNKNOWN), instanceOf(CommandHandler.class));
+        
+        //command.with(newCommandHandler());
+        command.with(new HandlerException());
+        command.with(QueryFactory.of("dummy"));
+        command.with(new RepositoryConfig());
+        command.with(newResultRow());
+        command.with(TagFactory.newSelect("dummy", LanguageType.NATIVE));
+        
         assertThat(command.postCallback(), instanceOf(CommandHandler.class));
         assertThat(command.postCommit(), instanceOf(CommandHandler.class));
         assertThat(command.postException(), instanceOf(CommandHandler.class));
         assertThat(command.preCallback(), instanceOf(CommandHandler.class));
         assertThat(command.run(), nullValue());
+    }
+    
+    private CommandHandler newCommandHandler()
+    {
+        CommandHandler handler = new DefaultCommandHandler(null)
+        {
+            
+            @Override
+            public Command asCommand()
+            {
+                return null;
+            }
+        };
+        return handler;
+    }
+    
+    private ResultRow<AuthorFlat,ResultSet> newResultRow() {
+        
+        return new ResultRow<AuthorFlat, ResultSet>()
+        {
+
+            @Override
+            public AuthorFlat row(ResultSet rs, int rownum) throws SQLException
+            {
+                return null;
+            }
+
+            @Override
+            public Transformable<AuthorFlat> getTransformable()
+            {
+                return null;
+            }
+
+            @Override
+            public void setColumns(JdbcColumn<ResultSet>[] columns)
+            {
+            }
+        };
     }
 }

@@ -19,13 +19,23 @@
  */
 package net.sf.jkniv.domain.flat;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sf.jkniv.whinstone.PreCallBack;
+import net.sf.jkniv.whinstone.CallbackScope;
+import net.sf.jkniv.whinstone.PostCallBack;
+
 public class AuthorFlat
 {
-    private String author;
-    private String book;
-
+    private String       author;
+    private String       book;
+    
+    private List<String> callback;
+    
     public AuthorFlat()
     {
+        this.callback = new ArrayList<String>();
     }
     
     public AuthorFlat(String author, String book)
@@ -54,4 +64,62 @@ public class AuthorFlat
         this.book = book;
     }
     
+    public List<String> getCallback()
+    {
+        return callback;
+    }
+    
+    public void setCallback(List<String> callback)
+    {
+        this.callback = callback;
+    }
+    
+    @PreCallBack(scope = CallbackScope.ADD)
+    public void callMePreAdd()
+    {
+        this.callback.add("PRE-ADD");
+    }
+    
+    @PreCallBack(scope = CallbackScope.REMOVE)
+    public void callMePreRemove()
+    {
+        this.callback.add("PRE-REMOVE");
+    }
+    
+    @PreCallBack(scope = CallbackScope.SELECT)
+    public void callMePreSelect()
+    {
+        this.callback.add("PRE-SELECT");
+    }
+    
+    @PreCallBack(scope = CallbackScope.UPDATE)
+    public void callMePreUpdate()
+    {
+        this.callback.add("PRE-UPDATE");
+    }
+    
+    @PostCallBack(scope = CallbackScope.ADD)
+    public void callMePostAdd()
+    {
+        this.callback.add("POST-ADD");
+    }
+    
+    @PostCallBack(scope = CallbackScope.REMOVE)
+    public void callMePostRemove()
+    {
+        this.callback.add("POST-REMOVE");
+    }
+    
+    @PostCallBack(scope = CallbackScope.SELECT)
+    public void callMePostSelect()
+    {
+        this.callback.add("POST-SELECT");
+    }
+    
+    @PostCallBack(scope = CallbackScope.UPDATE)
+    public void callMePostUpdate()
+    {
+        this.callback.add("POST-UPDATE");
+    }
+
 }

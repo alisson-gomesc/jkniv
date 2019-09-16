@@ -20,6 +20,7 @@
 package net.sf.jkniv.whinstone;
 
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -28,21 +29,29 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.jkniv.asserts.Assertable;
+import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.sqlegance.SqlType;
 
+/**
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ *
+ */
 class ObjectCallback
 {
     private final static Logger LOG = LoggerFactory.getLogger(ObjectCallback.class);
+    private final static Assertable NOT_NULL = AssertsFactory.getNotNull();
     final static ObjectCallback EMPTY = new ObjectCallback(String.class);
-    private Class<?> clazz;
+    private Class<?> targetClass;
     private Map<SqlType, Set<Method>> preMethods;
     private Map<SqlType, Set<Method>> postMethods;
     private Map<SqlType, Method> commitMethod;
     private Map<SqlType, Method> exceptionMethod;
     
     static {
-        
-        final Set<Method> M = new HashSet<Method>();
+        final Set<Method> M = Collections.emptySet();
         EMPTY.preMethods.put(SqlType.SELECT, M);
         EMPTY.preMethods.put(SqlType.INSERT, M);
         EMPTY.preMethods.put(SqlType.UPDATE, M);
@@ -61,23 +70,19 @@ class ObjectCallback
         EMPTY.exceptionMethod.put(SqlType.DELETE, null);
     }
     
-    public ObjectCallback(Class<?> clazz)
+    public ObjectCallback(Class<?> targetClass)
     {
-        this.clazz = clazz;
+        NOT_NULL.verify(targetClass);
+        this.targetClass = targetClass;
         this.preMethods = new HashMap<SqlType, Set<Method>>();
         this.postMethods = new HashMap<SqlType, Set<Method>>();
         this.commitMethod = new HashMap<SqlType, Method>();
         this.exceptionMethod = new HashMap<SqlType, Method>();
     }
 
-    public Class<?> getClazz()
+    public Class<?> getTargetClass()
     {
-        return clazz;
-    }
-
-    public void setClazz(Class<?> clazz)
-    {
-        this.clazz = clazz;
+        return targetClass;
     }
 
     public Set<Method> getPreMethods(SqlType sqlType)
@@ -89,10 +94,10 @@ class ObjectCallback
         return methods;
     }
 
-    public void addPreMethod(SqlType sqlType, Set<Method> preMethods)
-    {
-        this.preMethods.put(sqlType, preMethods);
-    }
+//    public void addPreMethod(SqlType sqlType, Set<Method> preMethods)
+//    {
+//        this.preMethods.put(sqlType, preMethods);
+//    }
 
     public void addPreMethod(SqlType sqlType, Method m)
     {
@@ -114,10 +119,10 @@ class ObjectCallback
         return methods;
     }
 
-    public void addPostMethod(SqlType sqlType, Set<Method> postMethods)
-    {
-        this.postMethods.put(sqlType, postMethods);
-    }
+//    public void addPostMethod(SqlType sqlType, Set<Method> postMethods)
+//    {
+//        this.postMethods.put(sqlType, postMethods);
+//    }
 
     public void addPostMethod(SqlType sqlType, Method m)
     {
@@ -157,7 +162,7 @@ class ObjectCallback
     @Override
     public String toString()
     {
-        return "ObjectCallback [clazz=" + clazz + ", preMethods=" + preMethods + ", postMethods=" + postMethods
+        return "ObjectCallback [clazz=" + targetClass + ", preMethods=" + preMethods + ", postMethods=" + postMethods
                 + ", commitMethod=" + commitMethod + ", rollbackMethod=" + exceptionMethod + "]";
     }
 }

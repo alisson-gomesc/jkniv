@@ -34,13 +34,13 @@ class RemoveHandler extends DefaultCommandHandler
     public RemoveHandler(CommandAdapter cmdAdapter)
     {
         super(cmdAdapter);
-        with(this);
+        //with(this);
     }
     
     @Override
     public Command asCommand()
     {
-        Command c = getCommandAdapter().asDeleteCommand(queryable);
+        Command c = getCommandAdapter().asRemoveCommand(queryable);
         c.with(this);
         c.with(this.handleableException);
         return c;

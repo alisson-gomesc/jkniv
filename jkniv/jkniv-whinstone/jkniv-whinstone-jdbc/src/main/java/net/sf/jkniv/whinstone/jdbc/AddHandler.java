@@ -35,7 +35,7 @@ class AddHandler extends DefaultCommandHandler
     public AddHandler(CommandAdapter cmdAdapter)
     {
         super(cmdAdapter);
-        with(this);
+        //with(this);
     }
     
     @Override

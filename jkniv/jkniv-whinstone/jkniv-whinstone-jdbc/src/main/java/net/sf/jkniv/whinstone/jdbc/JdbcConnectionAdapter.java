@@ -426,7 +426,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
     }
     
     @Override
-    public <T, R> Command asDeleteCommand(Queryable queryable)
+    public <T, R> Command asRemoveCommand(Queryable queryable)
     {
         Command command = null;
         if (queryable.getDynamicSql().isBatch() || queryable.isTypeOfBulk())
