@@ -33,7 +33,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Manager the live of cache entries.
  * 
+<<<<<<< HEAD
  * To enable logging for cache configure logger category:
+=======
+ * To enable logging for cache configure log4j:
+>>>>>>> branch '0.6.0.M49' of https://github.com/alisson-gomesc/jkniv.git
  * 
  * <pre>
  *   &#60;logger name="jkniv.whinstone.CACHE" additivity="false"&#62;
