@@ -67,7 +67,7 @@ public class QueryNameTest
     {
         this.stmt = mock(StatementAdapter.class);
         this.sql = mock(Selectable.class);
-        this.dialect= mock(AnsiDialect.class);
+        this.dialect = mock(AnsiDialect.class);
         this.paramParser= mock(ParamParser.class);
     }
     

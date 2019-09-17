@@ -24,26 +24,35 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import net.sf.jkniv.cache.Cacheable;
 import net.sf.jkniv.domain.flat.AuthorFlat;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.xml.TagFactory;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
+import net.sf.jkniv.sqlegance.validation.ValidateType;
 import net.sf.jkniv.whinstone.classification.Transformable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
@@ -52,7 +61,25 @@ public class DefaultQueryHandlerTest
 {
     @Rule
     public ExpectedException  catcher = ExpectedException.none();
-    CommandHandler commandHandler = newQueryHandler();
+    private CommandHandler commandHandler = newQueryHandler();
+
+    private Command        commandMock;
+    private CommandHandler commandHandlerMock;
+    private CommandAdapter commandAdapterMock;
+    private Queryable      queryMock;
+    private Selectable     selectableMock;
+    private Cacheable<Object, Object>  cacheableMock;
+    
+    @Before
+    public void setUp()
+    {
+        this.commandAdapterMock = mock(CommandAdapter.class);
+        this.commandHandlerMock = mock(CommandHandler.class);
+        this.commandMock = mock(Command.class);
+        this.queryMock = mock(Queryable.class);
+        this.selectableMock = mock(Selectable.class);
+        this.cacheableMock = mock(Cacheable.class);
+    }
 
     @Test
     public void whenCommandHaventSqlInstanceOf() 
@@ -102,6 +129,43 @@ public class DefaultQueryHandlerTest
         assertThat(commandHandler.run(), notNullValue());
     }
 
+    @Test
+    public void whenUseSelectCommandHanderWithCache() 
+    {
+        List<AuthorFlat> list = new ArrayList<AuthorFlat>();
+        AuthorFlat a1 = new AuthorFlat("A", "B1"), a2 = new AuthorFlat("B", "B2"); 
+        list.add(a1);
+        list.add(a2);
+        given(this.cacheableMock.getEntry(anyString())).willReturn(null);
+        given(this.queryMock.isCacheIgnore()).willReturn(false);
+        given(this.selectableMock.isSelectable()).willReturn(true);
+        given(this.selectableMock.hasCache()).willReturn(true);
+        given(this.selectableMock.getCache()).willReturn(this.cacheableMock);
+        given(this.selectableMock.asSelectable()).willReturn(selectableMock);
+        given(this.selectableMock.getSqlType()).willReturn(SqlType.SELECT);
+        given(this.selectableMock.getLanguageType()).willReturn(LanguageType.NATIVE);
+        given(this.selectableMock.getValidateType()).willReturn(ValidateType.NONE);
+        given(this.commandHandlerMock.asCommand()).willReturn(this.commandMock);
+        given(this.commandMock.execute()).willReturn(list);
+        
+        DefaultQueryHandler queryHandler = new DefaultQueryHandler(commandAdapterMock)
+        {
+            @Override
+            public Command asCommand()
+            {
+                return commandMock;
+            }
+        };
+        
+        queryHandler.with(selectableMock);
+        queryHandler.with(queryMock);
+        
+        assertThat(queryHandler.checkSqlType(SqlType.SELECT), instanceOf(CommandHandler.class));
+        List<AuthorFlat> answer = queryHandler.run();
+        assertThat(answer, notNullValue());
+        assertThat(answer, hasItems(a1, a2));
+    }
+    
     @Test
     public void whenUseSelectCommandHanderWithException() 
     {
