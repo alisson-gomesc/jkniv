@@ -33,19 +33,28 @@ import org.slf4j.LoggerFactory;
 /**
  * Manager the live of cache entries.
  * 
+ * To enable logging for cache configure logger category:
+ * 
+ * <pre>
+ *   &#60;logger name="jkniv.whinstone.CACHE" additivity="false"&#62;
+ *     &#60;level value="debug" /&#62;
+ *     &#60;appender-ref ref="console" /&#62;
+ *   &#60;/logger&#62;
+ * </pre>
+ * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
 public class CacheManager<K, V>
 {
-    private static final Logger            LOG                 = LoggerFactory.getLogger(CacheManager.class);
-    private final ScheduledExecutorService scheduler           = Executors.newScheduledThreadPool(1);
-    private final Map<String, Cacheable<K,V>> caches;
-    private final Map<String, CachePolicy> policies;
-    private ScheduledFuture<?> poolScheduler; 
-    private final long delay;
-    private final long period;
-    private final CachePolicy policy;
+    private static final Logger                LOG       = LoggerFactory.getLogger("jkniv.utils.CACHE");
+    private final ScheduledExecutorService     scheduler = Executors.newScheduledThreadPool(1);
+    private final Map<String, Cacheable<K, V>> caches;
+    private final Map<String, CachePolicy>     policies;
+    private ScheduledFuture<?>                 poolScheduler;
+    private final long                         delay;
+    private final long                         period;
+    private final CachePolicy                  policy;
     
     /**
      * Create a new cache manager with 5 seconds for initial delay to first execution
@@ -55,7 +64,7 @@ public class CacheManager<K, V>
     {
         this(5L, TimeUnit.MINUTES.toSeconds(5L));
     }
-
+    
     /**
      * Create a new cache manager with 5 seconds for initial delay to first execution
      * and configurable parameter for {@code period} to between successive executions.
@@ -65,7 +74,7 @@ public class CacheManager<K, V>
     {
         this(5L, period);
     }
-
+    
     /**
      * Create a new cache manager with configurable {@code initialDelay} and {@code period}.
      * @param initialDelay seconds to the time to delay first execution
@@ -73,10 +82,10 @@ public class CacheManager<K, V>
      */
     public CacheManager(long initialDelay, long period)
     {
-        this(initialDelay, period, new TTLCachePolicy(CachePolicy.DEFAULT_TTL, CachePolicy.DEFAULT_TTI, TimeUnit.MINUTES));
+        this(initialDelay, period,
+                new TTLCachePolicy(CachePolicy.DEFAULT_TTL, CachePolicy.DEFAULT_TTI, TimeUnit.MINUTES));
     }
     
-
     /**
      * Create a new cache manager with configurable {@code initialDelay} and {@code period}.
      * @param delay seconds to the time to delay first execution
@@ -91,7 +100,7 @@ public class CacheManager<K, V>
         this.policies = new HashMap<String, CachePolicy>();
         this.policy = policy;
     }
-
+    
     /**
      * Add new policy with specific name
      * @param policyName name of policy
@@ -103,7 +112,7 @@ public class CacheManager<K, V>
     {
         return this.policies.put(policyName, policy);
     }
-
+    
     /**
      * Add a new cache for manager
      * @param key cache identify 
@@ -115,7 +124,7 @@ public class CacheManager<K, V>
     {
         return this.caches.put(key, cache);
     }
-
+    
     /**
      * Add a new cache for manager
      * @param key cache identify
@@ -135,7 +144,7 @@ public class CacheManager<K, V>
         cache.setPolicy(policy);
         return this.caches.put(key, cache);
     }
-
+    
     /**
      * Create a new Memory cache to be managed with a default policy
      * @param key cache identify
@@ -147,7 +156,7 @@ public class CacheManager<K, V>
         this.caches.put(key, cacheable);
         return cacheable;
     }
-
+    
     public void pooling()
     {
         //[jkniv-cache-man]
@@ -160,21 +169,22 @@ public class CacheManager<K, V>
     {
         LOG.info("Canceling cacheable manager");
         this.clear();
-        if(this.poolScheduler != null)
+        if (this.poolScheduler != null)
             this.poolScheduler.cancel(true);
     }
-
+    
     private void clear()
     {
         Set<Map.Entry<String, Cacheable<K, V>>> entries = caches.entrySet();
         for (Map.Entry<String, Cacheable<K, V>> entry : entries)
         {
+            LOG.info("Cache [{}] has {} objects removed", entry.getValue().getName(), entry.getValue().size());
             Cacheable<K, V> cacheable = entry.getValue();
             cacheable.clear();
         }
         caches.clear();
     }
-
+    
     /**
      * Returns the total of elements in all cache entries in this manager. 
      * @return the sum of all cache elements in this manager 
@@ -197,7 +207,7 @@ public class CacheManager<K, V>
     {
         return this.caches.size();
     }
-
+    
     class WatchCaches implements Runnable
     {
         private final Map<String, Cacheable<K, V>> caches;
@@ -211,7 +221,7 @@ public class CacheManager<K, V>
         public void run()
         {
             int i = 0;
-            LOG.info("Manager [{}] caches", caches.size());
+            LOG.info("Managing [{}] caches", caches.size());
             Set<Map.Entry<String, Cacheable<K, V>>> entries = caches.entrySet();
             for (Map.Entry<String, Cacheable<K, V>> entry : entries)
             {
@@ -223,11 +233,11 @@ public class CacheManager<K, V>
                     if (!cacheable.getPolicy().isAlive(value.getTimestamp().getTime()))
                     {
                         cacheable.remove(cacheableEntry.getKey());
-                        LOG.debug("Removing cache [{}]", cacheableEntry.getKey());
+                        LOG.debug("The object [{}] was removed from cache {}", cacheableEntry.getKey(), cacheable.getName());
                         i++;
                     }
                 }
-                LOG.info("[{}] objects are removed from [{}] cache", i, cacheable.getName());            
+                LOG.info("[{}] objects are removed from [{}] cache", i, cacheable.getName());
             }
         }
     }
