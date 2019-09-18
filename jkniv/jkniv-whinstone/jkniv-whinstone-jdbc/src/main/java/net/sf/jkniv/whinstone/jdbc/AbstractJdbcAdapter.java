@@ -191,8 +191,16 @@ abstract class AbstractJdbcAdapter implements ConnectionFactory
     {
         try
         {
-            if (isolation != null && isolation != Isolation.DEFAULT && supportsTransactionIsolationLevel(conn, isolation))
-                conn.setTransactionIsolation(isolation.level());
+            if (isolation != null && isolation != Isolation.DEFAULT)
+            {
+                if(supportsTransactionIsolationLevel(conn, isolation))
+                {
+                    conn.setTransactionIsolation(isolation.level());
+                    LOG.debug("Transaction level was change to {}", isolation);
+                }
+                else
+                    LOG.warn("Database connection {} doesn't support setTransactionIsolation to [{}]", conn, isolation);
+            }
         }
         catch (SQLException e)
         {
@@ -203,7 +211,7 @@ abstract class AbstractJdbcAdapter implements ConnectionFactory
             }
             catch (SQLException sqle)
             {
-                LOG.warn("Cannot read transaction isolation level. reason: " + sqle.getLocalizedMessage(), sqle);
+                LOG.warn("Cannot read transaction isolation level. reason: " + sqle.getMessage(), sqle);
             }
         }
     }
