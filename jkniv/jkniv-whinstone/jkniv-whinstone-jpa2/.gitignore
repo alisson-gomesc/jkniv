@@ -1,4 +1,7 @@
 /target/
+/.settings/
+/.classpath
+/.project
 /derby.log
 /THROUBLES
 /stracktrace-for-nodialect-mapping-jdbc.log

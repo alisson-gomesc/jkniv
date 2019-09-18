@@ -1,5 +1,7 @@
+/target/
+/.settings/
+/.classpath
+/.project
 /changelog.txt
 /TODO
-/.settings/
 /pom-jadira.xml
-/target/

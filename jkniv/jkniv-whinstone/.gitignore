@@ -1,3 +1,5 @@
 /target/
-/stacktrace-stop-war-cassandra.log
 /.settings/
+/.classpath
+/.project
+/stacktrace-stop-war-cassandra.log
