@@ -1,6 +1,6 @@
 /target/
-/stacktrace-closing.log
-/derby.log
 /.settings/
 /.classpath
 /.project
+/stacktrace-closing.log
+/derby.log

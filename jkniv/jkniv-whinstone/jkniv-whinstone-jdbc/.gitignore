@@ -1,4 +1,7 @@
 /target/
+/.settings/
+/.classpath
+/.project
 /derby.log
 /eclipselink-tx-trace.txt
 /hibernate-trace.txt
@@ -7,6 +10,3 @@
 /stmt-methods2.txt
 /TODO
 /whinstone-exception.txt
-/.settings/
-/.classpath
-/.project

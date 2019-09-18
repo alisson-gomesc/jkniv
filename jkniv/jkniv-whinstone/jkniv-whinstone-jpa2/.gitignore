@@ -1,9 +1,9 @@
 /target/
+/.settings/
+/.classpath
+/.project
 /derby.log
 /THROUBLES
 /stracktrace-for-nodialect-mapping-jdbc.log
 /stacktrace-for-duplicate-alias.log
-/.settings/
-/.classpath
-/.project
 /stacktrace.log
