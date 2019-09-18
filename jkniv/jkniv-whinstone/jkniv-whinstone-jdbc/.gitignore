@@ -1,4 +1,7 @@
 /target/
+/.settings/
+/.project
+/.classpath
 /derby.log
 /eclipselink-tx-trace.txt
 /hibernate-trace.txt
