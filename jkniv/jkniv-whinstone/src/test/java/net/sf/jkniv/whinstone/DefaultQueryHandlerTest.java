@@ -60,6 +60,7 @@ import net.sf.jkniv.sqlegance.builder.xml.TagFactory;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
+import net.sf.jkniv.sqlegance.params.ParamParserColonMark;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
 import net.sf.jkniv.whinstone.classification.Transformable;
 import net.sf.jkniv.whinstone.params.AutoBindParams;
@@ -84,6 +85,7 @@ public class DefaultQueryHandlerTest
     private Cacheable<Object, Object> cacheableMock;
     private Cacheable.Entry           entry;
     private AuthorFlat                a1, a2;
+    private static final long TOTAL_OF_RECORDS = 5;
     
     @Before
     public void setUp()
@@ -95,14 +97,14 @@ public class DefaultQueryHandlerTest
         list.add(a2);
         
         List<Number> listOfRows= new ArrayList<Number>();
-        listOfRows.add(Long.valueOf("5"));
+        listOfRows.add(TOTAL_OF_RECORDS);
         
         this.commandAdapterMock = mock(CommandAdapter.class);
         this.commandHandlerMock = mock(CommandHandler.class);
         this.commandMock = mock(Command.class);
         this.stmtAdapterMock = mock(StatementAdapter.class);
         this.autoBindMock = mock(AutoBindParams.class);
-        this.queryMock = mock(Queryable.class);
+        //this.queryMock = mock(Queryable.class);
         this.selectableMock = mock(Selectable.class);
         this.sqlDialect = mock(SqlDialect.class);
         this.cacheableMock = mock(Cacheable.class);
@@ -111,15 +113,18 @@ public class DefaultQueryHandlerTest
         //this.handlerException = mock(HandleableException.class);
         //this.exception = mock(Exception.class);
         
+       
         given(this.entry.getValue()).willReturn(list);
         given(this.cacheableMock.getEntry(anyObject())).willReturn(entry);
-        given(this.queryMock.isCacheIgnore()).willReturn(false);
-        given(this.queryMock.getDynamicSql()).willReturn(selectableMock);
-        given(this.queryMock.bind(stmtAdapterMock)).willReturn(autoBindMock);
+//        given(this.queryMock.isCacheIgnore()).willReturn(false);
+//        given(this.queryMock.getDynamicSql()).willReturn(selectableMock);
+//        given(this.queryMock.bind(stmtAdapterMock)).willReturn(autoBindMock);
         given(this.selectableMock.isSelectable()).willReturn(true);
         given(this.selectableMock.hasCache()).willReturn(false);
         given(this.selectableMock.getCache()).willReturn(null);
         given(this.selectableMock.asSelectable()).willReturn(selectableMock);
+        given(this.selectableMock.getSql(null)).willReturn("select id, name from author");
+        given(this.selectableMock.getParamParser()).willReturn(ParamParserColonMark.getInstance());
         given(this.selectableMock.getSqlType()).willReturn(SqlType.SELECT);
         given(this.selectableMock.getLanguageType()).willReturn(LanguageType.NATIVE);
         given(this.selectableMock.getValidateType()).willReturn(validateTypeMock);
@@ -187,8 +192,8 @@ public class DefaultQueryHandlerTest
     {
         given(this.cacheableMock.getEntry(anyString())).willReturn(null);
         given(this.selectableMock.getCache()).willReturn(this.cacheableMock);
-        given(this.queryMock.isPaging()).willReturn(true);
         
+        queryMock = QueryFactory.of("dummy", 5, 2);
         DefaultQueryHandler queryHandler = newDefaultQueryHandler();
         queryHandler.with(selectableMock);
         queryHandler.with(queryMock);
@@ -198,12 +203,10 @@ public class DefaultQueryHandlerTest
         List<AuthorFlat> answer = queryHandler.run();
         assertThat(answer, notNullValue());
         assertThat(answer, hasItems(a1, a2));
-        assertThat(queryMock.isCached(), is(false));
-        //assertThat(queryMock.getTotal(), is(5L)); FIXME queryable object must be checked values setted
         
-        verify(queryMock, never()).cached();
-        verify(queryMock).isCacheIgnore();
-        verify(queryMock).setTotal(any(Long.class));
+        assertThat(queryMock.isCached(), is(false));
+        assertThat(queryMock.getTotal(), is(TOTAL_OF_RECORDS));
+        
         verify(selectableMock).hasCache();
         verify(selectableMock).getValidateType();
         verify(validateTypeMock).assertValidate(anyObject());
@@ -217,6 +220,7 @@ public class DefaultQueryHandlerTest
         given(this.cacheableMock.getEntry(anyString())).willReturn(null);
         given(this.selectableMock.getCache()).willReturn(this.cacheableMock);
         
+        queryMock = QueryFactory.of("dummy");
         DefaultQueryHandler queryHandler = newDefaultQueryHandler();
         queryHandler.with(selectableMock);
         queryHandler.with(queryMock);
@@ -224,11 +228,10 @@ public class DefaultQueryHandlerTest
         assertThat(queryHandler.checkSqlType(SqlType.SELECT), instanceOf(CommandHandler.class));
         List<AuthorFlat> answer = queryHandler.run();
         assertThat(answer, notNullValue());
-        assertThat(answer, hasItems(a1, a2));
+        assertThat(answer, hasItems(a1, a2));        
         assertThat(queryMock.isCached(), is(false));
-        
-        verify(queryMock, never()).cached();
-        verify(queryMock).isCacheIgnore();
+        assertThat(queryMock.getTotal(), is(2L));
+
         verify(selectableMock).hasCache();
         verify(selectableMock).getValidateType();
         verify(validateTypeMock).assertValidate(anyObject());
@@ -242,6 +245,7 @@ public class DefaultQueryHandlerTest
         given(this.selectableMock.hasCache()).willReturn(true);
         given(this.selectableMock.getCache()).willReturn(this.cacheableMock);
         
+        queryMock = QueryFactory.of("dummy");
         DefaultQueryHandler queryHandler = newDefaultQueryHandler();
         
         queryHandler.with(selectableMock);
@@ -251,9 +255,9 @@ public class DefaultQueryHandlerTest
         List<AuthorFlat> answer = queryHandler.run();
         assertThat(answer, notNullValue());
         assertThat(answer, hasItems(a1, a2));
-        
-        verify(queryMock).cached();
-        verify(queryMock).isCacheIgnore();
+        assertThat(queryMock.isCached(), is(true));
+        assertThat(queryMock.getTotal(), is((long)Statement.SUCCESS_NO_INFO));
+
         verify(selectableMock, never()).hasCache();
         verify(selectableMock).getValidateType();
         verify(validateTypeMock).assertValidate(anyObject());

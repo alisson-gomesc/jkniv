@@ -88,6 +88,7 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
             else
             {
                 queryable.cached();
+                queryable.setTotal(Statement.SUCCESS_NO_INFO);
                 list = (List<?>) entry.getValue();
                 if (LOG.isDebugEnabled())
                     LOG.debug("{} object(s) was returned from [{}] cache using query [{}] since {} reach [{}] times",
