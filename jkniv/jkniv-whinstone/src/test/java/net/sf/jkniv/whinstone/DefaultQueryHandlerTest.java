@@ -75,21 +75,12 @@ public class DefaultQueryHandlerTest
     private Command                   commandMock;
     private CommandHandler            commandHandlerMock;
     private CommandAdapter            commandAdapterMock;
-<<<<<<< HEAD
     private StatementAdapter          stmtAdapterMock;
     private AutoBindParams            autoBindMock;
     private Queryable                 queryMock;
     private Selectable                selectableMock;
     private SqlDialect                sqlDialect;
     private ValidateType              validateTypeMock;
-=======
-    private Queryable                 queryMock;
-    private Selectable                selectableMock;
-    private SqlDialect                sqlDialect;
-    private ValidateType              validateTypeMock;
-    private HandleableException       handlerException;
-    private Exception                 exception;
->>>>>>> branch '0.6.0.M50' of https://github.com/alisson-gomesc/jkniv.git
     private Cacheable<Object, Object> cacheableMock;
     private Cacheable.Entry           entry;
     private AuthorFlat                a1, a2;
@@ -103,12 +94,9 @@ public class DefaultQueryHandlerTest
         list.add(a1);
         list.add(a2);
         
-<<<<<<< HEAD
         List<Number> listOfRows= new ArrayList<Number>();
         listOfRows.add(Long.valueOf("5"));
         
-=======
->>>>>>> branch '0.6.0.M50' of https://github.com/alisson-gomesc/jkniv.git
         this.commandAdapterMock = mock(CommandAdapter.class);
         this.commandHandlerMock = mock(CommandHandler.class);
         this.commandMock = mock(Command.class);
@@ -120,7 +108,6 @@ public class DefaultQueryHandlerTest
         this.cacheableMock = mock(Cacheable.class);
         this.entry = mock(Cacheable.Entry.class);
         this.validateTypeMock = mock(ValidateType.class);
-<<<<<<< HEAD
         //this.handlerException = mock(HandleableException.class);
         //this.exception = mock(Exception.class);
         
@@ -142,33 +129,9 @@ public class DefaultQueryHandlerTest
         given(this.commandAdapterMock.newStatement(anyString(), any(LanguageType.class))).willReturn(stmtAdapterMock);
         given(this.stmtAdapterMock.returnType(any(Class.class))).willReturn(stmtAdapterMock);
         given(this.stmtAdapterMock.rows()).willReturn(listOfRows);
-=======
-        this.handlerException = mock(HandleableException.class);
-        this.exception = mock(Exception.class);
-        
-        given(this.entry.getValue()).willReturn(list);
-        given(this.cacheableMock.getEntry(anyObject())).willReturn(entry);
-        given(this.queryMock.isCacheIgnore()).willReturn(false);
-        given(this.queryMock.getDynamicSql()).willReturn(selectableMock);
-        given(this.selectableMock.isSelectable()).willReturn(true);
-        given(this.selectableMock.hasCache()).willReturn(false);
-        given(this.selectableMock.getCache()).willReturn(null);
-        given(this.selectableMock.asSelectable()).willReturn(selectableMock);
-        given(this.selectableMock.getSqlType()).willReturn(SqlType.SELECT);
-        given(this.selectableMock.getLanguageType()).willReturn(LanguageType.NATIVE);
-        given(this.selectableMock.getValidateType()).willReturn(validateTypeMock);
-        given(this.selectableMock.getSqlDialect()).willReturn(this.sqlDialect);
-        given(this.commandHandlerMock.asCommand()).willReturn(this.commandMock);
-        given(this.commandMock.execute()).willReturn(list);
->>>>>>> branch '0.6.0.M50' of https://github.com/alisson-gomesc/jkniv.git
         given(this.sqlDialect.supportsFeature(SqlFeatureSupport.PAGING_ROUNDTRIP)).willReturn(true);
 
-<<<<<<< HEAD
         //doThrow(new RepositoryException()).when(this.handlerException).handle(this.exception);
-=======
-        doThrow(RepositoryException.class).when(this.handlerException).handle(this.exception);
->>>>>>> branch '0.6.0.M50' of https://github.com/alisson-gomesc/jkniv.git
-
     }
     
     @Test
@@ -229,7 +192,6 @@ public class DefaultQueryHandlerTest
         DefaultQueryHandler queryHandler = newDefaultQueryHandler();
         queryHandler.with(selectableMock);
         queryHandler.with(queryMock);
-<<<<<<< HEAD
         queryHandler.with(new HandlerException());
         
         assertThat(queryHandler.checkSqlType(SqlType.SELECT), instanceOf(CommandHandler.class));
@@ -242,18 +204,6 @@ public class DefaultQueryHandlerTest
         verify(queryMock, never()).cached();
         verify(queryMock).isCacheIgnore();
         verify(queryMock).setTotal(any(Long.class));
-=======
-        queryHandler.with(handlerException);
-        
-        assertThat(queryHandler.checkSqlType(SqlType.SELECT), instanceOf(CommandHandler.class));
-        List<AuthorFlat> answer = queryHandler.run();
-        assertThat(answer, notNullValue());
-        assertThat(answer, hasItems(a1, a2));
-        assertThat(queryMock.isCached(), is(false));
-        
-        verify(queryMock, never()).cached();
-        verify(queryMock).isCacheIgnore();
->>>>>>> branch '0.6.0.M50' of https://github.com/alisson-gomesc/jkniv.git
         verify(selectableMock).hasCache();
         verify(selectableMock).getValidateType();
         verify(validateTypeMock).assertValidate(anyObject());
