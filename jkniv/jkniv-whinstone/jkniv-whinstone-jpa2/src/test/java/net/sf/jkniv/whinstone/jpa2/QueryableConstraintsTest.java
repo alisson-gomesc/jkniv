@@ -46,7 +46,7 @@ public class QueryableConstraintsTest extends BaseTest
     {
         Queryable q = QueryFactory.of("getScalarAuthorName");
         catcher.expectMessage("No unique result for query [" + q.getName() + "] with params [" + q.getParams()
-                + "result fetch [5] rows, Repository.get(..) method must return just one row]");
+                + "result fetch [6] rows, Repository.get(..) method must return just one row]");
         
         getRepository().scalar(q);
     }
@@ -57,7 +57,7 @@ public class QueryableConstraintsTest extends BaseTest
         Queryable q = QueryFactory.of("getScalarAuthorName", Author.class);
         catcher.expect(NonUniqueResultException.class);
         catcher.expectMessage("No unique result for query [" + q.getName() + "] with params [" + q.getParams()
-                + "result fetch [5] rows, Repository.get(..) method must return just one row]");
+                + "result fetch [6] rows, Repository.get(..) method must return just one row]");
         
         getRepository().get(q);
     }

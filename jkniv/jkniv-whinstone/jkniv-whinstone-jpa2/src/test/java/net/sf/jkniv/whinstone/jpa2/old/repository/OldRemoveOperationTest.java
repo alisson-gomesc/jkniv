@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.acme.domain.orm.Book;
 
 @Ignore("AbstractRepository protected level")
-public class RemoveOperationTest extends BaseTest
+public class OldRemoveOperationTest extends BaseTest
 {
     //@Autowired
     BookRepository   bookRepository;
