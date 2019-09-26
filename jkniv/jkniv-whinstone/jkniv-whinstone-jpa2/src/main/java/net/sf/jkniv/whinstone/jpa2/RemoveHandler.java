@@ -17,30 +17,29 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc;
+package net.sf.jkniv.whinstone.jpa2;
 
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandAdapter;
 import net.sf.jkniv.whinstone.DefaultCommandHandler;
 
 /**
- * JDBC Command to handler the {@code Add} life-cycle.
+ * JDBC Command to handler the {@code Remove} life-cycle.
  * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
-class AddHandler extends DefaultCommandHandler
+class RemoveHandler extends DefaultCommandHandler
 {
-    public AddHandler(CommandAdapter cmdAdapter)
+    public RemoveHandler(CommandAdapter cmdAdapter)
     {
         super(cmdAdapter);
-        //with(this);
     }
     
     @Override
     public Command asCommand()
     {
-        Command c = getCommandAdapter().asAddCommand(queryable);
+        Command c = getCommandAdapter().asRemoveCommand(queryable);
         c.with(this);
         c.with(this.handleableException);
         return c;

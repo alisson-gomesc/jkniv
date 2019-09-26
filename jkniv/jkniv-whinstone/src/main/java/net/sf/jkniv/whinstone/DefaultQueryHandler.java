@@ -127,6 +127,7 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
                 {
                     // FIXME BUG select count with ORDER BY 
                     // The ORDER BY clause is invalid in views, inline functions, derived tables, subqueries, and common table expressions, unless TOP or FOR XML is also specified.
+                    queryable.setTotal(Statement.SUCCESS_NO_INFO);
                     LOG.error("Cannot count the total of rows from full query [{}]", queryable.getName(), e);
                 }
             }

@@ -215,6 +215,64 @@ public class DefaultQueryHandlerTest
     }
 
     @Test
+    public void whenUseSelectCommandHanderWithPagingNoSupportsRoundtrip()
+    {
+        given(this.cacheableMock.getEntry(anyString())).willReturn(null);
+        given(this.selectableMock.getCache()).willReturn(this.cacheableMock);
+        given(this.sqlDialect.supportsFeature(SqlFeatureSupport.PAGING_ROUNDTRIP)).willReturn(false);
+
+        queryMock = QueryFactory.of("dummy", 5, 2);
+        DefaultQueryHandler queryHandler = newDefaultQueryHandler();
+        queryHandler.with(selectableMock);
+        queryHandler.with(queryMock);
+        queryHandler.with(new HandlerException());
+        
+        assertThat(queryHandler.checkSqlType(SqlType.SELECT), instanceOf(CommandHandler.class));
+        List<AuthorFlat> answer = queryHandler.run();
+        assertThat(answer, notNullValue());
+        assertThat(answer, hasItems(a1, a2));
+        
+        assertThat(queryMock.isCached(), is(false));
+        assertThat(queryMock.getTotal(), is((long)Statement.SUCCESS_NO_INFO));
+        
+        verify(selectableMock).hasCache();
+        verify(selectableMock).getValidateType();
+        verify(validateTypeMock).assertValidate(anyObject());
+        verify(commandMock).execute();
+        verify(commandAdapterMock).close();
+    }
+
+
+    @Test
+    public void whenUseSelectCommandHanderWithPagingCannotCountTotalRecords()
+    {
+        given(this.cacheableMock.getEntry(anyString())).willReturn(null);
+        given(this.selectableMock.getCache()).willReturn(this.cacheableMock);
+        doThrow(new RepositoryException()).when(this.stmtAdapterMock).rows();
+
+        queryMock = QueryFactory.of("dummy", 5, 2);
+        DefaultQueryHandler queryHandler = newDefaultQueryHandler();
+        queryHandler.with(selectableMock);
+        queryHandler.with(queryMock);
+        queryHandler.with(new HandlerException());
+        
+        assertThat(queryHandler.checkSqlType(SqlType.SELECT), instanceOf(CommandHandler.class));
+        List<AuthorFlat> answer = queryHandler.run();
+        assertThat(answer, notNullValue());
+        assertThat(answer, hasItems(a1, a2));
+        
+        assertThat(queryMock.isCached(), is(false));
+        assertThat(queryMock.getTotal(), is((long)Statement.SUCCESS_NO_INFO));
+        
+        verify(selectableMock).hasCache();
+        verify(selectableMock).getValidateType();
+        verify(validateTypeMock).assertValidate(anyObject());
+        verify(commandMock).execute();
+        verify(commandAdapterMock).close();
+    }
+
+
+    @Test
     public void whenUseSelectCommandHanderWithCache()
     {
         given(this.cacheableMock.getEntry(anyString())).willReturn(null);

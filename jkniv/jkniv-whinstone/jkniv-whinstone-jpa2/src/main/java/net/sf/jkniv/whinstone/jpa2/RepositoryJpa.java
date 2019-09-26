@@ -262,6 +262,22 @@ class RepositoryJpa implements RepositoryJpaExtend
     @Override
     public <T> T add(T entity) // FIXME CommandHandler must be used (refactoring)
     {
+        /*
+        NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toAddName(entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as add command", queryName);
+
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new AddHandler(this.cmdAdapter);
+        handler.with(queryable)
+            .with(sql)
+            .checkSqlType(SqlType.INSERT)
+            .with(handlerException)
+            .run();
+        return entity;
+        */
         NOT_NULL.verify(entity);
         if (isTraceEnabled)
             LOG.trace("executing EntityManage.persist(" + entity.getClass().getName() + ")");
@@ -273,6 +289,17 @@ class RepositoryJpa implements RepositoryJpaExtend
     @Override
     public int add(Queryable queryable)// FIXME CommandHandler must be used (refactoring)
     {
+        NOT_NULL.verify(queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new AddHandler(this.cmdAdapter);
+        int rows = handler.with(queryable)
+                .with(sql)
+                .checkSqlType(SqlType.INSERT)
+                .with(handlerException)
+                .run();
+        return rows;
+
+        /*
         if (isTraceEnabled)
             LOG.trace("executing add method with query [" + queryable.getName() + "]");
         Sql isql = sqlContext.getQuery(queryable.getName());
@@ -285,6 +312,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         if (isDebugEnabled)
             LOG.debug("{} records was affected by add [{}] command", rowsAffected, queryable.getName());
         return rowsAffected;
+        */
     }
     
     /**
@@ -318,6 +346,16 @@ class RepositoryJpa implements RepositoryJpaExtend
     @Override
     public int remove(Queryable queryable)// FIXME CommandHandler must be used (refactoring)
     {
+        NOT_NULL.verify(queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = new RemoveHandler(this.cmdAdapter);
+        int rows = handler.with(queryable)
+                .with(sql)
+                .checkSqlType(SqlType.DELETE)
+                .with(handlerException)
+                .run();
+        return rows;
+        /*
         if (isTraceEnabled)
             LOG.trace("executing remove method with query [" + queryable.getName() + "]");
         Sql isql = sqlContext.getQuery(queryable.getName());
@@ -329,6 +367,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         if (isDebugEnabled)
             LOG.debug("{} records was affected by remove [{}] command", rowsAffected, queryable.getName());
         return rowsAffected;
+        */
     }
     
     public boolean enrich(Queryable queryable) //FIXME test enrich
@@ -356,7 +395,6 @@ class RepositoryJpa implements RepositoryJpaExtend
     @Override
     public int update(Queryable queryable)// FIXME CommandHandler must be used (refactoring)
     {
-        /*
         NOT_NULL.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
@@ -368,7 +406,7 @@ class RepositoryJpa implements RepositoryJpaExtend
                 .with(handlerException)
                 .run();
         return rows;
-*/
+        /*
         if (isTraceEnabled)
             LOG.trace("executing update method with query [" + queryable.getName() + "]");
         Sql isql = sqlContext.getQuery(queryable.getName());
@@ -382,6 +420,7 @@ class RepositoryJpa implements RepositoryJpaExtend
             LOG.debug("{} records was affected by update [{}] command", rowsAffected, queryable.getName());
         
         return rowsAffected;
+        */
     }
     
     /**

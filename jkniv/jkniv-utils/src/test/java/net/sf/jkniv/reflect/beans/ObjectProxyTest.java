@@ -42,7 +42,16 @@ import net.sf.jkniv.reflect.ReflectionException;
 
 public class ObjectProxyTest
 {
-    
+    // TODO test me
+    //java.lang.NoSuchMethodException: br.com.rwit.clsiv.api.ClsiPdvDTO.<init>(java.math.BigDecimal, java.lang.String, java.lang.String, java.math.BigDecimal, java.math.BigDecimal, java.lang.String, java.math.BigDecimal, null, java.lang.Character)
+    // at java.lang.Class.getConstructor0(Class.java:3082)
+    // at java.lang.Class.getConstructor(Class.java:1825)
+    // at net.sf.jkniv.reflect.beans.DefaultObjectProxy.newInstance(DefaultObjectProxy.java:276)
+    // at net.sf.jkniv.whinstone.jpa2.AbstractQueryJpaAdapter.cast(AbstractQueryJpaAdapter.java:173)
+    // at net.sf.jkniv.whinstone.jpa2.QueryJpaAdapter.getResultList(QueryJpaAdapter.java:142)
+    // at net.sf.jkniv.whinstone.jpa2.RepositoryJpa.list(RepositoryJpa.java:513)
+    // at br.com.rwit.clsiv.api.services.RouteTagService.listPlanPdvs(RouteTagService.java:81)
+
     @Test
     public void whenHaveInstance()
     {

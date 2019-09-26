@@ -523,7 +523,7 @@ class QueryName implements Queryable
     @Override
     public String query()
     {
-        if (!boundSql)//TODO test Queryable.query method
+        if (!boundSql)
             throw new IllegalStateException("Needs to bind Sql before to call Queryable.query");
         return (this.sqlTextPaginated == null ? this.sqlText : this.sqlTextPaginated);
     }
@@ -531,7 +531,7 @@ class QueryName implements Queryable
     @Override
     public String queryCount()
     {
-        if (!boundSql) //TODO test Queryable.queryCount method
+        if (!boundSql)
             throw new IllegalStateException("Needs to bind Sql before to call Queryable.queryCount");
         return this.sqlTextToCount;
     }

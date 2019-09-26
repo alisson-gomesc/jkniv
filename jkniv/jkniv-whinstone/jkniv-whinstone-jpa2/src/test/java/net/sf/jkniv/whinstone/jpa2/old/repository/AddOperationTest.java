@@ -19,12 +19,18 @@
  */
 package net.sf.jkniv.whinstone.jpa2.old.repository;
 
-import junit.framework.Assert;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
 import net.sf.jkniv.whinstone.jpa2.BaseTest;
 import net.sf.jkniv.whinstone.jpa2.BookRepository;
 
-import org.junit.Ignore;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,11 +53,11 @@ public class AddOperationTest extends BaseTest
         
         bookRepository.add(b1);
         
-        Assert.assertNotNull(b1.getId());
+        assertThat(b1.getId(), notNullValue());
         b2 = bookRepository.get(b1);
-        Assert.assertNotNull(b2);
-        Assert.assertEquals(name, b2.getName());
-        Assert.assertEquals(isbn, b2.getIsbn());
+        assertThat(b2, notNullValue());
+        assertThat(name, is(b2.getName()));
+        assertThat(isbn, is(b2.getIsbn()));
     }
 
 }

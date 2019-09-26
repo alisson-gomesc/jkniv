@@ -20,6 +20,7 @@
 package net.sf.jkniv.whinstone.jpa2.repository;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Assert;
@@ -50,11 +51,11 @@ public class AddOperationTest extends BaseTest
         
         repository.add(b1);
         
-        Assert.assertNotNull(b1.getId());
+        assertThat(b1.getId(), notNullValue());
         b2 = repository.get(b1);
-        Assert.assertNotNull(b2);
-        Assert.assertEquals(name, b2.getName());
-        Assert.assertEquals(isbn, b2.getIsbn());
+        assertThat(b2, notNullValue());
+        assertThat(name, is(b2.getName()));
+        assertThat(isbn, is(b2.getIsbn()));
     }
 
     @Test
@@ -68,7 +69,6 @@ public class AddOperationTest extends BaseTest
         Queryable queryable = QueryFactory.of("saveAuthor2Native", a);
         
         int rows = repository.add(queryable);
-        
         assertThat(rows, is(1));
     }
     

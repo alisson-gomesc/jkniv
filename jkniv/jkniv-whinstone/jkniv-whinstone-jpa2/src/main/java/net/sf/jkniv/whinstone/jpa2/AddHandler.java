@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc;
+package net.sf.jkniv.whinstone.jpa2;
 
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandAdapter;
@@ -34,7 +34,6 @@ class AddHandler extends DefaultCommandHandler
     public AddHandler(CommandAdapter cmdAdapter)
     {
         super(cmdAdapter);
-        //with(this);
     }
     
     @Override

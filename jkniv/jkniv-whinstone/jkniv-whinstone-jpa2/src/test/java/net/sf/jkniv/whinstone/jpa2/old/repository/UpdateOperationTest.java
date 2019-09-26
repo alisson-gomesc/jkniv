@@ -19,45 +19,75 @@
  */
 package net.sf.jkniv.whinstone.jpa2.old.repository;
 
-import org.junit.Ignore;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.acme.domain.orm.Book;
 
-import junit.framework.Assert;
+import net.sf.jkniv.whinstone.QueryFactory;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jpa2.BaseTest;
-import net.sf.jkniv.whinstone.jpa2.BookRepository;
 
-@Ignore("AbstractRepository protected level")
 public class UpdateOperationTest extends BaseTest
 {
-    //@Autowired
-    BookRepository   bookRepository;
     
     @Test
     @Transactional
-    public void updateTest()
+    public void whenUpdateEntityWithJpaMapping()
     {
+        Repository repository = getRepository();
         String name = "Spoke Zarathustra", isbn = "978-0679601753";
         Book b1 = new Book(), b2 = null, b3 = null;
         b1.setName(name);
         b1.setIsbn(isbn);
         
-        bookRepository.add(b1);
-        Assert.assertNotNull(b1.getId());
-        b2 = bookRepository.get(b1);
-        Assert.assertNotNull(b2);
-        Assert.assertEquals(name, b2.getName());
-        Assert.assertEquals(isbn, b2.getIsbn());
+        repository.add(b1);
+        assertThat(b1.getId(), notNullValue());
+        b2 = repository.get(b1);
+        assertThat(b2, notNullValue());
+        assertThat(name, is(b2.getName()));
+        assertThat(isbn, is(b2.getIsbn()));
         
         b2.setIsbn("000");
-        bookRepository.update(b2);
-        b3 = bookRepository.get(b1);
-        Assert.assertNotNull(b3);
-        Assert.assertEquals("000", b3.getIsbn());
+        repository.update(b2);
+        b3 = repository.get(b1);
+        assertThat(b3, notNullValue());
+        assertThat("000", is(b3.getIsbn()));
     }
-
+    
+    @Test
+    @Transactional
+    public void whenUpdateEntityWithNativeQuery()
+    {
+        Repository repository = getRepository();
+        String name = "Spoke Zarathustra", isbn = "978-0679601753";
+        Book newBook = new Book(), updateBook = null, checkBook = null;
+        newBook.setName(name);
+        newBook.setIsbn(isbn);
+        
+        repository.add(newBook);
+        assertThat(newBook.getId(), notNullValue());
+        updateBook = repository.get(newBook);
+        assertThat(updateBook, notNullValue());
+        assertThat(name, is(updateBook.getName()));
+        assertThat(isbn, is(updateBook.getIsbn()));
+        
+        updateBook.setIsbn("000");
+        updateBook.setVisualization(5);
+        
+        Queryable query = QueryFactory.ofArray("Book#update2", updateBook.getName(), updateBook.getIsbn(),
+                updateBook.getVisualization(), updateBook.getId());
+        repository.update(query);
+        
+        checkBook = repository.get(newBook);
+        assertThat(checkBook, notNullValue());
+        assertThat("000", is(checkBook.getIsbn()));
+        assertThat(5, is(checkBook.getVisualization()));
+    }
     
 }

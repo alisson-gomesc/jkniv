@@ -208,12 +208,12 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     
     private Constructor<T> getProbablyContructor() // TODO test me
     {
-        Constructor<T> constructor = null;
+        Constructor<T> constructorFound = null;
         double biggerProbably = 0D;
         
-        for (Constructor<T> c : this.constructors)
+        for (Constructor<T> classConstructor : this.constructors)
         {
-            Class<?>[] cargs = c.getParameterTypes();
+            Class<?>[] cargs = classConstructor.getParameterTypes();
             if (cargs != null && cargs.length == this.constructorArgs.length)
             {
                 double probably = 0D;
@@ -233,11 +233,11 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
                 if (probably > biggerProbably)
                 {
                     biggerProbably = probably;
-                    constructor = c;
+                    constructorFound = classConstructor;
                 }
             }
         }
-        return constructor;
+        return constructorFound;
     }
     
     private int countNotNull(Object[] args)
