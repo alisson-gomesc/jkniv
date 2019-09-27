@@ -20,6 +20,7 @@
 package net.sf.jkniv.reflect.beans;
 
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
@@ -33,7 +34,9 @@ import static org.hamcrest.CoreMatchers.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import net.sf.jkniv.acme.domain.Book;
 import net.sf.jkniv.domain.orm.Animal;
@@ -42,6 +45,9 @@ import net.sf.jkniv.reflect.ReflectionException;
 
 public class ObjectProxyTest
 {
+    @Rule
+    public ExpectedException catcher = ExpectedException.none();  
+
     // TODO test me
     //java.lang.NoSuchMethodException: br.com.rwit.clsiv.api.ClsiPdvDTO.<init>(java.math.BigDecimal, java.lang.String, java.lang.String, java.math.BigDecimal, java.math.BigDecimal, java.lang.String, java.math.BigDecimal, null, java.lang.Character)
     // at java.lang.Class.getConstructor0(Class.java:3082)
@@ -137,7 +143,7 @@ public class ObjectProxyTest
         ObjectProxy<ReflectionException> bean = new DefaultObjectProxy<ReflectionException>(ReflectionException.class);
         bean.setConstructorArgs("My Exception Message", new NoSuchMethodException("Im cause Exception"));
         ReflectionException exception = bean.newInstance();
-        Assert.assertNotNull("Cannot create Exception with super type", exception);
+        assertThat("Cannot create Exception with super type", exception, notNullValue());
     }
     
     @Test
@@ -158,7 +164,27 @@ public class ObjectProxyTest
         assertThat(methodDeprecated.size(), is(1));
         assertThat(methodBefore.get(0).getAnnotations()[0], instanceOf(Before.class));
         assertThat(methodDeprecated.get(0).getAnnotations()[0], instanceOf(Deprecated.class));
+    }
 
+    @Test
+    public void whenTryInvokeMethodThatNotExists()
+    {
+        catcher.expect(ClassNotFoundException.class);
+//        catcher.expectMessage("Cannot find method [talk] for [net.sf.jkniv.orm.Animal]");
+//        ObjectProxy<Animal> proxy = ObjectProxyFactory.newProxy(Animal.class);
+//        proxy.invoke("talk");
+        ObjectProxy<Animal> proxy = ObjectProxyFactory.newProxy(Animal.class);
+        proxy.hasAnnotation("net.sf.jkniv.AnnotationNotExist");
+
+    }
+
+    @Test
+    public void whenTryInvokeMethodThatNotExistsButIsMuted()
+    {
+        ObjectProxy<Animal> proxy = ObjectProxyFactory.newProxy(Animal.class);
+        proxy.mute(ClassNotFoundException.class);
+        proxy.hasAnnotation("net.sf.jkniv.AnnotationNotExist");
+        assertThat(true, is(true));
     }
 
 }

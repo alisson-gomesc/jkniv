@@ -279,6 +279,8 @@ class RepositoryJpa implements RepositoryJpaExtend
         return entity;
         */
         NOT_NULL.verify(entity);
+        //Queryable queryable = QueryFactory.of("dummy", entity);
+        //queryable.is
         if (isTraceEnabled)
             LOG.trace("executing EntityManage.persist(" + entity.getClass().getName() + ")");
         EntityManager em = getEntityManager();

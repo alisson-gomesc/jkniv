@@ -101,9 +101,10 @@ public class JpaCommandAdapter implements CommandAdapter
         else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
             returnType = queryable.getDynamicSql().getReturnTypeAsClass();
         
-        stmt.returnType(returnType).resultRow(overloadResultRow)
-                .oneToManies(queryable.getDynamicSql().asSelectable().getOneToMany())
-                .groupingBy(queryable.getDynamicSql().asSelectable().getGroupByAsList());
+        stmt.returnType(returnType)
+            .resultRow(overloadResultRow)
+            .oneToManies(queryable.getDynamicSql().asSelectable().getOneToMany())
+            .groupingBy(queryable.getDynamicSql().asSelectable().getGroupByAsList());
         
         if (queryable.isScalar())
             stmt.scalar();

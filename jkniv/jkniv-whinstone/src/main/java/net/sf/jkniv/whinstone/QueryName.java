@@ -19,6 +19,7 @@
  */
 package net.sf.jkniv.whinstone;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -32,6 +33,8 @@ import org.apache.commons.beanutils.PropertyUtils;
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.reflect.BasicType;
+import net.sf.jkniv.reflect.beans.ObjectProxy;
+import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
@@ -704,4 +707,24 @@ class QueryName implements Queryable
     {
         return this.bookmark;
     }
+/*
+    private void checkIfParamIsEntity() {
+        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(this.params);
+        proxy.ge
+        Class<? extends Annotation> entityAnnotation = (Class<? extends Annotation>) forName("javax.persistence.Entity");
+        if (returnTypeClass != null && entityAnnotation != null)
+            this.returnTypeManaged = returnTypeClass.isAnnotationPresent(entityAnnotation);
+        
+    }
+
+    private Class<?> forName(String typeOfClass)
+    {
+        try
+        {
+            return Class.forName(typeOfClass);
+        }
+        catch (ClassNotFoundException returnNULL) {  // TODO ClassNotFoundException NULL type, returnType undefined 
+        return null;
+    }
+*/
 }

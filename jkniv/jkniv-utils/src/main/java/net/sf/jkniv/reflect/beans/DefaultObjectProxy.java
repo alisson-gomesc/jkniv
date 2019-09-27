@@ -47,8 +47,8 @@ import net.sf.jkniv.reflect.ReflectionException;
  * TODO list Reflection ObjectProxy
  * Convert number type to near method BigDecimal->Double->Float->Integer->Float 
  * 
- * @author Alisson
- *
+ * @author Alisson Gomes
+ * @since 0.6.0
  * @param <T>
  */
 class DefaultObjectProxy<T> implements ObjectProxy<T>
@@ -118,6 +118,12 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         this.nestedInvoke = new NestedInvoke((PojoInvoke) pojoInvoke, this.handleException);
         this.collectionInvoke = new CollectionInvoke(this.handleException);
         this.mapInvoke = new MapInvoke(this.handleException);
+    }
+    
+    @Override
+    public void mute(Class<? extends Exception> ex)
+    {
+        this.handleException.isMute(ex);
     }
     
     private void init()
@@ -488,6 +494,16 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         }
         return methods;
     }
+
+    @Override
+    public boolean hasAnnotation(String annotation)
+    {
+        Class<? extends Annotation> entityAnnotation = (Class<? extends Annotation>) forName(annotation);
+        if (this.instance != null && entityAnnotation != null)
+            return  this.instance.getClass().isAnnotationPresent(entityAnnotation);
+        
+        return false;
+    }
     
     private Class<?>[] getTypes(Object[] args)
     {
@@ -502,7 +518,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         }
         return types;
     }
-    
+    /*
     // FIXME needs supports jdk types like Duration, LocalTime, LocalDateTime, etc
     private boolean isDateType(Class<?> type)// TODO test me Calendar and Gregoria Calendar case
     {
@@ -514,4 +530,5 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         return (Calendar.class.getCanonicalName().equals(type.getCanonicalName())
                 || GregorianCalendar.class.getCanonicalName().equals(type.getCanonicalName()));
     }
+    */
 }
