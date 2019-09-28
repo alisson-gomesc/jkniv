@@ -20,6 +20,9 @@
  */
 package net.sf.jkniv.acme.domain;
 
+import javax.annotation.Resource;
+
+@Resource
 public class Book
 {
     private Long   id;

@@ -109,4 +109,6 @@ public interface ObjectProxy<T>
     
     boolean hasAnnotation(String annotation);
 
+    boolean hasAnnotation(Class<? extends Annotation> annotation);
+
 }

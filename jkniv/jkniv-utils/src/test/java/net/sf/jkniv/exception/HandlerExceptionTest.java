@@ -88,12 +88,15 @@ public class HandlerExceptionTest
     }
     */
     
-    @Test(expected=RuntimeException.class)
-    public void whenTryChangeMuteStatusFromExceptionExists() throws Exception
+    @Test
+    public void whenChangeMuteStatusFromExceptionExists()
     {
         HandleableException handler = new HandlerException();
         handler.config(NullPointerException.class, RuntimeException.class, "The Nullpointer is not mute");
+        assertThat(handler.isMute(), is(false));
         handler.mute(NullPointerException.class);
+        assertThat(handler.isMute(), is(false));
+        assertThat(handler.isMute(NullPointerException.class), is(true));
     }
     
     /*

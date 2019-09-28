@@ -25,10 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -51,6 +48,7 @@ import net.sf.jkniv.reflect.ReflectionException;
  * @since 0.6.0
  * @param <T>
  */
+@SuppressWarnings("unchecked")
 class DefaultObjectProxy<T> implements ObjectProxy<T>
 {
     private static final Logger       LOG        = LoggerFactory.getLogger(DefaultObjectProxy.class);
@@ -123,7 +121,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     @Override
     public void mute(Class<? extends Exception> ex)
     {
-        this.handleException.isMute(ex);
+        this.handleException.mute(ex);
     }
     
     private void init()
@@ -498,13 +496,18 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     @Override
     public boolean hasAnnotation(String annotation)
     {
-        Class<? extends Annotation> entityAnnotation = (Class<? extends Annotation>) forName(annotation);
-        if (this.instance != null && entityAnnotation != null)
-            return  this.instance.getClass().isAnnotationPresent(entityAnnotation);
+        return hasAnnotation((Class<? extends Annotation>) forName(annotation));
+    }
+
+    @Override
+    public boolean hasAnnotation(Class<? extends Annotation> annotation)
+    {
+        if (this.instance != null && annotation != null)
+            return  this.instance.getClass().isAnnotationPresent(annotation);
         
         return false;
     }
-    
+
     private Class<?>[] getTypes(Object[] args)
     {
         if (args == null)

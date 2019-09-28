@@ -235,10 +235,15 @@ public class HandlerException implements HandleableException
     
     public void mute(Class<? extends Exception> clazz)
     {
-        if (this.exceptions.containsKey(clazz))
-            throw new UnsupportedOperationException("Already exist an exception configured to exception ["
-                    + clazz.getName() + "] cannot change mute status from exception");
-        MapException map = new MapException(clazz, RuntimeException.class, "", true);
+//        if (this.exceptions.containsKey(clazz))
+//            throw new UnsupportedOperationException("Already exist an exception configured to exception ["
+//                    + clazz.getName() + "] cannot change mute status from exception");
+
+        MapException map = this.exceptions.get(clazz);
+        if(map == null)
+            map = new MapException(clazz, RuntimeException.class, "", true);
+        else
+            map.mute();
         this.exceptions.put(clazz, map);
     }
     

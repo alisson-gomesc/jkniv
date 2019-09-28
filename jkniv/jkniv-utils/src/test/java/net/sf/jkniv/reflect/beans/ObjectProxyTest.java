@@ -169,13 +169,11 @@ public class ObjectProxyTest
     @Test
     public void whenTryInvokeMethodThatNotExists()
     {
-        catcher.expect(ClassNotFoundException.class);
-//        catcher.expectMessage("Cannot find method [talk] for [net.sf.jkniv.orm.Animal]");
-//        ObjectProxy<Animal> proxy = ObjectProxyFactory.newProxy(Animal.class);
-//        proxy.invoke("talk");
+        catcher.expect(ReflectionException.class);
+        catcher.expectMessage("[ClassNotFoundException] -> no definition for the class with the specified name could be found");
+
         ObjectProxy<Animal> proxy = ObjectProxyFactory.newProxy(Animal.class);
         proxy.hasAnnotation("net.sf.jkniv.AnnotationNotExist");
-
     }
 
     @Test
@@ -185,8 +183,15 @@ public class ObjectProxyTest
         proxy.mute(ClassNotFoundException.class);
         proxy.hasAnnotation("net.sf.jkniv.AnnotationNotExist");
         assertThat(true, is(true));
-        assertThat(true, is(true));
-        assertThat(true, is(true));
+    }
+
+    @Test
+    public void whenCheckIfAnnotationIsPresentAtClass()
+    {
+        ObjectProxy<Book> proxy = ObjectProxyFactory.newProxy(Book.class);
+        proxy.newInstance();
+        assertThat(proxy.hasAnnotation("javax.annotation.Resource"), is(true));
+        assertThat(proxy.hasAnnotation(javax.annotation.Resource.class), is(true));
     }
 
 }
