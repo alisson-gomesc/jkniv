@@ -105,7 +105,7 @@ public interface ObjectProxy<T>
      * a mute rule is used to not throw the exception. 
      * @param ex exception class type
      */
-    void mute(Class<? extends Exception> ex);
+    ObjectProxy<T> mute(Class<? extends Exception> ex);
     
     boolean hasAnnotation(String annotation);
 

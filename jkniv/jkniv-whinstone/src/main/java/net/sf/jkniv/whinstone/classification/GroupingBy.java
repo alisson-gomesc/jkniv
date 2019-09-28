@@ -78,7 +78,7 @@ public class GroupingBy<T, R> implements Groupable<T, R>
     @SuppressWarnings({ "rawtypes" })
     public void classifier(R row)
     {
-        ObjectProxy<R> rowProxy = ObjectProxyFactory.newProxy(row);
+        ObjectProxy<R> rowProxy = ObjectProxyFactory.of(row);
         StringBuilder keySb = new StringBuilder();
         for (String k : this.keys)
         {

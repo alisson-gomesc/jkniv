@@ -119,9 +119,10 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     }
     
     @Override
-    public void mute(Class<? extends Exception> ex)
+    public ObjectProxy<T> mute(Class<? extends Exception> ex)
     {
         this.handleException.mute(ex);
+        return this;
     }
     
     private void init()
@@ -502,8 +503,8 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     @Override
     public boolean hasAnnotation(Class<? extends Annotation> annotation)
     {
-        if (this.instance != null && annotation != null)
-            return  this.instance.getClass().isAnnotationPresent(annotation);
+        if (this.targetClass != null && annotation != null)
+            return  this.targetClass.isAnnotationPresent(annotation);
         
         return false;
     }

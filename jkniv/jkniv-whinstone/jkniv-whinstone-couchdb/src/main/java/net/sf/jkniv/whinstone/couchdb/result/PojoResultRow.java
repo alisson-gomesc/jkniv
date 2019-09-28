@@ -86,7 +86,7 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
     {
         final Map<OneToMany, Object> otmValues;
         otmValues = new HashMap<OneToMany, Object>();
-        ObjectProxy<T> proxyRow = ObjectProxyFactory.newProxy(returnType);
+        ObjectProxy<T> proxyRow = ObjectProxyFactory.of(returnType);
         for (JdbcColumn<ResultSet> column : columns)
         {
             OneToMany otm = getOneToMany(column, otmValues);
@@ -106,7 +106,7 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
             Collection<Object> collection = (Collection<Object>) proxyRow.invoke(getterName);
             if (collection == null)
             {
-                collection = (Collection<Object>) ObjectProxyFactory.newProxy(entry.getKey().getImpl()).newInstance();
+                collection = (Collection<Object>) ObjectProxyFactory.of(entry.getKey().getImpl()).newInstance();
                 proxyRow.invoke(setterName, collection);
             }
             //System.out.println("adding to collection: " + entry.getValue());
@@ -119,7 +119,7 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
     
     private void setValueOf(JdbcColumn<ResultSet> column, ResultSet rs, ObjectProxy<T> proxy) throws SQLException
     {
-        Injectable<T> reflect = InjectableFactory.newMethodInjection(proxy);
+        Injectable<T> reflect = InjectableFactory.of(proxy);
         Object jdbcObject = null;
         if (column.isBinary())
             jdbcObject = column.getBytes(rs);
@@ -149,7 +149,7 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
                 otm = m;
                 if (!otmValues.containsKey(otm))
                 {
-                    ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(otm.getTypeOf());
+                    ObjectProxy<?> proxy = ObjectProxyFactory.of(otm.getTypeOf());
                     otmValues.put(otm, proxy.newInstance());
                 }
                 break;
@@ -161,8 +161,8 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
     private void prepareOneToManyValue(OneToMany otm, JdbcColumn column, ResultSet rs,
             final Map<OneToMany, Object> otmValues) throws SQLException
     {
-        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(otmValues.get(otm));
-        Injectable<?> reflect = InjectableFactory.newMethodInjection(proxy);
+        ObjectProxy<?> proxy = ObjectProxyFactory.of(otmValues.get(otm));
+        Injectable<?> reflect = InjectableFactory.of(proxy);
         Object jdbcObject = null;
         if (column.isBinary())
             jdbcObject = column.getBytes(rs);

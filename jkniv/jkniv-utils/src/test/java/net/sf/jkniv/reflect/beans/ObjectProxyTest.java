@@ -46,8 +46,8 @@ import net.sf.jkniv.reflect.ReflectionException;
 public class ObjectProxyTest
 {
     @Rule
-    public ExpectedException catcher = ExpectedException.none();  
-
+    public ExpectedException catcher = ExpectedException.none();
+    
     // TODO test me
     //java.lang.NoSuchMethodException: br.com.rwit.clsiv.api.ClsiPdvDTO.<init>(java.math.BigDecimal, java.lang.String, java.lang.String, java.math.BigDecimal, java.math.BigDecimal, java.lang.String, java.math.BigDecimal, null, java.lang.Character)
     // at java.lang.Class.getConstructor0(Class.java:3082)
@@ -57,7 +57,17 @@ public class ObjectProxyTest
     // at net.sf.jkniv.whinstone.jpa2.QueryJpaAdapter.getResultList(QueryJpaAdapter.java:142)
     // at net.sf.jkniv.whinstone.jpa2.RepositoryJpa.list(RepositoryJpa.java:513)
     // at br.com.rwit.clsiv.api.services.RouteTagService.listPlanPdvs(RouteTagService.java:81)
-
+    
+    @Test
+    public void whenCreateProxyFromNullValue()
+    {
+        catcher.expect(ReflectionException.class);
+        catcher.expectMessage(
+                "Cannot create proxy object least one argument must be not null target [null], targetClass [null], className [null]");
+        String nullReference = null;
+        ObjectProxy<?> proxy = ObjectProxyFactory.of(nullReference);
+    }
+    
     @Test
     public void whenHaveInstance()
     {
@@ -80,7 +90,7 @@ public class ObjectProxyTest
         Assert.assertFalse(bean.hasInstance());
     }
     
-    @Test//(expected = NullPointerException.class)
+    @Test //(expected = NullPointerException.class)
     //@Ignore(value = "A null instance can be exists because now a scalar value could be generated")
     //public void whenHavenotInstanceThrowException()
     public void whenGetInstanceIsNull()
@@ -149,14 +159,13 @@ public class ObjectProxyTest
     @Test
     public void whenLookingForAnnotationMethods()
     {
-        ObjectProxy<Animal> proxy = ObjectProxyFactory.newProxy(Animal.class);
+        ObjectProxy<Animal> proxy = ObjectProxyFactory.of(Animal.class);
         List<Method> methods = proxy.getAnnotationMethods(Before.class);
         
         assertThat(methods.size(), is(1));
         assertThat(methods.get(0).getAnnotations()[0], instanceOf(Before.class));
         
-        
-        ObjectProxy<Cat> proxyCat = ObjectProxyFactory.newProxy(Cat.class);
+        ObjectProxy<Cat> proxyCat = ObjectProxyFactory.of(Cat.class);
         List<Method> methodBefore = proxyCat.getAnnotationMethods(Before.class);
         List<Method> methodDeprecated = proxyCat.getAnnotationMethods(Deprecated.class);
         
@@ -165,31 +174,40 @@ public class ObjectProxyTest
         assertThat(methodBefore.get(0).getAnnotations()[0], instanceOf(Before.class));
         assertThat(methodDeprecated.get(0).getAnnotations()[0], instanceOf(Deprecated.class));
     }
-
+    
     @Test
     public void whenTryInvokeMethodThatNotExists()
     {
         catcher.expect(ReflectionException.class);
-        catcher.expectMessage("[ClassNotFoundException] -> no definition for the class with the specified name could be found");
-
-        ObjectProxy<Animal> proxy = ObjectProxyFactory.newProxy(Animal.class);
+        catcher.expectMessage(
+                "[ClassNotFoundException] -> no definition for the class with the specified name could be found");
+        
+        ObjectProxy<Animal> proxy = ObjectProxyFactory.of(Animal.class);
         proxy.hasAnnotation("net.sf.jkniv.AnnotationNotExist");
     }
-
+    
     @Test
     public void whenTryInvokeMethodThatNotExistsButIsMuted()
     {
-        ObjectProxy<Animal> proxy = ObjectProxyFactory.newProxy(Animal.class);
+        ObjectProxy<Animal> proxy = ObjectProxyFactory.of(Animal.class);
         proxy.mute(ClassNotFoundException.class);
         proxy.hasAnnotation("net.sf.jkniv.AnnotationNotExist");
         assertThat(true, is(true));
     }
-
+    
     @Test
     public void whenCheckIfAnnotationIsPresentAtClass()
     {
-        ObjectProxy<Book> proxy = ObjectProxyFactory.newProxy(Book.class);
+        ObjectProxy<Book> proxy = ObjectProxyFactory.of(Book.class);
         proxy.newInstance();
+        assertThat(proxy.hasAnnotation("javax.annotation.Resource"), is(true));
+        assertThat(proxy.hasAnnotation(javax.annotation.Resource.class), is(true));
+    }
+
+    @Test
+    public void whenCheckIfAnnotationIsPresentWithoutInstanceOfClass()
+    {
+        ObjectProxy<Book> proxy = ObjectProxyFactory.of(Book.class);
         assertThat(proxy.hasAnnotation("javax.annotation.Resource"), is(true));
         assertThat(proxy.hasAnnotation(javax.annotation.Resource.class), is(true));
     }

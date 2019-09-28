@@ -40,7 +40,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
 {
     private static final Logger SQLLOG = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
     private static final Logger LOG = LoggerFactory.getLogger(JdbcConnectionAdapter.class);
-    private static final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
+    private static final Assertable NOT_NULL = AssertsFactory.getNotNull();
     //private static final HandleableException handlerException = new HandlerException(RepositoryException.class,
     //        "Exception at connection session running %s");
     

@@ -49,7 +49,7 @@ public class GroupingProtoBy<T, R>
     @SuppressWarnings({"unchecked","rawtypes"})
     public void classifier(R row)
     {
-        ObjectProxy<R> rowProxy = ObjectProxyFactory.newProxy(row);
+        ObjectProxy<R> rowProxy = ObjectProxyFactory.of(row);
         StringBuilder keySb = new StringBuilder();
         for (String k : this.keys)
         {

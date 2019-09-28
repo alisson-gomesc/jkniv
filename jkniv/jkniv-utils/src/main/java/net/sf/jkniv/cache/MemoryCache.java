@@ -48,7 +48,7 @@ import net.sf.jkniv.asserts.AssertsFactory;
  */
 public class MemoryCache<K, V> implements Cacheable<K, V>
 {
-    private static final transient Assertable    notNull = AssertsFactory.getNotNull();
+    private static final Assertable    notNull = AssertsFactory.getNotNull();
     private String                               name;
     private CachePolicy                          policy;
     private ConcurrentMap<K, Cacheable.Entry<V>> cache;

@@ -31,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.exception.HandleableException;
-import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.experimental.TimerKeeper;
 import net.sf.jkniv.reflect.NumberFactory;
 import net.sf.jkniv.reflect.Numerical;
@@ -340,7 +339,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
             List<Object[]> listArray = (List<Object[]>) list;
             for (Object[] o : listArray)
             {
-                ObjectProxy<T> proxy = ObjectProxyFactory.newProxy(returnType);
+                ObjectProxy<T> proxy = ObjectProxyFactory.of(returnType);
                 proxy.setConstructorArgs(o);
                 T casted = proxy.newInstance();
                 castedList.add(casted);

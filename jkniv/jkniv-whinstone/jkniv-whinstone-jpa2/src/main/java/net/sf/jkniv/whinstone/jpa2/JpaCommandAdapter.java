@@ -48,9 +48,9 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  */
 public class JpaCommandAdapter implements CommandAdapter
 {
-    private static final transient Logger     LOG      = LoggerFactory.getLogger();
-    private static final transient Logger     SQLLOG   = net.sf.jkniv.whinstone.jpa2.LoggerFactory.getLogger();
-    private static final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
+    private static final Logger     LOG      = LoggerFactory.getLogger();
+    private static final Logger     SQLLOG   = net.sf.jkniv.whinstone.jpa2.LoggerFactory.getLogger();
+    private static final Assertable NOT_NULL = AssertsFactory.getNotNull();
     private final String                      contextName;
     private final HandleableException         handlerException;
     private JpaEmFactory                      emFactory;
@@ -131,8 +131,7 @@ public class JpaCommandAdapter implements CommandAdapter
         return buildCommand(queryable);
     }
     
-    @SuppressWarnings(
-    { "unchecked", "rawtypes" })
+    @SuppressWarnings({ "rawtypes" })
     private <T, R> Command buildCommand(Queryable queryable)
     {
         Command command = null;

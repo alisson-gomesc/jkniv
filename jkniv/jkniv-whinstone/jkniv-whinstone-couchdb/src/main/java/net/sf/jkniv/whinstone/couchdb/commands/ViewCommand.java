@@ -103,7 +103,7 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
                         }
                         else
                         {
-                            ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(o);
+                            ObjectProxy<?> proxy = ObjectProxyFactory.of(o);
                             if (proxy.hasMethod("setId"))
                                 proxy.invoke("setId", map.get("id"));
                             if (proxy.hasMethod("setKey"))

@@ -137,7 +137,7 @@ class QueryJpaAdapter extends AbstractQueryJpaAdapter
             ret = list.get(0);
             if (!queryable.isScalar() && isql.getLanguageType() == LanguageType.NATIVE && isql.getReturnType() != null)
             {
-                ObjectProxy<T> proxy = ObjectProxyFactory.newProxy(isql.getReturnType());
+                ObjectProxy<T> proxy = ObjectProxyFactory.of(isql.getReturnType());
                 proxy.setConstructorArgs((Object[])ret);// test when return value is not array
                 ret = proxy.newInstance();
             }

@@ -42,7 +42,7 @@ public class CallbackProcessorTest
     @Test
     public void whenCallbackProcessoFindAnnotatedMethods()  throws SecurityException, NoSuchMethodException
     {
-        ObjectProxy<AuthorFlat> proxy = ObjectProxyFactory.newProxy(AuthorFlat.class); 
+        ObjectProxy<AuthorFlat> proxy = ObjectProxyFactory.of(AuthorFlat.class); 
         CallbackProcessor processor = new CallbackProcessor(proxy);
         ObjectCallback callback = processor.loadCallbackEvents();
         assertThat(callback, notNullValue());
@@ -71,7 +71,7 @@ public class CallbackProcessorTest
     @Test
     public void whenToString()
     {
-        ObjectProxy<AuthorFlat> proxy = ObjectProxyFactory.newProxy(AuthorFlat.class); 
+        ObjectProxy<AuthorFlat> proxy = ObjectProxyFactory.of(AuthorFlat.class); 
         assertThat(new CallbackProcessor(proxy).toString(),notNullValue());
     }
 }

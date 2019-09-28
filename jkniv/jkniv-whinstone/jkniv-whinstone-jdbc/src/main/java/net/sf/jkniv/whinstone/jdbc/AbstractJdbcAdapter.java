@@ -45,7 +45,7 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
 abstract class AbstractJdbcAdapter implements ConnectionFactory
 {
     protected transient Logger                LOG         = LoggerFactory.getLogger(getClass());
-    private final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
+    private final static Assertable NOT_NULL = AssertsFactory.getNotNull();
     protected final String                           contextName;
     protected HandleableException handlerException;
     

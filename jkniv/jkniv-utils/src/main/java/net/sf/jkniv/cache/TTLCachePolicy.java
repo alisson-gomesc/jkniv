@@ -42,8 +42,8 @@ import net.sf.jkniv.asserts.AssertsFactory;
  */
 public class TTLCachePolicy implements CachePolicy
 {
-    private static final transient Logger LOG = LoggerFactory.getLogger(TTLCachePolicy.class);
-    private static final transient Assertable notNull = AssertsFactory.getNotNull();
+    private static final Logger LOG = LoggerFactory.getLogger(TTLCachePolicy.class);
+    private static final Assertable notNull = AssertsFactory.getNotNull();
 
     private final static long KB_FACTOR = 1000;
     private final static long KIB_FACTOR = 1024;

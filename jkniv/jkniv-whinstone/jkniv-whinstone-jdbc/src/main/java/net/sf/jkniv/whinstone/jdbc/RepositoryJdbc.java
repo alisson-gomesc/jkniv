@@ -584,7 +584,7 @@ class RepositoryJdbc implements Repository
         Object o = get(queryable);
         if(o != null)
         {
-            ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(queryable.getParams());
+            ObjectProxy<?> proxy = ObjectProxyFactory.of(queryable.getParams());
             proxy.merge(o);
             enriched = true;
         }
@@ -804,7 +804,7 @@ class RepositoryJdbc implements Repository
     private void configQueryNameStrategy()
     {
         String nameStrategy = repositoryConfig.getQueryNameStrategy();
-        ObjectProxy<? extends QueryNameStrategy> proxy = ObjectProxyFactory.newProxy(nameStrategy);
+        ObjectProxy<? extends QueryNameStrategy> proxy = ObjectProxyFactory.of(nameStrategy);
         this.strategyQueryName = proxy.newInstance();
     }
     
@@ -950,9 +950,9 @@ class RepositoryJdbc implements Repository
         ObjectProxy<? extends ConnectionFactory> factory = null;
         
         if (adpterClassName == null)
-            factory = ObjectProxyFactory.newProxy(defaultClass);
+            factory = ObjectProxyFactory.of(defaultClass);
         else
-            factory = ObjectProxyFactory.newProxy(adpterClassName);
+            factory = ObjectProxyFactory.of(adpterClassName);
         
         if (args != null)
         {

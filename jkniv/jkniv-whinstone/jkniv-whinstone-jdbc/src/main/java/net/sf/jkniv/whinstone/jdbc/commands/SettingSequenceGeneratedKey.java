@@ -94,7 +94,7 @@ class SettingSequenceGeneratedKey //implements AutoKey
             }
             else
             {
-                ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(queryable.getParams());
+                ObjectProxy<?> proxy = ObjectProxyFactory.of(queryable.getParams());
                 setValue(proxy, properties[0], nextValue);
             }
         }

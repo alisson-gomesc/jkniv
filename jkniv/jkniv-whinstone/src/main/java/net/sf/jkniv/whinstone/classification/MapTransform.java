@@ -39,8 +39,8 @@ public class MapTransform implements Transformable<Map<String, Object>>
     @Override
     public <T> T transform(Map<String, Object> row, Class<T> type)
     {
-        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(type);
-        Injectable<?> inject = InjectableFactory.newMethodInjection(proxy);
+        ObjectProxy<?> proxy = ObjectProxyFactory.of(type);
+        Injectable<?> inject = InjectableFactory.of(proxy);
         for(String key : row.keySet())
         {
             Object v = row.get(key);
@@ -55,8 +55,8 @@ public class MapTransform implements Transformable<Map<String, Object>>
     @Override
     public void transform(Map<String, Object> row, Object instance)
     {
-        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(instance);
-        Injectable<?> inject = InjectableFactory.newMethodInjection(proxy);
+        ObjectProxy<?> proxy = ObjectProxyFactory.of(instance);
+        Injectable<?> inject = InjectableFactory.of(proxy);
         for(String key : row.keySet())
         {
             Object v = row.get(key);

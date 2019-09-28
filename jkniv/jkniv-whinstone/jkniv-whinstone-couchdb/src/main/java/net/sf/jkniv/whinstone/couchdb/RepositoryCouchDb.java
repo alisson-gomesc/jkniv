@@ -240,7 +240,7 @@ class RepositoryCouchDb implements Repository
         Object o = handleGet(queryable, null);
         if(o != null)
         {
-            ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(queryable.getParams());
+            ObjectProxy<?> proxy = ObjectProxyFactory.of(queryable.getParams());
             proxy.merge(o);
             enriched = true;
         }

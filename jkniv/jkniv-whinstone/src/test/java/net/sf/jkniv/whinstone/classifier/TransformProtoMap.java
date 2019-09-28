@@ -34,8 +34,8 @@ public class TransformProtoMap<T>
 
     public T transform(Map<String, Object> row, Class<T> type)
     {
-        ObjectProxy<T> proxy = ObjectProxyFactory.newProxy(type);
-        Injectable<T> inject = InjectableFactory.newMethodInjection(proxy);
+        ObjectProxy<T> proxy = ObjectProxyFactory.of(type);
+        Injectable<T> inject = InjectableFactory.of(proxy);
         for(String key : row.keySet())
         {
             Object v = row.get(key);
@@ -46,8 +46,8 @@ public class TransformProtoMap<T>
     
     public void transform(Map<String, Object> row, T instance)
     {
-        ObjectProxy<T> proxy = ObjectProxyFactory.newProxy(instance);
-        Injectable<T> inject = InjectableFactory.newMethodInjection(proxy);
+        ObjectProxy<T> proxy = ObjectProxyFactory.of(instance);
+        Injectable<T> inject = InjectableFactory.of(proxy);
         for(String key : row.keySet())
         {
             Object v = row.get(key);

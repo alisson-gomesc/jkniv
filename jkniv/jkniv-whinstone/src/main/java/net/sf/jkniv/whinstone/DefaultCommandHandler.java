@@ -52,7 +52,6 @@ public abstract class DefaultCommandHandler implements CommandHandler
     static final Assertable                          NOT_NULL          = AssertsFactory.getNotNull();
     private final static Map<String, ObjectCallback> OBJECTS_CALLBACKS = new HashMap<String, ObjectCallback>();
     CommandAdapter                                   cmdAdapter;
-    //CommandHandler                                   handler;
     Command                                          command;
     ObjectProxy<?>                                   proxyParams;
     protected Queryable                              queryable;
@@ -65,13 +64,6 @@ public abstract class DefaultCommandHandler implements CommandHandler
     {
         this.cmdAdapter = cmdAdapter;
     }
-    
-//    @Override
-//    public CommandHandler with(CommandHandler handler)
-//    {
-//        this.handler = handler;
-//        return this;
-//    }
     
     @Override
     public CommandHandler with(ResultRow<?, ?> overloadResultRow)
@@ -86,7 +78,7 @@ public abstract class DefaultCommandHandler implements CommandHandler
         this.queryable = queryable;
         if (queryable.getParams() != null)
         {
-            this.proxyParams = ObjectProxyFactory.newProxy(queryable.getParams());
+            this.proxyParams = ObjectProxyFactory.of(queryable.getParams());
             CallbackProcessor processor = new CallbackProcessor(this.proxyParams);
             if (!OBJECTS_CALLBACKS.containsKey(proxyParams.getTargetClass().getName()))
             {
@@ -104,13 +96,6 @@ public abstract class DefaultCommandHandler implements CommandHandler
         this.sql = sql;
         return this;
     }
-    
-    //    @Override
-    //    public CommandHandler returnType(Class<?> returnType)
-    //    {
-    //        this.returnType = returnType;
-    //        return this;
-    //    }
     
     @Override
     public CommandHandler with(RepositoryConfig repositoryConfig)
@@ -136,7 +121,6 @@ public abstract class DefaultCommandHandler implements CommandHandler
         try
         {
             sql.getValidateType().assertValidate(queryable.getParams());
-            
             if (!queryable.isBoundSql())
                 queryable.bind(sql);
             try

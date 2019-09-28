@@ -164,7 +164,7 @@ abstract class AbstractQueryJpaAdapter implements QueryableJpaAdapter
             List<Object[]> listArray = (List<Object[]>)list;
             for (Object[] o : listArray)
             {
-                ObjectProxy<T> proxy = ObjectProxyFactory.newProxy(returnType);
+                ObjectProxy<T> proxy = ObjectProxyFactory.of(returnType);
                 proxy.setConstructorArgs(o);
                 T casted = proxy.newInstance();
                 castedList.add(casted);

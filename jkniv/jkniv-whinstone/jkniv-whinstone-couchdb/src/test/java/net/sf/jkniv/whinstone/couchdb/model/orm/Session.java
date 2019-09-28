@@ -27,7 +27,7 @@ import net.sf.jkniv.sqlegance.validation.UpdateValidate;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Session
 {
-    private static final transient Logger LOG = LoggerFactory.getLogger(Session.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Session.class);
     
     public static enum Protocol
     {

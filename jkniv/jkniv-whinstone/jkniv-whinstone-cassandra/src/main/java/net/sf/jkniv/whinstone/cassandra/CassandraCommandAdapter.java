@@ -56,9 +56,9 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  */
 class CassandraCommandAdapter implements CommandAdapter
 {
-    private static final transient Logger  LOG = LoggerFactory.getLogger();
-    private static final transient Logger SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
-    private static final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
+    private static final Logger  LOG = LoggerFactory.getLogger();
+    private static final Logger SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
+    private static final Assertable NOT_NULL = AssertsFactory.getNotNull();
     private Session session;
     private Cluster cluster;
     private StatementCache stmtCache;

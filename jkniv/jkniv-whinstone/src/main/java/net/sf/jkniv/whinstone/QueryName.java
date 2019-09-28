@@ -19,7 +19,6 @@
  */
 package net.sf.jkniv.whinstone;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -33,8 +32,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.reflect.BasicType;
-import net.sf.jkniv.reflect.beans.ObjectProxy;
-import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
@@ -55,8 +52,8 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  */
 class QueryName implements Queryable
 {
-    private static final transient Assertable NOT_NULL    = AssertsFactory.getNotNull();
-    private static final transient Assertable IS_NULL    = AssertsFactory.getIsNull();
+    private static final Assertable NOT_NULL    = AssertsFactory.getNotNull();
+    private static final Assertable IS_NULL    = AssertsFactory.getIsNull();
     private static final BasicType  BASIC_TYPE = BasicType.getInstance();
     
     private enum TYPEOF_PARAM

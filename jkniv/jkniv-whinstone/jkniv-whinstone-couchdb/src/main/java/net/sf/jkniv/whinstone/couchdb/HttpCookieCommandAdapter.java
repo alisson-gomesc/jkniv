@@ -48,8 +48,8 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 class HttpCookieCommandAdapter implements CommandAdapter
 {
-    private static final transient Logger LOG = LoggerFactory.getLogger(HttpCookieCommandAdapter.class);
-    private static final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
+    private static final Logger LOG = LoggerFactory.getLogger(HttpCookieCommandAdapter.class);
+    private static final Assertable NOT_NULL = AssertsFactory.getNotNull();
     private HttpBuilder httpBuilder;
     private final String contextName;
     

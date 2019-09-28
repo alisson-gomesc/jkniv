@@ -202,7 +202,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         boolean showConfig = Boolean
                 .valueOf(sqlContext.getRepositoryConfig().getProperty(RepositoryProperty.SHOW_CONFIG));
         String queryNameStrategyClass = sqlContext.getRepositoryConfig().getQueryNameStrategy();
-        ObjectProxy<QueryNameStrategy> proxy = ObjectProxyFactory.newProxy(queryNameStrategyClass);
+        ObjectProxy<QueryNameStrategy> proxy = ObjectProxyFactory.of(queryNameStrategyClass);
         this.strategyQueryName = proxy.newInstance();
         if (showConfig)
             showPersistenceConfig();
@@ -378,7 +378,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         List<Object> list = list(queryable);
         for (Object o : list)
         {
-            ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(queryable.getParams());
+            ObjectProxy<?> proxy = ObjectProxyFactory.of(queryable.getParams());
             proxy.merge(o);
             enriched = true;
         }

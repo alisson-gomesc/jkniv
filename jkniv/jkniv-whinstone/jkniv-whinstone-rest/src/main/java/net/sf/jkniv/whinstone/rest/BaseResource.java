@@ -152,19 +152,19 @@ public class BaseResource
     
     private Queryable _buildQueryable(String q, Class<?> className, MultivaluedMap<String, String> formParams)
     {
-        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(className);
+        ObjectProxy<?> proxy = ObjectProxyFactory.of(className);
         return newQuery(q, marshallToProxy(proxy, formParams), 0);
     }
     
     Queryable buildQueryable(String q, Class<?> className, UriInfo ui)
     {
-        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(className);
+        ObjectProxy<?> proxy = ObjectProxyFactory.of(className);
         return newQuery(q, marshallToProxy(proxy, ui.getQueryParameters()), 0);
     }
     
     Queryable buildQueryable(String q, Object entity, UriInfo ui)
     {
-        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(entity);
+        ObjectProxy<?> proxy = ObjectProxyFactory.of(entity);
         return newQuery(q, marshallToProxy(proxy, ui.getQueryParameters()), 0);
     }
     

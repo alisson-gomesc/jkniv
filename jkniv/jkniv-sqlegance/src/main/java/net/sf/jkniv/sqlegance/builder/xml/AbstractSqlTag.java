@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
+import net.sf.jkniv.reflect.beans.ObjectProxy;
+import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.Deletable;
 import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.LanguageType;
@@ -64,7 +66,7 @@ import net.sf.jkniv.sqlegance.validation.ValidateType;
 public abstract class AbstractSqlTag implements SqlTag
 {
     protected static final Assertable notNull = AssertsFactory.getNotNull();
-    private static final transient Logger       log  = LoggerFactory.getLogger(AbstractSqlTag.class);
+    private static final Logger       log  = LoggerFactory.getLogger(AbstractSqlTag.class);
     // find the pattern #{id}
     private static final String  REGEX_HASH_MARK     = "#\\{[\\w\\.?]+\\}";
     // find the pattern :id
@@ -219,12 +221,18 @@ public abstract class AbstractSqlTag implements SqlTag
         this.validateType = validateType;
         this.timestamp = new Date();
         this.paramParser = ParamParserNoMark.emptyParser();
-        this.returnTypeClass = forName(returnType);
         this.stats = stats;
-        Class<? extends Annotation> entityAnnotation = (Class<? extends Annotation>) forName("javax.persistence.Entity");
-        if (returnTypeClass != null && entityAnnotation != null)
-            this.returnTypeManaged = returnTypeClass.isAnnotationPresent(entityAnnotation);
+//        Class<? extends Annotation> entityAnnotation = (Class<? extends Annotation>) forName("javax.persistence.Entity");
+//        if (returnTypeClass != null && entityAnnotation != null)
+//            this.returnTypeManaged = returnTypeClass.isAnnotationPresent(entityAnnotation);
 
+        if(returnType != null)
+        {
+            ObjectProxy<?> proxyReturnType = ObjectProxyFactory.of(returnType)
+                    .mute(ClassNotFoundException.class);
+            this.returnTypeClass = proxyReturnType.getTargetClass();
+            this.returnTypeManaged = proxyReturnType.hasAnnotation("javax.persistence.Entity");
+        }
         //this.timeToLive = -1;//testing 30*1000; 
 
     }
@@ -676,17 +684,6 @@ public abstract class AbstractSqlTag implements SqlTag
         }
     }
 
-    private Class<?> forName(String clazz)
-    {
-        Class<?> classz = null;
-        try
-        {
-            classz = Class.forName(returnType);
-        }
-        catch (ClassNotFoundException returnNULL) {  /* TODO ClassNotFoundException NULL type, returnType undefined */}
-        return classz;
-    }
-    
     private boolean hasParamParser()
     {
         return !(this.paramParser instanceof ParamParserNoMark);

@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 //@Entity
 //@Table(name = "JPA_COLOR")
@@ -19,7 +18,6 @@ public class Color
     private String       name;
     private int          code;
     //private String       priority;
-    //@Transient
     private List<String> priorities;
     
     public Color()

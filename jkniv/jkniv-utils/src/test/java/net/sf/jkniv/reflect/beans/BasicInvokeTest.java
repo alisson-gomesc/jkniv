@@ -38,13 +38,13 @@ public class BasicInvokeTest
     @Test
     public void whenBasicInvokedForProxyToBuildBasicTypes()
     {
-        ObjectProxy<String> p = ObjectProxyFactory.newProxy(String.class);
+        ObjectProxy<String> p = ObjectProxyFactory.of(String.class);
         p.setConstructorArgs("Hi");
         String s = (String) p.newInstance();
         assertThat(s, is("Hi"));
         assertThat(s, instanceOf(String.class));
         
-        ObjectProxy<Double> d = ObjectProxyFactory.newProxy(Double.class);
+        ObjectProxy<Double> d = ObjectProxyFactory.of(Double.class);
         d.setConstructorArgs("0.2");
         Double result2 = d.newInstance();
         assertThat(result2, is(0.2));

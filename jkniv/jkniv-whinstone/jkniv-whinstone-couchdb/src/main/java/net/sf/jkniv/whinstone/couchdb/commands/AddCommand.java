@@ -205,7 +205,7 @@ public class AddCommand extends AbstractCommand implements CouchCommand
         Map<String, Object> response = JsonMapper.mapper(json, Map.class);
         Insertable sql = queryable.getDynamicSql().asInsertable();
         Object params = queryable.getParams();
-        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(params);
+        ObjectProxy<?> proxy = ObjectProxyFactory.of(params);
         String id = (String) response.get(COUCHDB_ID);
         String rev = (String) response.get(COUCHDB_REV);
         if (sql.isAutoGenerateKey())

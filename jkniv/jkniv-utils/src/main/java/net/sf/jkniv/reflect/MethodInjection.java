@@ -48,7 +48,7 @@ class MethodInjection<T> implements Injectable<T>
 
     public MethodInjection(T instance)
     {
-        this(ObjectProxyFactory.newProxy(instance));
+        this(ObjectProxyFactory.of(instance));
     }
 
     public MethodInjection(ObjectProxy<T> proxy)

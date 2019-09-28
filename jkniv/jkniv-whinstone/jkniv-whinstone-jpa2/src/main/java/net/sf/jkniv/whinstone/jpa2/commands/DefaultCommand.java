@@ -59,6 +59,7 @@ public class DefaultCommand implements Command
     {
         queryable.bind(stmt).on();
         Integer rows = stmt.execute();
+        
         return (T) rows;
     }
 }

@@ -70,7 +70,7 @@ public class FlatObjectResultRow<T> implements ResultRow<T, Row>
     
     public T row(Row rs, int rownum) throws SQLException
     {
-        ObjectProxy<T> proxy = ObjectProxyFactory.newProxy(returnType);
+        ObjectProxy<T> proxy = ObjectProxyFactory.of(returnType);
         for (JdbcColumn<Row> column : columns)
             setValueOf(column, rs, proxy);
         // list jdbcType = 22
@@ -79,7 +79,7 @@ public class FlatObjectResultRow<T> implements ResultRow<T, Row>
     
     private void setValueOf(JdbcColumn<Row> column, Row rs, ObjectProxy<T> proxy) throws SQLException
     {
-        Injectable<T> reflect = InjectableFactory.newMethodInjection(proxy);
+        Injectable<T> reflect = InjectableFactory.of(proxy);
         Object jdbcObject = null;
         if (column.isBinary())
             jdbcObject = column.getBytes(rs);

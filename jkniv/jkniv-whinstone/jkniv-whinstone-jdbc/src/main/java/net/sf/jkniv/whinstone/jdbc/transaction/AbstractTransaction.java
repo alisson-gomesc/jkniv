@@ -36,8 +36,8 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
 
 public abstract class AbstractTransaction implements Transactional
 {
-    protected static final transient Logger   logger   = LoggerFactory.getLogger(AbstractTransaction.class);
-    private static final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
+    protected static final Logger   logger   = LoggerFactory.getLogger(AbstractTransaction.class);
+    private static final Assertable NOT_NULL = AssertsFactory.getNotNull();
     private boolean                           wasAutoCommit;
     private TransactionStatus                 status;
     protected final TransactionScope          transactionScope;

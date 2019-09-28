@@ -34,7 +34,7 @@ public class InjectableFactory
      * @param <T> Type of instance object
      * @return implementation that inject values using reflection from properties methods
      */
-    public static <T> Injectable<T> newMethodInjection(T instance)
+    public static <T> Injectable<T> of(T instance)
     {
         return new MethodInjection<T>(instance);
     }
@@ -45,7 +45,7 @@ public class InjectableFactory
      * @param <T> Type of instance object
      * @return implementation that inject values using reflection from properties methods
      */
-    public static <T> Injectable<T> newMethodInjection(ObjectProxy<T> proxy)
+    public static <T> Injectable<T> of(ObjectProxy<T> proxy)
     {
         return new MethodInjection<T>(proxy);
     }

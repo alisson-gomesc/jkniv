@@ -128,7 +128,7 @@ public class BulkCommand extends AbstractCommand implements CouchCommand
             String className = "null";
             for (Object o : objectsToDelete)
             {
-                ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(o);
+                ObjectProxy<?> proxy = ObjectProxyFactory.of(o);
                 className = proxy.getTargetClass().getName();
                 if (proxy.hasMethod("isDeleted"))
                 {
@@ -228,7 +228,7 @@ public class BulkCommand extends AbstractCommand implements CouchCommand
         for (Object param : params)
         {
             BulkCommandResponse commandResponse = bulk.get(i++);
-            ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(param);
+            ObjectProxy<?> proxy = ObjectProxyFactory.of(param);
             String id = (String) commandResponse.getId();
             String rev = (String) commandResponse.getRev();
             boolean isOk = commandResponse.isOk();
