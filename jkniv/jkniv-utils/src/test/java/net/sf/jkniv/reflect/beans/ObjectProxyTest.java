@@ -185,6 +185,8 @@ public class ObjectProxyTest
         proxy.mute(ClassNotFoundException.class);
         proxy.hasAnnotation("net.sf.jkniv.AnnotationNotExist");
         assertThat(true, is(true));
+        assertThat(true, is(true));
+        assertThat(true, is(true));
     }
 
 }
