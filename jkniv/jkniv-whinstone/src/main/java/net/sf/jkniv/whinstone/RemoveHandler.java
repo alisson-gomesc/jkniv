@@ -17,30 +17,29 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.cassandra;
+package net.sf.jkniv.whinstone;
 
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandAdapter;
 import net.sf.jkniv.whinstone.DefaultCommandHandler;
 
 /**
- * Cassandra Command to handler the {@code Update} life-cycle.
+ * JDBC Command to handler the {@code Remove} life-cycle.
  * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
-class UpdateHandler extends DefaultCommandHandler
+class RemoveHandler extends DefaultCommandHandler
 {
-    public UpdateHandler(CommandAdapter cmdAdapter)
+    public RemoveHandler(CommandAdapter cmdAdapter)
     {
         super(cmdAdapter);
-        //with(this);
     }
     
     @Override
     public Command asCommand()
     {
-        Command c = getCommandAdapter().asUpdateCommand(queryable);
+        Command c = getCommandAdapter().asRemoveCommand(queryable);
         c.with(this);
         c.with(this.handleableException);
         return c;

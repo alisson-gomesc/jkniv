@@ -46,6 +46,7 @@ import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
 import net.sf.jkniv.whinstone.CommandHandler;
+import net.sf.jkniv.whinstone.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.ConnectionFactory;
 import net.sf.jkniv.whinstone.QueryFactory;
@@ -373,13 +374,13 @@ class RepositoryJdbc implements Repository
     private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new SelectHandler(this.connectionFactory.open(sql.getIsolation()));
+        CommandHandler handler = CommandHandlerFactory.ofSelect(this.connectionFactory.open(sql.getIsolation()));
         List<T> list = handler.with(queryable)
-        .with(sql)
-        .checkSqlType(SqlType.SELECT)
-        .with(handlerException)
-        .with(overloadResultRow)
-        .run();
+                .with(sql)
+                .checkSqlType(SqlType.SELECT)
+                .with(handlerException)
+                .with(overloadResultRow)
+                .run();
         return list;
     }
     
@@ -387,7 +388,7 @@ class RepositoryJdbc implements Repository
     {
         T ret = null;
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new SelectHandler(this.connectionFactory.open(sql.getIsolation()));
+        CommandHandler handler = CommandHandlerFactory.ofSelect(this.connectionFactory.open(sql.getIsolation()));
         List<T> list = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.SELECT)
@@ -487,7 +488,7 @@ class RepositoryJdbc implements Repository
     {
         NOT_NULL.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new AddHandler(this.connectionFactory.open(sql.getIsolation()));
+        CommandHandler handler = CommandHandlerFactory.ofAdd(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
                 .with(sql)
                 .checkSqlType(SqlType.INSERT)
@@ -506,7 +507,7 @@ class RepositoryJdbc implements Repository
 
         Queryable queryable = QueryFactory.of(queryName, entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new AddHandler(this.connectionFactory.open(sql.getIsolation()));
+        CommandHandler handler = CommandHandlerFactory.ofAdd(this.connectionFactory.open(sql.getIsolation()));
         handler.with(queryable)
             .with(sql)
             .checkSqlType(SqlType.INSERT)
@@ -598,7 +599,7 @@ class RepositoryJdbc implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new UpdateHandler(this.connectionFactory.open(sql.getIsolation()));
+        CommandHandler handler = CommandHandlerFactory.ofUpdate(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
                 .with(sql)
                 .checkSqlType(SqlType.UPDATE)
@@ -616,7 +617,7 @@ class RepositoryJdbc implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new UpdateHandler(this.connectionFactory.open(sql.getIsolation()));
+        CommandHandler handler = CommandHandlerFactory.ofUpdate(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
                 .with(sql)
                 .checkSqlType(SqlType.UPDATE)
@@ -688,7 +689,7 @@ class RepositoryJdbc implements Repository
     {
         NOT_NULL.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new RemoveHandler(this.connectionFactory.open(sql.getIsolation()));
+        CommandHandler handler = CommandHandlerFactory.ofRemove(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
                 .with(sql)
                 .checkSqlType(SqlType.DELETE)
@@ -706,7 +707,7 @@ class RepositoryJdbc implements Repository
             LOG.trace("Executing [{}] as remove command", queryName);
         Queryable queryable = QueryFactory.of(queryName, entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new RemoveHandler(this.connectionFactory.open(sql.getIsolation()));
+        CommandHandler handler = CommandHandlerFactory.ofRemove(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
                 .with(sql)
                 .checkSqlType(SqlType.DELETE)

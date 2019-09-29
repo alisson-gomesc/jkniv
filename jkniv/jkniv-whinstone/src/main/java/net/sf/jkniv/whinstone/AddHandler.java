@@ -17,14 +17,14 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.couchdb;
+package net.sf.jkniv.whinstone;
 
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandAdapter;
 import net.sf.jkniv.whinstone.DefaultCommandHandler;
 
 /**
- * Couchdb Command to handler the {@code Add} life-cycle.
+ * JDBC Command to handler the {@code Add} life-cycle.
  * 
  * @author Alisson Gomes
  * @since 0.6.0
@@ -34,7 +34,6 @@ class AddHandler extends DefaultCommandHandler
     public AddHandler(CommandAdapter cmdAdapter)
     {
         super(cmdAdapter);
-        //with(this);
     }
     
     @Override

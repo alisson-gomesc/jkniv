@@ -17,30 +17,29 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.couchdb;
+package net.sf.jkniv.whinstone;
 
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandAdapter;
-import net.sf.jkniv.whinstone.DefaultCommandHandler;
+import net.sf.jkniv.whinstone.DefaultQueryHandler;
 
 /**
- * Couchdb Command to handler the {@code Update} life-cycle.
+ * JPA Command to handler the {@code Select} life-cycle.
  * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
-class UpdateHandler extends DefaultCommandHandler
+class SelectHandler extends DefaultQueryHandler
 {
-    public UpdateHandler(CommandAdapter cmdAdapter)
+    public SelectHandler(CommandAdapter cmdAdapter)
     {
         super(cmdAdapter);
-        //with(this);
     }
     
     @Override
     public Command asCommand()
     {
-        Command c = getCommandAdapter().asUpdateCommand(queryable);
+        Command c = getCommandAdapter().asSelectCommand(queryable, overloadResultRow);
         c.with(this);
         c.with(this.handleableException);
         return c;

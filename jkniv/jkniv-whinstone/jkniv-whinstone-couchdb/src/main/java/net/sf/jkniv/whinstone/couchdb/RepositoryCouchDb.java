@@ -52,6 +52,7 @@ import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.whinstone.CommandHandler;
+import net.sf.jkniv.whinstone.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
@@ -198,7 +199,7 @@ class RepositoryCouchDb implements Repository
     {
         T ret = null;
         Sql sql = sqlContext.getQuery(q.getName());
-        CommandHandler handler = new SelectHandler(this.cmdAdapter);
+        CommandHandler handler = CommandHandlerFactory.ofSelect(this.cmdAdapter);
         List<T> list = handler.with(q)
                 .with(sql)
                 .checkSqlType(SqlType.SELECT)
@@ -274,7 +275,7 @@ class RepositoryCouchDb implements Repository
     private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new SelectHandler(this.cmdAdapter);
+        CommandHandler handler = CommandHandlerFactory.ofSelect(this.cmdAdapter);
         List<T> list = handler.with(queryable)
                 .with(sql)
                 .checkSqlType(SqlType.SELECT)
@@ -290,7 +291,7 @@ class RepositoryCouchDb implements Repository
     {
         notNull.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new AddHandler(this.cmdAdapter);
+        CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
         int rows = handler.with(queryable)
                 .with(sql)
                 .checkSqlType(SqlType.INSERT)
@@ -305,7 +306,7 @@ class RepositoryCouchDb implements Repository
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("add", entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new AddHandler(this.cmdAdapter);
+        CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
         handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.INSERT)
@@ -319,7 +320,7 @@ class RepositoryCouchDb implements Repository
     {
         notNull.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName()).asUpdateable();
-        CommandHandler handler = new UpdateHandler(this.cmdAdapter);
+        CommandHandler handler = CommandHandlerFactory.ofUpdate(this.cmdAdapter);
         int rows = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.UPDATE)
@@ -334,7 +335,7 @@ class RepositoryCouchDb implements Repository
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("update", entity);
         Sql sql = sqlContext.getQuery(queryable.getName()).asUpdateable();
-        CommandHandler handler = new UpdateHandler(this.cmdAdapter);
+        CommandHandler handler = CommandHandlerFactory.ofUpdate(this.cmdAdapter);
         handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.UPDATE)
@@ -348,7 +349,7 @@ class RepositoryCouchDb implements Repository
     {
         notNull.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new RemoveHandler(this.cmdAdapter);
+        CommandHandler handler = CommandHandlerFactory.ofRemove(this.cmdAdapter);
         int rows = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.DELETE)
@@ -363,7 +364,7 @@ class RepositoryCouchDb implements Repository
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("remove", entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new RemoveHandler(this.cmdAdapter);
+        CommandHandler handler = CommandHandlerFactory.ofRemove(this.cmdAdapter);
         int rows = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.DELETE)
