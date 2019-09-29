@@ -1,4 +1,3 @@
-package net.sf.jkniv.whinstone;
 /* 
  * JKNIV, whinstone one contract to access your database.
  * 
@@ -18,39 +17,31 @@ package net.sf.jkniv.whinstone;
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-import net.sf.jkniv.exception.HandleableException;
+package net.sf.jkniv.whinstone.commands;
+
+import net.sf.jkniv.whinstone.commands.Command;
+import net.sf.jkniv.whinstone.commands.CommandAdapter;
+import net.sf.jkniv.whinstone.commands.DefaultCommandHandler;
 
 /**
- * Dummy/Empty implementation for {@link Command}
+ * JDBC Command to handler the {@code Add} life-cycle.
  * 
  * @author Alisson Gomes
  * @since 0.6.0
- *
  */
-public class NoCommand implements Command
+class AddHandler extends DefaultCommandHandler
 {
-    private static final Command NO_COMMAND = new NoCommand();
-    
-    public static Command getInstance()
+    public AddHandler(CommandAdapter cmdAdapter)
     {
-        return NO_COMMAND;
+        super(cmdAdapter);
     }
     
     @Override
-    public Command with(HandleableException handleableException)
+    public Command asCommand()
     {
-        return this;
-    }
-    
-    @Override
-    public Command with(CommandHandler commandHandler)
-    {
-        return this;
-    }
-    
-    @Override
-    public <T> T execute()
-    {
-        return null;
+        Command c = getCommandAdapter().asAddCommand(queryable);
+        c.with(this);
+        c.with(this.handleableException);
+        return c;
     }
 }

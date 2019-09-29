@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone;
+package net.sf.jkniv.whinstone.commands;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -35,6 +35,8 @@ import net.sf.jkniv.domain.flat.AuthorFlat;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.SqlType;
+import net.sf.jkniv.whinstone.commands.CallbackProcessor;
+import net.sf.jkniv.whinstone.commands.ObjectCallback;
 
 public class CallbackProcessorTest
 {

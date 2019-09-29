@@ -17,16 +17,15 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone;
+package net.sf.jkniv.whinstone.commands;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
 
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.Rule;
@@ -34,8 +33,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import net.sf.jkniv.domain.flat.AuthorFlat;
-import net.sf.jkniv.reflect.beans.ObjectProxy;
-import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.SqlType;
 
 public class ObjectCallbackTest

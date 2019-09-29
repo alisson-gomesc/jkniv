@@ -38,10 +38,10 @@ import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
-import net.sf.jkniv.whinstone.Command;
-import net.sf.jkniv.whinstone.CommandHandler;
-import net.sf.jkniv.whinstone.NoCommandHandler;
 import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.commands.Command;
+import net.sf.jkniv.whinstone.commands.CommandHandler;
+import net.sf.jkniv.whinstone.commands.NoCommandHandler;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 
 /**

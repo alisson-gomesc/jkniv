@@ -42,14 +42,14 @@ import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
-import net.sf.jkniv.whinstone.CommandAdapter;
-import net.sf.jkniv.whinstone.CommandHandler;
-import net.sf.jkniv.whinstone.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.cassandra.dialect.CassandraDialect;
+import net.sf.jkniv.whinstone.commands.CommandAdapter;
+import net.sf.jkniv.whinstone.commands.CommandHandler;
+import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
 /**

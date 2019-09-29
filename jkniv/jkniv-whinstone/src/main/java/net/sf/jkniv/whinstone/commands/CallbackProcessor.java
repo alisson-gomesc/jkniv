@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone;
+package net.sf.jkniv.whinstone.commands;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -25,6 +25,9 @@ import java.util.List;
 
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.sqlegance.SqlType;
+import net.sf.jkniv.whinstone.CallbackScope;
+import net.sf.jkniv.whinstone.PostCallBack;
+import net.sf.jkniv.whinstone.PreCallBack;
 
 /**
  * 

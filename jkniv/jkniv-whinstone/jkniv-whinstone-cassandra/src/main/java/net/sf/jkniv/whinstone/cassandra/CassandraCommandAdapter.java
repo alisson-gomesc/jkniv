@@ -35,8 +35,6 @@ import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.LanguageType;
-import net.sf.jkniv.whinstone.Command;
-import net.sf.jkniv.whinstone.CommandAdapter;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.cassandra.commands.AddSequenceKeyJdbcCommand;
@@ -46,6 +44,8 @@ import net.sf.jkniv.whinstone.cassandra.commands.DefaultCommand;
 import net.sf.jkniv.whinstone.cassandra.commands.DefaultQuery;
 import net.sf.jkniv.whinstone.cassandra.statement.CassandraPreparedStatementAdapter;
 import net.sf.jkniv.whinstone.cassandra.statement.CassandraStatementAdapter;
+import net.sf.jkniv.whinstone.commands.Command;
+import net.sf.jkniv.whinstone.commands.CommandAdapter;
 import net.sf.jkniv.whinstone.statement.AutoKey;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 

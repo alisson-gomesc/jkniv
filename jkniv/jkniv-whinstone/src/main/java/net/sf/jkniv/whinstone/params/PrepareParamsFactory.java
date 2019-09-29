@@ -29,30 +29,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 public class PrepareParamsFactory
 {
-    @Deprecated
-    public static AutoBindParams newPrepareParams(StatementAdapterOld stmtAdapter, ParamParser paramParser, Queryable queryable)
-    {
-//        return null;
-        Object params = queryable.getParams();
-        AutoBindParams prepareParams = null;
-        if (queryable.isTypeOfNull())
-            prepareParams = new NoParamsOld(stmtAdapter);
-        else if (queryable.isTypeOfBasic() || queryable.getParams() instanceof Date || queryable.getParams() instanceof Calendar)
-            prepareParams = new BasicParamOld(stmtAdapter, params);
-        else if (queryable.isTypeOfArrayFromBasicTypes())
-            prepareParams = new PositionalArrayParamsOld(stmtAdapter, params, queryable.getName());
-        else if (queryable.isTypeOfCollectionFromBasicTypes())
-            prepareParams = new PositionalCollectionParamsOld(stmtAdapter, params, queryable.getName());
-        else if (paramParser.getType() == ParamMarkType.QUESTION)
-            prepareParams = new PositionalParamsOld(stmtAdapter, params, queryable.getName());
-        else
-            prepareParams = new NamedParamsOld(stmtAdapter, queryable);
-        
-        return prepareParams;
-        
-    }   
     
-    //public static <T,R> AutoBindParams newPrepareParams(StatementAdapter<T,R> adapter, ParamParser paramParser, Queryable queryable)
     public static <T,R> AutoBindParams newPrepareParams(StatementAdapter<T,R> adapter, Queryable queryable)
     {
         AutoBindParams prepareParams = null;

@@ -17,11 +17,11 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone;
-
-import java.sql.SQLException;
+package net.sf.jkniv.whinstone.commands;
 
 import net.sf.jkniv.sqlegance.LanguageType;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**

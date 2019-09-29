@@ -22,9 +22,9 @@ package net.sf.jkniv.whinstone.jpa2.commands;
 import javax.persistence.EntityManager;
 
 import net.sf.jkniv.exception.HandleableException;
-import net.sf.jkniv.whinstone.Command;
-import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.commands.Command;
+import net.sf.jkniv.whinstone.commands.CommandHandler;
 
 public class RemoveCommand implements Command
 {

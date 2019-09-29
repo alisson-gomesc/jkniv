@@ -41,13 +41,6 @@ class PositionalCollectionParams extends AbstractParam implements AutoBindParams
     }
     
     @Override
-    public StatementAdapterOld parameterized(String[] paramsNames)
-    {
-        on();
-        return null;
-    }
-    
-    @Override
     public void on()
     {
         Object[] objs = ((Collection<?>) params).toArray(new Object[0]);

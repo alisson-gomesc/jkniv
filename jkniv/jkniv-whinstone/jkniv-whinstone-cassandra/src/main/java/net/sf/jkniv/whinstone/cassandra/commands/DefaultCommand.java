@@ -22,10 +22,10 @@ package net.sf.jkniv.whinstone.cassandra.commands;
 import com.datastax.driver.core.Row;
 
 import net.sf.jkniv.exception.HandleableException;
-import net.sf.jkniv.whinstone.Command;
-import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.cassandra.statement.CassandraPreparedStatementAdapter;
+import net.sf.jkniv.whinstone.commands.Command;
+import net.sf.jkniv.whinstone.commands.CommandHandler;
 
 public class DefaultCommand implements Command
 {

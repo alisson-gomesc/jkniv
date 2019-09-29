@@ -63,6 +63,10 @@ import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.sqlegance.params.ParamParserColonMark;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
 import net.sf.jkniv.whinstone.classification.Transformable;
+import net.sf.jkniv.whinstone.commands.Command;
+import net.sf.jkniv.whinstone.commands.CommandAdapter;
+import net.sf.jkniv.whinstone.commands.CommandHandler;
+import net.sf.jkniv.whinstone.commands.DefaultQueryHandler;
 import net.sf.jkniv.whinstone.params.AutoBindParams;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 

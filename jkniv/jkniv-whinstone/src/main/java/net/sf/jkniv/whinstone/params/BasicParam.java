@@ -37,13 +37,6 @@ class BasicParam implements AutoBindParams
     }
     
     @Override
-    public StatementAdapterOld parameterized(String[] paramsNames)
-    {
-        on();
-        return null;
-    }
-
-    @Override
     public void on() 
     {
         if (paramsNames.length == 1)

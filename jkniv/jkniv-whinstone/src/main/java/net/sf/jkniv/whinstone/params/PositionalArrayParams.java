@@ -39,13 +39,6 @@ class PositionalArrayParams extends AbstractParam implements AutoBindParams
     }
     
     @Override
-    public StatementAdapterOld parameterized(String[] paramsNames)
-    {
-        on();
-        return null;
-    }
-
-    @Override
     public void on()
     {
         Object[] objs = (Object[]) params;

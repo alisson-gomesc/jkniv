@@ -17,12 +17,14 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone;
+package net.sf.jkniv.whinstone.commands;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.ResultRow;
 
 /**
  * A command handler to keep the life-cycle to be executed
@@ -47,13 +49,6 @@ public interface CommandHandler
      */
     CommandHandler with(Sql sql);
     
-    /*
-     * return type
-     * @param returnType type of return
-     * @return instance of this object
-     */
-   // CommandHandler returnType(Class<?> returnType);
-
     /**
      * Configure the life-cycle with a properties configuration of the repository
      * @param repositoryConfig configuration from repository
@@ -61,13 +56,6 @@ public interface CommandHandler
      */
     CommandHandler with(RepositoryConfig repositoryConfig);
 
-    /*
-     * Configure this life-cycle of command handler
-     * @param handler The Command Handler with life-cycle implementation
-     * @return a reference to this object.
-     */
-    //CommandHandler with(CommandHandler handler);
-    
     /**
      * Configure the life-cycle with a custom result parser rows of query.
      * @param customResultRow customized result row to parser
@@ -125,7 +113,6 @@ public interface CommandHandler
      * @return the result of the command execution
      */
     <T> T run();
-    
     
     /**
      * If the command isn't the sql type expected an illegal argument exception is throw.

@@ -47,13 +47,6 @@ class PositionalCollectionPojoParams extends AbstractParam implements AutoBindPa
     }
     
     @Override
-    public StatementAdapterOld parameterized(String[] paramsNames)
-    {
-        on();
-        return null;
-    }
-    
-    @Override
     public void on()
     {
         onBulk();//salient client don't get rows affected

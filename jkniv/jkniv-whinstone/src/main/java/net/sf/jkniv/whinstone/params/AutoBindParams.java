@@ -56,10 +56,4 @@ public interface AutoBindParams
      * <p><code>-2</code> no count of the number of rows it affected is available</p>
      * <p><code>-3</code> indicating that an error occurred while executing a batch statement</p>
      */
-    //public int onBatch();
-
-    /**
-     * @deprecated use auto bind 
-     */
-    public StatementAdapterOld parameterized(String[] paramsNames);
 }

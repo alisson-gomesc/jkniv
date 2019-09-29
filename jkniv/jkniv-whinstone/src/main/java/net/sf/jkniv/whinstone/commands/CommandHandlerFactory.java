@@ -17,7 +17,9 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone;
+package net.sf.jkniv.whinstone.commands;
+
+import net.sf.jkniv.whinstone.Queryable;
 
 /**
  * A command handler to keep the life-cycle to be executed

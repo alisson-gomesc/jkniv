@@ -17,21 +17,21 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone;
+package net.sf.jkniv.whinstone.commands;
 
-import net.sf.jkniv.whinstone.Command;
-import net.sf.jkniv.whinstone.CommandAdapter;
-import net.sf.jkniv.whinstone.DefaultCommandHandler;
+import net.sf.jkniv.whinstone.commands.Command;
+import net.sf.jkniv.whinstone.commands.CommandAdapter;
+import net.sf.jkniv.whinstone.commands.DefaultQueryHandler;
 
 /**
- * JDBC Command to handler the {@code Remove} life-cycle.
+ * JPA Command to handler the {@code Select} life-cycle.
  * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
-class RemoveHandler extends DefaultCommandHandler
+class SelectHandler extends DefaultQueryHandler
 {
-    public RemoveHandler(CommandAdapter cmdAdapter)
+    public SelectHandler(CommandAdapter cmdAdapter)
     {
         super(cmdAdapter);
     }
@@ -39,7 +39,7 @@ class RemoveHandler extends DefaultCommandHandler
     @Override
     public Command asCommand()
     {
-        Command c = getCommandAdapter().asRemoveCommand(queryable);
+        Command c = getCommandAdapter().asSelectCommand(queryable, overloadResultRow);
         c.with(this);
         c.with(this.handleableException);
         return c;
