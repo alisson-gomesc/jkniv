@@ -30,7 +30,6 @@ import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.jpa2.QueryableJpaAdapter;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**

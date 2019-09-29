@@ -19,7 +19,12 @@
  */
 package net.sf.jkniv.whinstone.jpa2;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import java.util.List;
+import java.util.Properties;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -30,9 +35,10 @@ import org.junit.Test;
 
 import com.acme.domain.orm.Book;
 
-import junit.framework.Assert;
+import net.sf.jkniv.reflect.beans.ObjectProxy;
+import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 
-@Ignore("Needs resolve classloader dependency where persistence.xml is search at web classpath")
+//@Ignore("Needs resolve classloader dependency where persistence.xml is search at web classpath")
 public class PersistenceInfoTest
 {
     private String UNIT_NAME = "whinstone";
@@ -41,30 +47,36 @@ public class PersistenceInfoTest
     public void providerNotNullTest()
     {
         String providerClass = PersistenceReader.getPersistenceInfo(UNIT_NAME).getProvider();
-        Assert.assertNotNull(providerClass);
+        assertThat(providerClass, notNullValue());
         //Assert.assertEquals("org.hibernate.ejb.HibernatePersistence", providerClass);
-        Assert.assertEquals("org.hibernate.jpa.HibernatePersistenceProvider", providerClass);
+        assertThat("org.hibernate.jpa.HibernatePersistenceProvider", is(providerClass));
     }
     
     @Test
     public void providerEntityManagerFactoryTest()
     {
         String providerClass = PersistenceReader.getPersistenceInfo(UNIT_NAME).getProvider();
-        PersistenceProvider provider = (PersistenceProvider) ReflectionUtil.newInstance(providerClass);
+        ObjectProxy<PersistenceProvider> proxy = ObjectProxyFactory.of(providerClass);
+        proxy.mute(InstantiationException.class).mute(IllegalAccessException.class).mute(ClassNotFoundException.class);
+        PersistenceProvider provider = proxy.newInstance();
         EntityManagerFactory emf = provider.createEntityManagerFactory(UNIT_NAME, null);
-        Assert.assertNotNull(emf);
+        assertThat(emf, notNullValue());
     }
     
-    @Test
+    @Test @Ignore("java.sql.SQLSyntaxErrorException: ORA-00942: table or view does not exist")
     public void providerEntityManagerTest()
     {
         String providerClass = PersistenceReader.getPersistenceInfo(UNIT_NAME).getProvider();
-        PersistenceProvider provider = (PersistenceProvider) ReflectionUtil.newInstance(providerClass);
-        EntityManagerFactory emf = provider.createEntityManagerFactory(UNIT_NAME, null);
-        Assert.assertNotNull(emf);
+        ObjectProxy<PersistenceProvider> proxy = ObjectProxyFactory.of(providerClass);
+        proxy.mute(InstantiationException.class).mute(IllegalAccessException.class).mute(ClassNotFoundException.class);
+        
+        //        PersistenceProvider provider = (PersistenceProvider) proxy.invoke("createEntityManagerFactory", UNIT_NAME);
+        EntityManagerFactory emf = (EntityManagerFactory) proxy.invoke("createEntityManagerFactory", UNIT_NAME,
+                new Properties());
+        assertThat(emf, notNullValue());
         EntityManager em = emf.createEntityManager();
-        Assert.assertNotNull(em);
+        assertThat(em, notNullValue());
         List<Book> list = em.createNativeQuery("select * from Book b").getResultList();
-        Assert.assertNotNull(list);
+        assertThat(list, notNullValue());
     }
 }

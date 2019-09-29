@@ -539,14 +539,14 @@ class RepositoryJpa implements RepositoryJpaExtend
         */
     }
     
-    /**
+    /*
      * Get one object instance from repository using a query.
      * 
      * @param queryable
      *            Query with parameters
      * @return Return the object that matches with query. A null reference is
      *         returned if the query no match anyone object.
-     */
+     *
     public <T> T __get(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
@@ -559,6 +559,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         ret = queryableJpaAdapter.getSingleResult();
         return ret;
     }
+    */
     
     @Override
     public <T> T get(Queryable queryable)
@@ -762,6 +763,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         return getEntityManager().createQuery(criteriaQuery);
     }
     
+    /*
     private int executeUpdate(Queryable queryable, Sql isql)
     {
         int rowsAffected = 0;
@@ -785,6 +787,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         }
         return rowsAffected;
     }
+    */
     
     private void setTotalObjectsOfQuery(Queryable queryable, Sql isql)
     {
