@@ -792,6 +792,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         Number total = 0L;
         if (queryable.isPaging())
         {
+            // FIXME design round trip to count total of records
             /*
             Query queryJpa = getQueryForAutoCount(queryable, isql);
             try

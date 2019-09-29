@@ -19,29 +19,36 @@
  */
 package net.sf.jkniv.sqlegance;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import net.sf.jkniv.cache.Cacheable;
 import net.sf.jkniv.cache.NoCache;
-import net.sf.jkniv.sqlegance.builder.XmlBuilderSql;
+import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
+import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
 import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
 import net.sf.jkniv.sqlegance.statement.ResultSetType;
-import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 
-@SuppressWarnings("deprecation")
 public class AttributesTest
 {
+    private static SqlContext sqlContext;
         
+    @BeforeClass
+    public static void setUp()
+    {
+        sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
+    }
+    
     @Test
     public void whenReadXmlSelectNodeAttributesElementMustMatch() { 
-        Sql sql = XmlBuilderSql.getQuery("sql1-attributes-all");
-        Sql sqlDefault = XmlBuilderSql.getQuery("sql2-attributes-default");
+        Sql sql = sqlContext.getQuery("sql1-attributes-all");
+        Sql sqlDefault = sqlContext.getQuery("sql2-attributes-default");
         
         assertThat(sql.getSql().toLowerCase(), is("select id, name from users".toLowerCase()));        
         assertThat(sqlDefault.getSql().toLowerCase(), is("select id, name from users".toLowerCase()));
@@ -70,8 +77,8 @@ public class AttributesTest
 
     @Test
     public void whenReadXmlInsertNodeAttributesElementMustMatch() { 
-        Sql sql = XmlBuilderSql.getQuery("sql3-in-attributes-all");
-        Sql sqlDefault = XmlBuilderSql.getQuery("sql4-in-attributes-default");
+        Sql sql = sqlContext.getQuery("sql3-in-attributes-all");
+        Sql sqlDefault = sqlContext.getQuery("sql4-in-attributes-default");
         
         assertThat(sql.getSql().toLowerCase(), is("INSERT INTO users VALUES (#{name})".toLowerCase()));        
         assertThat(sqlDefault.getSql().toLowerCase(), is("INSERT INTO users VALUES (#{name})".toLowerCase()));        
@@ -93,8 +100,8 @@ public class AttributesTest
 
     @Test
     public void whenReadXmlDeleteNodeAttributesElementMustMatch() { 
-        Sql sql = XmlBuilderSql.getQuery("sql5-de-attributes-all");
-        Sql sqlDefault = XmlBuilderSql.getQuery("sql6-de-attributes-default");
+        Sql sql = sqlContext.getQuery("sql5-de-attributes-all");
+        Sql sqlDefault = sqlContext.getQuery("sql6-de-attributes-default");
         assertThat(sql.getSql().toLowerCase(), is("delete from users where id = #{id}".toLowerCase()));        
         assertThat(sqlDefault.getSql().toLowerCase(), is("delete from users where id = #{id}".toLowerCase()));
         
@@ -116,8 +123,8 @@ public class AttributesTest
 
     @Test
     public void whenReadXmlUpdateNodeAttributesElementMustMatch() { 
-        Sql sql = XmlBuilderSql.getQuery("sql7-up-attributes-all");
-        Sql sqlDefault = XmlBuilderSql.getQuery("sql8-up-attributes-default");
+        Sql sql = sqlContext.getQuery("sql7-up-attributes-all");
+        Sql sqlDefault = sqlContext.getQuery("sql8-up-attributes-default");
         
         assertThat(sql.getSql().toLowerCase(), is("update users set name = #{name} where id = #{id}".toLowerCase()));        
         assertThat(sqlDefault.getSql().toLowerCase(), is("update users set name = #{name} where id = #{id}".toLowerCase()));
@@ -141,8 +148,8 @@ public class AttributesTest
     @Test
     public void whenReadXmlWithGroupByAttributesElementMustMatch() 
     { 
-        Selectable sql1 = XmlBuilderSql.getQuery("test-groupingby1-after-select").asSelectable();
-        Selectable sql2 = XmlBuilderSql.getQuery("test-groupingby2-after-select").asSelectable();
+        Selectable sql1 = sqlContext.getQuery("test-groupingby1-after-select").asSelectable();
+        Selectable sql2 = sqlContext.getQuery("test-groupingby2-after-select").asSelectable();
         
         assertThat(sql1.getSql().toLowerCase(), is("select name, code, priority from color"));        
         assertThat(sql1.getLanguageType(), is(LanguageType.NATIVE));

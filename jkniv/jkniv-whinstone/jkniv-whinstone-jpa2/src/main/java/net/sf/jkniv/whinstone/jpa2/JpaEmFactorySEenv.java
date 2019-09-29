@@ -52,31 +52,6 @@ class JpaEmFactorySEenv implements JpaEmFactory
         return em;
     }
 
-    /*
-    @Override
-    public boolean isContainerManaged()
-    {
-        if (containerManaged == null) 
-        {
-            EntityManager em = null;
-            try
-            {
-                em = createEntityManager();
-                em.getTransaction();
-                
-                containerManaged = false;
-            }
-            catch(IllegalStateException ex) {
-                containerManaged = true;
-            } finally {
-                if (em!=null && em.isOpen())
-                    em.close();
-            }
-        }
-        return containerManaged;
-    }
-    */
-    
     /**
      * @throws IllegalStateException if the entity manager is container-managed
      */
@@ -92,7 +67,6 @@ class JpaEmFactorySEenv implements JpaEmFactory
         
         return transactional;
     }
-    
 
     @Override
     public boolean isActive()

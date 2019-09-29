@@ -25,14 +25,22 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import net.sf.jkniv.sqlegance.builder.XmlBuilderSql;
+import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 
 public class XmlBuiderSqlOrderTest
 {
+    private static SqlContext sqlContext;
     
+    @BeforeClass
+    public static void setUp()
+    {
+        sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
+    }
+   
     @Test
     public void whenBuildTheQueryTheOrderOfElementsIsWarrantedSelectElements()
     {
@@ -44,7 +52,7 @@ public class XmlBuiderSqlOrderTest
         p.put("doc", "00000000");
         p.put("age", "18");
         
-        sql = XmlBuilderSql.getQuery("test-order1-select");
+        sql = sqlContext.getQuery("test-order1-select");
         assertThat(sql.getSql(p).toLowerCase(),
                    is("select id, name from users where id > 0 and name = #{name} and cel = #{cel} and doc like #{doc} and age = #{age}"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
@@ -60,7 +68,7 @@ public class XmlBuiderSqlOrderTest
         p.put("phone", "88885544");
         p.put("age", "18");
         
-        sql = XmlBuilderSql.getQuery("test-order2-where");
+        sql = sqlContext.getQuery("test-order2-where");
         assertThat(sql.getSql(p).toLowerCase(),
                   is("select id, name from users where name = #{name} and cel = #{cel} and phone like #{phone} and age = #{age}"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
@@ -75,7 +83,7 @@ public class XmlBuiderSqlOrderTest
         p.put("cel", "99880066");
         p.put("age", "18");
         
-        sql = XmlBuilderSql.getQuery("test-order2-where");
+        sql = sqlContext.getQuery("test-order2-where");
         assertThat(sql.getSql(p).toLowerCase(),
                    is("select id, name from users where name = #{name} and cel = #{cel} and status = 1 and age = #{age}"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
@@ -89,7 +97,7 @@ public class XmlBuiderSqlOrderTest
         p.put("doc", "99880066");
         p.put("age", "18");
         
-        sql = XmlBuilderSql.getQuery("test-order2-where");
+        sql = sqlContext.getQuery("test-order2-where");
         assertThat(sql.getSql(p).toLowerCase(),
                 is("select id, name from users where doc like #{doc} and age = #{age}"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));

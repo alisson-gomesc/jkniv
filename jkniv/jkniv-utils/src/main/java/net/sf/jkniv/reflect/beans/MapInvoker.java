@@ -20,14 +20,14 @@
 package net.sf.jkniv.reflect.beans;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
+import java.util.Map;
 
 import net.sf.jkniv.exception.HandleableException;
 
-class CollectionInvoke extends AbstractInvoke implements Invokable
+class MapInvoker extends AbstractInvoker implements Invokable
 {
 
-    public CollectionInvoke(HandleableException handleException)
+    public MapInvoker(HandleableException handleException)
     {
         super(handleException);
     }
@@ -45,13 +45,14 @@ class CollectionInvoke extends AbstractInvoke implements Invokable
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Object invoke(String methodName, Object theInstance, Object... values)
     {
-        boolean ret = false;
+        Object oldValue = null;
         for(Object v : values)
-            ret = ((Collection)theInstance).add(v);
-        return ret;
+            oldValue = ((Map)theInstance).put(methodName, v);
+        
+        return oldValue;
     }
     
 }

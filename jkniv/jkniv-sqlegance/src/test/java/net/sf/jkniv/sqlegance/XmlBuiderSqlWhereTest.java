@@ -25,13 +25,22 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import net.sf.jkniv.sqlegance.builder.XmlBuilderSql;
+import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 
 public class XmlBuiderSqlWhereTest
 {
+    private static SqlContext sqlContext;
+    
+    @BeforeClass
+    public static void setUp()
+    {
+        sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
+    }
+
     @Test
     public void whenBuildTheQueryTheWhereClauseSuprimeFirstANDCase1()
     {
@@ -40,7 +49,7 @@ public class XmlBuiderSqlWhereTest
         p.put("name", "alanis");
         p.put("age", "18");
         
-        sql = XmlBuilderSql.getQuery("test-where-suprime-and1");
+        sql = sqlContext.getQuery("test-where-suprime-and1");
         assertThat(sql.getSql(p).toLowerCase(),
                    is("select id, name from users where ( age = #{age} or age >=18) and name = #{name}"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
@@ -54,7 +63,7 @@ public class XmlBuiderSqlWhereTest
         p.put("name", "alanis");
         p.put("age", "18");
         
-        sql = XmlBuilderSql.getQuery("test-where-suprime-and2");
+        sql = sqlContext.getQuery("test-where-suprime-and2");
         assertThat(sql.getSql(p).toLowerCase(),
                 is("select id, name from users where ( age = #{age} or age >=18) and name = #{name}"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
@@ -67,7 +76,7 @@ public class XmlBuiderSqlWhereTest
         Sql sql;
         p.put("name", "alanis");
         p.put("age", "18");
-        sql = XmlBuilderSql.getQuery("test-where-suprime-and3");
+        sql = sqlContext.getQuery("test-where-suprime-and3");
         assertThat(sql.getSql(p).toLowerCase(),
                 is("select id, name from users where age = #{age} and name = #{name}"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
@@ -81,7 +90,7 @@ public class XmlBuiderSqlWhereTest
         Sql sql;
         p.put("code", "123");
         p.put("codeShop", "18");
-        sql = XmlBuilderSql.getQuery("test-where-with-choose-colon");
+        sql = sqlContext.getQuery("test-where-with-choose-colon");
         assertThat(sql.getSql(p).replaceAll("\n", "").toLowerCase(), is("select * from customers c where trim(c.code) = trim(:code)          and trim(c.codeshop) = :codeshop"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.COLON));
     }

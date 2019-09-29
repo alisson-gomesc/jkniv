@@ -25,20 +25,28 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import net.sf.jkniv.sqlegance.builder.XmlBuilderSql;
+import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 
-@SuppressWarnings("deprecation")
 public class XmlBuiderSqlChooseTest
 {
+    private static SqlContext sqlContext;
+    
+    @BeforeClass
+    public static void setUp()
+    {
+        sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
+    }
+
 	@Test
 	public void whenNameParameterHasValueHeIsPartOfQuery() {
         Map<String, Object> p = new HashMap<String, Object>();
         Sql sql;
         p.put("name", "acme");
-        sql = XmlBuilderSql.getQuery("test-choose-hashmark1");
+        sql = sqlContext.getQuery("test-choose-hashmark1");
         assertThat(sql.getSql(p).toLowerCase(), is("select id, name from users where id > 0 and name = #{name} and status = 1"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
 	}
@@ -48,7 +56,7 @@ public class XmlBuiderSqlChooseTest
         Map<String, Object> p = new HashMap<String, Object>();
         Sql sql;
         p.put("doc", "acme");
-        sql = XmlBuilderSql.getQuery("test-choose-hashmark1");
+        sql = sqlContext.getQuery("test-choose-hashmark1");
         assertThat(sql.getSql(p).toLowerCase(), is("select id, name from users where id > 0 and doc like #{doc}"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
 	}
@@ -58,7 +66,7 @@ public class XmlBuiderSqlChooseTest
         Map<String, Object> p = new HashMap<String, Object>();
         Sql sql;
         p.put("phone", "acme");
-        sql = XmlBuilderSql.getQuery("test-choose-hashmark1");
+        sql = sqlContext.getQuery("test-choose-hashmark1");
         assertThat(sql.getSql(p).toLowerCase(), is("select id, name from users where id > 0 and phone like #{phone}"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
 	}
@@ -67,7 +75,7 @@ public class XmlBuiderSqlChooseTest
 	public void whenHaventParameterValueOtherwiseNodeIsPartOfQuery() {
         Map<String, Object> p = new HashMap<String, Object>();
         Sql sql;
-        sql = XmlBuilderSql.getQuery("test-choose-hashmark1");
+        sql = sqlContext.getQuery("test-choose-hashmark1");
         assertThat(sql.getSql(p).toLowerCase(), is("select id, name from users where id > 0 and status = 1"));		
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
 	}

@@ -47,7 +47,7 @@ public class NestedInvokeTest
     public void whenBuildNestedObjecLevelOne()
     {
         Book book = new Book();
-        Invokable call = new NestedInvoke(new HandlerException());
+        Invokable call = new NestedInvoker(new HandlerException());
         
         call.invoke("author.name", book, "john");
         
@@ -59,7 +59,7 @@ public class NestedInvokeTest
     @Test
     public void whenBuildAbstractWithInstaceTypeLevelOne()
     {
-        Invokable call = new NestedInvoke(new HandlerException());
+        Invokable call = new NestedInvoker(new HandlerException());
         NestedContainerType nestedContainer = new NestedContainerType();
         ContainerType container = new ContainerType();
         container.setMyAbstractClass(new MyConcreteForAbstract());
@@ -75,7 +75,7 @@ public class NestedInvokeTest
     @Test
     public void whenBuildNestedSeveralSimpleTypesLevelOne()
     {
-        Invokable call = new NestedInvoke(new HandlerException());
+        Invokable call = new NestedInvoker(new HandlerException());
         NestedContainerType nestedContainer = new NestedContainerType();
         call.invoke("types.author.name", nestedContainer, "john");
         call.invoke("types.book.author.name", nestedContainer, "john");
@@ -130,10 +130,9 @@ public class NestedInvokeTest
     @Test
     public void whenBuildNestedExistsObjecLevelOne()
     {
-        Invokable call = new NestedInvoke(new HandlerException());
+        Invokable call = new NestedInvoker(new HandlerException());
         Book book = new Book();
         book.setAuthor(new Author());
-        //BuildNestedObject build = new BuildNestedObject(book);
         
         call.invoke("author.name", book, "john");
         
@@ -145,7 +144,7 @@ public class NestedInvokeTest
     @Test
     public void whenReflectionNestedInvokeBasicMethodUnsupportedOperation()
     {
-        Invokable call = new NestedInvoke(new HandlerException());
+        Invokable call = new NestedInvoker(new HandlerException());
         catcher.expect(UnsupportedOperationException.class);
         call.invoke(String.class, "hello Exception");
     }
@@ -153,7 +152,7 @@ public class NestedInvokeTest
     @Test
     public void whenReflectionNestedInvokeMethodUnsupportedOperation() throws SecurityException, NoSuchMethodException
     {
-        Invokable call = new NestedInvoke(new HandlerException());
+        Invokable call = new NestedInvoker(new HandlerException());
         catcher.expect(UnsupportedOperationException.class);
         call.invoke(Map.class.getMethod("size"), "hello Exception");
     }

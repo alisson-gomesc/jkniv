@@ -27,13 +27,13 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.exception.HandleableException;
 
-abstract class AbstractInvoke
+abstract class AbstractInvoker
 {
     protected static final Assertable       notNull    = AssertsFactory.getNotNull();
     protected final HandleableException   handleException;
     private final Map<String, MethodInfo> cacheMethods;
     
-    public AbstractInvoke(HandleableException handleException)
+    public AbstractInvoker(HandleableException handleException)
     {
         this.handleException = handleException;
         this.cacheMethods = new HashMap<String, MethodInfo>(3);

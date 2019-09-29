@@ -27,7 +27,6 @@ import net.sf.jkniv.sqlegance.KeyGeneratorType;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
-import net.sf.jkniv.whinstone.ResultSetParser;
 
 /**
  * Adapter for Statements {@link java.sql.Statement}, {@link java.sql.PreparedStatement}, 

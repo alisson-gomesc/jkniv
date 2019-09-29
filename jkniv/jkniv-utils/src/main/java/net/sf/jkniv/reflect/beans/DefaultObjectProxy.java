@@ -111,11 +111,11 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
                     target, targetClazz, className);
         isWrapperType = BASIC_TYPE.isBasicType(targetClass);
         init();
-        this.basicInvoke = new BasicInvoke(this.handleException);
-        this.pojoInvoke = new PojoInvoke((BasicInvoke) basicInvoke, this.handleException);
-        this.nestedInvoke = new NestedInvoke((PojoInvoke) pojoInvoke, this.handleException);
-        this.collectionInvoke = new CollectionInvoke(this.handleException);
-        this.mapInvoke = new MapInvoke(this.handleException);
+        this.basicInvoke = new BasicInvoker(this.handleException);
+        this.pojoInvoke = new PojoInvoker((BasicInvoker) basicInvoke, this.handleException);
+        this.nestedInvoke = new NestedInvoker((PojoInvoker) pojoInvoke, this.handleException);
+        this.collectionInvoke = new CollectionInvoker(this.handleException);
+        this.mapInvoke = new MapInvoker(this.handleException);
     }
     
     @Override

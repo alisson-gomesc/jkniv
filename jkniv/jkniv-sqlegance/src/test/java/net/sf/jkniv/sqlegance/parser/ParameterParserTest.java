@@ -28,8 +28,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("ParameterParser is deprecated and deleted")
 public class ParameterParserTest
 {
     private static final String SQL_WITH_HASH          = "select id, name from Roles where id = #{id} and name = #{name}";
@@ -76,12 +78,12 @@ public class ParameterParserTest
     @Test
     public void parameterParserExtractTest()
     {
-        String[] paramsSqlHash = ParameterParser.extract(SQL_WITH_HASH);
-        String[] paramsSql2Dots = ParameterParser.extract(SQL_WITH_2_DOTS);
-        String[] paramsSqlQuestionMark = ParameterParser.extract(SQL_WITH_QUESTION_MARK);
-        String[] paramsSqlHashDoubledNamed = ParameterParser.extract(SQL_WITH_HASH_DOUBLE);
-        String[] paramsSqlEmpty = ParameterParser.extract("");
-        String[] paramsSqlNull = ParameterParser.extract(null);
+        String[] paramsSqlHash = null;// = ParameterParser.extract(SQL_WITH_HASH);
+        String[] paramsSql2Dots=null;// = ParameterParser.extract(SQL_WITH_2_DOTS);
+        String[] paramsSqlQuestionMark=null;// = ParameterParser.extract(SQL_WITH_QUESTION_MARK);
+        String[] paramsSqlHashDoubledNamed=null;// = ParameterParser.extract(SQL_WITH_HASH_DOUBLE);
+        String[] paramsSqlEmpty=null;// = ParameterParser.extract("");
+        String[] paramsSqlNull=null;// = ParameterParser.extract(null);
         
         assertThat( paramsSqlHash.length, is(2));
         assertThat(paramsSqlHash[0], is("id"));
@@ -103,12 +105,12 @@ public class ParameterParserTest
         assertThat(paramsSqlNull.length, is(0));
     }
     
-    @Test
+    @Test @Ignore("ParameterParser is deprecated and deleted")
     public void parameterParserExtractInClauseTest()
     {
-        String[] paramsSqlHash = ParameterParser.extract(SQL_WITH_IN_HASH);
-        String[] paramsSql2Dots = ParameterParser.extract(SQL_WITH_IN_2DOTS);
-        String[] paramsSqlQuestion = ParameterParser.extract(SQL_WITH_IN_QUESTION);
+        String[] paramsSqlHash = null;// = ParameterParser.extract(SQL_WITH_IN_HASH);
+        String[] paramsSql2Dots = null;// = ParameterParser.extract(SQL_WITH_IN_2DOTS);
+        String[] paramsSqlQuestion = null;// = ParameterParser.extract(SQL_WITH_IN_QUESTION);
         
         
         assertThat(paramsSqlHash.length, is(2) );
@@ -125,31 +127,33 @@ public class ParameterParserTest
     }
     
     @Test(expected = RuntimeException.class)
+    @Ignore("ParameterParser is deprecated and deleted")
     public void whenSqlMixNamedParameterExceptionsIsExpectedCase1()
     {
         String sql = "select id, name from Roles where id = #{id} and name = #{name} and xy = ?";
-        ParameterParser.extract(sql);
+        //ParameterParser.extract(sql);
     }
     
     @Test(expected = RuntimeException.class)
+    
     public void whenSqlMixNamedParameterExceptionsIsExpectedCase2()
     {
         String sql = "select id, name from Roles where id = #{id} and name = #{name} and xy = :xy";
-        ParameterParser.extract(sql);
+        //ParameterParser.extract(sql);
     }
     
     @Test(expected = RuntimeException.class)
     public void whenSqlMixNamedParameterExceptionsIsExpectedCase3()
     {
         String sql = "select id, name from Roles where id = :id and name = #{name}";
-        ParameterParser.extract(sql);
+        //ParameterParser.extract(sql);
     }
     
     @Test(expected = RuntimeException.class)
     public void whenSqlMixNamedParameterExceptionsIsExpectedCase4()
     {
         String sql = "select id, name from Roles where id = ? and name = #{name}";
-        ParameterParser.extract(sql);
+        //ParameterParser.extract(sql);
     }
     
     @Test
@@ -173,9 +177,7 @@ public class ParameterParserTest
     {
         String sql = "select id, name from Roles where id = :id and name = :name and status = :status";
         String sqlExpected = "select id, name from Roles where id = ?   and name = ?     and status = ?      ";
-        String newSql = ParameterParser.replaceTwoDotsForQuestionMark(sql);
-        //System.out.println(sql);
-        //System.out.println(newSql);
+        String newSql = null;// = ParameterParser.replaceTwoDotsForQuestionMark(sql);
         assertThat(newSql, is(sqlExpected));
     }
     
@@ -184,7 +186,7 @@ public class ParameterParserTest
     {
         String sql         = "select id, name from Roles where id = :id and name = :name and status = :status and dt = to_date(:dt,'YYYY-MM-DD HH24:MI:SS')";
         String sqlExpected = "select id, name from Roles where id = ?   and name = ?     and status = ?       and dt = to_date(?  ,'YYYY-MM-DD HH24:MI:SS')";
-        String newSql = ParameterParser.replaceTwoDotsForQuestionMark(sql);
+        String newSql = null;// = ParameterParser.replaceTwoDotsForQuestionMark(sql);
         assertThat(newSql, is(sqlExpected));
     }
     
@@ -193,7 +195,7 @@ public class ParameterParserTest
     {
         String sql         = "select id, name from Roles where id = #{id} and name = #{name} and status = #{status}";
         String sqlExpected = "select id, name from Roles where id = ?     and name = ?       and status = ?        ";
-        String newSql = ParameterParser.replaceHashForQuestionMark(sql);
+        String newSql = null;// = ParameterParser.replaceHashForQuestionMark(sql);
         assertThat(newSql, is(sqlExpected));
     }
     
@@ -202,7 +204,7 @@ public class ParameterParserTest
     {
         String sql         = "select id, name from Roles where id = #{id} and name = #{name} and status = #{status} and dt = to_date(#{dt},'YYYY-MM-DD HH24:MI:SS')";
         String sqlExpected = "select id, name from Roles where id = ?     and name = ?       and status = ?         and dt = to_date(?    ,'YYYY-MM-DD HH24:MI:SS')";
-        String newSql = ParameterParser.replaceHashForQuestionMark(sql);
+        String newSql = null;// = ParameterParser.replaceHashForQuestionMark(sql);
         assertThat(newSql, is(sqlExpected));
     }
     
@@ -211,9 +213,7 @@ public class ParameterParserTest
     {
         String sql         = "select id, name \nfrom Roles where \nid = #{id} and \nname = #{name} and \nstatus = #{status}";
         String sqlExpected = "select id, name \nfrom Roles where \nid = ?     and \nname = ?       and \nstatus = ?        ";
-        String newSql = ParameterParser.replaceHashForQuestionMark(sql);
-        //System.out.println(sql);
-        //System.out.println(newSql);
+        String newSql = null;// = ParameterParser.replaceHashForQuestionMark(sql);
         assertThat(newSql, is(sqlExpected));
     }
     
@@ -221,8 +221,8 @@ public class ParameterParserTest
     public void whenSqlHaveHashAnswerIsTrue()
     {
         String sql = "select id, name from Roles where id = #{id} and name = #{name} and status = #{status}";
-        boolean answer = ParameterParser.hasHash(sql);
-        String[] count = ParameterParser.extract(sql);
+        boolean answer = false;// = ParameterParser.hasHash(sql);
+        String[] count = null;// = ParameterParser.extract(sql);
         Assert.assertTrue("Hash will be found", answer);
         assertThat("Two dots will be found 3 parameters", count.length, is(3));
     }
@@ -231,8 +231,8 @@ public class ParameterParserTest
     public void whenSqlHaveHashAnswerIsTrueNested()
     {
         String sql = "select * from Route(#{a.longitude.value},#{a.latitude.value},#{b.longitude.value},#{b.latitude.value})";
-        boolean answer = ParameterParser.hasHash(sql);
-        String[] count = ParameterParser.extract(sql);
+        boolean answer = false;//ParameterParser.hasHash(sql);
+        String[] count = null;// = ParameterParser.extract(sql);
         Assert.assertTrue("Hash will be found", answer);
         assertThat("Two dots will be found 4 parameters", count.length, is(4));
     }
@@ -241,8 +241,8 @@ public class ParameterParserTest
     public void whenSqlHaveQuestionAnswerIsTrue()
     {
         String sql = "select id, name from Roles where id = ? and name = ? and status = ?";
-        boolean answer = ParameterParser.hasQuestion(sql);
-        String[] count = ParameterParser.extract(sql);
+        boolean answer = false;//ParameterParser.hasQuestion(sql);
+        String[] count = null;// = ParameterParser.extract(sql);
         Assert.assertTrue("Question mark will be found", answer);
         assertThat("Two dots will be found 3 parameters", count.length, is(3));
     }
@@ -251,8 +251,8 @@ public class ParameterParserTest
     public void whenSqlHaveTwoDotsAnswerIsTrue()
     {
         String sql = "select id, name from Roles where id = :id and name = :name and status = :status";
-        boolean answer = ParameterParser.hasTwoDots(sql);
-        String[] count = ParameterParser.extract(sql);
+        boolean answer = false;//ParameterParser.hasTwoDots(sql);
+        String[] count = null;// = ParameterParser.extract(sql);
         Assert.assertTrue("Two dots will be found", answer);
         assertThat("Two dots will be found 3 parameters", count.length, is(3));
     }
@@ -261,8 +261,8 @@ public class ParameterParserTest
     public void whenSqlHaveTwoDotsAnswerIsTrueNested()
     {
         String sql = "select * from Route(:a.longitude.value,:a.latitude.value,:b.longitude.value,:b.latitude.value)";
-        boolean answer = ParameterParser.hasTwoDots(sql);
-        String[] count = ParameterParser.extract(sql);
+        boolean answer = false;//ParameterParser.hasTwoDots(sql);
+        String[] count = null;// = ParameterParser.extract(sql);
         Assert.assertTrue("Two dots will be found", answer);
         assertThat("Two dots will be found 4 parameters", count.length, is(4));
     }
@@ -271,7 +271,7 @@ public class ParameterParserTest
     public void whenSqlHaveTwoDotsWithDateTwoDots()
     {
         String sql = "select id, name from Roles where dt = to_date(:dt,'YYYY-MM-DD HH24:MI:SS') and name = :name and status = :status";
-        String[] answer = ParameterParser.extract(sql);
+        String[] answer = null;// = ParameterParser.extract(sql);
         assertThat("Two dots will be found 3 parameters", answer.length, is(3));
     }
     
@@ -279,7 +279,7 @@ public class ParameterParserTest
     public void whenSqlHaveQuestionMarksDateTwoDots()
     {
         String sql = "select id, name from Roles where dt = to_date(?,'YYYY-MM-DD HH24:MI:SS') and name = ? and status = ?";
-        String[] answer = ParameterParser.extract(sql);
+        String[] answer = null;// = ParameterParser.extract(sql);
         assertThat("Two dots will be found 3 parameters", answer.length, is(3));
     }
     
@@ -287,7 +287,7 @@ public class ParameterParserTest
     public void whenSqlHashMarksDateTwoDots()
     {
         String sql = "select id, name from Roles where dt = to_date(#{dt},'YYYY-MM-DD HH24:MI:SS') and name = #{name} and status = #{status}";
-        String[] answer = ParameterParser.extract(sql);
+        String[] answer = null;// = ParameterParser.extract(sql);
         assertThat("Two dots will be found 3 parameters", answer.length, is(3));
     }
     

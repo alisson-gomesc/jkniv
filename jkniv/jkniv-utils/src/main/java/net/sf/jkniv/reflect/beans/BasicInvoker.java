@@ -19,37 +19,67 @@
  */
 package net.sf.jkniv.reflect.beans;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import net.sf.jkniv.exception.HandleableException;
-import net.sf.jkniv.experimental.converters.ArgumentsConvert;
 import net.sf.jkniv.reflect.ReflectionException;
 
-class PojoInvoke extends AbstractInvoke implements Invokable
+class BasicInvoker extends AbstractInvoker implements Invokable
 {
-    private final Invokable basicInvoke;
-
-    public PojoInvoke(HandleableException handleException)
-    {
-        this(new BasicInvoke(handleException), handleException);
-    }
-
-    public PojoInvoke(BasicInvoke basicInvoke, HandleableException handleException)
+    public BasicInvoker(HandleableException handleException)
     {
         super(handleException);
-        this.basicInvoke = basicInvoke;
     }
-
-    @Override
+    
     public Object invoke(Method method, Object theInstance, Object... values)
     {
         Object ret = null;
-        Object[] assignableArgs = ArgumentsConvert.makeAssignableTo(method.getParameterTypes(), values);
-        ret = invokeDirect(method, theInstance, assignableArgs);
+        try
+        {
+            ret = method.invoke(theInstance, values);
+        }
+        catch (Exception e)//IllegalAccessException, IllegalArgumentException, InvocationTargetException
+        {
+            this.handleException.handle(e, e.getMessage() + " method [" + method + "] type of("
+                    + StringUtil.arrayToClass(values) + ") values of (" + StringUtil.arrayToString(values) + ")");
+        }
         return ret;
     }
     
-    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T invoke(Class<T> targetClass, Object... values)
+    {
+        T value = (T)((values == null || values.length == 0) ? null : values[0]);
+        T ret = null;
+        if (value == null)
+            return ret;
+        
+        if (targetClass.getName().equals(value.getClass().getName()))
+            return value;
+        
+        try
+        {
+            Method m = targetClass.getMethod("valueOf", value.getClass());
+            ret = (T) invoke(m, null, value);
+        }
+        catch (Exception e)
+        {
+            try
+            {
+                Constructor<T> constructor = targetClass.getConstructor(value.getClass());
+                ret = constructor.newInstance(values);
+            }
+            catch (Exception ex)
+            {
+                
+                this.handleException.handle(ex,
+                        "Cannot found constructor to [" + targetClass + "] with value [" + value + "]");
+            }
+        }
+        return ret;
+    }
+    
     public Object invoke(String methodName, Object theInstance, Object... values)
     {
         Method method = null;
@@ -70,32 +100,6 @@ class PojoInvoke extends AbstractInvoke implements Invokable
                     methodName);
         
         return invoke(method, theInstance, values);
-    }
-
-    @Override
-    public <T> T invoke(Class<T> targetClass, Object... values)
-    {
-        return basicInvoke.invoke(targetClass, values);
-    }
-
-    private Object invokeDirect(Method method, Object theInstance, Object... values)
-    {
-        Object ret = null;
-        try
-        {
-            //
-            if (method.getParameterTypes().length > 0)
-                ret = method.invoke(theInstance, values);
-            else
-                ret = method.invoke(theInstance);
-        }
-        //IllegalAccessException, IllegalArgumentException, InvocationTargetException
-        catch (Exception e)
-        {
-            this.handleException.handle(e, e.getMessage() + " method [" + method + "] type of(" + StringUtil.arrayToClass(values)
-                    + ") values of (" + StringUtil.arrayToString(values) + ")");
-        }
-        return ret;
     }
 
 }

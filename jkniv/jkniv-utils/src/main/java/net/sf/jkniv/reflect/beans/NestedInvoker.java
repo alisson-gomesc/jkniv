@@ -28,28 +28,28 @@ import org.slf4j.LoggerFactory;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.reflect.ReflectionException;
 
-class NestedInvoke extends AbstractInvoke implements Invokable
+class NestedInvoker extends AbstractInvoker implements Invokable
 {
-    private static final Logger LOG = LoggerFactory.getLogger(NestedInvoke.class);
-    private static final MethodName getter  = new GetterMethod();
-    private static final MethodName setter  = new SetterMethod();
-    private final Invokable pojoInvoke;
+    private static final Logger LOG = LoggerFactory.getLogger(NestedInvoker.class);
+    private static final MethodName GETTER  = new GetterMethod();
+    private static final MethodName SETTER  = new SetterMethod();
+    private final Invokable pojoInvoker;
 
-    public NestedInvoke(HandleableException handleException)
+    public NestedInvoker(HandleableException handleException)
     {
-        this(new PojoInvoke(handleException), handleException);
+        this(new PojoInvoker(handleException), handleException);
     }
 
-    public NestedInvoke(PojoInvoke pojo, HandleableException handleException)
+    public NestedInvoker(PojoInvoker pojo, HandleableException handleException)
     {
         super(handleException);
-        this.pojoInvoke = new PojoInvoke(handleException);
+        this.pojoInvoker = new PojoInvoker(handleException);
     }
 
-    public NestedInvoke(PojoInvoke pojo, BasicInvoke basic, HandleableException handleException)
+    public NestedInvoker(PojoInvoker pojo, BasicInvoker basic, HandleableException handleException)
     {
         super(handleException);
-        this.pojoInvoke = new PojoInvoke(basic, handleException);
+        this.pojoInvoker = new PojoInvoker(basic, handleException);
     }
 
     @Override
@@ -73,8 +73,8 @@ class NestedInvoke extends AbstractInvoke implements Invokable
         try
         {
             nestedInstance = createNestedInstances(methodName, nestedMethodsNames, theInstance);
-            MethodInfo methodInfoSeter = getMethodByName(setter.capitalize(nestedMethodsNames[nestedMethodsNames.length - 1]), nestedInstance.getClass());
-            ret = pojoInvoke.invoke(methodInfoSeter.method, nestedInstance, values);
+            MethodInfo methodInfoSeter = getMethodByName(SETTER.capitalize(nestedMethodsNames[nestedMethodsNames.length - 1]), nestedInstance.getClass());
+            ret = pojoInvoker.invoke(methodInfoSeter.method, nestedInstance, values);
 
             //setValue(nestedInstance, nestedMethodsNames[nestedMethodsNames.length - 1], values);
         }
@@ -107,11 +107,11 @@ class NestedInvoke extends AbstractInvoke implements Invokable
             String methodName = nestedMethodsNames[i];
             MethodInfo methodInfo = null;
             Object o = null;
-            String methodNameCaptilized = getter.capitalize(methodName);
+            String methodNameCaptilized = GETTER.capitalize(methodName);
             methodInfo = getMethodByName(methodNameCaptilized, useTargetClass);
             notNull.verify(new ReflectionException("Cannot find method [" + methodNameCaptilized  + "] for [" + useTargetClass.getName() + "]"), methodInfo.method);// TODO design custom message
 
-            o = pojoInvoke.invoke(methodInfo.method, useInstance);
+            o = pojoInvoker.invoke(methodInfo.method, useInstance);
             //o = invokeDirect(methodInfo.method, useInstance);
             
             if (o == null)
@@ -127,8 +127,8 @@ class NestedInvoke extends AbstractInvoke implements Invokable
                             + "] to set nested values.");
                 
                 nestedInstance = fieldType.newInstance();
-                MethodInfo methodInfoSeter = getMethodByName(setter.capitalize(methodName), useTargetClass);
-                pojoInvoke.invoke(methodInfoSeter.method, useInstance, nestedInstance);
+                MethodInfo methodInfoSeter = getMethodByName(SETTER.capitalize(methodName), useTargetClass);
+                pojoInvoker.invoke(methodInfoSeter.method, useInstance, nestedInstance);
                 //invokeDirect(methodInfoSeter.method, useInstance, nestedInstance);
             }
             else

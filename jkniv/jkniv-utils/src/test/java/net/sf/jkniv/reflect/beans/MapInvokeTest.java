@@ -44,7 +44,7 @@ public class MapInvokeTest
     @Test
     public void whenReflectionBuilBasicMap()
     {
-        Invokable call = new MapInvoke(new HandlerException());
+        Invokable call = new MapInvoker(new HandlerException());
         Map<String, String> map = new HashMap<String, String>();
         
         Object ret = call.invoke("color", map, "RED");
@@ -64,7 +64,7 @@ public class MapInvokeTest
     @Test
     public void whenReflectionBuilPojoMap()
     {
-        Invokable call = new MapInvoke(new HandlerException());
+        Invokable call = new MapInvoker(new HandlerException());
         Map<String, Author> map = new HashMap<String, Author>();
         Author author = new Author("john");
         
@@ -99,7 +99,7 @@ public class MapInvokeTest
     @Test
     public void whenReflectionMapInvokeBasicMethodUnsupportedOperation()
     {
-        Invokable call = new MapInvoke(new HandlerException());
+        Invokable call = new MapInvoker(new HandlerException());
         catcher.expect(UnsupportedOperationException.class);
         call.invoke(String.class, "hello Exception");
     }
@@ -107,7 +107,7 @@ public class MapInvokeTest
     @Test
     public void whenReflectionMapInvokeMethodUnsupportedOperation() throws SecurityException, NoSuchMethodException
     {
-        Invokable call = new MapInvoke(new HandlerException());
+        Invokable call = new MapInvoker(new HandlerException());
         catcher.expect(UnsupportedOperationException.class);
         call.invoke(Map.class.getMethod("size"), "hello Exception");
     }

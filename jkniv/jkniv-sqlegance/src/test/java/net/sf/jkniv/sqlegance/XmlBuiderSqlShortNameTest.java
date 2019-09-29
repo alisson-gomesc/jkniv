@@ -22,14 +22,23 @@ package net.sf.jkniv.sqlegance;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import net.sf.jkniv.sqlegance.builder.XmlBuilderSql;
+import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 
 public class XmlBuiderSqlShortNameTest
 {
+    private static SqlContext sqlContext;
+    
+    @BeforeClass
+    public static void setUp()
+    {
+        sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
+    }
+
     @Rule
     public ExpectedException catcher = ExpectedException.none();
     
@@ -39,12 +48,12 @@ public class XmlBuiderSqlShortNameTest
 	    catcher.expect(QueryNotFoundException.class);
 	    catcher.expectMessage("There are duplicate short name [getUsers] for this statement, use fully name to recover it");
 	    Sql sql1, sql2;
-        sql1 = XmlBuilderSql.getQuery("com.acme.sample.getUsers");
-        sql2 = XmlBuilderSql.getQuery("com.acme.sample.security.getUsers");
+        sql1 = sqlContext.getQuery("com.acme.sample.getUsers");
+        sql2 = sqlContext.getQuery("com.acme.sample.security.getUsers");
         assertThat(sql1.getSql().toLowerCase(), is("select id, name from users"));
         assertThat(sql2.getSql().toLowerCase(), is("select id, name from users_sec"));
         assertThat((sql1 != sql2), is(true));
-        XmlBuilderSql.getQuery("getUsers");
+        sqlContext.getQuery("getUsers");
 	}
 	
 	

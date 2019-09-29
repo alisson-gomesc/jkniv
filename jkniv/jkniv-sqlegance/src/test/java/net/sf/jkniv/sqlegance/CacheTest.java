@@ -19,25 +19,17 @@
  */
 package net.sf.jkniv.sqlegance;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import net.sf.jkniv.cache.Cacheable;
 import net.sf.jkniv.cache.MemoryCache;
 import net.sf.jkniv.cache.NoCache;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
-import net.sf.jkniv.sqlegance.builder.XmlBuilderSql;
-import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
-import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
-import net.sf.jkniv.sqlegance.statement.ResultSetType;
-import net.sf.jkniv.sqlegance.params.ParamMarkType;
-import net.sf.jkniv.sqlegance.transaction.Isolation;
 
 public class CacheTest
 {

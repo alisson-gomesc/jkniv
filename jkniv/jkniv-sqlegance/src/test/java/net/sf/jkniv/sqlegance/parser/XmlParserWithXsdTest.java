@@ -19,16 +19,26 @@
  */
 package net.sf.jkniv.sqlegance.parser;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.builder.XmlBuilderSql;
+import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 
 public class XmlParserWithXsdTest
 {
-    @Test(expected=RepositoryException.class)
+    @Rule
+    public ExpectedException    catcher  = ExpectedException.none();
+    private static final String XSD_PATH = "file:/C:/dev/wks/wks-jkniv-git/jkniv/jkniv-sqlegance/target/classes/net/sf/jkniv/sqlegance/builder/xml/";
+    
+    @Test
     public void whenLoadFileWithXsdError()
     {
-        XmlBuilderSql.configFile("/customxml/sql-stmt-wrong.xml");
+        catcher.expect(RepositoryException.class);
+        catcher.expectMessage("Fail validate [/customxml/sql-stmt-wrong.xml] against XSD=[[" + XSD_PATH
+                + "sqlegance-stmt.xsd, " + XSD_PATH
+                + "sqlegance-cache.xsd]]. cvc-complex-type.3.2.2: Attribute 'name' is not allowed to appear in element 'statements'");
+        SqlContextFactory.newInstance("/customxml/sql-stmt-wrong.xml");
     }
 }

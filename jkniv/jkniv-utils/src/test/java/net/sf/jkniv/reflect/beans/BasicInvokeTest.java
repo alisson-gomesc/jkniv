@@ -19,14 +19,12 @@
  */
 package net.sf.jkniv.reflect.beans;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-
-
-import static org.hamcrest.CoreMatchers.instanceOf;
 
 import org.junit.Test;
 
@@ -63,7 +61,7 @@ public class BasicInvokeTest
     @Test
     public void whenBasicInvokeToBuildBasicTypes()
     {
-        Invokable call = new BasicInvoke(new HandlerException());
+        Invokable call = new BasicInvoker(new HandlerException());
 
         boolean resultB = call.invoke(Boolean.class, "true");
         assertThat(resultB, is(true));
@@ -124,7 +122,7 @@ public class BasicInvokeTest
     @Test
     public void whenBasicInvokeToBuildEnums()
     {
-        Invokable call = new BasicInvoke(new HandlerException());
+        Invokable call = new BasicInvoker(new HandlerException());
         
         
         FooColor red = call.invoke(FooColor.class, "RED");
