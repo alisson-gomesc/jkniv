@@ -39,6 +39,9 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.jpa2.commands.DefaultCommand;
 import net.sf.jkniv.whinstone.jpa2.commands.DefaultQuery;
+import net.sf.jkniv.whinstone.jpa2.commands.MergeCommand;
+import net.sf.jkniv.whinstone.jpa2.commands.PersistCommand;
+import net.sf.jkniv.whinstone.jpa2.commands.RemoveCommand;
 import net.sf.jkniv.whinstone.jpa2.statement.JpaStatementAdapter;
 import net.sf.jkniv.whinstone.statement.AutoKey;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
@@ -50,12 +53,13 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  */
 public class JpaCommandAdapter implements CommandAdapter
 {
-    private static final Logger     LOG      = LoggerFactory.getLogger();
-    private static final Logger     SQLLOG   = net.sf.jkniv.whinstone.jpa2.LoggerFactory.getLogger();
-    private static final Assertable NOT_NULL = AssertsFactory.getNotNull();
-    private final String                      contextName;
-    private final HandleableException         handlerException;
-    private JpaEmFactory                      emFactory;
+    private static final Logger       LOG               = LoggerFactory.getLogger();
+    private static final Logger       SQLLOG            = net.sf.jkniv.whinstone.jpa2.LoggerFactory.getLogger();
+    private static final Assertable   NOT_NULL          = AssertsFactory.getNotNull();
+    private static final String       ENTITY_ANNOTATION = "javax.persistence.Entity";
+    private final String              contextName;
+    private final HandleableException handlerException;
+    private JpaEmFactory              emFactory;
     
     public JpaCommandAdapter(String contextName, JpaEmFactory emFactory, HandleableException handlerException)
     {
@@ -88,11 +92,8 @@ public class JpaCommandAdapter implements CommandAdapter
             SQLLOG.info("Bind Native SQL\n{}", sql);
         
         Query queryJpa = build(queryable);
-                
-        StatementAdapter<T, R> stmt = new JpaStatementAdapter(
-                queryJpa, 
-                queryable, 
-                this.handlerException);
+        
+        StatementAdapter<T, R> stmt = new JpaStatementAdapter(queryJpa, queryable, this.handlerException);
         queryable.bind(stmt).on();
         
         if (queryable.getReturnType() != null)
@@ -100,10 +101,9 @@ public class JpaCommandAdapter implements CommandAdapter
         else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
             returnType = queryable.getDynamicSql().getReturnTypeAsClass();
         
-        stmt.returnType(returnType)
-            .resultRow(overloadResultRow)
-            .oneToManies(queryable.getDynamicSql().asSelectable().getOneToMany())
-            .groupingBy(queryable.getDynamicSql().asSelectable().getGroupByAsList());
+        stmt.returnType(returnType).resultRow(overloadResultRow)
+                .oneToManies(queryable.getDynamicSql().asSelectable().getOneToMany())
+                .groupingBy(queryable.getDynamicSql().asSelectable().getGroupByAsList());
         
         if (queryable.isScalar())
             stmt.scalar();
@@ -115,22 +115,44 @@ public class JpaCommandAdapter implements CommandAdapter
     @Override
     public <T, R> Command asUpdateCommand(Queryable queryable)
     {
-        return buildCommand(queryable);
+        Command command = null;
+        boolean isEntity = isEntity(queryable);
+        if (isEntity)
+            command = new MergeCommand(getEntityManager(), queryable);
+        else
+            command = buildCommand(queryable);
+        
+        return command;
     }
     
     @Override
     public <T, R> Command asRemoveCommand(Queryable queryable)//, ResultRow<T, R> overloadResultRow)
     {
-        return buildCommand(queryable);
+        Command command = null;
+        boolean isEntity = isEntity(queryable);
+        if (isEntity)
+            command = new RemoveCommand(getEntityManager(), queryable);
+        else
+            command = buildCommand(queryable);
+        
+        return command;
     }
     
     @Override
     public <T, R> Command asAddCommand(Queryable queryable)//, ResultRow<T, R> overloadResultRow)
     {
-        return buildCommand(queryable);
+        Command command = null;
+        boolean isEntity = isEntity(queryable);
+        if (isEntity)
+            command = new PersistCommand(getEntityManager(), queryable);
+        else
+            command = buildCommand(queryable);
+        
+        return command;
     }
     
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings(
+    { "rawtypes" })
     private <T, R> Command buildCommand(Queryable queryable)
     {
         Command command = null;
@@ -141,8 +163,8 @@ public class JpaCommandAdapter implements CommandAdapter
         
         Query queryJpa = build(queryable);
         
-        JpaStatementAdapter<Number, ResultSet> stmt = new JpaStatementAdapter<Number, ResultSet>(queryJpa,
-                queryable, this.handlerException);
+        JpaStatementAdapter<Number, ResultSet> stmt = new JpaStatementAdapter<Number, ResultSet>(queryJpa, queryable,
+                this.handlerException);
         
         //        if (queryable.getDynamicSql().isBatch() || queryable.isTypeOfBulk())
         //            command = new BulkCommand((CassandraPreparedStatementAdapter) stmt, queryable);
@@ -163,40 +185,55 @@ public class JpaCommandAdapter implements CommandAdapter
         return command;
     }
     
+    private boolean isEntity(Queryable queryable)
+    {
+        boolean isEntity = false;
+        if (queryable.getParams() != null)
+        {
+            isEntity = ObjectProxyFactory.of(queryable.getParams()).mute(ClassNotFoundException.class)
+                    .hasAnnotation(ENTITY_ANNOTATION);
+        }
+        return (isEntity && 
+                (queryable.getDynamicSql().getLanguageType() == LanguageType.HQL
+                || queryable.getDynamicSql().getLanguageType() == LanguageType.JPQL));
+    }
+    
     @Override
     public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
     {
-        
-        Query queryJpa = build(sql, languageType,  null, false);
+        Query queryJpa = build(sql, languageType, null, false);
         StatementAdapter<T, R> stmt = new JpaStatementAdapter(queryJpa, null, this.handlerException);
         return stmt;
     }
+    
     private Query build(Queryable queryable)
     {
-        boolean isReturnTypeManaged = false;
-        if(queryable.getDynamicSql().hasReturnType())
+        boolean returnTypeIsEntity = false;
+        if (queryable.getDynamicSql().hasReturnType())
         {
             ObjectProxy<?> proxyReturnType = ObjectProxyFactory.of(queryable.getDynamicSql().getReturnType());
-            isReturnTypeManaged = proxyReturnType.hasAnnotation("javax.persistence.Entity");
+            returnTypeIsEntity = proxyReturnType.hasAnnotation(ENTITY_ANNOTATION);
         }
-        return build(queryable.query(), queryable.getDynamicSql().getLanguageType(), queryable.getDynamicSql().getReturnTypeAsClass(), isReturnTypeManaged);
+        return build(queryable.query(), queryable.getDynamicSql().getLanguageType(),
+                queryable.getDynamicSql().getReturnTypeAsClass(), returnTypeIsEntity);
     }
     
-    private Query build(String sql, LanguageType languageType, Class<?> overloadReturnedType, boolean isReturnTypeManaged)
+    private Query build(String sql, LanguageType languageType, Class<?> overloadReturnedType,
+            boolean returnTypeIsEntity)
     {
         EntityManager em = getEntityManager();
         Query queryJpa = null;
         switch (languageType)
         {
             case JPQL:
-                if (isReturnTypeManaged)
+                if (returnTypeIsEntity)
                     queryJpa = em.createQuery(sql, overloadReturnedType);
                 else
                     queryJpa = em.createQuery(sql);
                 
                 break;
             case NATIVE:
-                if (isReturnTypeManaged)
+                if (returnTypeIsEntity)
                     queryJpa = em.createNativeQuery(sql, overloadReturnedType);
                 else
                     queryJpa = em.createNativeQuery(sql);
@@ -204,7 +241,7 @@ public class JpaCommandAdapter implements CommandAdapter
             case STORED:
                 throw new UnsupportedOperationException(
                         "RepositoryJpa supports JPQL or NATIVE queries none other, Stored Procedure is pending to implements");
-                //              queryJpa = em.createStoredProcedureQuery(isql.asStorable().getSpName());          
+            //              queryJpa = em.createStoredProcedureQuery(isql.asStorable().getSpName());          
             default:
                 throw new UnsupportedOperationException(
                         "RepositoryJpa supports JPQL or NATIVE queries none other, Stored Procedure is pending to implements");
@@ -234,7 +271,7 @@ public class JpaCommandAdapter implements CommandAdapter
         return adapter;
         */
     }
-
+    
     private EntityManager getEntityManager()
     {
         EntityManager em = emFactory.createEntityManager();
@@ -247,5 +284,5 @@ public class JpaCommandAdapter implements CommandAdapter
     {
         return "JpaCommandAdapter [contextName=" + contextName + ", emFactory=" + emFactory + "]";
     }
-
+    
 }

@@ -19,24 +19,23 @@
  */
 package net.sf.jkniv.whinstone.jpa2.commands;
 
-import java.sql.ResultSet;
+import javax.persistence.EntityManager;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.jpa2.statement.JpaStatementAdapter;
 
-public class DefaultCommand implements Command
+public class PersistCommand implements Command
 {
-    protected final JpaStatementAdapter<Number, ResultSet> stmt;
+    protected final EntityManager em;
     protected final Queryable queryable;
     protected HandleableException handlerException;
     
-    public DefaultCommand(JpaStatementAdapter<Number, ResultSet> stmt, Queryable queryable)
+    public PersistCommand(EntityManager em, Queryable queryable)
     {
         super();
-        this.stmt = stmt;
+        this.em = em;
         this.queryable = queryable;
     }
     
@@ -57,8 +56,7 @@ public class DefaultCommand implements Command
     @SuppressWarnings("unchecked")
     public <T> T execute()
     {
-        queryable.bind(stmt).on();
-        Integer rows = stmt.execute();
-        return (T) rows;
+        em.persist(queryable.getParams());
+        return (T) queryable.getParams();
     }
 }

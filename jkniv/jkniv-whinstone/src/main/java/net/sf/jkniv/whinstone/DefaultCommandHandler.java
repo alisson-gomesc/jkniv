@@ -120,6 +120,8 @@ public abstract class DefaultCommandHandler implements CommandHandler
             LOG.trace("Executing [{}] as {} command", queryable, sql.getSqlType());
         try
         {
+            // JPA with a entity doesn't assert validate
+            // how can fix/improve this?
             sql.getValidateType().assertValidate(queryable.getParams());
             if (!queryable.isBoundSql())
                 queryable.bind(sql);

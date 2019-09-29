@@ -47,6 +47,7 @@ import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.NonUniqueResultException;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
 import net.sf.jkniv.sqlegance.RepositoryException;
@@ -55,6 +56,7 @@ import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
+import net.sf.jkniv.sqlegance.builder.xml.TagFactory;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.CommandAdapter;
 import net.sf.jkniv.whinstone.CommandHandler;
@@ -262,22 +264,20 @@ class RepositoryJpa implements RepositoryJpaExtend
     @Override
     public <T> T add(T entity) // FIXME CommandHandler must be used (refactoring)
     {
-        /*
         NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toAddName(entity);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as add command", queryName);
 
         Queryable queryable = QueryFactory.of(queryName, entity);
-        Sql sql = sqlContext.getQuery(queryable.getName());
+        Sql sql = TagFactory.newInsert("dummy", LanguageType.JPQL, this.sqlContext.getSqlDialect());
         CommandHandler handler = new AddHandler(this.cmdAdapter);
         handler.with(queryable)
             .with(sql)
-            .checkSqlType(SqlType.INSERT)
             .with(handlerException)
             .run();
         return entity;
-        */
+        /*
         NOT_NULL.verify(entity);
         //Queryable queryable = QueryFactory.of("dummy", entity);
         //queryable.is
@@ -286,6 +286,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         EntityManager em = getEntityManager();
         em.persist(entity);
         return entity;
+        */
     }
     
     @Override
@@ -326,6 +327,21 @@ class RepositoryJpa implements RepositoryJpaExtend
     public <T> int remove(T entity)// FIXME CommandHandler must be used (refactoring)
     {
         NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toRemoveName(entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as remove command", queryName);
+
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        Sql sql = TagFactory.newInsert("dummy", LanguageType.JPQL, this.sqlContext.getSqlDialect());
+        CommandHandler handler = new RemoveHandler(this.cmdAdapter);
+        
+        handler.with(queryable)
+            .with(sql)
+            .with(handlerException)
+            .run();
+        return Statement.SUCCESS_NO_INFO;
+        /*
+        NOT_NULL.verify(entity);
         if (isTraceEnabled)
             LOG.trace("executing EntityManage.remove(" + entity.getClass().getName() + ")");
         EntityManager em = getEntityManager();
@@ -334,6 +350,7 @@ class RepositoryJpa implements RepositoryJpaExtend
             LOG.debug("1 record [{}] MUST BE affected by remove command", entity);
         
         return Statement.SUCCESS_NO_INFO;
+        */
     }
     
     /**
@@ -434,11 +451,27 @@ class RepositoryJpa implements RepositoryJpaExtend
     public <T> T update(T entity)// FIXME CommandHandler must be used (refactoring)
     {
         NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toUpdateName(entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as update command", queryName);
+
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        Sql sql = TagFactory.newInsert("dummy", LanguageType.JPQL, this.sqlContext.getSqlDialect());
+        CommandHandler handler = new UpdateHandler(this.cmdAdapter);
+        
+        T merged = handler.with(queryable)
+            .with(sql)
+            .with(handlerException)
+            .run();
+        return merged;
+        /*
+        NOT_NULL.verify(entity);
         if (isTraceEnabled)
             LOG.trace("executing EntityManage.merge(" + entity.getClass().getName() + ")");
         EntityManager em = getEntityManager();
-        T t = em.merge(entity);
-        return t;
+        T merged = em.merge(entity);
+        return merged
+        */
     }
     
     /**

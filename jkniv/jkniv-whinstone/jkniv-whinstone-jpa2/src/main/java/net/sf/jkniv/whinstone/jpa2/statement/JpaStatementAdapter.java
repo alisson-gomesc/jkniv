@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.slf4j.Logger;
@@ -378,7 +379,8 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
     @Override
     public void close()
     {
-        // TODO Auto-generated method stub
+        // TODO implements close for JpaStatementAdapter
+        LOG.warn("close Statement Adapter not implemented for RepositoryJpa!");
     }
     
     @Override
