@@ -55,12 +55,20 @@ class QueryJpaAdapter extends AbstractQueryJpaAdapter
         ParamParser paramParser = isql.getParamParser();
         String[] paramsNames = isql.getParamParser().find(sql);
         Queryable queryable2 = queryable;
+        
+        boolean isReturnTypeManaged = false;
+        if(queryable.getDynamicSql().hasReturnType())
+        {
+            ObjectProxy<?> proxyReturnType = ObjectProxyFactory.of(queryable.getDynamicSql().getReturnType());
+            isReturnTypeManaged = proxyReturnType.hasAnnotation("javax.persistence.Entity");
+        }
+        
         switch (isql.getLanguageType())
         {
             case JPQL:
                 if (overloadReturnType == null)
                     queryJpa = em.createQuery(sql);
-                else if(isql.isReturnTypeManaged())
+                else if(isReturnTypeManaged)
                     queryJpa = em.createQuery(sql, overloadReturnType);
                 else
                     queryJpa = em.createQuery(sql);
@@ -83,7 +91,7 @@ class QueryJpaAdapter extends AbstractQueryJpaAdapter
                 queryable2 = QueryFactory.of(queryable.getName(), params, queryable.getOffset(), queryable.getMax());
                 if (overloadReturnType == null)
                     queryJpa = em.createNativeQuery(positionalSql);
-                else if(isql.isReturnTypeManaged())
+                else if(isReturnTypeManaged)
                     queryJpa = em.createNativeQuery(positionalSql, overloadReturnType);
                 else
                     queryJpa = em.createNativeQuery(positionalSql);
@@ -121,7 +129,7 @@ class QueryJpaAdapter extends AbstractQueryJpaAdapter
         {
             List<T> listGrouped = null;
             if (isql.getLanguageType() == LanguageType.NATIVE && 
-                !"".equals(isql.getReturnType()) && list.size() > 0)
+                isql.hasReturnType() && list.size() > 0)
             {
                 list = cast((List<Object[]>) list, isql.getReturnType());
             }
@@ -155,7 +163,7 @@ class QueryJpaAdapter extends AbstractQueryJpaAdapter
     {
         List<T> list = super.getResultList();
         if (isql.getLanguageType() == LanguageType.NATIVE && 
-            !"".equals(isql.getReturnType()) && list.size() > 0)
+            isql.hasReturnType() && list.size() > 0)
         {
             list = cast((List<Object[]>) list, isql.getReturnType());
         }

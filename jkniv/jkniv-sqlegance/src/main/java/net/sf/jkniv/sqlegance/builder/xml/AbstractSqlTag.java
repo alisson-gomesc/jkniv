@@ -19,7 +19,6 @@
  */
 package net.sf.jkniv.sqlegance.builder.xml;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,18 +38,14 @@ import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Statistical;
 import net.sf.jkniv.sqlegance.Storable;
 import net.sf.jkniv.sqlegance.Updateable;
-import net.sf.jkniv.sqlegance.builder.xml.dynamic.ConditionalTag;
 import net.sf.jkniv.sqlegance.builder.xml.dynamic.ITextTag;
 import net.sf.jkniv.sqlegance.builder.xml.dynamic.StaticText;
 import net.sf.jkniv.sqlegance.builder.xml.dynamic.WhereTag;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.params.ParamParser;
-import net.sf.jkniv.sqlegance.params.ParamParserColonMark;
 import net.sf.jkniv.sqlegance.params.ParamParserFactory;
-import net.sf.jkniv.sqlegance.params.ParamParserHashMark;
 import net.sf.jkniv.sqlegance.params.ParamParserNoMark;
-import net.sf.jkniv.sqlegance.params.ParamParserQuestionMark;
 import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
 import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
 import net.sf.jkniv.sqlegance.statement.ResultSetType;
@@ -65,58 +60,60 @@ import net.sf.jkniv.sqlegance.validation.ValidateType;
  */
 public abstract class AbstractSqlTag implements SqlTag
 {
-    protected static final Assertable notNull = AssertsFactory.getNotNull();
-    private static final Logger       log  = LoggerFactory.getLogger(AbstractSqlTag.class);
+    protected static final Assertable notNull                         = AssertsFactory.getNotNull();
+    private static final Logger       log                             = LoggerFactory.getLogger(AbstractSqlTag.class);
     // find the pattern #{id}
-    private static final String  REGEX_HASH_MARK     = "#\\{[\\w\\.?]+\\}";
+    private static final String       REGEX_HASH_MARK                 = "#\\{[\\w\\.?]+\\}";
     // find the pattern :id
-    private static final String  REGEX_COLON_MARK    = ":[\\w\\.?]+";
+    private static final String       REGEX_COLON_MARK                = ":[\\w\\.?]+";
     // find the pattern ?
-    private static final String  REGEX_QUESTION_MARK = "[\\?]+";
-    private static final Pattern PATTERN_HASH        = Pattern.compile(REGEX_HASH_MARK, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-    private static final Pattern PATTERN_COLON       = Pattern.compile(REGEX_COLON_MARK, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-    private static final Pattern PATTERN_QUESTION    = Pattern.compile(REGEX_QUESTION_MARK, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final String       REGEX_QUESTION_MARK             = "[\\?]+";
+    private static final Pattern      PATTERN_HASH                    = Pattern.compile(REGEX_HASH_MARK,
+            Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern      PATTERN_COLON                   = Pattern.compile(REGEX_COLON_MARK,
+            Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern      PATTERN_QUESTION                = Pattern.compile(REGEX_QUESTION_MARK,
+            Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     
+    public static final String        ATTRIBUTE_NAME                  = "id";
+    public static final String        ATTRIBUTE_TYPE                  = "type";
+    public static final String        ATTRIBUTE_ISOLATION             = "isolation";
+    public static final String        ATTRIBUTE_TIMEOUT               = "timeout";
+    public static final String        ATTRIBUTE_HINT                  = "hint";
+    public static final String        ATTRIBUTE_BATCH                 = "batch";
+    public static final String        ATTRIBUTE_CACHE                 = "cache";
+    public static final String        ATTRIBUTE_RETURN_TYPE           = "returnType";
+    public static final String        ATTRIBUTE_GROUP_BY              = "groupBy";
     
-    public static final String   ATTRIBUTE_NAME                  = "id";
-    public static final String   ATTRIBUTE_TYPE                  = "type";
-    public static final String   ATTRIBUTE_ISOLATION             = "isolation";
-    public static final String   ATTRIBUTE_TIMEOUT               = "timeout";
-    public static final String   ATTRIBUTE_HINT                  = "hint";
-    public static final String   ATTRIBUTE_BATCH                 = "batch";
-    public static final String   ATTRIBUTE_CACHE                 = "cache";
-    public static final String   ATTRIBUTE_RETURN_TYPE           = "returnType";
-    public static final String   ATTRIBUTE_GROUP_BY              = "groupBy";
+    public static final String        ATTRIBUTE_RESULTSET_TYPE        = "resultSetType";
+    public static final String        ATTRIBUTE_RESULTSET_CONCURRENCY = "resultSetConcurrency";
+    public static final String        ATTRIBUTE_RESULTSET_HOLDABILITY = "resultSetHoldability";
+    public static final String        ATTRIBUTE_VALIDATION            = "validation";
     
-    public static final String   ATTRIBUTE_RESULTSET_TYPE        = "resultSetType";
-    public static final String   ATTRIBUTE_RESULTSET_CONCURRENCY = "resultSetConcurrency";
-    public static final String   ATTRIBUTE_RESULTSET_HOLDABILITY = "resultSetHoldability";
-    public static final String   ATTRIBUTE_VALIDATION            = "validation";
-    
-    protected String             id;
-    protected LanguageType       languageType;
-    private Isolation            isolation;
-    private String               hint;
-    private int                  timeout;
-    private boolean              batch;
-    private ResultSetType        resultSetType;
-    private ResultSetConcurrency resultSetConcurrency;
-    private ResultSetHoldability resultSetHoldability;
-    private ValidateType         validateType;
-    private List<ITextTag>       textTag;
-    private String               returnType;
-    private Class<?>             returnTypeClass;
-    private boolean              returnTypeManaged;
-    private String               xpath;
-    private String               resourceName;
-    private Date                 timestamp;
-    private ParamParser          paramParser;
-    private String               paket;
+    protected String                  id;
+    protected LanguageType            languageType;
+    private Isolation                 isolation;
+    private String                    hint;
+    private int                       timeout;
+    private boolean                   batch;
+    private ResultSetType             resultSetType;
+    private ResultSetConcurrency      resultSetConcurrency;
+    private ResultSetHoldability      resultSetHoldability;
+    private ValidateType              validateType;
+    private List<ITextTag>            textTag;
+    private String                    returnType;
+    private Class<?>                  returnTypeClass;
+    //private boolean            returnTypeManaged;
+    private String                    xpath;
+    private String                    resourceName;
+    private Date                      timestamp;
+    private ParamParser               paramParser;
+    private String                    paket;
     //private long                 timeToLive;
     
     //private ResultRow<?, ?> parserRow;
-    private SqlDialect sqlDialect;
-    private Statistical stats;
+    private SqlDialect                sqlDialect;
+    private Statistical               stats;
     
     /**
      * Build a new SQL tag from XML file.
@@ -128,15 +125,17 @@ public abstract class AbstractSqlTag implements SqlTag
      */
     public AbstractSqlTag(String id, LanguageType languageType)
     {
-        this(id, languageType, Isolation.DEFAULT, -1, false, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", ValidateType.NONE, NoSqlStats.getInstance());
+        this(id, languageType, Isolation.DEFAULT, -1, false, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT,
+                ResultSetHoldability.DEFAULT, null, ValidateType.NONE, NoSqlStats.getInstance());
     }
     
     public AbstractSqlTag(String id, LanguageType languageType, SqlDialect sqlDialect)
     {
-        this(id, languageType, Isolation.DEFAULT, -1, false, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", ValidateType.NONE, NoSqlStats.getInstance());
+        this(id, languageType, Isolation.DEFAULT, -1, false, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT,
+                ResultSetHoldability.DEFAULT, "", ValidateType.NONE, NoSqlStats.getInstance());
         this.sqlDialect = sqlDialect;
     }
-
+    
     /**
      * Build a new SQL tag from XML file.
      * 
@@ -157,18 +156,13 @@ public abstract class AbstractSqlTag implements SqlTag
      * @param validateType validation to apply before execute SQL.
      * @param stats SQL statistical
      */
-    public AbstractSqlTag(String id, 
-                          LanguageType languageType, 
-                          Isolation isolation, 
-                          int timeout, 
-                          boolean batch, 
-                          String hint, 
-                          ValidateType validateType,
-                          Statistical stats)
+    public AbstractSqlTag(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch,
+            String hint, ValidateType validateType, Statistical stats)
     {
-        this(id, languageType, isolation, timeout, batch, hint, ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT, ResultSetHoldability.DEFAULT, "", validateType, stats);
+        this(id, languageType, isolation, timeout, batch, hint, ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT,
+                ResultSetHoldability.DEFAULT, "", validateType, stats);
     }
-
+    
     /**
      * Build a new SQL tag from XML file.
      * 
@@ -194,18 +188,9 @@ public abstract class AbstractSqlTag implements SqlTag
      * @param stats statistical for procedures
      */
     @SuppressWarnings("unchecked")
-    public AbstractSqlTag(String id, 
-                          LanguageType languageType, 
-                          Isolation isolation, 
-                          int timeout, 
-                          boolean batch,
-                          String hint,
-                          ResultSetType resultSetType, 
-                          ResultSetConcurrency resultSetConcurrency, 
-                          ResultSetHoldability resultSetHoldability, 
-                          String returnType,
-                          ValidateType validateType,
-                          Statistical stats)
+    public AbstractSqlTag(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch,
+            String hint, ResultSetType resultSetType, ResultSetConcurrency resultSetConcurrency,
+            ResultSetHoldability resultSetHoldability, String returnType, ValidateType validateType, Statistical stats)
     {
         this.textTag = new ArrayList<ITextTag>();
         this.id = id;
@@ -222,19 +207,14 @@ public abstract class AbstractSqlTag implements SqlTag
         this.timestamp = new Date();
         this.paramParser = ParamParserNoMark.emptyParser();
         this.stats = stats;
-//        Class<? extends Annotation> entityAnnotation = (Class<? extends Annotation>) forName("javax.persistence.Entity");
-//        if (returnTypeClass != null && entityAnnotation != null)
-//            this.returnTypeManaged = returnTypeClass.isAnnotationPresent(entityAnnotation);
-
-        if(returnType != null)
+        if (hasReturnType())
         {
-            ObjectProxy<?> proxyReturnType = ObjectProxyFactory.of(returnType)
-                    .mute(ClassNotFoundException.class);
-            this.returnTypeClass = proxyReturnType.getTargetClass();
-            this.returnTypeManaged = proxyReturnType.hasAnnotation("javax.persistence.Entity");
+            this.returnTypeClass = ObjectProxyFactory.of(returnType)
+                    .mute(ClassNotFoundException.class)
+                    .getTargetClass();
         }
         //this.timeToLive = -1;//testing 30*1000; 
-
+        
     }
     
     /**
@@ -242,6 +222,7 @@ public abstract class AbstractSqlTag implements SqlTag
      * 
      * @return Sql sentence
      */
+    @Override
     public String getSql()
     {
         StringBuilder sb = new StringBuilder();
@@ -268,6 +249,7 @@ public abstract class AbstractSqlTag implements SqlTag
      *            the properties.
      * @return Dynamic sql sentence
      */
+    @Override
     public String getSql(Object params)
     {
         StringBuilder sb = new StringBuilder();
@@ -290,21 +272,22 @@ public abstract class AbstractSqlTag implements SqlTag
                     sb.append(text);
             }
         }
-        String q = sb.toString(); 
+        String q = sb.toString();
         log.trace("SQL [{}] [{}]:\n{}", id, languageType, q);
         return q;
     }
-//    
-//    protected void reload()
-//    {
-//        
-//    }
+    //    
+    //    protected void reload()
+    //    {
+    //        
+    //    }
     
     /**
      * language from SQL sentence.
      * 
      * @return the type of language used to SQL sentence.
      */
+    @Override
     public LanguageType getLanguageType()
     {
         return languageType;
@@ -315,6 +298,7 @@ public abstract class AbstractSqlTag implements SqlTag
      * 
      * @return name from tag
      */
+    @Override
     public String getName()
     {
         return id;
@@ -323,32 +307,34 @@ public abstract class AbstractSqlTag implements SqlTag
     /**
      * add a new text tag.
      */
+    @Override
     public void addTag(ITextTag tag)
     {
         this.textTag.add(tag);
         if (hasParamParser())
             return;
         
-        for(ITextTag t : tag.getTags())
+        for (ITextTag t : tag.getTags())
         {
             setParamParser(t.getText());
         }
         if (tag instanceof WhereTag && tag.isDynamicGroup())//FIXME BUG implements params from set, choose tags
         {
-            for(ITextTag t : tag.getTags())
+            for (ITextTag t : tag.getTags())
             {
                 setParamParser(t.getText());
-                for(ITextTag t2 : t.getTags())
+                for (ITextTag t2 : t.getTags())
                     setParamParser(t2.getText());
             }
         }
-        else if(!tag.isDynamicGroup())
+        else if (!tag.isDynamicGroup())
             setParamParser(tag.getText());
     }
     
     /**
      * add a set of static text from tag elements.
      */
+    @Override
     public void addTag(String text)
     {
         this.textTag.add(new StaticText(text));
@@ -358,12 +344,14 @@ public abstract class AbstractSqlTag implements SqlTag
     /**
      * add a set of text tags (static or dynamic).
      */
+    @Override
     public void addTag(List<ITextTag> tags)
     {
-        for(ITextTag t : tags)
+        for (ITextTag t : tags)
             addTag(t);
     }
     
+    @Override
     public String getHint()
     {
         return this.hint;
@@ -374,6 +362,7 @@ public abstract class AbstractSqlTag implements SqlTag
         this.hint = hint;
     }
     
+    @Override
     public Isolation getIsolation()
     {
         return this.isolation;
@@ -383,7 +372,8 @@ public abstract class AbstractSqlTag implements SqlTag
     {
         this.isolation = isolation;
     }
-    
+
+    @Override
     public int getTimeout()
     {
         return this.timeout;
@@ -394,6 +384,7 @@ public abstract class AbstractSqlTag implements SqlTag
         this.timeout = timeout;
     }
     
+    @Override
     public boolean isBatch()
     {
         return this.batch;
@@ -415,7 +406,7 @@ public abstract class AbstractSqlTag implements SqlTag
         this.cache = cache;
     }
     */
-
+    
     @Override
     public boolean isSelectable()
     {
@@ -427,7 +418,7 @@ public abstract class AbstractSqlTag implements SqlTag
     {
         return false;
     }
-
+    
     @Override
     public boolean isUpdateable()
     {
@@ -439,63 +430,64 @@ public abstract class AbstractSqlTag implements SqlTag
     {
         return false;
     }
-
+    
     @Override
     public Selectable asSelectable()
     {
         throw new UnsupportedOperationException("Isn't Selectable object instance");
     }
-
+    
     @Override
     public Insertable asInsertable()
     {
         throw new UnsupportedOperationException("Isn't Insertable object instance");
     }
-
+    
     @Override
     public Updateable asUpdateable()
     {
         throw new UnsupportedOperationException("Isn't Updateable object instance");
     }
-
     
+    @Override
     public ResultSetType getResultSetType()
     {
         return resultSetType;
     }
-
+    
     @Override
     public Deletable asDeletable()
     {
         throw new UnsupportedOperationException("Isn't deletable object instance");
     }
-
+    
     @Override
     public Storable asStorable()
     {
         throw new UnsupportedOperationException("Isn't Storable object instance");
     }
-
+    
     public void setResultSetType(ResultSetType resultSetType)
     {
         this.resultSetType = resultSetType;
     }
-
+    
+    @Override
     public ResultSetConcurrency getResultSetConcurrency()
     {
         return resultSetConcurrency;
     }
-
+    
     public void setResultSetConcurrency(ResultSetConcurrency resultSetConcurrency)
     {
         this.resultSetConcurrency = resultSetConcurrency;
     }
-
+    
     public ResultSetHoldability getResultSetHoldability()
     {
         return resultSetHoldability;
     }
-
+    
     public void setResultSetHoldability(ResultSetHoldability resultSetHoldability)
     {
         this.resultSetHoldability = resultSetHoldability;
@@ -506,12 +498,20 @@ public abstract class AbstractSqlTag implements SqlTag
         this.returnType = returnType;
     }
     
+    @Override
     public String getReturnType()
     {
         return this.returnType;
     }
+
+    @Override
+    public boolean hasReturnType()
+    {
+        return this.returnType != null && !"".equals(returnType.trim());
+    }
     
-    public Class<?> getReturnTypeAsClass() 
+    @Override
+    public Class<?> getReturnTypeAsClass()
     {
         return this.returnTypeClass;
     }
@@ -528,43 +528,49 @@ public abstract class AbstractSqlTag implements SqlTag
     }
     */
     
+    //    @Override
+    //    public boolean isReturnTypeManaged()
+    //    {
+    //        return this.returnTypeManaged;
+    //    }
     
     @Override
-    public boolean isReturnTypeManaged()
-    {
-        return this.returnTypeManaged;
-    }
-    
     public void setValidateType(ValidateType validateType)
     {
         this.validateType = validateType;
     }
     
+    @Override
     public ValidateType getValidateType()
     {
         return validateType;
     }
     
+    @Override
     public void setXpath(String xpath)
     {
         this.xpath = xpath;
     }
     
+    @Override
     public String getXPath()
     {
         return xpath;
     }
     
+    @Override
     public void setResourceName(String resourceName)
     {
         this.resourceName = resourceName;
     }
     
+    @Override
     public String getResourceName()
     {
         return this.resourceName;
     }
-
+    
+    @Override
     public Date getTimestamp()
     {
         return this.timestamp;
@@ -596,7 +602,7 @@ public abstract class AbstractSqlTag implements SqlTag
         //    throw new IllegalStateException("Cannot re-assign SqlDialect for Sql object");
         this.sqlDialect = sqlDialect;
     }
-
+    
     @Override
     public SqlDialect getSqlDialect()
     {
@@ -625,7 +631,7 @@ public abstract class AbstractSqlTag implements SqlTag
     {
         this.stats = stats;
     }
-        
+    
     @Override
     public int hashCode()
     {
@@ -636,7 +642,7 @@ public abstract class AbstractSqlTag implements SqlTag
         result = prime * result + ((resourceName == null) ? 0 : resourceName.hashCode());
         return result;
     }
-
+    
     @Override
     public boolean equals(Object obj)// TODO test case for Tag equals method
     {
@@ -670,7 +676,7 @@ public abstract class AbstractSqlTag implements SqlTag
             return false;
         return true;
     }
-
+    
     private void setParamParser(String text)
     {
         if (!hasParamParser())
@@ -683,37 +689,35 @@ public abstract class AbstractSqlTag implements SqlTag
                 this.paramParser = ParamParserFactory.getInstance(ParamMarkType.QUESTION);//new ParamParserQuestionMark();
         }
     }
-
+    
     private boolean hasParamParser()
     {
         return !(this.paramParser instanceof ParamParserNoMark);
     }
     
-
-
-//    /**
-//     * 
-//     * @param seconds Time to live in seconds
-//     */
-//    public void setTimeToLive(long seconds)
-//    {
-//        this.timeToLive = TimeUnit.SECONDS.toMillis(seconds);
-//    }
-
-//    /**
-//     * 
-//     * @return the time in seconds
-//     */
-//    public long getTimeToLive()
-//    {
-//        return TimeUnit.MILLISECONDS.toSeconds(timeToLive);
-//    }
+    //    /**
+    //     * 
+    //     * @param seconds Time to live in seconds
+    //     */
+    //    public void setTimeToLive(long seconds)
+    //    {
+    //        this.timeToLive = TimeUnit.SECONDS.toMillis(seconds);
+    //    }
     
-//    public boolean isExpired()
-//    {
-//        if (timeToLive < 0)
-//            return false;
-//        
-//        return (this.timestamp.getTime() + timeToLive < new Date().getTime());
-//    }
+    //    /**
+    //     * 
+    //     * @return the time in seconds
+    //     */
+    //    public long getTimeToLive()
+    //    {
+    //        return TimeUnit.MILLISECONDS.toSeconds(timeToLive);
+    //    }
+    
+    //    public boolean isExpired()
+    //    {
+    //        if (timeToLive < 0)
+    //            return false;
+    //        
+    //        return (this.timestamp.getTime() + timeToLive < new Date().getTime());
+    //    }
 }

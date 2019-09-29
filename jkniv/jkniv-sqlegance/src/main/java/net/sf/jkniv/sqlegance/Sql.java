@@ -175,17 +175,20 @@ public interface Sql
     ResultSetHoldability getResultSetHoldability();
     
     String getReturnType();
+    
+    boolean hasReturnType();
 
     Class<?> getReturnTypeAsClass(); // TODO test me, null when haven't return type
 
     //void setResultRow(ResultRow<?, ?> resultRow);
 
     //ResultRow<?, ?> getResultRow();
-    /**
+    /*
      * Check if return type is managed as {@code javax.persistence.Entity}
      * @return return {@code true} if is annotated as {@code javax.persistence.Entity}, {@code false} otherwise
-     */
+     *
     boolean isReturnTypeManaged();
+    */
     
     /**
      * Timestamp when sql was read from xml

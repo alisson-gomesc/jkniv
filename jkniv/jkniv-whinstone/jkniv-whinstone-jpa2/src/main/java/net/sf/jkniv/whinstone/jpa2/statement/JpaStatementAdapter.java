@@ -245,7 +245,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
                 queryable.getDynamicSql().getStats().add(TimerKeeper.clear());
             
             if (queryable.getDynamicSql().getLanguageType() == LanguageType.NATIVE
-                    && !"".equals(queryable.getDynamicSql().getReturnType()) && list.size() > 0)
+                    && queryable.getDynamicSql().hasReturnType() && list.size() > 0)
             {
                 list = cast((List<Object[]>) list, queryable.getDynamicSql().getReturnType());
             }
@@ -293,13 +293,13 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
      * @return list of casted objects
      */
     @SuppressWarnings("unchecked")
-    private <T> List<T> cast(List list, String returnType)// TODO test me case when jpa return array of objects (native query or select specific columns
+    private List<T> cast(List<?> list, String returnType)// TODO test me case when jpa return array of objects (native query or select specific columns
     {
         List<T> castedList = null;
         Object firstValue = list.get(0);
-        if (firstValue.getClass().getName().equals(returnType))
+        if (firstValue.getClass().getName().equals(returnType) || returnType == null)
         {
-            castedList = list;
+            castedList = (List<T>)list;
         }
         else if (firstValue instanceof Number)
         {
@@ -333,7 +333,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
         //                castedList.add(casted);
         //            }
         //        }
-        else
+        else if (returnType != null)
         {
             castedList = new ArrayList<T>(list.size());
             List<Object[]> listArray = (List<Object[]>) list;
@@ -343,7 +343,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
                 proxy.setConstructorArgs(o);
                 T casted = proxy.newInstance();
                 castedList.add(casted);
-            }
+            }            
         }
         if (castedList.size() != list.size())
             throw new RepositoryException("Wrong conversion type from List<Object[]> to List of [" + returnType + "]");

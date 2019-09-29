@@ -41,8 +41,8 @@ public class QueryableConstraintsTest extends BaseTest
     @Rule
     public ExpectedException catcher = ExpectedException.none();
     
-    @Test //@Ignore("java.lang.ClassCastException: java.lang.String cannot be cast to [Ljava.lang.Object;")
-    public void whenScalarReturnMoreOnRow()
+    @Test
+    public void whenScalarReturnMoreOneRow()
     {
         Queryable q = QueryFactory.of("getScalarAuthorName");
         catcher.expectMessage("No unique result for query [" + q.getName() + "] with params [" + q.getParams()
@@ -52,7 +52,7 @@ public class QueryableConstraintsTest extends BaseTest
     }
     
     @Test
-    public void whenGetReturnMoreOnRow()
+    public void whenGetReturnMoreOneRow()
     {
         Queryable q = QueryFactory.of("getScalarAuthorName", Author.class);
         catcher.expect(NonUniqueResultException.class);

@@ -30,6 +30,8 @@ import org.slf4j.Logger;
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.exception.HandleableException;
+import net.sf.jkniv.reflect.beans.ObjectProxy;
+import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.CommandAdapter;
@@ -85,10 +87,7 @@ public class JpaCommandAdapter implements CommandAdapter
         if (SQLLOG.isInfoEnabled())
             SQLLOG.info("Bind Native SQL\n{}", sql);
         
-        Query queryJpa = build(sql, 
-                queryable.getDynamicSql().getLanguageType(), 
-                queryable.getDynamicSql().getReturnTypeAsClass(), 
-                queryable.getDynamicSql().isReturnTypeManaged());
+        Query queryJpa = build(queryable);
                 
         StatementAdapter<T, R> stmt = new JpaStatementAdapter(
                 queryJpa, 
@@ -140,10 +139,7 @@ public class JpaCommandAdapter implements CommandAdapter
         if (SQLLOG.isInfoEnabled())
             SQLLOG.info("Bind Native SQL\n{}", sql);
         
-        Query queryJpa = build(sql, 
-                queryable.getDynamicSql().getLanguageType(), 
-                queryable.getDynamicSql().getReturnTypeAsClass(), 
-                queryable.getDynamicSql().isReturnTypeManaged());
+        Query queryJpa = build(queryable);
         
         JpaStatementAdapter<Number, ResultSet> stmt = new JpaStatementAdapter<Number, ResultSet>(queryJpa,
                 queryable, this.handlerException);
@@ -175,12 +171,21 @@ public class JpaCommandAdapter implements CommandAdapter
         StatementAdapter<T, R> stmt = new JpaStatementAdapter(queryJpa, null, this.handlerException);
         return stmt;
     }
+    private Query build(Queryable queryable)
+    {
+        boolean isReturnTypeManaged = false;
+        if(queryable.getDynamicSql().hasReturnType())
+        {
+            ObjectProxy<?> proxyReturnType = ObjectProxyFactory.of(queryable.getDynamicSql().getReturnType());
+            isReturnTypeManaged = proxyReturnType.hasAnnotation("javax.persistence.Entity");
+        }
+        return build(queryable.query(), queryable.getDynamicSql().getLanguageType(), queryable.getDynamicSql().getReturnTypeAsClass(), isReturnTypeManaged);
+    }
     
     private Query build(String sql, LanguageType languageType, Class<?> overloadReturnedType, boolean isReturnTypeManaged)
     {
         EntityManager em = getEntityManager();
         Query queryJpa = null;
-        
         switch (languageType)
         {
             case JPQL:

@@ -50,6 +50,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * @author Alisson Gomes
  * @since 0.6.0
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 class QueryName implements Queryable
 {
     private static final Assertable NOT_NULL    = AssertsFactory.getNotNull();
@@ -402,7 +403,6 @@ class QueryName implements Queryable
     }
     
     @Override
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Iterator<Object> iterator()
     {
         if (this.params == null)
@@ -421,7 +421,6 @@ class QueryName implements Queryable
     }
     
     @Override
-    @SuppressWarnings({ "rawtypes" })
     public Object[] values(String[] paramsNames)
     {
         List<Object> params = new ArrayList<Object>();

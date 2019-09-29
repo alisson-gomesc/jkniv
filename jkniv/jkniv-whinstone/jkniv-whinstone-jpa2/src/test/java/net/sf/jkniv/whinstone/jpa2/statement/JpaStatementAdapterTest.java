@@ -153,6 +153,7 @@ public class JpaStatementAdapterTest
         given(query.getResultList()).willReturn(books);
         given(this.sql.getLanguageType()).willReturn(LanguageType.NATIVE);
         given(this.sql.getReturnType()).willReturn(Book.class.getName());
+        given(this.sql.hasReturnType()).willReturn(true);
         
         JpaStatementAdapter<Book, ResultSet>  stmt = new JpaStatementAdapter<Book, ResultSet>(query, queryable, getHandlerException());
         List<Book> answer = stmt.rows();
