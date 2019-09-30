@@ -34,7 +34,7 @@ public class ResultSetTransform  implements Transformable<ResultSet>
     
     public void transform(ResultSet row, Object instance)
     {
-        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(instance);
+        ObjectProxy<?> proxy = ObjectProxyFactory.of(instance);
         proxy.merge(row);
     }
 }

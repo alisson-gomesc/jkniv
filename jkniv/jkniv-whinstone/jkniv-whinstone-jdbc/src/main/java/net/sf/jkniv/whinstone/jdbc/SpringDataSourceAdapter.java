@@ -48,7 +48,7 @@ public class SpringDataSourceAdapter extends AbstractJdbcAdapter
         //this.dsProxy = new TransactionAwareDataSourceProxy(ds);
         
         this.transactionAwareDataSourceProxy = ObjectProxyFactory
-                .newProxy(classForName(SPRING_TRANSACTIONAWEREDATASOURCE_PROXY));
+                .of(classForName(SPRING_TRANSACTIONAWEREDATASOURCE_PROXY));
         this.transactionAwareDataSourceProxy.setConstructorArgs(dataSourceTarget);
         this.transactionAwareDataSourceProxy.newInstance();
     }

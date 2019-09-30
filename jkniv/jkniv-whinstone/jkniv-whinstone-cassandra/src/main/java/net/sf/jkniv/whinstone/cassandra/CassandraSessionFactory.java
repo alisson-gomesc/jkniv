@@ -33,7 +33,7 @@ import com.datastax.driver.core.Session;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
-import net.sf.jkniv.whinstone.CommandAdapter;
+import net.sf.jkniv.whinstone.commands.CommandAdapter;
 
 public class CassandraSessionFactory //implements ConnectionFactory
 {

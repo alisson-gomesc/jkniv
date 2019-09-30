@@ -44,7 +44,6 @@ class JpaEmFactoryHard implements JpaEmFactory
     {
         this.em = em;
         this.threads = new HashSet<String>();
-        //isContainerManaged();
         LOG.warn("\nRepository instance using EntityManager provided with Constructor... ISN'T THREAD-SAFE! \nTake care, you need provider a new EntityManager for each thread!\n");
     }
     
@@ -67,28 +66,6 @@ class JpaEmFactoryHard implements JpaEmFactory
         }
         return em;
     }
-    
-    /* (non-Javadoc)
-     * @see net.sf.jkniv.whinstone.jpa2.JpaEmFactory#isContainerManaged()
-     *
-    @Override
-    public boolean isContainerManaged()
-    {
-        if (containerManaged == null)
-        {
-            try
-            {
-                em.getTransaction();
-                containerManaged = false;
-            }
-            catch (IllegalStateException jta)
-            {
-                containerManaged = true;
-            }
-        }
-        return containerManaged;
-    }
-    */
     
     /* (non-Javadoc)
      * @see net.sf.jkniv.whinstone.jpa2.JpaEmFactory#getTransaction()

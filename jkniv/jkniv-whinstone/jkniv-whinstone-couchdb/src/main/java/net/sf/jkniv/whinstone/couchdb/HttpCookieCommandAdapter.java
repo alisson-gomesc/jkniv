@@ -28,10 +28,10 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.Sql;
-import net.sf.jkniv.whinstone.Command;
-import net.sf.jkniv.whinstone.CommandAdapter;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.commands.Command;
+import net.sf.jkniv.whinstone.commands.CommandAdapter;
 import net.sf.jkniv.whinstone.couchdb.commands.AddCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.AllDocsCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.BulkCommand;
@@ -48,8 +48,8 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 class HttpCookieCommandAdapter implements CommandAdapter
 {
-    private static final transient Logger LOG = LoggerFactory.getLogger(HttpCookieCommandAdapter.class);
-    private static final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
+    private static final Logger LOG = LoggerFactory.getLogger(HttpCookieCommandAdapter.class);
+    private static final Assertable NOT_NULL = AssertsFactory.getNotNull();
     private HttpBuilder httpBuilder;
     private final String contextName;
     

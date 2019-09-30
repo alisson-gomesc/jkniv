@@ -19,11 +19,6 @@
  */
 package net.sf.jkniv.whinstone.couchdb;
 
-import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -32,10 +27,7 @@ import org.slf4j.LoggerFactory;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
-import net.sf.jkniv.whinstone.CommandAdapter;
-import net.sf.jkniv.whinstone.ConnectionAdapter;
-import net.sf.jkniv.whinstone.ConnectionFactory;
-import net.sf.jkniv.whinstone.transaction.Transactional;
+import net.sf.jkniv.whinstone.commands.CommandAdapter;
 
 public class HttpConnectionFactory //implements ConnectionFactory
 {

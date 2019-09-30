@@ -23,20 +23,30 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import net.sf.jkniv.sqlegance.builder.XmlBuilderSql;
+import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 
 public class XmlCustomFileTest
 {
+    private static SqlContext sqlContext;
+    
+    @BeforeClass
+    public static void setUp()
+    {
+        sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
+    }
+
+
     @Test @Ignore("Time to live removed, automatic reload xml was implemented")
     public void whenLoadCustomFileSucessfullyAndTestRefresh() throws InterruptedException
     {
-        XmlBuilderSql.configFile("/customxml/sql-custom-test1.xml");
-        Sql sql1 = XmlBuilderSql.getQuery("sql-custom-test1");
-        Sql sql2 = XmlBuilderSql.getQuery("sql-custom-test2");
+        //sqlContext.configFile("/customxml/sql-custom-test1.xml");
+        Sql sql1 = sqlContext.getQuery("sql-custom-test1");
+        Sql sql2 = sqlContext.getQuery("sql-custom-test2");
         
         assertThat(sql1, notNullValue());
         assertThat(sql2, notNullValue());
@@ -59,8 +69,8 @@ public class XmlCustomFileTest
         Thread.sleep(5000);
         //assertThat(sql1.isExpired(), is(true));
         //assertThat(sql1.isExpired(), is(true));
-        sql1 = XmlBuilderSql.getQuery("sql-custom-test1");
-        sql2 = XmlBuilderSql.getQuery("sql-custom-test2");
+        sql1 = sqlContext.getQuery("sql-custom-test1");
+        sql2 = sqlContext.getQuery("sql-custom-test2");
         assertThat(sql1.getParamParser().getType(), is(ParamMarkType.NO_MARK));
         assertThat(sql2.getParamParser().getType(), is(ParamMarkType.NO_MARK));
         //assertThat(sql1.isExpired(), is(false));

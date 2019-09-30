@@ -32,7 +32,7 @@ public class ObjectTransform  implements Transformable<Object>
     
     public void transform(Object row, Object instance)
     {
-        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(instance);
+        ObjectProxy<?> proxy = ObjectProxyFactory.of(instance);
         proxy.merge(row);
     }
 }

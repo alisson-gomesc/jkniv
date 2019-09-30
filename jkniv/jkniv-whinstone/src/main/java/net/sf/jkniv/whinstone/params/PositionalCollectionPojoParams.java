@@ -47,13 +47,6 @@ class PositionalCollectionPojoParams extends AbstractParam implements AutoBindPa
     }
     
     @Override
-    public StatementAdapterOld parameterized(String[] paramsNames)
-    {
-        on();
-        return null;
-    }
-    
-    @Override
     public void on()
     {
         onBulk();//salient client don't get rows affected
@@ -67,7 +60,7 @@ class PositionalCollectionPojoParams extends AbstractParam implements AutoBindPa
         while(it.hasNext())
         {
             Object pojo = it.next();
-            ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(pojo);
+            ObjectProxy<?> proxy = ObjectProxyFactory.of(pojo);
             for(String paramName : paramsNames)
             {
             	String getterName = GETTER.capitalize(paramName);

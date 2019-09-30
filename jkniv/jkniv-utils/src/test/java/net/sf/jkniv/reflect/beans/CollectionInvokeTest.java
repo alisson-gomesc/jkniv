@@ -43,7 +43,7 @@ public class CollectionInvokeTest
     @Test
     public void whenReflectionBuilBasicCollection()
     {
-        Invokable call = new CollectionInvoke(new HandlerException());
+        Invokable call = new CollectionInvoker(new HandlerException());
         Collection<String> col = new ArrayList<String>();
         
         Object ret = call.invoke("add", col, "RED");
@@ -58,7 +58,7 @@ public class CollectionInvokeTest
     @Test
     public void whenReflectionBuilPojoCollection()
     {
-        Invokable call = new CollectionInvoke(new HandlerException());
+        Invokable call = new CollectionInvoker(new HandlerException());
         Collection<Author> col = new ArrayList<Author>();
         Author author = new Author("john");
         
@@ -74,7 +74,7 @@ public class CollectionInvokeTest
     @Test
     public void whenReflectionCollectionInvokeBasicMethodUnsupportedOperation()
     {
-        Invokable call = new CollectionInvoke(new HandlerException());
+        Invokable call = new CollectionInvoker(new HandlerException());
         catcher.expect(UnsupportedOperationException.class);
         call.invoke(String.class, "hello Exception");
     }
@@ -82,7 +82,7 @@ public class CollectionInvokeTest
     @Test
     public void whenReflectionCollectionInvokeMethodUnsupportedOperation() throws SecurityException, NoSuchMethodException
     {
-        Invokable call = new CollectionInvoke(new HandlerException());
+        Invokable call = new CollectionInvoker(new HandlerException());
         catcher.expect(UnsupportedOperationException.class);
         call.invoke(Map.class.getMethod("size"), "hello Exception");
     }

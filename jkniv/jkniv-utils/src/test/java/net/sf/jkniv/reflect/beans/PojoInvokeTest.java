@@ -33,7 +33,7 @@ public class PojoInvokeTest
     @Test
     public void whenReflectionBuildEnum()
     {
-        Invokable call = new PojoInvoke(new HandlerException());
+        Invokable call = new PojoInvoker(new HandlerException());
         
         FooColor red = call.invoke(FooColor.class, "RED");
         FooColor blue = call.invoke(FooColor.class, "BLUE");
@@ -49,7 +49,7 @@ public class PojoInvokeTest
     @Test
     public void whenReflectionBuildPojo()
     {
-        Invokable call = new PojoInvoke(new HandlerException());
+        Invokable call = new PojoInvoker(new HandlerException());
         Book book = new Book();
         call.invoke("setId", book, 101);
         call.invoke("setName", book, "Ernest Miller Hemingway");

@@ -93,13 +93,6 @@ class JpaEmFactoryJndi implements JpaEmFactory
         return em;
     }
     
-    /*
-    @Override
-    public boolean isContainerManaged()
-    {
-        return true;
-    }
-    */
     /**
      * @throws IllegalStateException if the entity manager is container-managed
      */

@@ -6,6 +6,7 @@
 
   <include href="/repository-sql-insert.xml" />
   <include href="/repository-sql-delete.xml" />
+  <include href="/repository-sql-update.xml" />
   <include href="/repository-sql-scalar.xml" />
   <include href="/repository-sql-native.xml" />
   <include href="/repository-sql-map.xml" />
@@ -20,15 +21,13 @@
       where b.id = :id
     </if>
   </select>
-  <update id="Book#update">
-    update jpa_book set name = :name, isbn = :isbn, visualization = :visualization where id = :id
-  </update>
-  <update id="Book#update2">
-    update jpa_book set name = ?, isbn = ?, visualization = ? where id = ?
-  </update>
 
   <select id="Book.list" type="JPQL" returnType="com.acme.domain.orm.Book">
     from Book b
+  </select>
+
+  <select id="Author.list" type="JPQL">
+    from Author a
   </select>
 
   <select id="listLikeName" type="JPQL" returnType="com.acme.domain.orm.Book">

@@ -32,13 +32,6 @@ class NoParams implements AutoBindParams
     }
     
     @Override
-    public StatementAdapterOld parameterized(String[] paramsNames)
-    {
-        on();
-        return null;
-    }
-
-    @Override
     public void on() 
     {
         // no bind query without params

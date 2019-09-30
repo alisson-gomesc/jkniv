@@ -19,16 +19,25 @@
  */
 package net.sf.jkniv.sqlegance;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import net.sf.jkniv.sqlegance.builder.XmlBuilderSql;
+import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 
 public class XmlBuilderSqlWrongTest
 {
+    private static SqlContext sqlContext;
     
-    @Test(expected = RepositoryException.class)
+    @BeforeClass
+    public static void setUp()
+    {
+        sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
+    }
+
+    @Test//(expected = RepositoryException.class)
     public void selectWhereAndIfTogetherTest()
     {
-        XmlBuilderSql.configFile("/customxml/sql-stmt-wrong.xml");
+        // TODO review design to add file dynamically
+        //sqlContext.configFile("/customxml/sql-stmt-wrong.xml");
     }
 }

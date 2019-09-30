@@ -176,7 +176,7 @@ public class RestFulResources extends BaseResource
         if (clazzTransform != null && TransformReturn.class.isAssignableFrom(clazzTransform))
         {
             queryable = buildQueryable(q, ui);
-            transform = (TransformReturn<?>) ObjectProxyFactory.newProxy(clazzTransform).newInstance();
+            transform = (TransformReturn<?>) ObjectProxyFactory.of(clazzTransform).newInstance();
         }
         else
             queryable = buildQueryable(q, clazz, ui);
@@ -212,7 +212,7 @@ public class RestFulResources extends BaseResource
         Class<?> clazzTransform = transformers.getType(t);
         Queryable queryable = buildQueryable(q, clazz, ui);
         List<?> resources = getRepository(ctx).list(queryable);
-        TransformReturn<?> transform = (TransformReturn<?>) ObjectProxyFactory.newProxy(clazzTransform).newInstance();
+        TransformReturn<?> transform = (TransformReturn<?>) ObjectProxyFactory.of(clazzTransform).newInstance();
         List<?> newResources = transform.transform(resources);
         return buildSimpleResponse(newResources);
     }
@@ -256,7 +256,7 @@ public class RestFulResources extends BaseResource
         if (clazzTransform != null && TransformReturn.class.isAssignableFrom(clazzTransform))
         {
             queryable = buildQueryable(q, ui);
-            transform = (TransformReturn<?>) ObjectProxyFactory.newProxy(clazzTransform).newInstance();
+            transform = (TransformReturn<?>) ObjectProxyFactory.of(clazzTransform).newInstance();
         }
         else
         {
@@ -354,7 +354,7 @@ public class RestFulResources extends BaseResource
             @Context UriInfo ui, String body) throws JsonParseException, JsonMappingException, IOException
     {
         Class<?> clazz = modelTypes.getType(m);
-        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(clazz);
+        ObjectProxy<?> proxy = ObjectProxyFactory.of(clazz);
         marshallToProxy(proxy, ui.getQueryParameters());
         if (isNotEmpty(body))
         {

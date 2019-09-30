@@ -41,7 +41,7 @@ public class AnnotationTest
     @Test
     public void whenReconizeAllCallbackMethods()
     {
-        ObjectProxy<Cat> proxy = ObjectProxyFactory.newProxy(Cat.class);
+        ObjectProxy<Cat> proxy = ObjectProxyFactory.of(Cat.class);
         
         List<Method> precallbacks = proxy.getAnnotationMethods(PreCallBack.class);
         List<Method> postcallbacks = proxy.getAnnotationMethods(PostCallBack.class);

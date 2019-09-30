@@ -35,7 +35,6 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.domain.acme.Author;
 
-@SuppressWarnings("rawtypes")
 public class QueryableConstraintsTest  extends BaseJdbc
 {
     @Autowired

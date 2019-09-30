@@ -25,10 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,10 +44,11 @@ import net.sf.jkniv.reflect.ReflectionException;
  * TODO list Reflection ObjectProxy
  * Convert number type to near method BigDecimal->Double->Float->Integer->Float 
  * 
- * @author Alisson
- *
+ * @author Alisson Gomes
+ * @since 0.6.0
  * @param <T>
  */
+@SuppressWarnings("unchecked")
 class DefaultObjectProxy<T> implements ObjectProxy<T>
 {
     private static final Logger       LOG        = LoggerFactory.getLogger(DefaultObjectProxy.class);
@@ -113,11 +111,18 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
                     target, targetClazz, className);
         isWrapperType = BASIC_TYPE.isBasicType(targetClass);
         init();
-        this.basicInvoke = new BasicInvoke(this.handleException);
-        this.pojoInvoke = new PojoInvoke((BasicInvoke) basicInvoke, this.handleException);
-        this.nestedInvoke = new NestedInvoke((PojoInvoke) pojoInvoke, this.handleException);
-        this.collectionInvoke = new CollectionInvoke(this.handleException);
-        this.mapInvoke = new MapInvoke(this.handleException);
+        this.basicInvoke = new BasicInvoker(this.handleException);
+        this.pojoInvoke = new PojoInvoker((BasicInvoker) basicInvoke, this.handleException);
+        this.nestedInvoke = new NestedInvoker((PojoInvoker) pojoInvoke, this.handleException);
+        this.collectionInvoke = new CollectionInvoker(this.handleException);
+        this.mapInvoke = new MapInvoker(this.handleException);
+    }
+    
+    @Override
+    public ObjectProxy<T> mute(Class<? extends Exception> ex)
+    {
+        this.handleException.mute(ex);
+        return this;
     }
     
     private void init()
@@ -208,12 +213,12 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     
     private Constructor<T> getProbablyContructor() // TODO test me
     {
-        Constructor<T> constructor = null;
+        Constructor<T> constructorFound = null;
         double biggerProbably = 0D;
         
-        for (Constructor<T> c : this.constructors)
+        for (Constructor<T> classConstructor : this.constructors)
         {
-            Class<?>[] cargs = c.getParameterTypes();
+            Class<?>[] cargs = classConstructor.getParameterTypes();
             if (cargs != null && cargs.length == this.constructorArgs.length)
             {
                 double probably = 0D;
@@ -233,11 +238,11 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
                 if (probably > biggerProbably)
                 {
                     biggerProbably = probably;
-                    constructor = c;
+                    constructorFound = classConstructor;
                 }
             }
         }
-        return constructor;
+        return constructorFound;
     }
     
     private int countNotNull(Object[] args)
@@ -488,7 +493,22 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         }
         return methods;
     }
-    
+
+    @Override
+    public boolean hasAnnotation(String annotation)
+    {
+        return hasAnnotation((Class<? extends Annotation>) forName(annotation));
+    }
+
+    @Override
+    public boolean hasAnnotation(Class<? extends Annotation> annotation)
+    {
+        if (this.targetClass != null && annotation != null)
+            return  this.targetClass.isAnnotationPresent(annotation);
+        
+        return false;
+    }
+
     private Class<?>[] getTypes(Object[] args)
     {
         if (args == null)
@@ -502,7 +522,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         }
         return types;
     }
-    
+    /*
     // FIXME needs supports jdk types like Duration, LocalTime, LocalDateTime, etc
     private boolean isDateType(Class<?> type)// TODO test me Calendar and Gregoria Calendar case
     {
@@ -514,4 +534,5 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         return (Calendar.class.getCanonicalName().equals(type.getCanonicalName())
                 || GregorianCalendar.class.getCanonicalName().equals(type.getCanonicalName()));
     }
+    */
 }

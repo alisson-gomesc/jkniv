@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.sqlegance.RepositoryException;
 
-class JsonMapper
+public class JsonMapper
 {
     private static HandlerException handlerException;
     private static ObjectMapper mapper;

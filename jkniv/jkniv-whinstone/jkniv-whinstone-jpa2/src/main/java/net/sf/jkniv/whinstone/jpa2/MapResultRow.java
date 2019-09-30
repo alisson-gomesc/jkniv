@@ -61,7 +61,7 @@ class MapResultRow<T> implements ResultRow<T, Object[]>
         Map<String, Object> map = newInstance();        
         for (Object o : row)
         {
-            ObjectProxy<T> proxy = ObjectProxyFactory.newProxy(returnType);
+            ObjectProxy<T> proxy = ObjectProxyFactory.of(returnType);
             proxy.setConstructorArgs(o);
             T casted = proxy.newInstance();
             //castedList.add(casted);

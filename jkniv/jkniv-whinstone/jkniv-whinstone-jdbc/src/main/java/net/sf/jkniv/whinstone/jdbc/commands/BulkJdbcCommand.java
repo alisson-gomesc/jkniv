@@ -20,20 +20,8 @@
 package net.sf.jkniv.whinstone.jdbc.commands;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
-import net.sf.jkniv.exception.HandleableException;
-import net.sf.jkniv.sqlegance.Insertable;
-import net.sf.jkniv.whinstone.Command;
-import net.sf.jkniv.whinstone.CommandHandler;
-import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.jdbc.PreparedStatementStrategy;
-import net.sf.jkniv.whinstone.jdbc.params.PreparedStatementAdapterOld;
-import net.sf.jkniv.whinstone.params.AutoBindParams;
-import net.sf.jkniv.whinstone.params.PrepareParamsFactory;
-import net.sf.jkniv.whinstone.params.StatementAdapterOld;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**

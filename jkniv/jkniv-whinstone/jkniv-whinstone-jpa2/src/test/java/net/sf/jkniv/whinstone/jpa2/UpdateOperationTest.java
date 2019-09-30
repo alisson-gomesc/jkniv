@@ -19,7 +19,10 @@
  */
 package net.sf.jkniv.whinstone.jpa2;
 
-import org.junit.Assert;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import org.junit.Test;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,17 +43,17 @@ public class UpdateOperationTest extends BaseTest
         b1.setIsbn(isbn);
         
         repository.add(b1);
-        Assert.assertNotNull(b1.getId());
+        assertThat(b1.getId(), notNullValue());
         b2 = repository.get(b1);
-        Assert.assertNotNull(b2);
-        Assert.assertEquals(name, b2.getName());
-        Assert.assertEquals(isbn, b2.getIsbn());
+        assertThat(b2, notNullValue());
+        assertThat(name, is(b2.getName()));
+        assertThat(isbn, is(b2.getIsbn()));
         
         b2.setIsbn("000");
         repository.update(b2);
         b3 = repository.get(b1);
-        Assert.assertNotNull(b3);
-        Assert.assertEquals("000", b3.getIsbn());
+        assertThat(b3, notNullValue());
+        assertThat("000", is(b3.getIsbn()));
     }
 
 }

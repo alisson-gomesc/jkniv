@@ -9,21 +9,21 @@
  <select id="BookByName" type="JPQL" returnType="com.acme.domain.orm.Book">
   from Book b where b.name = ?
  </select>
- <select id="GetNameBookByName" type="JPQL" returnType="com.acme.domain.orm.Book">
+ <select id="GetNameBookByName" type="JPQL" returnType="java.lang.String">
   select b.name from Book b where b.name = ?
  </select>
- <select id="GetNameBookByNameNative" type="NATIVE" returnType="com.acme.domain.orm.Book">
+ <select id="GetNameBookByNameNative" type="NATIVE" returnType="java.lang.String">
   select b.NAME from JPA_BOOK b where b.NAME = ?
  </select>
 
- <select id="GetNameBookByName2" type="JPQL" returnType="com.acme.domain.orm.Book">
+ <select id="GetNameBookByName2" type="JPQL" returnType="java.lang.String">
   select b.name from Book b where b.name = :name
  </select>
-  <select id="getScalarAuthorName" type="NATIVE" returnType="com.acme.domain.noorm.Author">
+ <select id="getScalarAuthorName" type="NATIVE" returnType="java.lang.String">
   SELECT a.name from JPA_AUTHOR a
    <if test="id != null">
     where a.id = 1
    </if>
-  </select>
+ </select>
 
  </statements>

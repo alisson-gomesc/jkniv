@@ -23,7 +23,6 @@ public class Father
 {
     private String surname;
     
-
     public String getSurname()
     {
         return surname;

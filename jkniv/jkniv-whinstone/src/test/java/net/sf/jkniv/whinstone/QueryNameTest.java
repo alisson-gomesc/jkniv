@@ -24,7 +24,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -42,6 +45,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Matchers;
 
 import net.sf.jkniv.domain.flat.AuthorFlat;
 import net.sf.jkniv.sqlegance.Selectable;
@@ -67,7 +71,7 @@ public class QueryNameTest
     {
         this.stmt = mock(StatementAdapter.class);
         this.sql = mock(Selectable.class);
-        this.dialect= mock(AnsiDialect.class);
+        this.dialect = mock(AnsiDialect.class);
         this.paramParser= mock(ParamParser.class);
     }
     
@@ -81,8 +85,26 @@ public class QueryNameTest
     }
     
     @Test
-    public void whenQueryIsPage()
+    public void whenQueryIsPaging()
     {
+        Queryable queryNoPage = QueryFactory.of("dummy");
+        assertThat(queryNoPage.isPaging(), is(false));
+        assertThat(queryNoPage.hasRowsOffset(), is(false));
+        Queryable queryWithPage = QueryFactory.of("dummy", 10, 10);
+        assertThat(queryWithPage.isPaging(), is(true));
+        assertThat(queryWithPage.hasRowsOffset(), is(true));
+        
+        
+        //verify(dialect).buildQueryPaging(anyString(), anyInt(), anyInt());
+        //when(mockedObject.play(Matchers.<Class<T>>any())).thenReturn(object);
+    }
+
+    @Test
+    public void whenQueryIsPagingWithBookmark()
+    {
+        given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(true);
+        //given(this.dialect.buildQueryPaging(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(true);
+        
         Queryable queryNoPage = QueryFactory.of("dummy");
         assertThat(queryNoPage.isPaging(), is(false));
         assertThat(queryNoPage.hasRowsOffset(), is(false));
@@ -304,6 +326,16 @@ public class QueryNameTest
         q1 = QueryFactory.of("dummy", 5, 11);
         q2 = QueryFactory.of("dummy", 5, 10);
         assertThat(q1, not(is(q2)));
+    }
+
+    @Test
+    public void whenEquals()
+    {
+        Queryable q1 = QueryFactory.of("dummy1");
+        Queryable q2 = QueryFactory.of("dummy2");
+        
+        
+        assertThat(q1.equals(q2), is(false));
     }
 
     @Test

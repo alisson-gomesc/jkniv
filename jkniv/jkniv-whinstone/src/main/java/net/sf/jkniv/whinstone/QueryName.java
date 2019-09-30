@@ -50,10 +50,11 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * @author Alisson Gomes
  * @since 0.6.0
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 class QueryName implements Queryable
 {
-    private static final transient Assertable NOT_NULL    = AssertsFactory.getNotNull();
-    private static final transient Assertable IS_NULL    = AssertsFactory.getIsNull();
+    private static final Assertable NOT_NULL    = AssertsFactory.getNotNull();
+    private static final Assertable IS_NULL    = AssertsFactory.getIsNull();
     private static final BasicType  BASIC_TYPE = BasicType.getInstance();
     
     private enum TYPEOF_PARAM
@@ -402,7 +403,6 @@ class QueryName implements Queryable
     }
     
     @Override
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Iterator<Object> iterator()
     {
         if (this.params == null)
@@ -421,7 +421,6 @@ class QueryName implements Queryable
     }
     
     @Override
-    @SuppressWarnings({ "rawtypes" })
     public Object[] values(String[] paramsNames)
     {
         List<Object> params = new ArrayList<Object>();
@@ -523,7 +522,7 @@ class QueryName implements Queryable
     @Override
     public String query()
     {
-        if (!boundSql)//TODO test Queryable.query method
+        if (!boundSql)
             throw new IllegalStateException("Needs to bind Sql before to call Queryable.query");
         return (this.sqlTextPaginated == null ? this.sqlText : this.sqlTextPaginated);
     }
@@ -531,7 +530,7 @@ class QueryName implements Queryable
     @Override
     public String queryCount()
     {
-        if (!boundSql) //TODO test Queryable.queryCount method
+        if (!boundSql)
             throw new IllegalStateException("Needs to bind Sql before to call Queryable.queryCount");
         return this.sqlTextToCount;
     }
@@ -704,4 +703,24 @@ class QueryName implements Queryable
     {
         return this.bookmark;
     }
+/*
+    private void checkIfParamIsEntity() {
+        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(this.params);
+        proxy.ge
+        Class<? extends Annotation> entityAnnotation = (Class<? extends Annotation>) forName("javax.persistence.Entity");
+        if (returnTypeClass != null && entityAnnotation != null)
+            this.returnTypeManaged = returnTypeClass.isAnnotationPresent(entityAnnotation);
+        
+    }
+
+    private Class<?> forName(String typeOfClass)
+    {
+        try
+        {
+            return Class.forName(typeOfClass);
+        }
+        catch (ClassNotFoundException returnNULL) {  // TODO ClassNotFoundException NULL type, returnType undefined 
+        return null;
+    }
+*/
 }

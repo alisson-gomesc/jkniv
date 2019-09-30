@@ -25,13 +25,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.exception.HandleableException;
-import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.experimental.TimerKeeper;
 import net.sf.jkniv.reflect.NumberFactory;
 import net.sf.jkniv.reflect.Numerical;
@@ -246,7 +246,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
                 queryable.getDynamicSql().getStats().add(TimerKeeper.clear());
             
             if (queryable.getDynamicSql().getLanguageType() == LanguageType.NATIVE
-                    && !"".equals(queryable.getDynamicSql().getReturnType()) && list.size() > 0)
+                    && queryable.getDynamicSql().hasReturnType() && list.size() > 0)
             {
                 list = cast((List<Object[]>) list, queryable.getDynamicSql().getReturnType());
             }
@@ -294,13 +294,13 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
      * @return list of casted objects
      */
     @SuppressWarnings("unchecked")
-    private <T> List<T> cast(List list, String returnType)// TODO test me case when jpa return array of objects (native query or select specific columns
+    private List<T> cast(List<?> list, String returnType)// TODO test me case when jpa return array of objects (native query or select specific columns
     {
         List<T> castedList = null;
         Object firstValue = list.get(0);
-        if (firstValue.getClass().getName().equals(returnType))
+        if (firstValue.getClass().getName().equals(returnType) || returnType == null)
         {
-            castedList = list;
+            castedList = (List<T>)list;
         }
         else if (firstValue instanceof Number)
         {
@@ -334,17 +334,17 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
         //                castedList.add(casted);
         //            }
         //        }
-        else
+        else if (returnType != null)
         {
             castedList = new ArrayList<T>(list.size());
             List<Object[]> listArray = (List<Object[]>) list;
             for (Object[] o : listArray)
             {
-                ObjectProxy<T> proxy = ObjectProxyFactory.newProxy(returnType);
+                ObjectProxy<T> proxy = ObjectProxyFactory.of(returnType);
                 proxy.setConstructorArgs(o);
                 T casted = proxy.newInstance();
                 castedList.add(casted);
-            }
+            }            
         }
         if (castedList.size() != list.size())
             throw new RepositoryException("Wrong conversion type from List<Object[]> to List of [" + returnType + "]");
@@ -379,7 +379,8 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
     @Override
     public void close()
     {
-        // TODO Auto-generated method stub
+        // TODO implements close for JpaStatementAdapter
+        LOG.warn("close Statement Adapter not implemented for RepositoryJpa!");
     }
     
     @Override

@@ -48,9 +48,4 @@ public interface AutoKey<E>
     boolean isEmpty();
     
     int size();
-    
-    /*
-     * Bound the key values to a entity model.
-     */
-    //public void bind();
 }

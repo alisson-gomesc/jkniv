@@ -23,6 +23,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import net.sf.jkniv.reflect.ReflectionException;
+
 /**
  * Utility interface to work with object reflection
  * 
@@ -97,4 +99,16 @@ public interface ObjectProxy<T>
      * @return a list of all public methods annotated with {@code annotation} or empty list otherwise.
      */
     List<Method> getAnnotationMethods(final Class<? extends Annotation> annotation);
+    
+    /**
+     * When the proxy catch a Exception to handler by {@code ReflectionException}
+     * a mute rule is used to not throw the exception. 
+     * @param ex exception class type
+     */
+    ObjectProxy<T> mute(Class<? extends Exception> ex);
+    
+    boolean hasAnnotation(String annotation);
+
+    boolean hasAnnotation(Class<? extends Annotation> annotation);
+
 }

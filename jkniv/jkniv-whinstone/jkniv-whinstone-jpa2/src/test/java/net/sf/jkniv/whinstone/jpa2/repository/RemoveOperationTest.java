@@ -20,6 +20,8 @@
 package net.sf.jkniv.whinstone.jpa2.repository;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Assert;
@@ -39,36 +41,36 @@ public class RemoveOperationTest extends BaseTest
 {
     @Test
     @Transactional
-    public void removeTest()
+    public void whenRemoveEntityUsinJpaMapping()
     {
         Repository repository = getRepository();
         String name = "Spoke Zarathustra", isbn = "978-0679601753";
-        Book b1 = new Book(), b2 = null;
-        b1.setName(name);
-        b1.setIsbn(isbn);
+        Book newBook = new Book(), removeBook = null;
+        newBook.setName(name);
+        newBook.setIsbn(isbn);
         
-        repository.add(b1);
-        Assert.assertNotNull(b1.getId());
-        b2 = repository.get(b1);
-        Assert.assertNotNull(b2);
-        Assert.assertEquals(name, b2.getName());
-        Assert.assertEquals(isbn, b2.getIsbn());
-        repository.remove(b2);
-        b2 = repository.get(b1);
-        Assert.assertNull(b2);
+        repository.add(newBook);
+        assertThat(newBook.getId(), notNullValue());
+        removeBook = repository.get(newBook);
+        assertThat(removeBook, notNullValue());
+        assertThat(name, is(removeBook.getName()));
+        assertThat(isbn, is(removeBook.getIsbn()));
+        repository.remove(removeBook);
+        
+        removeBook = repository.get(newBook);
+        assertThat(removeBook, nullValue());
     }
 
-    @Ignore("Script db-load.sql doesn't works, fix spring-contex.xml with <jdbc:initialize-database... ")
     @Test
     @Transactional
-    public void whenRemoveUsinNativeQuery()
+    public void whenRemoveEntityUsingNativeQuery()
     {
         Repository repository = getRepository();
         Author a = new Author();
         a.setId(505L);
         Queryable queryable = QueryFactory.of("deleteAuthor2Native", a);
         
-        Queryable countQuery = QueryFactory.of("Book.list", a);
+        Queryable countQuery = QueryFactory.of("Author.list", a);
         int count = repository.list(countQuery).size();
 
         assertThat(count, is(6));
@@ -76,6 +78,9 @@ public class RemoveOperationTest extends BaseTest
         int rows = repository.remove(queryable);
         
         assertThat(rows, is(1));
+        
+        int recount = repository.list(countQuery).size();
+        assertThat(recount, is(5));
     }
 
     

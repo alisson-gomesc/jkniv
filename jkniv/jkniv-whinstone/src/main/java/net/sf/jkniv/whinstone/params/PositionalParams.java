@@ -36,11 +36,6 @@ class PositionalParams extends AbstractParam implements AutoBindParams
         this.params = queryable.getParams();
         this.queryName = queryable.getName();
     }
-    public StatementAdapterOld parameterized(String[] paramsNames)
-    {
-        on();
-        return null;
-    }
     
     @Override
     public void on()

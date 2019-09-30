@@ -21,10 +21,8 @@ package net.sf.jkniv.whinstone.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Properties;
 
-import net.sf.jkniv.reflect.ReflectionUtils;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.ConnectionAdapter;

@@ -45,13 +45,14 @@ import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
-import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.ConnectionFactory;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.commands.CommandHandler;
+import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
 /**
@@ -373,13 +374,13 @@ class RepositoryJdbc implements Repository
     private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new SelectHandler(this.connectionFactory.open(sql.getIsolation()));
+        CommandHandler handler = CommandHandlerFactory.ofSelect(this.connectionFactory.open(sql.getIsolation()));
         List<T> list = handler.with(queryable)
-        .with(sql)
-        .checkSqlType(SqlType.SELECT)
-        .with(handlerException)
-        .with(overloadResultRow)
-        .run();
+                .with(sql)
+                .checkSqlType(SqlType.SELECT)
+                .with(handlerException)
+                .with(overloadResultRow)
+                .run();
         return list;
     }
     
@@ -387,7 +388,7 @@ class RepositoryJdbc implements Repository
     {
         T ret = null;
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new SelectHandler(this.connectionFactory.open(sql.getIsolation()));
+        CommandHandler handler = CommandHandlerFactory.ofSelect(this.connectionFactory.open(sql.getIsolation()));
         List<T> list = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.SELECT)
@@ -487,7 +488,7 @@ class RepositoryJdbc implements Repository
     {
         NOT_NULL.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new AddHandler(this.connectionFactory.open(sql.getIsolation()));
+        CommandHandler handler = CommandHandlerFactory.ofAdd(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
                 .with(sql)
                 .checkSqlType(SqlType.INSERT)
@@ -506,7 +507,7 @@ class RepositoryJdbc implements Repository
 
         Queryable queryable = QueryFactory.of(queryName, entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new AddHandler(this.connectionFactory.open(sql.getIsolation()));
+        CommandHandler handler = CommandHandlerFactory.ofAdd(this.connectionFactory.open(sql.getIsolation()));
         handler.with(queryable)
             .with(sql)
             .checkSqlType(SqlType.INSERT)
@@ -584,7 +585,7 @@ class RepositoryJdbc implements Repository
         Object o = get(queryable);
         if(o != null)
         {
-            ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(queryable.getParams());
+            ObjectProxy<?> proxy = ObjectProxyFactory.of(queryable.getParams());
             proxy.merge(o);
             enriched = true;
         }
@@ -598,7 +599,7 @@ class RepositoryJdbc implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new UpdateHandler(this.connectionFactory.open(sql.getIsolation()));
+        CommandHandler handler = CommandHandlerFactory.ofUpdate(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
                 .with(sql)
                 .checkSqlType(SqlType.UPDATE)
@@ -616,7 +617,7 @@ class RepositoryJdbc implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new UpdateHandler(this.connectionFactory.open(sql.getIsolation()));
+        CommandHandler handler = CommandHandlerFactory.ofUpdate(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
                 .with(sql)
                 .checkSqlType(SqlType.UPDATE)
@@ -688,7 +689,7 @@ class RepositoryJdbc implements Repository
     {
         NOT_NULL.verify(queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new RemoveHandler(this.connectionFactory.open(sql.getIsolation()));
+        CommandHandler handler = CommandHandlerFactory.ofRemove(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
                 .with(sql)
                 .checkSqlType(SqlType.DELETE)
@@ -706,7 +707,7 @@ class RepositoryJdbc implements Repository
             LOG.trace("Executing [{}] as remove command", queryName);
         Queryable queryable = QueryFactory.of(queryName, entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new RemoveHandler(this.connectionFactory.open(sql.getIsolation()));
+        CommandHandler handler = CommandHandlerFactory.ofRemove(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
                 .with(sql)
                 .checkSqlType(SqlType.DELETE)
@@ -804,7 +805,7 @@ class RepositoryJdbc implements Repository
     private void configQueryNameStrategy()
     {
         String nameStrategy = repositoryConfig.getQueryNameStrategy();
-        ObjectProxy<? extends QueryNameStrategy> proxy = ObjectProxyFactory.newProxy(nameStrategy);
+        ObjectProxy<? extends QueryNameStrategy> proxy = ObjectProxyFactory.of(nameStrategy);
         this.strategyQueryName = proxy.newInstance();
     }
     
@@ -950,9 +951,9 @@ class RepositoryJdbc implements Repository
         ObjectProxy<? extends ConnectionFactory> factory = null;
         
         if (adpterClassName == null)
-            factory = ObjectProxyFactory.newProxy(defaultClass);
+            factory = ObjectProxyFactory.of(defaultClass);
         else
-            factory = ObjectProxyFactory.newProxy(adpterClassName);
+            factory = ObjectProxyFactory.of(adpterClassName);
         
         if (args != null)
         {

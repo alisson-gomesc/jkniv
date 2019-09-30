@@ -52,7 +52,7 @@ class MapException
     
     public void mute()
     {
-        this.mute = false;
+        this.mute = true;
     }
     
     public boolean isMute()

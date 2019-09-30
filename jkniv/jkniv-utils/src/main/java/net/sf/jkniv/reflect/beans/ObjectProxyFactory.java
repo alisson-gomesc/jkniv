@@ -28,7 +28,7 @@ public class ObjectProxyFactory
      * @param <T> Type of result object
      * @return Proxy for instanceof T
      */
-    public static <T> ObjectProxy<T> newProxy(String className)
+    public static <T> ObjectProxy<T> of(String className)
     {
         return new DefaultObjectProxy<T>(className);
     }
@@ -39,7 +39,7 @@ public class ObjectProxyFactory
      * @param <T> Type of result object
      * @return Proxy for <code>target</code>
      */
-    public static <T> ObjectProxy<T> newProxy(T target)
+    public static <T> ObjectProxy<T> of(T target)
     {
         return new DefaultObjectProxy<T>(target);
     }
@@ -50,7 +50,7 @@ public class ObjectProxyFactory
      * @param <T> Type of result object
      * @return Proxy for instanceof <code>targetClass</code>
      */
-    public static <T> ObjectProxy<T> newProxy(Class<T> targetClass)
+    public static <T> ObjectProxy<T> of(Class<T> targetClass)
     {
         return new DefaultObjectProxy<T>(targetClass);
     }

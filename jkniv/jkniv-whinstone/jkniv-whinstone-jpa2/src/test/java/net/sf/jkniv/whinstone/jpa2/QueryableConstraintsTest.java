@@ -27,7 +27,6 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.acme.domain.noorm.Author;
 
@@ -42,23 +41,23 @@ public class QueryableConstraintsTest extends BaseTest
     @Rule
     public ExpectedException catcher = ExpectedException.none();
     
-    @Test //@Ignore("java.lang.ClassCastException: java.lang.String cannot be cast to [Ljava.lang.Object;")
-    public void whenScalarReturnMoreOnRow()
+    @Test
+    public void whenScalarReturnMoreOneRow()
     {
         Queryable q = QueryFactory.of("getScalarAuthorName");
         catcher.expectMessage("No unique result for query [" + q.getName() + "] with params [" + q.getParams()
-                + "result fetch [5] rows, Repository.get(..) method must return just one row]");
+                + "result fetch [6] rows, Repository.get(..) method must return just one row]");
         
         getRepository().scalar(q);
     }
     
     @Test
-    public void whenGetReturnMoreOnRow()
+    public void whenGetReturnMoreOneRow()
     {
         Queryable q = QueryFactory.of("getScalarAuthorName", Author.class);
         catcher.expect(NonUniqueResultException.class);
         catcher.expectMessage("No unique result for query [" + q.getName() + "] with params [" + q.getParams()
-                + "result fetch [5] rows, Repository.get(..) method must return just one row]");
+                + "result fetch [6] rows, Repository.get(..) method must return just one row]");
         
         getRepository().get(q);
     }

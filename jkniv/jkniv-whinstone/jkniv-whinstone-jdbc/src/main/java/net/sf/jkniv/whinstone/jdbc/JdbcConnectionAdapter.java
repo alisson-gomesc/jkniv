@@ -3,7 +3,6 @@ package net.sf.jkniv.whinstone.jdbc;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -20,10 +19,10 @@ import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
-import net.sf.jkniv.whinstone.Command;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.commands.Command;
 import net.sf.jkniv.whinstone.jdbc.commands.AddAutoKeyJdbcCommand;
 import net.sf.jkniv.whinstone.jdbc.commands.AddSequenceKeyJdbcCommand;
 import net.sf.jkniv.whinstone.jdbc.commands.BulkJdbcCommand;
@@ -40,7 +39,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
 {
     private static final Logger SQLLOG = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
     private static final Logger LOG = LoggerFactory.getLogger(JdbcConnectionAdapter.class);
-    private static final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
+    private static final Assertable NOT_NULL = AssertsFactory.getNotNull();
     //private static final HandleableException handlerException = new HandlerException(RepositoryException.class,
     //        "Exception at connection session running %s");
     

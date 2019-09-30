@@ -28,8 +28,6 @@ public interface JpaEmFactory
     
     EntityManager createEntityManager();
     
-    //boolean isContainerManaged();
-    
     /**
      * Retrieve the transaction in progress from thread.
      * @throws IllegalStateException if the entity manager is container-managed

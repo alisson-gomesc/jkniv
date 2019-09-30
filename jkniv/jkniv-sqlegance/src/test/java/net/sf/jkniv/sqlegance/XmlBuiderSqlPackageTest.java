@@ -22,17 +22,26 @@ package net.sf.jkniv.sqlegance;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import net.sf.jkniv.sqlegance.builder.XmlBuilderSql;
+import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 
 public class XmlBuiderSqlPackageTest
 {
+    private static SqlContext sqlContext;
+    
+    @BeforeClass
+    public static void setUp()
+    {
+        sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
+    }
+
     @Test
     public void whenNoPackageIsDefineJustNameQueryIsEnoughCase1()
     {
-        Sql sql = XmlBuilderSql.getQuery("test-nopack-0");
+        Sql sql = sqlContext.getQuery("test-nopack-0");
         assertThat(sql.getSql().toLowerCase(), is("select id, name from Users where id = 0".toLowerCase()));
         assertThat(sql.getXPath(), is("statements/select[@id='test-nopack-0']"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.NO_MARK));
@@ -41,7 +50,7 @@ public class XmlBuiderSqlPackageTest
     @Test
     public void whenNoPackageIsDefineJustNameQueryIsEnoughCase2()
     {
-        Sql sql = XmlBuilderSql.getQuery("test-nopack-7");
+        Sql sql = sqlContext.getQuery("test-nopack-7");
         assertThat(sql.getSql().toLowerCase(), is("select id, name from Users where id = 7".toLowerCase()));
         assertThat(sql.getXPath(), is("statements/select[@id='test-nopack-7']"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.NO_MARK));
@@ -50,7 +59,7 @@ public class XmlBuiderSqlPackageTest
     @Test
     public void whenNoPackageIsDefineJustNameQueryIsEnoughCase3()
     {
-        Sql sql = XmlBuilderSql.getQuery("test-nopack-8");
+        Sql sql = sqlContext.getQuery("test-nopack-8");
         assertThat(sql.getSql().toLowerCase(), is("select id, name from Users where id = 8".toLowerCase()));
         assertThat(sql.getXPath(), is("statements/select[@id='test-nopack-8']"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.NO_MARK));
@@ -59,7 +68,7 @@ public class XmlBuiderSqlPackageTest
     @Test
     public void whenPackageIsDefineFullnameIsRequiredCase1()
     {
-        Sql sql = XmlBuilderSql.getQuery("com.acme.one.test-pack-1");
+        Sql sql = sqlContext.getQuery("com.acme.one.test-pack-1");
         assertThat(sql.getSql().toLowerCase(), is("select id, name from Users where id = 1".toLowerCase()));
         assertThat(sql.getXPath(), is("statements/package[@name='com.acme.one']/select[@id='test-pack-1']"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.NO_MARK));
@@ -68,7 +77,7 @@ public class XmlBuiderSqlPackageTest
     @Test
     public void whenPackageIsDefineFullnameIsRequiredCase2()
     {
-        Sql sql = XmlBuilderSql.getQuery("com.acme.one.test-pack-2");
+        Sql sql = sqlContext.getQuery("com.acme.one.test-pack-2");
         assertThat(sql.getSql().toLowerCase(), is("select id, name from Users where id = 2".toLowerCase()));
         assertThat(sql.getXPath(), is("statements/package[@name='com.acme.one']/select[@id='test-pack-2']"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.NO_MARK));
@@ -77,7 +86,7 @@ public class XmlBuiderSqlPackageTest
     @Test
     public void whenPackageIsDefineFullnameIsRequiredCase3()
     {
-        Sql sql = XmlBuilderSql.getQuery("com.acme.one.test-pack-3");
+        Sql sql = sqlContext.getQuery("com.acme.one.test-pack-3");
         assertThat(sql.getSql().toLowerCase(), is("select id, name from Users where id = 3".toLowerCase()));
         assertThat(sql.getXPath(), is("statements/package[@name='com.acme.one']/select[@id='test-pack-3']"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.NO_MARK));
@@ -86,7 +95,7 @@ public class XmlBuiderSqlPackageTest
     @Test
     public void whenPackageIsDefineFullnameIsRequiredCase4()
     {
-        Sql sql = XmlBuilderSql.getQuery("com.acme.two.test-pack-4");
+        Sql sql = sqlContext.getQuery("com.acme.two.test-pack-4");
         assertThat(sql.getSql().toLowerCase(), is("select id, name from Users where id = 4".toLowerCase()));
         assertThat(sql.getXPath(), is("statements/package[@name='com.acme.two']/select[@id='test-pack-4']"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.NO_MARK));
@@ -95,7 +104,7 @@ public class XmlBuiderSqlPackageTest
     @Test
     public void whenPackageIsDefineFullnameIsRequiredCase5()
     {
-        Sql sql = XmlBuilderSql.getQuery("com.acme.two.test-pack-5");
+        Sql sql = sqlContext.getQuery("com.acme.two.test-pack-5");
         assertThat(sql.getSql().toLowerCase(), is("select id, name from Users where id = 5".toLowerCase()));
         assertThat(sql.getXPath(), is("statements/package[@name='com.acme.two']/select[@id='test-pack-5']"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.NO_MARK));
@@ -104,7 +113,7 @@ public class XmlBuiderSqlPackageTest
     @Test
     public void whenPackageIsDefineFullnameIsRequiredCase6()
     {
-        Sql sql = XmlBuilderSql.getQuery("com.acme.two.test-pack-6");
+        Sql sql = sqlContext.getQuery("com.acme.two.test-pack-6");
         assertThat(sql.getSql().toLowerCase(), is("select id, name from Users where id = 6".toLowerCase()));
         assertThat(sql.getXPath(), is("statements/package[@name='com.acme.two']/select[@id='test-pack-6']"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.NO_MARK));

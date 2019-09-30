@@ -27,10 +27,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import net.sf.jkniv.sqlegance.builder.XmlBuilderSql;
+import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.sqlegance.builder.xml.ProcedureTag;
 import net.sf.jkniv.sqlegance.domain.orm.Author;
 import net.sf.jkniv.sqlegance.domain.orm.FooDomain;
@@ -38,13 +39,21 @@ import net.sf.jkniv.sqlegance.params.ParamMarkType;
 
 public class XmlBuilderSqlTest
 {    
+    private static SqlContext sqlContext;
+    
+    @BeforeClass
+    public static void setUp()
+    {
+        sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
+    }
+
     @Test @Ignore("getFiles method is deprecated and removed")
     public void whenReadXmlFilesYourStatusesAreFlagged()
     {
         /*
-        SqlFile f1 = XmlBuilderSql.getFiles().get(0);
-        SqlFile f2 = XmlBuilderSql.getFiles().get(1);
-        SqlFile f3 = XmlBuilderSql.getFiles().get(2);
+        SqlFile f1 = sqlContext.getFiles().get(0);
+        SqlFile f2 = sqlContext.getFiles().get(1);
+        SqlFile f3 = sqlContext.getFiles().get(2);
         
         Assert.assertEquals("/SQL1Test.xml", f1.getName());
         Assert.assertEquals("/SQL2Test.xml", f2.getName());
@@ -63,28 +72,28 @@ public class XmlBuilderSqlTest
         params1.put("name", "acme");
         params1.put("age", 6);
         
-        sql = XmlBuilderSql.getQuery("selectUsers");
+        sql = sqlContext.getQuery("selectUsers");
         Assert.assertEquals("select id, name from Users".toLowerCase(), sql.getSql().toLowerCase());
         Assert.assertEquals("select id, name from Users where id = 1".toLowerCase(), sql.getSql(params1).toLowerCase());
         Assert.assertEquals(LanguageType.JPQL, sql.getLanguageType());
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.NO_MARK));
         
-        sql = XmlBuilderSql.getQuery("selectGroups");
+        sql = sqlContext.getQuery("selectGroups");
         Assert.assertEquals("select id, name from Groups".toLowerCase(), sql.getSql().toLowerCase());
         Assert.assertEquals(LanguageType.JPQL, sql.getLanguageType());
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
         
-        sql = XmlBuilderSql.getQuery("selectCompanies");
+        sql = sqlContext.getQuery("selectCompanies");
         assertThat(sql.getSql().toLowerCase(), is("select id, name from companies"));
         assertThat(sql.getLanguageType(),is(LanguageType.NATIVE));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.NO_MARK));
         
-        sql = XmlBuilderSql.getQuery("selectRoles");
+        sql = sqlContext.getQuery("selectRoles");
         assertThat(sql.getSql().toLowerCase(), is("select id, name from roles"));
         assertThat(sql.getLanguageType(), is(LanguageType.NATIVE));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.NO_MARK));
         
-        sql = XmlBuilderSql.getQuery("selectUsersHaving");
+        sql = sqlContext.getQuery("selectUsersHaving");
         assertThat(sql.getSql(params1).toLowerCase(), 
                     is("select id, name from users where name = 1 having age > 5"));
         assertThat(sql.getLanguageType(),is(LanguageType.NATIVE));
@@ -99,7 +108,7 @@ public class XmlBuilderSqlTest
         FooDomain d1 = new FooDomain("name", 0, "state", "title", author), d2 = new FooDomain("name", 0, null, "title", author), d3 = new FooDomain("name", 0,
                 "state", null, author), d4 = new FooDomain("name", 0, "state", "title", null), d5 = new FooDomain(null, 5, null, null, author);
         
-        Sql sql = XmlBuilderSql.getQuery("selectGroups");
+        Sql sql = sqlContext.getQuery("selectGroups");
         assertThat(sql.getSql().toLowerCase(), is("select id, name from groups"));
         assertThat(sql.getLanguageType(), is(LanguageType.JPQL));
         assertThat(sql.getSql(d1).toLowerCase(), 
@@ -132,8 +141,8 @@ public class XmlBuilderSqlTest
         author3.setUsername("Bob");
         author3.setPassword("pass");
         
-        Sql sql1 = XmlBuilderSql.getQuery("insertAuthor1");
-        Sql sql2 = XmlBuilderSql.getQuery("insertAuthor2");
+        Sql sql1 = sqlContext.getQuery("insertAuthor1");
+        Sql sql2 = sqlContext.getQuery("insertAuthor2");
         
         assertThat(sql1.getSql().toLowerCase(),
                     is("insert into author (username,password,email,bio) values (#{username},#{password},#{email},#{bio})"));
@@ -156,8 +165,8 @@ public class XmlBuilderSqlTest
         author.setUsername("Bob");
         author.setPassword("pass");
         author.setBio("bio");
-        Sql sql1 = XmlBuilderSql.getQuery("updateAuthor1");
-        Sql sql2 = XmlBuilderSql.getQuery("updateAuthor2");
+        Sql sql1 = sqlContext.getQuery("updateAuthor1");
+        Sql sql2 = sqlContext.getQuery("updateAuthor2");
         assertThat(sql1.getSql(), 
                     is("update Author set username = #{username}, password = #{password}, email = #{email}, bio = #{bio} where id = #{id}"));
         assertThat(sql2.getSql(author),
@@ -169,7 +178,7 @@ public class XmlBuilderSqlTest
     @Test
     public void whenReadDeleteSqlWithoutDynamicElements()
     {
-        Sql sql = XmlBuilderSql.getQuery("deleteAuthor");
+        Sql sql = sqlContext.getQuery("deleteAuthor");
         assertThat(sql.getSql(), is("delete from Author where id = #{id}"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
     }
@@ -177,9 +186,9 @@ public class XmlBuilderSqlTest
     @Test
     public void whenReadXmlProcedureNodeAttributesElementMustMatch() throws InterruptedException
     {
-        ProcedureTag sql = (ProcedureTag) XmlBuilderSql.getQuery("daInsertAutoItemUpc");
+        ProcedureTag sql = (ProcedureTag) sqlContext.getQuery("daInsertAutoItemUpc");
         Thread.sleep(5000);
-        sql = (ProcedureTag) XmlBuilderSql.getQuery("daInsertAutoItemUpc");
+        sql = (ProcedureTag) sqlContext.getQuery("daInsertAutoItemUpc");
         assertThat(sql.getLanguageType(), is(LanguageType.STORED));
         assertThat(sql.getSpName(), is("daInsertAutoITEM_UPC"));
         assertThat(sql.getParams().length, is(13));

@@ -36,7 +36,7 @@ import net.sf.jkniv.whinstone.ConnectionAdapter;
 public class TransactionContext
 {
     private final static Logger LOG = LoggerFactory.getLogger(TransactionContext.class);
-    private final transient Assertable NOT_NULL = AssertsFactory.getNotNull();
+    private final static Assertable NOT_NULL = AssertsFactory.getNotNull();
     private final String               name;
     private final ConnectionAdapter    conn;
     private Transactional              tx;

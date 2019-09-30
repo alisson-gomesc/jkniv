@@ -235,7 +235,7 @@ public class RepositoryConfig
             String className = getProperty(RepositoryProperty.DATA_MASKING);
             if (className != null)
             {
-                ObjectProxy<DataMasking> proxy = ObjectProxyFactory.newProxy(className);
+                ObjectProxy<DataMasking> proxy = ObjectProxyFactory.of(className);
                 masking = proxy.newInstance();
             }
         }
@@ -439,7 +439,7 @@ public class RepositoryConfig
     private void defineDialect()
     {
         String sqlDialectName = getProperty(RepositoryProperty.SQL_DIALECT);
-        ObjectProxy<SqlDialect> proxy = ObjectProxyFactory.newProxy(sqlDialectName);
+        ObjectProxy<SqlDialect> proxy = ObjectProxyFactory.of(sqlDialectName);
         sqlDialect = proxy.newInstance();
         for (SqlFeatureSupport feature : SqlFeatureSupport.values())
         {

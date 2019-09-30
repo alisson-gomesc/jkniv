@@ -201,7 +201,7 @@ public class DeleteCommand extends AbstractCommand implements CouchCommand
         Map<String, Object> response = JsonMapper.mapper(json, Map.class);
         //Updateable sql = queryable.getDynamicSql().asUpdateable();
         Object params = queryable.getParams();
-        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(params);
+        ObjectProxy<?> proxy = ObjectProxyFactory.of(params);
         String id = (String) response.get(COUCHDB_ID);
         String rev = (String) response.get(COUCHDB_REV);
         if (params instanceof Map)

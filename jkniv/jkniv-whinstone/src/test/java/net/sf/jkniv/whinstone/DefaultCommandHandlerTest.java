@@ -44,6 +44,10 @@ import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.xml.TagFactory;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.whinstone.classification.Transformable;
+import net.sf.jkniv.whinstone.commands.Command;
+import net.sf.jkniv.whinstone.commands.CommandAdapter;
+import net.sf.jkniv.whinstone.commands.CommandHandler;
+import net.sf.jkniv.whinstone.commands.DefaultCommandHandler;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 @SuppressWarnings("unchecked")

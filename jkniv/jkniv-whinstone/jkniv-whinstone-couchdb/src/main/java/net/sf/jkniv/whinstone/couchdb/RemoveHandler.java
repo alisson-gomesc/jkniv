@@ -19,9 +19,9 @@
  */
 package net.sf.jkniv.whinstone.couchdb;
 
-import net.sf.jkniv.whinstone.Command;
-import net.sf.jkniv.whinstone.CommandAdapter;
-import net.sf.jkniv.whinstone.DefaultCommandHandler;
+import net.sf.jkniv.whinstone.commands.Command;
+import net.sf.jkniv.whinstone.commands.CommandAdapter;
+import net.sf.jkniv.whinstone.commands.DefaultCommandHandler;
 
 /**
  * Couchdb Command to handler the {@code Remove} life-cycle.

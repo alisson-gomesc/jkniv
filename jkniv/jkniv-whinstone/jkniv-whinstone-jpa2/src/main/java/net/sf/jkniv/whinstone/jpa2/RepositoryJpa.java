@@ -22,7 +22,6 @@ package net.sf.jkniv.whinstone.jpa2;
 import java.sql.Statement;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -47,6 +46,7 @@ import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.NonUniqueResultException;
 import net.sf.jkniv.sqlegance.QueryNameStrategy;
 import net.sf.jkniv.sqlegance.RepositoryException;
@@ -55,12 +55,14 @@ import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
+import net.sf.jkniv.sqlegance.builder.xml.TagFactory;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
-import net.sf.jkniv.whinstone.CommandAdapter;
-import net.sf.jkniv.whinstone.CommandHandler;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.commands.CommandAdapter;
+import net.sf.jkniv.whinstone.commands.CommandHandler;
+import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.jpa2.dialect.JpaDialect;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
@@ -143,9 +145,6 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.sqlContext.getRepositoryConfig().add(props);
         this.sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
         this.strategyQueryName = null;
-        //this.emFactory = new JpaEmFactoryJndi(persistenceInfo.getUnitName());
-        //if (!emFactory.isActive())
-        //    this.emFactory = new JpaEmFactorySEenv(persistenceInfo.getUnitName());
         this.init();
     }
     
@@ -202,7 +201,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         boolean showConfig = Boolean
                 .valueOf(sqlContext.getRepositoryConfig().getProperty(RepositoryProperty.SHOW_CONFIG));
         String queryNameStrategyClass = sqlContext.getRepositoryConfig().getQueryNameStrategy();
-        ObjectProxy<QueryNameStrategy> proxy = ObjectProxyFactory.newProxy(queryNameStrategyClass);
+        ObjectProxy<QueryNameStrategy> proxy = ObjectProxyFactory.of(queryNameStrategyClass);
         this.strategyQueryName = proxy.newInstance();
         if (showConfig)
             showPersistenceConfig();
@@ -263,16 +262,44 @@ class RepositoryJpa implements RepositoryJpaExtend
     public <T> T add(T entity) // FIXME CommandHandler must be used (refactoring)
     {
         NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toAddName(entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as add command", queryName);
+
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        Sql sql = TagFactory.newInsert("dummy", LanguageType.JPQL, this.sqlContext.getSqlDialect());
+        CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
+        handler.with(queryable)
+            .with(sql)
+            .with(handlerException)
+            .run();
+        return entity;
+        /*
+        NOT_NULL.verify(entity);
+        //Queryable queryable = QueryFactory.of("dummy", entity);
+        //queryable.is
         if (isTraceEnabled)
             LOG.trace("executing EntityManage.persist(" + entity.getClass().getName() + ")");
         EntityManager em = getEntityManager();
         em.persist(entity);
         return entity;
+        */
     }
     
     @Override
     public int add(Queryable queryable)// FIXME CommandHandler must be used (refactoring)
     {
+        NOT_NULL.verify(queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
+        int rows = handler.with(queryable)
+                .with(sql)
+                .checkSqlType(SqlType.INSERT)
+                .with(handlerException)
+                .run();
+        return rows;
+
+        /*
         if (isTraceEnabled)
             LOG.trace("executing add method with query [" + queryable.getName() + "]");
         Sql isql = sqlContext.getQuery(queryable.getName());
@@ -285,6 +312,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         if (isDebugEnabled)
             LOG.debug("{} records was affected by add [{}] command", rowsAffected, queryable.getName());
         return rowsAffected;
+        */
     }
     
     /**
@@ -296,6 +324,21 @@ class RepositoryJpa implements RepositoryJpaExtend
     public <T> int remove(T entity)// FIXME CommandHandler must be used (refactoring)
     {
         NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toRemoveName(entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as remove command", queryName);
+
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        Sql sql = TagFactory.newInsert("dummy", LanguageType.JPQL, this.sqlContext.getSqlDialect());
+        CommandHandler handler = CommandHandlerFactory.ofRemove(this.cmdAdapter);
+        
+        handler.with(queryable)
+            .with(sql)
+            .with(handlerException)
+            .run();
+        return Statement.SUCCESS_NO_INFO;
+        /*
+        NOT_NULL.verify(entity);
         if (isTraceEnabled)
             LOG.trace("executing EntityManage.remove(" + entity.getClass().getName() + ")");
         EntityManager em = getEntityManager();
@@ -304,6 +347,7 @@ class RepositoryJpa implements RepositoryJpaExtend
             LOG.debug("1 record [{}] MUST BE affected by remove command", entity);
         
         return Statement.SUCCESS_NO_INFO;
+        */
     }
     
     /**
@@ -318,6 +362,16 @@ class RepositoryJpa implements RepositoryJpaExtend
     @Override
     public int remove(Queryable queryable)// FIXME CommandHandler must be used (refactoring)
     {
+        NOT_NULL.verify(queryable);
+        Sql sql = sqlContext.getQuery(queryable.getName());
+        CommandHandler handler = CommandHandlerFactory.ofRemove(this.cmdAdapter);
+        int rows = handler.with(queryable)
+                .with(sql)
+                .checkSqlType(SqlType.DELETE)
+                .with(handlerException)
+                .run();
+        return rows;
+        /*
         if (isTraceEnabled)
             LOG.trace("executing remove method with query [" + queryable.getName() + "]");
         Sql isql = sqlContext.getQuery(queryable.getName());
@@ -329,6 +383,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         if (isDebugEnabled)
             LOG.debug("{} records was affected by remove [{}] command", rowsAffected, queryable.getName());
         return rowsAffected;
+        */
     }
     
     public boolean enrich(Queryable queryable) //FIXME test enrich
@@ -337,7 +392,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         List<Object> list = list(queryable);
         for (Object o : list)
         {
-            ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(queryable.getParams());
+            ObjectProxy<?> proxy = ObjectProxyFactory.of(queryable.getParams());
             proxy.merge(o);
             enriched = true;
         }
@@ -356,19 +411,18 @@ class RepositoryJpa implements RepositoryJpaExtend
     @Override
     public int update(Queryable queryable)// FIXME CommandHandler must be used (refactoring)
     {
-        /*
         NOT_NULL.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new UpdateHandler(this.cmdAdapter);
+        CommandHandler handler = CommandHandlerFactory.ofUpdate(this.cmdAdapter);
         int rows = handler.with(queryable)
                 .with(sql)
                 .checkSqlType(SqlType.UPDATE)
                 .with(handlerException)
                 .run();
         return rows;
-*/
+        /*
         if (isTraceEnabled)
             LOG.trace("executing update method with query [" + queryable.getName() + "]");
         Sql isql = sqlContext.getQuery(queryable.getName());
@@ -382,6 +436,7 @@ class RepositoryJpa implements RepositoryJpaExtend
             LOG.debug("{} records was affected by update [{}] command", rowsAffected, queryable.getName());
         
         return rowsAffected;
+        */
     }
     
     /**
@@ -393,11 +448,27 @@ class RepositoryJpa implements RepositoryJpaExtend
     public <T> T update(T entity)// FIXME CommandHandler must be used (refactoring)
     {
         NOT_NULL.verify(entity);
+        String queryName = this.strategyQueryName.toUpdateName(entity);
+        if (isTraceEnabled)
+            LOG.trace("Executing [{}] as update command", queryName);
+
+        Queryable queryable = QueryFactory.of(queryName, entity);
+        Sql sql = TagFactory.newInsert("dummy", LanguageType.JPQL, this.sqlContext.getSqlDialect());
+        CommandHandler handler = CommandHandlerFactory.ofUpdate(this.cmdAdapter);
+        
+        T merged = handler.with(queryable)
+            .with(sql)
+            .with(handlerException)
+            .run();
+        return merged;
+        /*
+        NOT_NULL.verify(entity);
         if (isTraceEnabled)
             LOG.trace("executing EntityManage.merge(" + entity.getClass().getName() + ")");
         EntityManager em = getEntityManager();
-        T t = em.merge(entity);
-        return t;
+        T merged = em.merge(entity);
+        return merged
+        */
     }
     
     /**
@@ -465,14 +536,14 @@ class RepositoryJpa implements RepositoryJpaExtend
         */
     }
     
-    /**
+    /*
      * Get one object instance from repository using a query.
      * 
      * @param queryable
      *            Query with parameters
      * @return Return the object that matches with query. A null reference is
      *         returned if the query no match anyone object.
-     */
+     *
     public <T> T __get(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
@@ -485,6 +556,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         ret = queryableJpaAdapter.getSingleResult();
         return ret;
     }
+    */
     
     @Override
     public <T> T get(Queryable queryable)
@@ -613,7 +685,7 @@ class RepositoryJpa implements RepositoryJpaExtend
     {
         T ret = null;
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new SelectHandler(this.cmdAdapter);
+        CommandHandler handler = CommandHandlerFactory.ofSelect(this.cmdAdapter);
         List<T> list = handler
                 .with(queryable)
                 .with(sql)
@@ -635,7 +707,7 @@ class RepositoryJpa implements RepositoryJpaExtend
     private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new SelectHandler(this.cmdAdapter);
+        CommandHandler handler = CommandHandlerFactory.ofSelect(this.cmdAdapter);
         List<T> list = handler
                 .with(queryable)
                 .with(sql)
@@ -688,6 +760,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         return getEntityManager().createQuery(criteriaQuery);
     }
     
+    /*
     private int executeUpdate(Queryable queryable, Sql isql)
     {
         int rowsAffected = 0;
@@ -711,6 +784,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         }
         return rowsAffected;
     }
+    */
     
     private void setTotalObjectsOfQuery(Queryable queryable, Sql isql)
     {
@@ -718,6 +792,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         Number total = 0L;
         if (queryable.isPaging())
         {
+            // FIXME design round trip to count total of records
             /*
             Query queryJpa = getQueryForAutoCount(queryable, isql);
             try
