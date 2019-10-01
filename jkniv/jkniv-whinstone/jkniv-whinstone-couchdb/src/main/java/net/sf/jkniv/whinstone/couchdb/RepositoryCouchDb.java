@@ -58,6 +58,7 @@ import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.couchdb.commands.CouchDbSynchViewDesign;
+import net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect2o1;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
@@ -73,7 +74,7 @@ class RepositoryCouchDb implements Repository
     private static final Assertable           notNull            = AssertsFactory.getNotNull();
     private QueryNameStrategy                 strategyQueryName;
     private HandleableException               handlerException;
-    private RepositoryConfig                  repositoryConfig;
+    //private RepositoryConfig                  repositoryConfig;
     private CouchDbSqlContext                 sqlContext;
     private HttpCookieCommandAdapter          cmdAdapter;
     private final static Map<String, Boolean> DOC_SCHEMA_UPDATED = new HashMap<String, Boolean>();
@@ -119,6 +120,9 @@ class RepositoryCouchDb implements Repository
         this.sqlContext = new CouchDbSqlContext(sqlContext);
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
+        this.sqlContext.getRepositoryConfig().add(RepositoryProperty.SQL_DIALECT.key(), CouchDbDialect2o1.class.getName());
+        this.sqlContext.setSqlDialect(this.sqlContext.getRepositoryConfig().getSqlDialect());
+        this.sqlContext.buildInQueries();
         this.cmdAdapter = (HttpCookieCommandAdapter) new HttpConnectionFactory(
                 sqlContext.getRepositoryConfig().getProperties(), sqlContext.getName()).open();
         configHanlerException();

@@ -22,8 +22,6 @@ package net.sf.jkniv.whinstone.couchdb.dialect;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.StringStartsWith.startsWith;
-import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 
 import java.util.Collections;
 
@@ -64,7 +62,7 @@ public class CouchDbDialect2Test
         //catcher.expectMessage(".");
         Sql sql = sqlContext.getQuery("authors-page-override");
         String sqlText = sql.getSql();
-        CouchDbDialect20 dialect = new CouchDbDialect20();
+        CouchDbDialect2o0 dialect = new CouchDbDialect2o0();
         dialect.buildQueryPaging(sqlText, 0, 10);
     }
 
@@ -73,7 +71,7 @@ public class CouchDbDialect2Test
     {
         Sql sql = sqlContext.getQuery("authors-page");
         String sqlText = sql.getSql();
-        CouchDbDialect20 dialect = new CouchDbDialect20();
+        CouchDbDialect2o0 dialect = new CouchDbDialect2o0();
         String sqlPage = dialect.buildQueryPaging(sqlText, 0, 10);
         
         assertThat(sqlPage, is("{\n     \"selector\": {\"nationality\": {\"$in\": :nations}}\n    \n,\"limit\": 10, \"skip\": 0 }") );
@@ -84,7 +82,7 @@ public class CouchDbDialect2Test
     {
         Sql sql = sqlContext.getQuery("authors-page");
         String sqlText = sql.getSql();
-        CouchDbDialect20 dialect = new CouchDbDialect20();
+        CouchDbDialect2o0 dialect = new CouchDbDialect2o0();
         String sqlPage = dialect.buildQueryPaging(sqlText, 0, 10, "AzDgfhIKlo");
         
         assertThat(sqlPage, is("{\n     \"selector\": {\"nationality\": {\"$in\": :nations}}\n    \n,\"limit\": 10, \"skip\": 0, \"bookmark\": \"AzDgfhIKlo\" }") );
@@ -102,7 +100,7 @@ public class CouchDbDialect2Test
     
     private Queryable newQueryable(Queryable q, Sql s)
     {
-        SqlDialect d = new CouchDbDialect20();
+        SqlDialect d = new CouchDbDialect2o0();
         s.bind(d);
         q.bind(s);
         return q;
@@ -183,7 +181,7 @@ public class CouchDbDialect2Test
     {
         Sql sql = sqlContext.getQuery("authors-page");
         Queryable q = newQueryable(getQueryName(), sql);
-        assertThat(q.getDynamicSql().getSqlDialect().supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY), is(true));
+        assertThat(q.getDynamicSql().getSqlDialect().supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY), is(false));
     }
 
 }

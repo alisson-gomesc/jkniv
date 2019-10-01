@@ -51,14 +51,14 @@ import net.sf.jkniv.whinstone.params.ParameterException;
  * @since 0.6.0
  * @see <a href="https://docs.couchdb.org/en/2.1.2/api/database/find.html">Find Pagination</a>
  */
-public class CouchDbDialect20 extends AnsiDialect
+public class CouchDbDialect2o0 extends AnsiDialect
 {
-    public CouchDbDialect20()
+    public CouchDbDialect2o0()
     {
         super();
         addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, true));
         addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, true));
-        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.BOOKMARK_QUERY, true));//couchdb 2.0 doesn't support bookmark
+        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.BOOKMARK_QUERY, false));//couchdb 2.0 doesn't support bookmark
         addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.CONN_HOLDABILITY, false));
         addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.PAGING_ROUNDTRIP, false));
     }

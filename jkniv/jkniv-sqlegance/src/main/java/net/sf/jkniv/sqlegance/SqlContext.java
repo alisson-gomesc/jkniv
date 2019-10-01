@@ -50,6 +50,8 @@ public interface SqlContext
      */
     Sql getQuery(String name);
     
+    Sql add(Sql sql);
+    
     /**
      * Retrieve all queries from package
      * @param packageName name of package
