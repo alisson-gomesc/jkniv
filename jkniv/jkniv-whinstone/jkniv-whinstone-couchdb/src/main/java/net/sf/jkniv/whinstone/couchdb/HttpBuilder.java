@@ -44,7 +44,7 @@ public class HttpBuilder
     private final Charset                 charset;
     private RequestParams                 requestParams;
     private CouchDbAuthenticate           auth;
-    
+    // TODO refactor this lot of query params
     private static final List<String>     KEY_PARAMS_ALLDOCS     = Arrays.asList("conflicts", "descending", "endkey",
             "end_key", "endkey_docid", "end_key_doc_id", "include_docs", "inclusive_end", "key", "keys", "stale",
             "startkey", "start_key", "startkey_docid", "start_key_doc_id", "update_seq");                            /*"limit","skip"*/

@@ -34,7 +34,6 @@ import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.xml.TagFactory;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
-import net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect20;
 
 public class CouchDbSqlContext implements SqlContext
 {
@@ -43,33 +42,31 @@ public class CouchDbSqlContext implements SqlContext
     private static final String GET_QUERY = "get", PUT_QUERY = "add", UPDATE_QUERY = "update", DELETE_QUERY = "remove"; 
     private static final Map<String, Sql> BUILTIN = new HashMap<String, Sql>(); 
             
-    private static final CouchDbDialect20 couchDbDialect = new CouchDbDialect20();
-    
-    static {
-        // initialize built in Sql
-        BUILTIN.put(ALL_DOCS_QUERY, TagFactory.newSelect(ALL_DOCS_QUERY, LanguageType.STORED, couchDbDialect));
-        BUILTIN.put(GET_QUERY, TagFactory.newSelect(GET_QUERY, LanguageType.STORED, couchDbDialect));
-        
-        Insertable insertable = TagFactory.newInsert(PUT_QUERY, LanguageType.STORED, couchDbDialect);
-        insertable.setValidateType(ValidateType.ADD);
-        
-        Updateable  updateable = TagFactory.newUpdate(UPDATE_QUERY, LanguageType.STORED, couchDbDialect);
-        updateable.setValidateType(ValidateType.UPDATE);
-        
-        Deletable deletable = TagFactory.newDelete(DELETE_QUERY, LanguageType.STORED, couchDbDialect);
-        deletable.setValidateType(ValidateType.REMOVE);
-
-        BUILTIN.put(PUT_QUERY, insertable);
-        BUILTIN.put(UPDATE_QUERY, updateable);
-        BUILTIN.put(DELETE_QUERY, deletable);
-    }
-    
     public CouchDbSqlContext(SqlContext sqlContext)
     {
         this.sqlContext = sqlContext;
         checkBuiltinFunctions();
     }
-    
+
+    public void buildInQueries()
+    {
+        // initialize built in Sql
+        BUILTIN.put(ALL_DOCS_QUERY, TagFactory.newSelect(ALL_DOCS_QUERY, LanguageType.STORED, getSqlDialect()));
+        BUILTIN.put(GET_QUERY, TagFactory.newSelect(GET_QUERY, LanguageType.STORED, getSqlDialect()));
+        
+        Insertable insertable = TagFactory.newInsert(PUT_QUERY, LanguageType.STORED, getSqlDialect());
+        insertable.setValidateType(ValidateType.ADD);
+        
+        Updateable  updateable = TagFactory.newUpdate(UPDATE_QUERY, LanguageType.STORED, getSqlDialect());
+        updateable.setValidateType(ValidateType.UPDATE);
+        
+        Deletable deletable = TagFactory.newDelete(DELETE_QUERY, LanguageType.STORED, getSqlDialect());
+        deletable.setValidateType(ValidateType.REMOVE);
+        BUILTIN.put(PUT_QUERY, insertable);
+        BUILTIN.put(UPDATE_QUERY, updateable);
+        BUILTIN.put(DELETE_QUERY, deletable);
+    }
+
     private void checkBuiltinFunctions()
     {
         for(String k : BUILTIN.keySet())
@@ -137,6 +134,12 @@ public class CouchDbSqlContext implements SqlContext
         sqlContext.close();
     }
     
+    @Override
+    public Sql add(Sql sql)
+    {
+        return sqlContext.add(sql);
+    }
+    
     public static boolean isAllDocs(String name)
     {
         return ALL_DOCS_QUERY.equals(name);
@@ -146,5 +149,4 @@ public class CouchDbSqlContext implements SqlContext
     {
         return GET_QUERY.equals(name);
     }
-
 }

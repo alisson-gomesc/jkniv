@@ -133,6 +133,12 @@ class ClassPathSqlContext implements SqlContext
     }
     
     @Override
+    public Sql add(Sql sql)
+    {
+        return add(sql.getName(), sql);
+    }
+    
+    @Override
     public List<Sql> getPackage(String packageName)
     {
         List<Sql> queries = new ArrayList<Sql>();
@@ -347,8 +353,9 @@ class ClassPathSqlContext implements SqlContext
         includes.add(include);
     }
     
-    private void add(String key, Sql isql)
+    private Sql add(String key, Sql isql)
     {
+        Sql old = null;
         if (key.contains(".") && shortnameEnable)
         {
             String shortName = shortName(key);
@@ -361,10 +368,11 @@ class ClassPathSqlContext implements SqlContext
                 statements.put(shortName, new Duplicate(isql.getName(), LanguageType.NATIVE));
             }
         }
-        Sql old = statements.put(key, isql);
+        old = statements.put(key, isql);
         if (old != null)
             LOG.warn("The statement [{}] from [{}] was replaced from resource [{}]", key, old.getResourceName(),
                     isql.getResourceName());
+        return old;
     }
     
     private String shortName(String key)
