@@ -68,54 +68,54 @@ public interface StatementAdapter<T, R>
      * return type
      * @param returnType type of return
      * @return instance of this object
-     * @deprecated Command must to know return type TODO change design
      */
+    // @deprecated Command must to know return type TODO change design
     StatementAdapter<T, R> returnType(Class<T> returnType);
 
     /**
      * result row
      * @param resultRow how to process the rows
      * @return instance of this object
-     * @deprecated Command must to know result row TODO change design
      */
+    // @deprecated Command must to know result row TODO change design
     StatementAdapter<T, R> resultRow(ResultRow<T, R> resultRow);
     
     /**
      * scalar value
      * @return instance of this object
-     * @deprecated Command must to know return type TODO change design
      */
+    // @deprecated Command must to know return type TODO change design
     StatementAdapter<T, R> scalar();
     
     /**
      * one to many
      * @param oneToManies one-to-many relationship
      * @return instance of this object
-     * @deprecated Command must to know one to many TODO change design
     */
+    // @deprecated Command must to know one to many TODO change design
     StatementAdapter<T, R> oneToManies(Set<OneToMany> oneToManies);
     
     /**
      * group by
      * @param groupingBy list of fields to group the rows
      * @return instance of this object
-     * @deprecated Command must to know group by TODO change design
      */
+    // @deprecated Command must to know group by TODO change design
     StatementAdapter<T, R> groupingBy(List<String> groupingBy);
 
     /**
      * key generator type
      * @param keyGeneratorType type of generator key
      * @return instance of this object
-     * @deprecated Command must to know return type TODO change design
      */
+    // @deprecated Command must to know return type TODO change design
     StatementAdapter<T, R> keyGeneratorType(KeyGeneratorType keyGeneratorType);
 
     /**
      * get key generator type
      * @return instance of this object
-     * @deprecated Command must to know return type TODO change design
      */
+    // @deprecated Command must to know return type TODO change design
     KeyGeneratorType getKeyGeneratorType();
 
     /**

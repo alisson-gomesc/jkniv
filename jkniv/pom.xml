@@ -23,7 +23,6 @@
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <jaxb-version>2.0.3</jaxb-version>
     <version.jackson>2.6.7</version.jackson>
-    <!--<spring.version>4.3.20.RELEASE</spring.version>-->
     <spring.version>4.3.17.RELEASE</spring.version>
   </properties>
 
@@ -32,15 +31,13 @@
     <module>jkniv-utils</module>
     <module>jkniv-sqlegance</module>
     <module>jkniv-whinstone</module>
-    <!-- 
-    <module>jkniv-test-jdk8</module>
-    -->
     <module>jkniv-whinstone/jkniv-whinstone-jdbc</module>
     <module>jkniv-whinstone/jkniv-whinstone-jpa2</module>
     <module>jkniv-whinstone/jkniv-whinstone-cassandra</module>
     <module>jkniv-whinstone/jkniv-whinstone-couchdb</module>
-    <module>jkniv-whinstone/jkniv-whinstone-rest</module>    
     <!-- 
+    <module>jkniv-test-jdk8</module>
+    <module>jkniv-whinstone/jkniv-whinstone-rest</module>    
     <module>jkniv-whinstone/jkniv-whinstone-fluent</module>
     <module>jkniv-camel/jkniv-camel-sap-jco3</module>
     <module>jkniv-jaas/jkniv-jaas-glassfish</module>
