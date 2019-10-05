@@ -416,7 +416,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
     public <T, R> Command asUpdateCommand(Queryable queryable)
     {
         Command command = null;
-        if (queryable.getDynamicSql().isBatch() || queryable.isTypeOfBulk())
+        if (queryable.isTypeOfBulk())
             command = new BulkJdbcCommand(this.newStatement(queryable), queryable, this.conn);
         else
             command = new DefaultJdbcCommand(this.newStatement(queryable), queryable, this.conn);
@@ -428,7 +428,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
     public <T, R> Command asRemoveCommand(Queryable queryable)
     {
         Command command = null;
-        if (queryable.getDynamicSql().isBatch() || queryable.isTypeOfBulk())
+        if (queryable.isTypeOfBulk())
             command = new BulkJdbcCommand(this.newStatement(queryable), queryable, this.conn);
         else
             command = new DefaultJdbcCommand(this.newStatement(queryable), queryable, this.conn);
@@ -453,7 +453,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
                 command = new AddSequenceKeyJdbcCommand(this.newInsertStatement(queryable), queryable, this.conn);
             }
         }
-        else if (queryable.getDynamicSql().isBatch() || queryable.isTypeOfBulk())
+        else if (queryable.isTypeOfBulk())
             command = new BulkJdbcCommand(this.newStatement(queryable), queryable, this.conn);
         else
             command = new DefaultJdbcCommand(this.newStatement(queryable), queryable, this.conn);

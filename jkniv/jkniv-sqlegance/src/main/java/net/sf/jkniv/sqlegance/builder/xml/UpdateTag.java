@@ -70,14 +70,12 @@ class UpdateTag extends AbstractSqlTag implements Updateable
      * @param isolation Retrieves the current transaction isolation level for the query.
      * @param timeout Retrieves the number of seconds the repository will wait for a Query
      * object to execute.
-     * @param batch Indicate if query is a batch of commands.
-     * @param hint A SQL hint can be used on certain database platforms
      * @param validateType validation to apply before execute SQL.
      * @param stats SQL statistical
      */
-    public UpdateTag(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch, String hint, ValidateType validateType, Statistical stats)
+    public UpdateTag(String id, LanguageType languageType, Isolation isolation, int timeout, ValidateType validateType, Statistical stats)
     {
-        super(id, languageType, isolation, timeout, batch/*, null*/, hint, validateType, stats);
+        super(id, languageType, isolation, timeout, validateType, stats);
     }
 
     /**

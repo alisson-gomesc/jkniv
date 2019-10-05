@@ -89,10 +89,10 @@ class InsertTag extends AbstractSqlTag implements Insertable
      * @param validateType validation to apply before execute SQL
      * @param stats sql statistical
      */
-    public InsertTag(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch, String hint,
+    public InsertTag(String id, LanguageType languageType, Isolation isolation, int timeout,
             ValidateType validateType, Statistical stats)
     {
-        super(id, languageType, isolation, timeout, batch/*, null*/, hint, validateType, stats);
+        super(id, languageType, isolation, timeout, validateType, stats);
     }
     
     /**

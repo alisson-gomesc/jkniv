@@ -51,7 +51,20 @@ public class XmlBuiderSqlWhereTest
         
         sql = sqlContext.getQuery("test-where-suprime-and1");
         assertThat(sql.getSql(p).toLowerCase(),
-                   is("select id, name from users where ( age = #{age} or age >=18) and name = #{name}"));
+                   is("select id, name from users where (age = #{age} or age >=18) and name = #{name}"));
+        assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
+    }
+
+    @Test
+    public void whenQueryHasDynamicWhereClauseFistSentenceIsFalse()
+    {
+        Map<String, Object> p = new HashMap<String, Object>();
+        Sql sql;
+        p.put("name", "alanis");
+        
+        sql = sqlContext.getQuery("test-where-suprime-and1");
+        assertThat(sql.getSql(p).toLowerCase(),
+                   is("select id, name from users where name = #{name}"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
     }
 
@@ -65,7 +78,7 @@ public class XmlBuiderSqlWhereTest
         
         sql = sqlContext.getQuery("test-where-suprime-and2");
         assertThat(sql.getSql(p).toLowerCase(),
-                is("select id, name from users where ( age = #{age} or age >=18) and name = #{name}"));
+                is("select id, name from users where (age = #{age} or age >=18) and name = #{name}"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
     }
 

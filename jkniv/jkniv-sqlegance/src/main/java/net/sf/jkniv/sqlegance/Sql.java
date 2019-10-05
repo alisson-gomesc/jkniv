@@ -134,7 +134,7 @@ public interface Sql
      */
     LanguageType getLanguageType();
     
-    /**
+    /*
      * A SQL hint can be used on certain database platforms to define how the
      * query uses indexes and other such low level usages. The SQL hint will be
      * included in the SQL, after the SELECT/INSERT/UPDATE/DELETE command. - See
@@ -143,7 +143,7 @@ public interface Sql
      * 
      * @return The full hint string, including the comment \ delimiters.
      */
-    String getHint();
+    //String getHint();
     
     /**
      * Retrieves the current transaction isolation level for the query.
@@ -162,11 +162,11 @@ public interface Sql
      */
     int getTimeout();
     
-    /**
+    /*
      * Indicate if query is a batch of commands.
      * @return true means is a batch command, false otherwise.
      */
-    boolean isBatch();
+    //boolean isBatch();
 
     ResultSetType getResultSetType();
     

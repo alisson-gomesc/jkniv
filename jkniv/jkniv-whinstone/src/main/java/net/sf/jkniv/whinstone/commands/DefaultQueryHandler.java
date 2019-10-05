@@ -58,9 +58,8 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
         Selectable selectable = sql.asSelectable();
         if (!queryable.isBoundSql())
             queryable.bind(selectable);
-        
         Cacheable.Entry entry = null;
-        
+
         if (!queryable.isCacheIgnore())
             entry = selectable.getCache().getEntry(queryable);
         try

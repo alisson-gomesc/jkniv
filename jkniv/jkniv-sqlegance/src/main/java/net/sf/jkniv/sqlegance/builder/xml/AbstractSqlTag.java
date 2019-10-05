@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
-import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.Deletable;
 import net.sf.jkniv.sqlegance.Insertable;
@@ -93,9 +92,9 @@ public abstract class AbstractSqlTag implements SqlTag
     protected String                  id;
     protected LanguageType            languageType;
     private Isolation                 isolation;
-    private String                    hint;
+    //private String                    hint;
     private int                       timeout;
-    private boolean                   batch;
+    //private boolean                   batch;
     private ResultSetType             resultSetType;
     private ResultSetConcurrency      resultSetConcurrency;
     private ResultSetHoldability      resultSetHoldability;
@@ -125,13 +124,13 @@ public abstract class AbstractSqlTag implements SqlTag
      */
     public AbstractSqlTag(String id, LanguageType languageType)
     {
-        this(id, languageType, Isolation.DEFAULT, -1, false, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT,
+        this(id, languageType, Isolation.DEFAULT, -1, ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT,
                 ResultSetHoldability.DEFAULT, null, ValidateType.NONE, NoSqlStats.getInstance());
     }
     
     public AbstractSqlTag(String id, LanguageType languageType, SqlDialect sqlDialect)
     {
-        this(id, languageType, Isolation.DEFAULT, -1, false, "", ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT,
+        this(id, languageType, Isolation.DEFAULT, -1, ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT,
                 ResultSetHoldability.DEFAULT, "", ValidateType.NONE, NoSqlStats.getInstance());
         this.sqlDialect = sqlDialect;
     }
@@ -149,17 +148,13 @@ public abstract class AbstractSqlTag implements SqlTag
      * @param timeout
      *            Retrieves the number of seconds the repository will wait for a
      *            Query object to execute.
-     * @param batch
-     *            Indicate if query is a batch of commands.
-     * @param hint
-     *            A SQL hint can be used on certain database platforms.
      * @param validateType validation to apply before execute SQL.
      * @param stats SQL statistical
      */
-    public AbstractSqlTag(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch,
-            String hint, ValidateType validateType, Statistical stats)
+    public AbstractSqlTag(String id, LanguageType languageType, Isolation isolation, 
+            int timeout, ValidateType validateType, Statistical stats)
     {
-        this(id, languageType, isolation, timeout, batch, hint, ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT,
+        this(id, languageType, isolation, timeout, ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT,
                 ResultSetHoldability.DEFAULT, "", validateType, stats);
     }
     
@@ -176,10 +171,6 @@ public abstract class AbstractSqlTag implements SqlTag
      * @param timeout
      *            Retrieves the number of seconds the repository will wait for a
      *            Query object to execute.
-     * @param batch
-     *            Indicate if query is a batch of commands.
-     * @param hint
-     *            A SQL hint can be used on certain database platforms
      * @param resultSetType TODO javadoc
      * @param resultSetConcurrency TODO javadoc
      * @param resultSetHoldability TODO javadoc
@@ -188,8 +179,8 @@ public abstract class AbstractSqlTag implements SqlTag
      * @param stats statistical for procedures
      */
     @SuppressWarnings("unchecked")
-    public AbstractSqlTag(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch,
-            String hint, ResultSetType resultSetType, ResultSetConcurrency resultSetConcurrency,
+    public AbstractSqlTag(String id, LanguageType languageType, Isolation isolation, int timeout, 
+            ResultSetType resultSetType, ResultSetConcurrency resultSetConcurrency,
             ResultSetHoldability resultSetHoldability, String returnType, ValidateType validateType, Statistical stats)
     {
         this.textTag = new ArrayList<ITextTag>();
@@ -197,8 +188,8 @@ public abstract class AbstractSqlTag implements SqlTag
         this.languageType = languageType;
         this.isolation = isolation;
         this.timeout = timeout;
-        this.batch = batch;
-        this.hint = hint;
+        //this.batch = batch;
+        //this.hint = hint;
         this.resultSetType = resultSetType;
         this.resultSetConcurrency = resultSetConcurrency;
         this.resultSetHoldability = resultSetHoldability;
@@ -352,17 +343,6 @@ public abstract class AbstractSqlTag implements SqlTag
     }
     
     @Override
-    public String getHint()
-    {
-        return this.hint;
-    }
-    
-    public void setHint(String hint)
-    {
-        this.hint = hint;
-    }
-    
-    @Override
     public Isolation getIsolation()
     {
         return this.isolation;
@@ -384,17 +364,17 @@ public abstract class AbstractSqlTag implements SqlTag
         this.timeout = timeout;
     }
     
-    @Override
-    public boolean isBatch()
-    {
-        return this.batch;
-    }
-    
-    public void setBatch(boolean batch)
-    {
-        this.batch = batch;
-    }
-    
+//    @Override
+//    public boolean isBatch()
+//    {
+//        return this.batch;
+//    }
+//    
+//    public void setBatch(boolean batch)
+//    {
+//        this.batch = batch;
+//    }
+//    
     /*
     public String getCache()
     {

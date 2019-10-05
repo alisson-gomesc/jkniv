@@ -60,10 +60,8 @@ public class TagFactory
      * @param isolation Retrieves the current transaction isolation level for the query.
      * @param timeout Retrieves the number of seconds the repository will wait for a Query
      * object to execute.
-     * @param batch Indicate if query is a batch of commands.
      * @param cache 
      *            Indicate if must keep SQL result in cache           
-     * @param hint A SQL hint can be used on certain database platforms.
      * @param resultSetType TODO javadoc
      * @param resultSetConcurrency TODO javadoc
      * @param resultSetHoldability holdability from {@code ResultSet}
@@ -74,11 +72,11 @@ public class TagFactory
      * @return select tag
      */
     public static Selectable newSelect(String id, LanguageType languageType, Isolation isolation, int timeout,
-            boolean batch, String cache, String hint, ResultSetType resultSetType,
+            String cache, ResultSetType resultSetType,
             ResultSetConcurrency resultSetConcurrency, ResultSetHoldability resultSetHoldability, String returnType,
             String groupBy, ValidateType validateType, Statistical stats)
     {
-        return new SelectTag(id, languageType, isolation, timeout, batch, cache, hint, resultSetType,
+        return new SelectTag(id, languageType, isolation, timeout, cache, resultSetType,
                 resultSetConcurrency, resultSetHoldability, returnType, groupBy, validateType, stats);
     }
     
@@ -93,10 +91,10 @@ public class TagFactory
     }
     
     
-    public static Insertable newInsert(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch, String hint,
-            ValidateType validateType, Statistical stats)
+    public static Insertable newInsert(String id, LanguageType languageType, 
+            Isolation isolation, int timeout, ValidateType validateType, Statistical stats)
     {
-        return new InsertTag(id, languageType, isolation, timeout, batch, hint, validateType, stats);
+        return new InsertTag(id, languageType, isolation, timeout, validateType, stats);
     }
 
     /**
@@ -123,9 +121,9 @@ public class TagFactory
     }
     
     public static Updateable newUpdate(String id, LanguageType languageType, Isolation isolation, 
-            int timeout, boolean batch, String hint, ValidateType validateType, Statistical stats)
+            int timeout, ValidateType validateType, Statistical stats)
     {
-        return new UpdateTag(id, languageType, isolation, timeout, batch, hint, validateType, stats);
+        return new UpdateTag(id, languageType, isolation, timeout, validateType, stats);
     }
 
     
@@ -140,10 +138,10 @@ public class TagFactory
     }
 
     public static Deletable newDelete(
-            String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch, String hint,
+            String id, LanguageType languageType, Isolation isolation, int timeout,
             ValidateType validateType, Statistical stats)
     {
-        return new DeleteTag(id, languageType, isolation, timeout, batch, hint, validateType, stats);
+        return new DeleteTag(id, languageType, isolation, timeout, validateType, stats);
     }
     
 }

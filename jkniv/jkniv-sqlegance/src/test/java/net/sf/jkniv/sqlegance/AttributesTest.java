@@ -56,8 +56,8 @@ public class AttributesTest
         assertThat(sql.getLanguageType(), is(LanguageType.NATIVE));
         assertThat(sql.getIsolation(), is(Isolation.NONE));
         assertThat(sql.getTimeout(), is(1500));
-        assertThat(sql.isBatch(), is(true));
-        assertThat(sql.getHint(), is("/*+ index(usr idx_primary_key)*/"));
+        //assertThat(sql.isBatch(), is(true));
+        //assertThat(sql.getHint(), is("/*+ index(usr idx_primary_key)*/"));
         assertThat(sql.getResultSetType(), is(ResultSetType.TYPE_FORWARD_ONLY));
         assertThat(sql.getResultSetConcurrency(), is(ResultSetConcurrency.CONCUR_READ_ONLY));
         assertThat(sql.getResultSetHoldability(), is(ResultSetHoldability.CLOSE_CURSORS_AT_COMMIT));
@@ -65,8 +65,8 @@ public class AttributesTest
         assertThat(sqlDefault.getLanguageType(), is(LanguageType.NATIVE));
         assertThat(sqlDefault.getIsolation(), is(Isolation.DEFAULT));
         assertThat(sqlDefault.getTimeout(), is(-1));
-        assertThat(sqlDefault.isBatch(), is(false));
-        assertThat(sqlDefault.getHint(), is(""));
+        //assertThat(sqlDefault.isBatch(), is(false));
+        //assertThat(sqlDefault.getHint(), is(""));
         assertThat(sqlDefault.getResultSetType(), is(ResultSetType.DEFAULT));
         assertThat(sqlDefault.getResultSetConcurrency(), is(ResultSetConcurrency.DEFAULT));
         assertThat(sqlDefault.getResultSetHoldability(), is(ResultSetHoldability.DEFAULT));
@@ -86,14 +86,14 @@ public class AttributesTest
         assertThat(sql.getLanguageType(), is(LanguageType.HQL));
         assertThat(sql.getIsolation(), is(Isolation.READ_UNCOMMITTED));
         assertThat(sql.getTimeout(), is(2500));
-        assertThat(sql.isBatch(), is(true));
-        assertThat(sql.getHint(), is("/*+ index(usr idx_primary_key)*/"));
+        //assertThat(sql.isBatch(), is(true));
+        //assertThat(sql.getHint(), is("/*+ index(usr idx_primary_key)*/"));
 
         assertThat(sqlDefault.getLanguageType(), is(LanguageType.HQL));
         assertThat(sqlDefault.getIsolation(), is(Isolation.DEFAULT));
         assertThat(sqlDefault.getTimeout(), is(-1));
-        assertThat(sqlDefault.isBatch(), is(false));
-        assertThat(sqlDefault.getHint(), is(""));
+        //assertThat(sqlDefault.isBatch(), is(false));
+        //assertThat(sqlDefault.getHint(), is(""));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
         assertThat(sqlDefault.getParamParser().getType(), is(ParamMarkType.HASH));
     }
@@ -108,14 +108,14 @@ public class AttributesTest
         assertThat(sql.getLanguageType(), is(LanguageType.NATIVE));
         assertThat(sql.getIsolation(), is(Isolation.READ_COMMITTED));
         assertThat(sql.getTimeout(), is(3500));
-        assertThat(sql.isBatch(), is(true));
-        assertThat(sql.getHint(), is("/*+ index(usr idx_primary_key)*/"));
+        //assertThat(sql.isBatch(), is(true));
+        //assertThat(sql.getHint(), is("/*+ index(usr idx_primary_key)*/"));
 
         assertThat(sqlDefault.getLanguageType(), is(LanguageType.NATIVE));
         assertThat(sqlDefault.getIsolation(), is(Isolation.DEFAULT));
         assertThat(sqlDefault.getTimeout(), is(-1));
-        assertThat(sqlDefault.isBatch(), is(false));
-        assertThat(sqlDefault.getHint(), is(""));
+        //assertThat(sqlDefault.isBatch(), is(false));
+        //assertThat(sqlDefault.getHint(), is(""));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
         assertThat(sqlDefault.getParamParser().getType(), is(ParamMarkType.HASH));
     }
@@ -132,14 +132,14 @@ public class AttributesTest
         assertThat(sql.getLanguageType(), is(LanguageType.NATIVE));
         assertThat(sql.getIsolation(), is(Isolation.REPEATABLE_READ));
         assertThat(sql.getTimeout(), is(4500));
-        assertThat(sql.isBatch(), is(true));
-        assertThat(sql.getHint(), is("/*+ index(usr idx_primary_key)*/"));
+        //assertThat(sql.isBatch(), is(true));
+        //assertThat(sql.getHint(), is("/*+ index(usr idx_primary_key)*/"));
 
         assertThat(sqlDefault.getLanguageType(), is(LanguageType.NATIVE));
         assertThat(sqlDefault.getIsolation(), is(Isolation.SERIALIZABLE));
         assertThat(sqlDefault.getTimeout(), is(-1));
-        assertThat(sqlDefault.isBatch(), is(false));
-        assertThat(sqlDefault.getHint(), is(""));
+        //assertThat(sqlDefault.isBatch(), is(false));
+        //assertThat(sqlDefault.getHint(), is(""));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
         assertThat(sqlDefault.getParamParser().getType(), is(ParamMarkType.HASH));
     }
@@ -153,8 +153,8 @@ public class AttributesTest
         
         assertThat(sql1.getSql().toLowerCase(), is("select name, code, priority from color"));        
         assertThat(sql1.getLanguageType(), is(LanguageType.NATIVE));
-        assertThat(sql1.isBatch(), is(false));
-        assertThat(sql1.getHint(), is(""));
+        //assertThat(sql1.isBatch(), is(false));
+        //assertThat(sql1.getHint(), is(""));
         assertThat(sql1.getParamParser().getType(), is(ParamMarkType.NO_MARK));
         assertThat(sql1.getGroupBy(), is("name"));
         assertThat(sql1.getGroupByAsList().size(), is(1));
@@ -164,8 +164,8 @@ public class AttributesTest
         
         assertThat(sql2.getSql().toLowerCase(), is("select name, code, priority from color"));        
         assertThat(sql2.getLanguageType(), is(LanguageType.NATIVE));
-        assertThat(sql2.isBatch(), is(false));
-        assertThat(sql2.getHint(), is(""));
+        //assertThat(sql2.isBatch(), is(false));
+        //assertThat(sql2.getHint(), is(""));
         assertThat(sql2.getParamParser().getType(), is(ParamMarkType.NO_MARK));
         assertThat(sql2.getGroupBy(), is("name,code"));
         assertThat(sql2.getGroupByAsList().size(), is(2));

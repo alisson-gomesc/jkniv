@@ -898,13 +898,6 @@ class RepositoryJpa implements RepositoryJpaExtend
         return pInfo;
     }
     
-    private void checkSqlType(Sql isql, SqlType expected)
-    {
-        if (isql.getSqlType() != expected)
-            throw new IllegalArgumentException("Cannot execute sql [" + isql.getName() + "] as [" + isql.getSqlType()
-                    + "], exptected is " + expected);
-    }
-    
     private void configureHandlerException()
     {
         /*
@@ -913,8 +906,6 @@ class RepositoryJpa implements RepositoryJpaExtend
          * TransactionRequiredException - if invoked on a container-managed entity manager of 
          * type PersistenceContextType.TRANSACTION and there is no transaction
          */
-        
-        
         this.handlerException = new HandlerException(RepositoryException.class, "JPA Error cannot execute SQL: %s");
         // JPA 2 throws Exceptions
         /* @throws IllegalStateException if called for a Java

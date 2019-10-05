@@ -8,7 +8,7 @@
 
 
   <select
-    id="selectUsers"
+    id="select-users"
     type="JPQL">
     <description>Description from the sql logic</description>
     select id, name from Users
@@ -18,7 +18,7 @@
   </select>
 
   <select
-    id="selectGroups"
+    id="select-groups"
     type="JPQL">
     select id, name from Groups
     <where>
@@ -40,12 +40,12 @@
   </select>
 
   <select
-    id="selectUsersHaving"
+    id="select-users-having"
     type="NATIVE">
     select id, name from Users
     <where>
       <if test="name != null">
-        name = 1
+        name = 'acme'
       </if>
     </where>
     <if test="age > 5">

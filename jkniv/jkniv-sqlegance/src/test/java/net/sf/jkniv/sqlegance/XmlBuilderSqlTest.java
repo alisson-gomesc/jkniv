@@ -72,13 +72,13 @@ public class XmlBuilderSqlTest
         params1.put("name", "acme");
         params1.put("age", 6);
         
-        sql = sqlContext.getQuery("selectUsers");
+        sql = sqlContext.getQuery("select-users");
         Assert.assertEquals("select id, name from Users".toLowerCase(), sql.getSql().toLowerCase());
         Assert.assertEquals("select id, name from Users where id = 1".toLowerCase(), sql.getSql(params1).toLowerCase());
         Assert.assertEquals(LanguageType.JPQL, sql.getLanguageType());
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.NO_MARK));
         
-        sql = sqlContext.getQuery("selectGroups");
+        sql = sqlContext.getQuery("select-groups");
         Assert.assertEquals("select id, name from Groups".toLowerCase(), sql.getSql().toLowerCase());
         Assert.assertEquals(LanguageType.JPQL, sql.getLanguageType());
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.HASH));
@@ -93,9 +93,9 @@ public class XmlBuilderSqlTest
         assertThat(sql.getLanguageType(), is(LanguageType.NATIVE));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.NO_MARK));
         
-        sql = sqlContext.getQuery("selectUsersHaving");
+        sql = sqlContext.getQuery("select-users-having");
         assertThat(sql.getSql(params1).toLowerCase(), 
-                    is("select id, name from users where name = 1 having age > 5"));
+                    is("select id, name from users where name = 'acme' having age > 5"));
         assertThat(sql.getLanguageType(),is(LanguageType.NATIVE));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.NO_MARK));
     }
@@ -108,7 +108,7 @@ public class XmlBuilderSqlTest
         FooDomain d1 = new FooDomain("name", 0, "state", "title", author), d2 = new FooDomain("name", 0, null, "title", author), d3 = new FooDomain("name", 0,
                 "state", null, author), d4 = new FooDomain("name", 0, "state", "title", null), d5 = new FooDomain(null, 5, null, null, author);
         
-        Sql sql = sqlContext.getQuery("selectGroups");
+        Sql sql = sqlContext.getQuery("select-groups");
         assertThat(sql.getSql().toLowerCase(), is("select id, name from groups"));
         assertThat(sql.getLanguageType(), is(LanguageType.JPQL));
         assertThat(sql.getSql(d1).toLowerCase(), 

@@ -90,9 +90,7 @@ class SelectTag extends AbstractSqlTag implements Selectable
      * @param isolation Retrieves the current transaction isolation level for the query.
      * @param timeout Retrieves the number of seconds the repository will wait for a Query
      * object to execute.
-     * @param batch Indicate if query is a batch of commands.
      * @param cacheName cache name to keep result queries
-     * @param hint A SQL hint can be used on certain database platforms.
      * @param resultSetType TODO javadoc
      * @param resultSetConcurrency TODO javadoc
      * @param resultSetHoldability holdability from {@code ResultSet}
@@ -101,11 +99,12 @@ class SelectTag extends AbstractSqlTag implements Selectable
      * @param validateType validation to apply before execute SQL.
      * @param stats sql statistical
      */
-    public SelectTag(String id, LanguageType languageType, Isolation isolation, int timeout, boolean batch,
-            String cacheName, String hint, ResultSetType resultSetType, ResultSetConcurrency resultSetConcurrency,
+    public SelectTag(String id, LanguageType languageType, Isolation isolation, int timeout, 
+            String cacheName, 
+            ResultSetType resultSetType, ResultSetConcurrency resultSetConcurrency,
             ResultSetHoldability resultSetHoldability, String returnType, String groupBy, ValidateType validateType, Statistical stats)
     {
-        super(id, languageType, isolation, timeout, batch/*, cache*/, hint, resultSetType, resultSetConcurrency,
+        super(id, languageType, isolation, timeout, resultSetType, resultSetConcurrency,
                 resultSetHoldability, returnType, validateType, stats);
         this.groupBy = groupBy;
         this.oneToMany = new HashSet<OneToMany>();

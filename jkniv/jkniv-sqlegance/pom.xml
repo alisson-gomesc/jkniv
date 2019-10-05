@@ -5,7 +5,7 @@
   <parent>
     <groupId>net.sf.jkniv</groupId>
     <artifactId>jkniv</artifactId>
-    <version>0.6.0.M50</version>
+    <version>0.6.0.M51</version>
   </parent>
 
   <artifactId>jkniv-sqlegance</artifactId>
