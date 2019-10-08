@@ -57,8 +57,14 @@ public class DefaultCommand implements Command
     @SuppressWarnings("unchecked")
     public <T> T execute()
     {
-        queryable.bind(stmt).on();
-        Integer rows = stmt.execute();
+        Integer rows = 0;
+        if(queryable.isTypeOfBulk())
+            rows = queryable.bind(stmt).onBulk();
+        else
+        {
+            queryable.bind(stmt).on();
+            rows = stmt.execute();
+        }
         return (T) rows;
     }
 }
