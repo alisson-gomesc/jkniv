@@ -41,31 +41,35 @@ import net.sf.jkniv.sqlegance.transaction.Isolation;
  */
 public interface Sql
 {
+    /**
+     * The name of query into XML file
+     * @return query name
+     */
     String getName();
     
     /**
-     * Retrieve static sql from a node, the dynamic parts is skipped.
+     * Retrieve static SQL from a node, the dynamic parts is skipped.
      * 
-     * @return Sql sentence
+     * @return SQL sentence
      */
     String getSql();
     
     /**
-     * Retrieve dynamic sql from a node, the dynamic parts is evaluated at time
-     * to create the sql.
+     * Retrieve dynamic SQL from a node, the dynamic parts is evaluated at time
+     * to create the SQL.
      * 
      * @param params
-     *            parameters to evaluate dynamic sql, can be a object like
+     *            parameters to evaluate dynamic SQL, can be a object like
      *            Author, Book, etc or a java.util.Map where yours keys is like
      *            the properties.
-     * @return Dynamic sql sentence
+     * @return Dynamic SQL sentence
      */
     String getSql(Object params);
     
     /**
      * Retrieve node type: INSERT, UPDATE, DELETE, SELECT or PROCEDURE.
      * 
-     * @return node type declared at xml file.
+     * @return node type declared at XML file.
      */
     SqlType getSqlType();
     
