@@ -19,6 +19,12 @@
  */
 package net.sf.jkniv.sqlegance;
 
+/**
+ * Generate key types
+ * 
+ * @author Alisson Gomes
+ * @since  0.6.0
+ */
 public enum KeyGeneratorType
 {
     AUTO,

@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.sqlegance.builder.xml;
 
+import java.util.ArrayList;
+
 import net.sf.jkniv.sqlegance.OneToMany;
 
 /**
@@ -38,7 +40,7 @@ class OneToManyTag implements OneToMany
         super();
         this.property = property;
         this.typeOf = typeOf;
-        this.impl = ( ("".equals(impl) || impl == null) ? "java.util.ArrayList" : impl);
+        this.impl = ( ("".equals(impl) || impl == null) ? ArrayList.class.getName() : impl);
     }
     
     /* (non-Javadoc)

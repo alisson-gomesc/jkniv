@@ -20,7 +20,7 @@
 package net.sf.jkniv.sqlegance.logger;
 
 /**
- * Responsible to define the rules what data must be masking and how must be.
+ * Responsible to define the attributes that will be masking and how must be.
  * 
  * @author Alisson Gomes
  * @since 0.6.0

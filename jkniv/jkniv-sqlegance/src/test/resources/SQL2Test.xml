@@ -11,7 +11,6 @@
     select id, name from Companies
   </select>
 
-
   <insert
     id="insertAuthor1"
     type="NATIVE">
@@ -33,7 +32,6 @@
       (username,password) values (#{id},#{username})
     </if>
   </insert>
-
 
   <update
     id="updateAuthor1"

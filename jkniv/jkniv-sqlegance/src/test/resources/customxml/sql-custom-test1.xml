@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <statements 
-  context="custom-users"
+  context="ctx-users"
   xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
@@ -11,6 +11,5 @@
   <select  id="sql-custom-test1" type="NATIVE">
     select id, name from users
   </select>
-
 
 </statements>

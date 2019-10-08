@@ -52,7 +52,7 @@ import net.sf.jkniv.sqlegance.transaction.TransactionType;
 /**
  * 
  * @author Alisson Gomes
- *
+ * @since 0.6.0
  */
 public class RepositoryConfig
 {

@@ -20,7 +20,7 @@
     select id, name from Users
     <where>
       <if test="age != null">
-        AND ( age = #{age} or age >=18)
+        AND (age = #{age} or age >=18)
       </if>
       <if test="name != null">
         AND name = #{name}
