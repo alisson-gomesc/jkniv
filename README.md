@@ -1,6 +1,7 @@
 JKNIV
 =====
 
+[![Twitter](https://img.shields.io/twitter/follow/BeJkniv.svg?label=Follow&style=social)](https://twitter.com/BeJkniv)
 
 Jkniv is set of Java libraries to help software development. A Switzerland penknife (kniv).
 
