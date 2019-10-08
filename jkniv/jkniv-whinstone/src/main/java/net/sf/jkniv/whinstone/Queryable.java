@@ -316,14 +316,4 @@ public interface Queryable
      * @param bookmark A string that enables you to specify which page of results you require
      */
     void setBookmark(String bookmark);
-    
-    // FIXME design when invoked return type it's overload the sql the list or get method cannot change de value
-    // return IllegalStateException when this happen
-
-//    /**
-//     * Overload the return type from XML query.
-//     * @param clazz to return by repository using this query
-//     */
-//    void setReturnType(Class clazz);
-//    
 }

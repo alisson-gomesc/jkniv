@@ -78,18 +78,5 @@ public class ParamParserColonMark extends AbstractParamParser
         }
         
         return params;
-    }
-   
-    private boolean isArrayWithElements(Object o)
-    {
-        boolean answer = false;
-        
-        if (o != null)
-        {
-            
-        }
-        
-        return answer;
-    }
-
+    }   
 }

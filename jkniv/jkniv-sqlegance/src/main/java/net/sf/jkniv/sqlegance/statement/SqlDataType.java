@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * @see java.sql.Types
  * @since 0.6.0
  */
-public enum SqlDataType
+enum SqlDataType
 {
     /**
      * <P>

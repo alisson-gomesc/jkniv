@@ -17,26 +17,21 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.sqlegance.params;
+package net.sf.jkniv.sqlegance.statement;
 
 /**
+ * Parser the columns names from SQL.
  * 
  * @author Alisson Gomes
  * @since 0.6.0
+ *
  */
-public class ParamParserFactory
+public interface ColumnParser
 {
-    public static ParamParser getInstance(ParamMarkType type) {
-        ParamParser instance = ParamParserNoMark.emptyParser();
-        if (type == ParamMarkType.COLON)
-            instance = ParamParserColonMark.getInstance();
-        else if (type == ParamMarkType.QUESTION)
-            instance = ParamParserQuestionMark.getInstance();
-        else if (type == ParamMarkType.HASH)
-            instance = ParamParserHashMark.getInstance();
-           
-        return instance;
-    }
-    
-    
+    /**
+     * Extract the column names or alias from SQL.
+     * @param sql statement query language
+     * @return an array with the column names or aliases.
+     */
+    String[] extract(String sql);
 }
