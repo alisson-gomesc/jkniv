@@ -63,7 +63,7 @@ public class PersistenceInfoTest
         assertThat(emf, notNullValue());
     }
     
-    @Test @Ignore("java.sql.SQLSyntaxErrorException: ORA-00942: table or view does not exist")
+    @Test
     public void providerEntityManagerTest()
     {
         String providerClass = PersistenceReader.getPersistenceInfo(UNIT_NAME).getProvider();
@@ -76,7 +76,7 @@ public class PersistenceInfoTest
         assertThat(emf, notNullValue());
         EntityManager em = emf.createEntityManager();
         assertThat(em, notNullValue());
-        List<Book> list = em.createNativeQuery("select * from Book b").getResultList();
+        List list = em.createNativeQuery("select id, name, isbn from JPA_BOOK b").getResultList();
         assertThat(list, notNullValue());
     }
 }
