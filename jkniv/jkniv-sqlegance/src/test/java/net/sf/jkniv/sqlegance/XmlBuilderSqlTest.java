@@ -28,11 +28,11 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.sqlegance.builder.xml.ProcedureTag;
+import net.sf.jkniv.sqlegance.domain.flat.Role;
 import net.sf.jkniv.sqlegance.domain.orm.Author;
 import net.sf.jkniv.sqlegance.domain.orm.FooDomain;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
@@ -47,23 +47,6 @@ public class XmlBuilderSqlTest
         sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
     }
 
-    @Test @Ignore("getFiles method is deprecated and removed")
-    public void whenReadXmlFilesYourStatusesAreFlagged()
-    {
-        /*
-        SqlFile f1 = sqlContext.getFiles().get(0);
-        SqlFile f2 = sqlContext.getFiles().get(1);
-        SqlFile f3 = sqlContext.getFiles().get(2);
-        
-        Assert.assertEquals("/SQL1Test.xml", f1.getName());
-        Assert.assertEquals("/SQL2Test.xml", f2.getName());
-        Assert.assertEquals("/SQL3Test.xml", f3.getName());
-        Assert.assertEquals(XMLFileStatus.PROCESSED, f1.getStatus());
-        Assert.assertEquals(XMLFileStatus.PROCESSED, f2.getStatus());
-        Assert.assertEquals(XMLFileStatus.PROCESSED, f3.getStatus());
-        */
-    }
-    
     @Test
     public void selectClauseTest()
     {
@@ -211,5 +194,23 @@ public class XmlBuilderSqlTest
         assertThat(sql.getParams()[12].getSqlType(), is(Types.CHAR));
         assertThat(sql.getParams()[12].getTypeName(), is("com.acme.Model"));
         assertThat(sql.getParamParser().getType(), is(ParamMarkType.NO_MARK));
+    }
+    
+    @Test
+    public void whenReadDynamicWhereClause()
+    {
+        Sql sql = sqlContext.getQuery("select-roles");
+        Role role = new Role();
+        
+        assertThat(sql.getSql(), is("select id, name, status from Roles"));
+
+        role.setStatus("ACTIVE");
+        assertThat(sql.getSql(role).replace("\n", ""), is("select id, name, status from Roles where status = :status"));
+        
+        role.setStatus(null); role.setName("%admin%");
+        assertThat(sql.getSql(role).replace("\n", ""), is("select id, name, status from Roles where name like :name"));
+
+        role.setStatus("ACTIVE");
+        assertThat(sql.getSql(role).replace("\n", ""), is("select id, name, status from Roles where status = :status and name like :name"));
     }
 }

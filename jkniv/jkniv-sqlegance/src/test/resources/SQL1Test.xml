@@ -54,5 +54,17 @@
           ]]>
     </if>
   </select>
+  
+    <select id="select-roles">
+      select id, name, status from Roles
+      <where>
+        <if test="status != null">
+          and status = :status
+        </if>
+        <if test="name != null">
+          and name like :name
+        </if>
+      </where>
+    </select>  
 
 </statements>

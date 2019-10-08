@@ -1,4 +1,4 @@
-Title:  -> Dynamic SQL
+Title: Dynamic SQL
 
 
 Dynamic SQL
@@ -29,24 +29,30 @@ There are four others specials tags:
 
 SQLegance doesn't accept appended parameter to SQL, so the statements must use a `PreparedStatement` where an object represents a pre-compiled SQL statement. This way yours SQL will are protected against SQL injection attack.
 
-There are three ways to define parameters names: `#{id}`, `:id` and `?`. But, they cannot be mixed, just one type for statement.
+There are three ways to define parameters names: 
 
-    <select id="users-hash" type="JPQL">
+ - `#{id}` a mybatis style
+ - `:id` a JPA style
+ - `?` a JDBC style
+ 
+Note: They cannot be mixed, just one type for statement.
+
+    <select id="users-hash">
       select id, name from Users where id = #{id} or name like #{name}
     </select>
 
-    <select id="users-dot" type="JPQL">
+    <select id="users-dot">
       select id, name from Users where id = :id or name like :name
     </select>
 
-    <select id="users-question" type="NAVIVE">
+    <select id="users-question">
       select id, name from Users where id = ? or name like ?
     </select>
 
     
 ### Nested parameters evaluate
 
-To evaluate the conditions a parameter can be check with nested values:
+To evaluate the conditions a parameter can be check with nested values (`roles.size()`):
 
     <select id="users-dot">
       select u.id, u.name user_name, r.name role_name
@@ -239,13 +245,13 @@ It's very important that the order from evaluation from sentence it's sequential
     @Test
     public void orderTestSelectWhere2() {
       Map<String, Object> p = new HashMap<String, Object>();
-      ISql sql;
+      Sql statement;
       p.put("name", "acme");
       p.put("cel", "99880066");
       p.put("age", "18");
         
-      sql = XmlBuilderSql.getQuery("test-order2-where");
-      System.out.println(sql.getSql(p));
+      statement = XmlBuilderSql.getQuery("test-order2-where");
+      System.out.println(statement.getSql(p));
     }
 
 

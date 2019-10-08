@@ -4,7 +4,21 @@ title: Getting Started
 Getting started
 ----------------------
 
-Almost all enterprise applications need to database to persistence your data. Once you have configured your database, you will write SQL to manipulate your records at database. Here we began to use SQLegance, writing SQL.
+Maven users will need to add the following dependency to their pom.xml for this component:
+
+    <dependency>
+      <groupId>net.sf.jkniv</groupId>
+      <artifactId>jkniv-sqlegance</artifactId>
+      <version>0.6.0</version>
+    </dependency>
+
+
+The libraries below are necessary if you want to resolve the dependencies manually:
+
+![Dependencies](images/sqlegance-dependencies.png "Dependencies")
+
+
+Once you have configured your database, you will write SQL to manipulate your records at database. Here we began to use SQLegance, writing SQL.
 
 ## Sql Context
 
@@ -30,7 +44,7 @@ Below present a full sample with yours tags:
       </select>
       
       <update id="updateAuthor" type="NATIVE">
-        update Author set username = #{username}, password = #{password}, email = #{email}, bio = #{bio} where id = #{id}
+        update Author set username = #{username}, password = #{password}, email = #{email} where id = #{id}
       </update>
       
       <delete id="delete-author" type="NATIVE">
@@ -55,12 +69,38 @@ Before to get a query it's necessary load the sentences in `SqlContext` instance
     public static void main(String[] args)
     {
        SqlContext sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
-       Sql sql = sqlContext.getQuery("select-users");
+       Sql statement = sqlContext.getQuery("select-users");
        
-       String mysql = sql.getSql();
+       String mysql = statement.getSql();
        
-       System.out.println(mysql); // print: select id, name from Users where id = 1
+       System.out.println(mysql); // output -> select id, name from Users where id = 1
     }
+
+Invoking `statement.getSql()` just recover the static part of the query ignoring all conditional parts.
+
+## SQL Dynamically
+
+    <select id="select-roles">
+      select id, name, status from Roles
+      <where>
+        <if test="status != null">
+          and status = :status
+        </if>
+        <if test="name != null">
+          and name like :name
+        </if>
+      </where>
+    </select>
+
+
+To evaluate the conditional parts a input parameter must be passed to the `statement.getSql(Object)` method, any type of object can be used (POJO, Map, Properties etc).
+
+        Sql statement = sqlContext.getQuery("select-roles");
+        Role role = new Role();
+        role.setStatus("ACTIVE");
+        
+        String mysql = statement.getSql(role);
+        System.out.println(mysql); // output -> select id, name, state from Roles where status = :status
 
 Just it!
 
