@@ -1,6 +1,8 @@
 JKNIV
 =====
 
+[![License: LGPL v2.1](https://img.shields.io/badge/License-LGPL%20v2_1-blue.svg)](https://www.gnu.org/licenses/lgpl-2.1)
+[![Twitter](https://img.shields.io/twitter/follow/BeJkniv.svg?label=Follow&style=social)](https://twitter.com/BeJkniv)
 
 Jkniv is set of Java libraries to help software development. A Switzerland penknife (kniv).
 
