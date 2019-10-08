@@ -25,7 +25,7 @@ Below present a full sample with yours tags:
 
       <include href="/another-sql-file.xml" />
     
-      <select id="selectUsers" type="JPQL">
+      <select id="select-users" type="JPQL">
         select id, name from Users where id = 1
       </select>
       
@@ -33,11 +33,11 @@ Below present a full sample with yours tags:
         update Author set username = #{username}, password = #{password}, email = #{email}, bio = #{bio} where id = #{id}
       </update>
       
-      <delete id="deleteAuthor" type="NATIVE">
+      <delete id="delete-author" type="NATIVE">
         delete from Author where id = #{id}
       </delete>
 
-      <procedure id="updateItens" spname="sprUpdateItens">
+      <procedure id="update-itens" spname="sprUpdateItens">
         <parameter property="categoryid" mode="IN" />
       </procedure>
       
@@ -46,7 +46,7 @@ Below present a full sample with yours tags:
 
 ## SQL
 
-Before to get a query it's necessary load the sentences in `SqlContext` instanceTo get a query call the methods:
+Before to get a query it's necessary load the sentences in `SqlContext` instance to get a query calling the methods:
 
     import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
     import net.sf.jkniv.sqlegance.SqlContext;
@@ -55,7 +55,7 @@ Before to get a query it's necessary load the sentences in `SqlContext` instance
     public static void main(String[] args)
     {
        SqlContext sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
-       Sql sql = sqlContext.getQuery("selectUsers");
+       Sql sql = sqlContext.getQuery("select-users");
        
        String mysql = sql.getSql();
        
@@ -63,7 +63,4 @@ Before to get a query it's necessary load the sentences in `SqlContext` instance
     }
 
 Just it!
-
-
-`0.5.0 note:` In sqlegance-0.5.0 the sql context is static, from 0.6.0 version each instance it's a different context, a lot of things change from `0.5.0` to `0.6.0`.
 

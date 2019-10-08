@@ -251,7 +251,7 @@ class CassandraCommandAdapter implements CommandAdapter
         
         PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
         CassandraPreparedStatementAdapter<Number, Row> stmt = new CassandraPreparedStatementAdapter<Number, Row>(this.session, stmtPrep, queryable);
-        if (queryable.getDynamicSql().isBatch() || queryable.isTypeOfBulk())
+        if (queryable.isTypeOfBulk())
             command = new BulkCommand((CassandraPreparedStatementAdapter) stmt, queryable);        
         else if (queryable.getDynamicSql().isInsertable() && 
                  queryable.getDynamicSql().asInsertable().isAutoGenerateKey())

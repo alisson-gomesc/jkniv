@@ -4,29 +4,36 @@ Configuration
 -------------
 
 
-Now the sqlegance version 0.6.0 can have configuration to auxiliar the data source connection.
+SQLegance provides an way to configure the database connection (data source or properties), but is complete unnecessary if you are using with another framework like Hibernate or spring-jdbc.
+
+An analogue with JPA files is shown into the next table:
+
+| File       | JPA                                        | SQLegance                                |
+|------------|--------------------------------------------|------------------------------------------|
+|config file | `/main/java/resources/META-INF/persistence.xml` | `/main/java/resources/repository-config.xml`  |
+|query file  | `/main/java/resources/META-INF/orm.xml`        | any name, normally `repository-sql.xml`, `/main/java/resources/repository-sql.xml` |
 
 
-### Binding Sql Statements with Repository Config
+### Binding SQL Statements with Repository Config
 
 To bind a set of SQLs statements with a configuration just add attribute `context` at `<statements>` element, like this:
 
 
     <statements 
-      context="custom-users"
+      context="ctx-users"
       xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
       xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
 
 
-This create link between `repository-sql.xml` (previous version to 0.6.0 is `SqlConfig.xml`) and `repository-config.xml`
+This create a link between `repository-sql.xml` file and `repository-config.xml`.
 
 
     <repository-config xmlns="http://jkniv.sf.net/schema/sqlegance/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/config 
       http://jkniv.sf.net/schema/sqlegance/sqlegance-config.xsd">
     
-      <repository name="custom-users" transaction-type="JDBC">
+      <repository name="ctx-users" transaction-type="JDBC">
         <description>My jdbc datasource config</description>
     ...
     
@@ -34,7 +41,7 @@ This create link between `repository-sql.xml` (previous version to 0.6.0 is `Sql
 ![Binding](images/bind-config-with-statement.png "Binding")
 
 
-**Note:** `context` attributes from `<include>` XML files will not be considered!
+**Note:** `context` attributes from `<include>` files will not be considered!
 
-When a context attribute isn't defined the first repository config name is default.
- 
+When a context attribute isn't defined at `statements` element, the first `repository` element is used as default.
+

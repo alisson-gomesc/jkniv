@@ -49,7 +49,7 @@ public class SelectWithMapTest extends BaseTest
         assertThat(books.get(0).containsKey("name"), is(true));
         assertThat(books.get(0).containsKey("isbn"), is(true));
     }
-    @Test @Ignore("re-design load types not mapped with JPA")
+    
     public void whenJpaReturnLisOfMapsNativeQuery()
     {
         Repository repository = getRepository();
@@ -61,5 +61,6 @@ public class SelectWithMapTest extends BaseTest
         assertThat(books.get(0).containsKey("name"), is(true));
         assertThat(books.get(0).containsKey("isbn"), is(true));
     }
+    // TODO more test with select columns JPA
     
 }

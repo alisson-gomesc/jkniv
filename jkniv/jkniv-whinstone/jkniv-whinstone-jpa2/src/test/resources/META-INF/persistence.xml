@@ -23,7 +23,7 @@
       <property name="javax.persistence.jdbc.user" value="whinstone" />
       <property name="javax.persistence.jdbc.password" value="whinstone" />
       <property name="hibernate.show_sql" value="true" />
-      <property name="jkniv.repository.method_namestrategy" value="net.sf.jkniv.sqlegance.DefaultXmlQueryNameStrategy" />
+      <property name="jkniv.repository.method_namestrategy" value="net.sf.jkniv.sqlegance.HashQueryNameStrategy" />
       <!--property name="jkniv.repository.persistenceunitname" value="" / -->
       <property name="jkniv.repository.show_config" value="false" />
     </properties>
@@ -56,7 +56,7 @@
       <property name="javax.persistence.jdbc.user" value="usrcluster" />
       <property name="javax.persistence.jdbc.password" value="cluster@123" />
       <property name="hibernate.show_sql" value="true" />
-      <property name="jkniv.repository.method_namestrategy" value="net.sf.jkniv.sqlegance.DefaultXmlQueryNameStrategy" />
+      <property name="jkniv.repository.method_namestrategy" value="net.sf.jkniv.sqlegance.HashQueryNameStrategy" />
       <property name="jkniv.repository.show_config" value="false" />
     </properties>
   </persistence-unit>

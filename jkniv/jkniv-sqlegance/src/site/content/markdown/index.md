@@ -1,9 +1,9 @@
-Title: jkniv sqlegance
+Title: SQLegance
 
 What is SQLegance?
 --------------------
 
-SQLegance is a SQL sentence framework with support for dynamically append SQL. SQLegance put all SQL sentences at XML file, just it. Making the SQL sentence more readable, an better maintenance, like iBatis framework, where the SQL sentence can be dynamics. 
+SQLegance is a library for SQL sentence that supports for dynamically append SQL. SQLegance put all SQL sentences at XML file, just it. Making the SQL sentence more readable, an better maintenance, like iBatis framework, where the SQL sentence can be dynamics. 
 
 Maven users will need to add the following dependency to their pom.xml for this component:
 

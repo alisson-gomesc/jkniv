@@ -22,7 +22,9 @@ package net.sf.jkniv.whinstone.jpa2.statement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -44,6 +46,7 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
+import net.sf.jkniv.sqlegance.statement.ColumnParserFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.Groupable;
@@ -248,7 +251,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
             if (queryable.getDynamicSql().getLanguageType() == LanguageType.NATIVE
                     && queryable.getDynamicSql().hasReturnType() && list.size() > 0)
             {
-                list = cast((List<Object[]>) list, queryable.getDynamicSql().getReturnType());
+                list = cast((List<Object[]>) list, queryable.getDynamicSql().getReturnTypeAsClass());
             }
             int totalBeforeGroup = list.size();
             
@@ -294,7 +297,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
      * @return list of casted objects
      */
     @SuppressWarnings("unchecked")
-    private List<T> cast(List<?> list, String returnType)// TODO test me case when jpa return array of objects (native query or select specific columns
+    private List<T> cast(List<?> list, Class<?> returnType)// TODO test me case when jpa return array of objects (native query or select specific columns
     {
         List<T> castedList = null;
         Object firstValue = list.get(0);
@@ -304,7 +307,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
         }
         else if (firstValue instanceof Number)
         {
-            Numerical factory = NumberFactory.getInstance(returnType);
+            Numerical factory = NumberFactory.getInstance(returnType.getName());
             castedList = new ArrayList<T>(list.size());
             List<?> listArray = (List<?>) list;
             for (Object o : listArray)
@@ -334,15 +337,30 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
         //                castedList.add(casted);
         //            }
         //        }
+        else if (Map.class.isAssignableFrom(returnType))
+        {
+            // TODO check match between columns size and object array
+            String[] columns = ColumnParserFactory.getInstance().extract(queryable.query());
+            castedList = new ArrayList<T>(list.size());
+            List<Object[]> listArray = (List<Object[]>) list;
+            for (Object[] tupla : listArray)
+            {
+                Map<String, Object> map = new HashMap<String, Object>();
+                for(int i=0; i<tupla.length; i++)
+                    map.put(columns[i], tupla[i]);
+                
+                castedList.add((T)map);
+            } 
+        }
         else if (returnType != null)
         {
             castedList = new ArrayList<T>(list.size());
             List<Object[]> listArray = (List<Object[]>) list;
             for (Object[] o : listArray)
             {
-                ObjectProxy<T> proxy = ObjectProxyFactory.of(returnType);
+                ObjectProxy<?> proxy = ObjectProxyFactory.of(returnType);
                 proxy.setConstructorArgs(o);
-                T casted = proxy.newInstance();
+                T casted = (T)proxy.newInstance();
                 castedList.add(casted);
             }            
         }

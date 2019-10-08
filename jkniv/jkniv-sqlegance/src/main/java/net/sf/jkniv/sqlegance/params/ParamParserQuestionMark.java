@@ -52,8 +52,6 @@ public class ParamParserQuestionMark extends AbstractParamParser
         return PATTERN_PARAMS;
     }
 
-
-
     @Override
     public String[] find(String query)
     {

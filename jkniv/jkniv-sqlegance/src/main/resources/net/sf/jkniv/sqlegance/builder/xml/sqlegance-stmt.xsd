@@ -57,10 +57,14 @@
       <xsd:attribute name="id" use="required" type="xsd:string" />
       <xsd:attribute name="type" use="optional" type="languageType" />
       <xsd:attribute name="isolation" use="optional" type="transactionIsolation" />
-      <xsd:attribute name="hint" use="optional" type="xsd:string" />
-      <xsd:attribute name="timeout" use="optional" type="xsd:int" />
+      <xsd:attribute name="timeout" use="optional" type="xsd:int">
+       <xsd:annotation>
+        <xsd:documentation>
+         number of seconds the driver will wait for a statement object to be executed
+        </xsd:documentation>
+       </xsd:annotation>
+      </xsd:attribute>      
       <xsd:attribute name="cache" use="optional" type="xsd:string" />
-      <xsd:attribute name="batch" use="optional" type="xsd:boolean" />
       <xsd:attribute name="resultSetType" use="optional" type="resultSetType" />
       <xsd:attribute name="resultSetConcurrency" use="optional" type="resultSetConcurrency" />
       <xsd:attribute name="resultSetHoldability" use="optional" type="resultSetHoldability" />
@@ -94,9 +98,13 @@
       <xsd:attribute name="id" use="required" type="xsd:string" />
       <xsd:attribute name="type" use="optional" type="languageType" />
       <xsd:attribute name="isolation" use="optional" type="transactionIsolation" />
-      <xsd:attribute name="hint" use="optional" type="xsd:string" />
-      <xsd:attribute name="timeout" use="optional" type="xsd:int" />
-      <xsd:attribute name="batch" use="optional" type="xsd:boolean" />
+      <xsd:attribute name="timeout" use="optional" type="xsd:int">
+       <xsd:annotation>
+        <xsd:documentation>
+         number of seconds the driver will wait for a statement object to be executed
+        </xsd:documentation>
+       </xsd:annotation>
+      </xsd:attribute>
       <xsd:attribute name="validation" use="optional" type="validation" />
     </xsd:complexType>
   </xsd:element>
@@ -131,9 +139,13 @@
       <xsd:attribute name="id" use="required" type="xsd:string" />
       <xsd:attribute name="type" use="optional" type="languageType" />
       <xsd:attribute name="isolation" use="optional" type="transactionIsolation" />
-      <xsd:attribute name="hint" use="optional" type="xsd:string" />
-      <xsd:attribute name="timeout" use="optional" type="xsd:int" />
-      <xsd:attribute name="batch" use="optional" type="xsd:boolean" />
+      <xsd:attribute name="timeout" use="optional" type="xsd:int">
+       <xsd:annotation>
+        <xsd:documentation>
+         number of seconds the driver will wait for a statement object to be executed
+        </xsd:documentation>
+       </xsd:annotation>
+      </xsd:attribute>
       <xsd:attribute name="validation" use="optional" type="validation" />
     </xsd:complexType>
   </xsd:element>
@@ -162,9 +174,13 @@
       <xsd:attribute name="id" use="required" type="xsd:string" />
       <xsd:attribute name="type" use="optional" type="languageType" />
       <xsd:attribute name="isolation" use="optional" type="transactionIsolation" />
-      <xsd:attribute name="hint" use="optional" type="xsd:string" />
-      <xsd:attribute name="timeout" use="optional" type="xsd:int" />
-      <xsd:attribute name="batch" use="optional" type="xsd:boolean" />
+      <xsd:attribute name="timeout" use="optional" type="xsd:int">
+       <xsd:annotation>
+        <xsd:documentation>
+         number of seconds the driver will wait for a statement object to be executed
+        </xsd:documentation>
+       </xsd:annotation>
+      </xsd:attribute>
       <xsd:attribute name="validation" use="optional" type="validation" />
     </xsd:complexType>
   </xsd:element>
@@ -178,9 +194,13 @@
       <xsd:attribute name="id" use="required" type="xsd:string" />
       <xsd:attribute name="spname" use="required" type="xsd:NCName" />
       <xsd:attribute name="isolation" use="optional" type="transactionIsolation" />
-      <xsd:attribute name="hint" use="optional" type="xsd:string" />
-      <xsd:attribute name="timeout" use="optional" type="xsd:int" />
-      <xsd:attribute name="batch" use="optional" type="xsd:boolean" />
+      <xsd:attribute name="timeout" use="optional" type="xsd:int">
+      <xsd:annotation>
+        <xsd:documentation>
+         number of seconds the driver will wait for a statement object to be executed
+        </xsd:documentation>
+       </xsd:annotation>
+      </xsd:attribute>
     </xsd:complexType>
   </xsd:element>
 

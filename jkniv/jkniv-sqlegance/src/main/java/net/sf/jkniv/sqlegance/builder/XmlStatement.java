@@ -336,7 +336,7 @@ class XmlStatement
         if (Selectable.TAG_NAME.equals(nodeName))
         {
             tag = (SqlTag)TagFactory.newSelect(id, type, isolation, timeout, 
-                                               batch, cache, hint, resultSetType, 
+                                               cache, resultSetType, 
                                                resultSetConcurrency, resultSetHoldability, 
                                                returnType, groupBy, validateType, stats);
             
@@ -355,19 +355,19 @@ class XmlStatement
         }
         else if (Insertable.TAG_NAME.equals(nodeName))
         {
-            tag = (SqlTag) TagFactory.newInsert(id, type, isolation, timeout, batch, hint, validateType, stats);
+            tag = (SqlTag) TagFactory.newInsert(id, type, isolation, timeout, validateType, stats);
         }
         else if (Updateable.TAG_NAME.equals(nodeName))
         {
-            tag = (SqlTag) TagFactory.newUpdate(id, type, isolation, timeout, batch, hint, validateType, stats);
+            tag = (SqlTag) TagFactory.newUpdate(id, type, isolation, timeout, validateType, stats);
         }
         else if (Deletable.TAG_NAME.equals(nodeName))
         {
-            tag = (SqlTag) TagFactory.newDelete(id, type, isolation, timeout, batch, hint, validateType, stats);
+            tag = (SqlTag) TagFactory.newDelete(id, type, isolation, timeout, validateType, stats);
         }
         else if (ProcedureTag.TAG_NAME.equals(nodeName))
         {
-            tag = new ProcedureTag(id, type, isolation, timeout, batch, hint, ValidateType.NONE, stats);
+            tag = new ProcedureTag(id, type, isolation, timeout, ValidateType.NONE, stats);
         }
         return tag;
     }

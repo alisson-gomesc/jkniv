@@ -17,30 +17,21 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.sqlegance;
+package net.sf.jkniv.sqlegance.statement;
 
 /**
- * Generate key types
+ * Parser the columns names from SQL.
  * 
  * @author Alisson Gomes
- * @since  0.6.0
+ * @since 0.6.0
+ *
  */
-public enum KeyGeneratorType
+public interface ColumnParser
 {
-    AUTO,
-    SEQUENCE,
-    //TABLE
-    ;
-    
-    public static KeyGeneratorType get(String s)
-    {
-        KeyGeneratorType answer = KeyGeneratorType.AUTO;
-        for(KeyGeneratorType type : KeyGeneratorType.values())
-        {
-            if (type.name().equalsIgnoreCase(s))
-                answer = type;
-        }
-        return answer;
-    }
-
+    /**
+     * Extract the column names or alias from SQL.
+     * @param sql statement query language
+     * @return an array with the column names or aliases.
+     */
+    String[] extract(String sql);
 }

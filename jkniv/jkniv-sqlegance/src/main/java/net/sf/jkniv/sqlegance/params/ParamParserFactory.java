@@ -26,8 +26,6 @@ package net.sf.jkniv.sqlegance.params;
  */
 public class ParamParserFactory
 {
-
-    
     public static ParamParser getInstance(ParamMarkType type) {
         ParamParser instance = ParamParserNoMark.emptyParser();
         if (type == ParamMarkType.COLON)

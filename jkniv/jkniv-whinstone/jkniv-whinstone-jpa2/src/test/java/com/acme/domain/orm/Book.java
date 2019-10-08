@@ -22,6 +22,7 @@ package com.acme.domain.orm;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -36,6 +37,7 @@ public class Book
     private String  isbn;
     private Integer visualization;
     @ManyToOne
+    @JoinColumn(name="AUTHOR_ID")
     private Author  author;
    
     

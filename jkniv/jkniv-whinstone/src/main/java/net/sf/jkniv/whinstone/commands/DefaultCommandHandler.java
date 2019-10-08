@@ -21,9 +21,7 @@ package net.sf.jkniv.whinstone.commands;
 
 import java.lang.reflect.Method;
 import java.sql.Statement;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -125,7 +123,7 @@ public abstract class DefaultCommandHandler implements CommandHandler
             // JPA with a entity doesn't assert validate
             // how can fix/improve this?
             sql.getValidateType().assertValidate(queryable.getParams());
-            if (!queryable.isBoundSql())
+            if(!queryable.isBoundSql())
                 queryable.bind(sql);
             try
             {

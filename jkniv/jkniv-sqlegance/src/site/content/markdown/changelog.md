@@ -6,20 +6,19 @@ Title: Changelog
 
 ### Version 0.6.0 is not source compatible with 0.5.x  
 
-- ![BUG Fix](images/bug_icon.png "BUG Fix") Load repository-sql.xml, SqlConfig.xml files from EJB classloader's works.
-
-- ![BUG Fix](images/bug_icon.png "BUG Fix") Query evaluation with null parameter is null-safe now.
-
-    IQuery q = new Query("cars");
-    List&lt;Car&gt; list = repository.get(q);
-
-if query had a dynamic clause an exception was thrown
+ - `ISql` was renamed to `Sql`
+ - `ISqlTag` was renamed to `SqlTag`
+ - `IQuery` was moved to `jkniv-whinstone` with `Queryable` named
+ - `IRepository<T>` was deleted. A new one was created at `jkniv-whinstone` named `Repository` without generics.
+ - `ParameterParser` was deleted, an interface `ParamParser` was created.
+ - `SqlCommandType` was deleted
+ - `ISqlNameStrategy` was deleted
+ - `ConfigurationException` was deleted
+ - `XmlBuilderSql` was deleted
 
 - ![BUG Fix](images/bug_icon.png "BUG Fix") XSD schema build a wrong nested tags auto-complete and validation. Fixed version http://jkniv.sf.net/schema/sqlegance/sqlegance-0.5.1.xsd
 
-- ![Update](images/update_icon.png "Update") Add hint attribute at `select`, `insert`, `update` and `delete` tags
 - ![Update](images/update_icon.png "Update") Add timeout attribute at `select`, `insert`, `update` and `delete` tags.
-- ![Update](images/update_icon.png "Update") Add batch attribute at `select`, `insert`, `update` and `delete` tags.
 - ![Update](images/update_icon.png "Update") Add isolation level attribute at `select`, `insert`, `update` and `delete` tags.
 
 
