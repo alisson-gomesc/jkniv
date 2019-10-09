@@ -30,7 +30,7 @@ public class XmlParserWithXsdTest
 {
     @Rule
     public ExpectedException    catcher  = ExpectedException.none();
-    private static final String XSD_PATH = "file:/C:/dev/wks/wks-jkniv-git/jkniv/jkniv-sqlegance/target/classes/net/sf/jkniv/sqlegance/builder/xml/";
+    private static final String XSD_PATH = "file:/C:/dev/wks/wks-jkniv-git/jkniv-sqlegance/target/classes/net/sf/jkniv/sqlegance/builder/xml/";
     
     @Test
     public void whenLoadFileWithXsdError()
