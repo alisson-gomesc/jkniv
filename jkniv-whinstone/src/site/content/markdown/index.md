@@ -31,7 +31,7 @@ The steps to start are:
 
 1. Configure your datasource
 2. write your SQL queries
-3. run, forrest, run...
+3. run, Forrest, run...
 
 No annotations, no mapping (except if you want to use JPA), easily to test. The power of the database query language is yours and `whinstone` gives to you **the plain java objects with automatic bind to input parameters and result set output**, reducing a boilerplate of code to set JDBC parameters and ResultSet *getters*.
 

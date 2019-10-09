@@ -101,7 +101,8 @@ A `repository-config.xml` is like a `persistence.xml` for JPA that define one or
   
 |Database     | Dialect           |
 | ----------- | ----------------- |
-| CouchDB     | net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect |
+| CouchDB     | net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect2o1 |
+| Cassandra   | net.sf.jkniv.whinstone.cassandra.dialect.CassandraDialect |
 | DB2         | net.sf.jkniv.whinstone.jdbc.dialect.DB2Dialect |
 | DB2 compatibility MySQL | net.sf.jkniv.whinstone.jdbc.dialect.DB2EnableMYSDialect | 
 | DB2 compatibility Oracle | net.sf.jkniv.whinstone.jdbc.dialect.DB2EnableORADialect |
