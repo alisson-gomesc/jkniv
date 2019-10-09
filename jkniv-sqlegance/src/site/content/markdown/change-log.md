@@ -16,6 +16,8 @@ Title: Changelog
  - `ConfigurationException` was deleted
  - `XmlBuilderSql` was deleted
 
+- ![BUG Fix](images/bug_icon.png "BUG Fix") `<set>`, `<where>` and `<choos>` elements are thread-safe.
+
 - ![BUG Fix](images/bug_icon.png "BUG Fix") XSD schema build a wrong nested tags auto-complete and validation. Fixed version http://jkniv.sf.net/schema/sqlegance/sqlegance-0.5.1.xsd
 
 - ![Update](images/update_icon.png "Update") Add timeout attribute at `select`, `insert`, `update` and `delete` tags.
