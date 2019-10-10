@@ -5,6 +5,30 @@ Title: Changelog
 
 `Note: MILESTONES (.MXX) releases isn't public yet`
 
+## Release notes - jkniv-whinstone - Version 0.6.0.M50
+    
+### New Feature
+<ul>
+<li>[<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-44'>JKNIVWHIN-44</a>] -         [jpa] Callback methods SELECT, REMOVE, UPDATE, ADD
+</li>
+<li>[<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-77'>JKNIVWHIN-77</a>] -         [jpa2] supports for cache selects result 
+</li>
+</ul>
+    
+### Improvement
+<ul>
+<li>[<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-111'>JKNIVWHIN-111</a>] -         [jpa] supports for JSR Bean Validation 
+</li>
+</ul>
+        
+### Bug
+
+<ul>
+<li>[<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-108'>JKNIVWHIN-108</a>] -         [couchdb] fix dialect
+</li>
+</ul>
+
+
 
 ## Release notes: jkniv-whinstone - Version 0.6.0.M49
     
@@ -52,7 +76,7 @@ Title: Changelog
 
 ## Release notes - jkniv-whinstone - Version 0.6.0.M47
 
-###Bug
+### Bug
 
  - [<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-86'>JKNIVWHIN-86</a>] - ![BUG Fix](images/bug_icon.png "BUG Fix") [jdbc] potential unclosed statement
  - [<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-87'>JKNIVWHIN-87</a>] - ![BUG Fix](images/bug_icon.png "BUG Fix") [jdbc] connection is hold when there isn&#39;t transaction
