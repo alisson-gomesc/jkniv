@@ -45,35 +45,24 @@ class ObjectResultSetParser<T> implements ResultSetParser<T, String>
     private final static Logger        LOG = LoggerFactory.getLogger(ObjectResultSetParser.class);
     private final ResultRow<T, String> resultRow;
     private final Groupable<T, T>      groupable;
-    private final int                  rows;
     
     public ObjectResultSetParser(ResultRow<T, String> resultRow, Groupable<T, T> groupable)
     {
-        this(resultRow, groupable, 0);
-    }
-    
-    public ObjectResultSetParser(ResultRow<T, String> resultRow, Groupable<T, T> groupable, int rows)
-    {
         this.resultRow = resultRow;
         this.groupable = groupable;
-        this.rows = rows;
-        
     }
     
+    @Override
     public List<T> parser(String json) throws SQLException
     {
         List<String> list = new ArrayList<String>();
         list.add(json);
-        int rownum = 0;
+        //int rownum = 0;
         //            while (!rs.isExhausted())
         //            {
         //                T row = resultRow.row(rs.one(), rownum++);
         //                groupable.classifier(row); FIXME
         //            }
         return (List<T>) list;//groupable.asList();
-    }
-    
-    public void close(String json)
-    {
     }
 }

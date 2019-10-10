@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  context="repo-stats"
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+  <select id="select-roles">
+    select id, name, status from Roles where status = :status
+  </select>  
+  <select id="select-roles-2">
+    select id, name, status from Roles where status = :status
+  </select>  
+  <select id="select-roles-3">
+    select id, name, status from Roles where status = :status
+  </select>  
+  <insert id="insert-author">
+      insert into Author (username,password,email) values (:username,:password,:email)
+  </insert>
+  <insert id="insert-author-2">
+      insert into Author (username,password,email) values (:username,:password,:email)
+  </insert>
+  <insert id="insert-author-3">
+      insert into Author (username,password,email) values (:username,:password,:email)
+  </insert>
+  <update id="update-author">
+    update Author set username = :username, password = :password, email = :email where id = :id
+  </update>    
+  <update id="update-author-2">
+    update Author set username = :username, password = :password, email = :email where id = :id
+  </update>    
+  <update id="update-author-3">
+    update Author set username = :username, password = :password, email = :email where id = :id
+  </update>
+  <delete id="delete-author">
+    delete from Author where id = :id
+  </delete>    
+  <delete id="delete-author-2">
+    delete from Author where id = :id
+  </delete>
+  <delete id="delete-author-3">
+    delete from Author where id = :id
+  </delete>
+  <procedure id="sp-item" spname="spInsertItem">
+    <parameter property="sku" mode="IN" />
+    <parameter property="upcAltKey" mode="IN" />
+    <parameter property="uom" mode="IN" />
+  </procedure>
+  <procedure id="sp-item-2" spname="spInsertItem">
+    <parameter property="sku" mode="IN" />
+    <parameter property="upcAltKey" mode="IN" />
+    <parameter property="uom" mode="IN" />
+  </procedure>  
+  <procedure id="sp-item-3" spname="spInsertItem">
+    <parameter property="sku" mode="IN" />
+    <parameter property="upcAltKey" mode="IN" />
+    <parameter property="uom" mode="IN" />
+  </procedure>  
+</statements>

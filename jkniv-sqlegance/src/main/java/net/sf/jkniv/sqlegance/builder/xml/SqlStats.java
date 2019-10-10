@@ -20,7 +20,7 @@
 package net.sf.jkniv.sqlegance.builder.xml;
 
 /**
- * select statistics
+ * Statements statistics
  * 
  * @author Alisson Gomes
  * @since 0.6.0

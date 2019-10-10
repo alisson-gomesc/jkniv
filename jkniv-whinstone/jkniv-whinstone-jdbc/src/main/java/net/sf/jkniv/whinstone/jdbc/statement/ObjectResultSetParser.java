@@ -45,21 +45,15 @@ class ObjectResultSetParser<T> implements ResultSetParser<T, ResultSet>
     private final static Logger LOG = LoggerFactory.getLogger(ObjectResultSetParser.class);
     private final ResultRow<T, ResultSet> resultRow;
     private final Groupable<T, T> groupable;
-    private final int          rows;
+    //private final int          rows;
     
     public ObjectResultSetParser(ResultRow<T, ResultSet> resultRow, Groupable<T, T> groupable)
     {
-        this(resultRow, groupable, 0);
-    }
-    
-    public ObjectResultSetParser(ResultRow<T, ResultSet> resultRow, Groupable<T, T> groupable, int rows)
-    {
         this.resultRow = resultRow;
         this.groupable = groupable;
-        this.rows = rows;
-        
     }
-    
+
+    @Override
     public List<T> parser(ResultSet rs) throws SQLException
     {
         try
@@ -79,7 +73,7 @@ class ObjectResultSetParser<T> implements ResultSetParser<T, ResultSet>
         return l;
     }
     
-    public void close(ResultSet rs)
+    private void close(ResultSet rs)
     {
         if (rs != null)
         {

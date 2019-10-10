@@ -238,8 +238,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         // TODO https://www.datastax.com/dev/blog/client-side-improvements-in-cassandra-2-0
     }
     
-    @SuppressWarnings(
-    { "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public List<T> rows()
     {
         ResultSet rs = null;
@@ -251,7 +250,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
             rs = session.execute(bound);
             JdbcColumn<Row>[] columns = getJdbcColumns(rs.getColumnDefinitions());
             setResultRow(columns);
-            LOG.info("AvailableWithoutFetching={}, FullyFetched={}, Exhausted={}", rs.getAvailableWithoutFetching(), rs.isFullyFetched(), rs.isExhausted());
+            //LOG.debug("AvailableWithoutFetching={}, FullyFetched={}, Exhausted={}", rs.getAvailableWithoutFetching(), rs.isFullyFetched(), rs.isExhausted());
             Transformable<T> transformable = resultRow.getTransformable();
             if (!groupingBy.isEmpty())
             {

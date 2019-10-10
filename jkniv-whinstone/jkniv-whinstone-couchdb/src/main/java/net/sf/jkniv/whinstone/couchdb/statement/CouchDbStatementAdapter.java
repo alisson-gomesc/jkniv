@@ -21,7 +21,6 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.params.ParamParser;
 import net.sf.jkniv.whinstone.ResultRow;
-import net.sf.jkniv.whinstone.ResultSetParser;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 import net.sf.jkniv.whinstone.couchdb.commands.JsonMapper;
 import net.sf.jkniv.whinstone.statement.AutoKey;
@@ -224,7 +223,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     public void bindKey()
     {
         // FIXME UnsupportedOperationException
-        throw new UnsupportedOperationException("CouchDb repository  doesn't implement this method yet!");
+        throw new UnsupportedOperationException("CouchDb repository doesn't implement this method yet!");
     }
     
     @Override
@@ -273,18 +272,6 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
         this.boundParams = true;
     }
     
-//    private String quotesJson(Object value)
-//    {
-//        String ret  = String.valueOf("\"" + value + "\"");
-//        if (value instanceof Number)
-//            ret = String.valueOf(value);// FFIXME stament bind type like Date, Double, Calendar, Float
-//        
-//        return ret;
-//    }
-//    
-    /*******************************************************************************/
-    
-    
     /**
      * return the index and increment the next value
      * <b>Note: take care with debug invoke, this method increment the index</b>
@@ -310,25 +297,6 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
                     MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
-    //    /**
-    //     * Summarize the columns from SQL result in binary data or not.
-    //     * @param metadata  object that contains information about the types and properties of the columns in a <code>ResultSet</code> 
-    //     * @return Array of columns with name and index
-    //     */
-    //    @SuppressWarnings("unchecked")
-    //    private JdbcColumn<Row>[] getJdbcColumns(ColumnDefinitions metadata)
-    //    {
-    //        JdbcColumn<Row>[] columns = new JdbcColumn[metadata.size()];
-    //        
-    //        for (int i = 0; i < columns.length; i++)
-    //        {
-    //            String columnName = metadata.getName(i);//getColumnName(metadata, columnNumber);
-    //            int columnType = metadata.getType(i).getName().ordinal(); //metadata.getColumnType(columnNumber);
-    //            columns[i] = new CouchDbColumn(i, columnName, columnType);
-    //        }
-    //        return columns;
-    //    }
-
     @Override
     public void close()
     {
@@ -340,5 +308,4 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     {
         LOG.warn("Couchdb doesn't support fetch size!");
     }
-
 }

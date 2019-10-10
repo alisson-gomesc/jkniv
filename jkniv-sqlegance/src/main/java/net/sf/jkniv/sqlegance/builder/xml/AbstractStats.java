@@ -21,6 +21,9 @@ package net.sf.jkniv.sqlegance.builder.xml;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.jkniv.sqlegance.Statistical;
 
 /**
@@ -30,6 +33,7 @@ import net.sf.jkniv.sqlegance.Statistical;
  */
 abstract class AbstractStats implements Statistical
 {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractStats.class);
     private AtomicLong max;
     private AtomicLong min;
     private AtomicLong total;
@@ -63,6 +67,7 @@ abstract class AbstractStats implements Statistical
         this.lastTime.set(time);
         this.count.getAndIncrement();
         this.total.addAndGet(time);
+        LOG.trace("added {} ms with total of {} the {} time", time, this.total, this.count);
     }
     
     @Override

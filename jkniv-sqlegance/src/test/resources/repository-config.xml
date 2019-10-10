@@ -44,4 +44,10 @@
     </properties>
   </repository>
   
+  <repository name="repo-stats" transaction-type="LOCAL">
+    <jndi-data-source>jdbc/default_values</jndi-data-source>
+    <properties>
+      <property name="jkniv.repository.stats" value="true"/>
+    </properties>
+  </repository>  
 </repository-config>

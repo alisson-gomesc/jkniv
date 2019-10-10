@@ -10,7 +10,7 @@
     </layout>
   </appender>
   <logger name="net.sf.jkniv" additivity="false">
-    <level value="debug" />
+    <level value="trace" />
     <appender-ref ref="console" />
   </logger>
 

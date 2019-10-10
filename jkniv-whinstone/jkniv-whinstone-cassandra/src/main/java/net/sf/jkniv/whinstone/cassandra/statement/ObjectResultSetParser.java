@@ -22,9 +22,6 @@ package net.sf.jkniv.whinstone.cassandra.statement;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 
@@ -44,24 +41,17 @@ import net.sf.jkniv.whinstone.classification.Groupable;
  */
 class ObjectResultSetParser<T> implements ResultSetParser<T, ResultSet>
 {
-    private final static Logger LOG = LoggerFactory.getLogger(ObjectResultSetParser.class);
+    //private final static Logger LOG = LoggerFactory.getLogger(ObjectResultSetParser.class);
     private final ResultRow<T, Row> resultRow;
     private final Groupable<T, T> groupable;
-    private final int          rows;
     
     public ObjectResultSetParser(ResultRow<T, Row> resultRow, Groupable<T, T> groupable)
     {
-        this(resultRow, groupable, 0);
-    }
-    
-    public ObjectResultSetParser(ResultRow<T, Row> resultRow, Groupable<T, T> groupable, int rows)
-    {
         this.resultRow = resultRow;
         this.groupable = groupable;
-        this.rows = rows;
-        
     }
     
+    @Override
     public List<T> parser(ResultSet rs) throws SQLException
     {
         try
@@ -80,7 +70,8 @@ class ObjectResultSetParser<T> implements ResultSetParser<T, ResultSet>
         return groupable.asList();
     }
     
-    public void close(ResultSet rs)
-    {        
+    private void close(ResultSet rs)
+    {
+        // The ResultSet is not "linked" to a connection or any other resource that needs closing.
     }
 }

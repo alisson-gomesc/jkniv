@@ -19,16 +19,37 @@
  */
 package net.sf.jkniv.sqlegance;
 
-import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.CoreMatchers.sameInstance;
 
-public class StartingSqleganceTest
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
+import net.sf.jkniv.sqlegance.builder.xml.NoSqlStats;
+import net.sf.jkniv.sqlegance.dialect.SqlDialect;
+
+public class InstancesTest
 {
-    public static void main(String[] args)
+    private static SqlContext sqlContext;
+    
+    @BeforeClass
+    public static void setUp()
     {
-       SqlContext sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
-       Sql sql = sqlContext.getQuery("sql2-attributes-default");
-       
-       String mysql = sql.getSql();
-       System.out.println(mysql);
+        sqlContext = SqlContextFactory.newInstance("/repository-sql.xml");
+    }
+    
+    @Test
+    public void whenCheckInstancesOf()
+    {
+        SqlDialect dialect = null;
+        for (Sql sql : sqlContext.getPackage(""))
+        {
+            if (dialect == null)
+                dialect = sql.getSqlDialect();
+            
+            assertThat(dialect, sameInstance(sql.getSqlDialect()));
+            assertThat(NoSqlStats.getInstance(), sameInstance(sql.getStats()));
+        }
     }
 }
