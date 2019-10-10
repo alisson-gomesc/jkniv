@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.result;
+package net.sf.jkniv.whinstone.jdbc.statement;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,7 +45,7 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class FlatObjectResultRow<T> implements ResultRow<T, ResultSet>
+class FlatObjectResultRow<T> implements ResultRow<T, ResultSet>
 {
     private final static Logger LOG = LoggerFactory.getLogger(FlatObjectResultRow.class);
     private static final Logger  SQLLOG = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();

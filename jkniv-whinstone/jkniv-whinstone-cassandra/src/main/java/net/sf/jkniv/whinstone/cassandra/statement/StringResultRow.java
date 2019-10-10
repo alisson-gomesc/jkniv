@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.cassandra.result;
+package net.sf.jkniv.whinstone.cassandra.statement;
 
 import java.sql.SQLException;
 
@@ -25,12 +25,9 @@ import org.slf4j.Logger;
 
 import com.datastax.driver.core.Row;
 
-import net.sf.jkniv.reflect.NumberFactory;
-import net.sf.jkniv.reflect.Numerical;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
-import net.sf.jkniv.whinstone.cassandra.LoggerFactory;
 import net.sf.jkniv.whinstone.classification.Transformable;
 
 /**
@@ -41,22 +38,20 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class NumberResultRow<T> implements ResultRow<T, Row>
+class StringResultRow<T> implements ResultRow<T, Row>
 {
     private static final Logger      SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
     private static final DataMasking MASKING = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getDataMasking();
     private JdbcColumn<Row>[] columns;
-    private final Numerical numerical;
 
-    public NumberResultRow(Class<T> returnType)
+    public StringResultRow()
     {
-        this(returnType, null);
+        this(null);
     }
 
-    public NumberResultRow(Class<T> returnType, JdbcColumn<Row>[] columns)
+    public StringResultRow(JdbcColumn<Row>[] columns)
     {
         this.columns = columns;
-        this.numerical = NumberFactory.getInstance(returnType.getCanonicalName());
     }
     
     @SuppressWarnings("unchecked")
@@ -71,14 +66,10 @@ public class NumberResultRow<T> implements ResultRow<T, Row>
         if(SQLLOG.isTraceEnabled())
             SQLLOG.trace("Mapping index [0] column [{}] type of [{}] to value [{}]", 
                 columns[0].getAttributeName(), 
-                (numerical != null ? numerical.getClass().getCanonicalName() : "null"), 
+                (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), 
                 MASKING.mask(columns[0].getAttributeName(), jdbcObject));
         
-//        if(SQLLOG.isTraceEnabled())
-//            SQLLOG.trace("Column index [0] named [{}] type of [{}] with value [{}]", 
-//                    columns[0].getAttributeName(), 
-//                    numerical.getClass().getCanonicalName(), jdbcObject);
-        return (T) numerical.valueOf(jdbcObject);
+        return (T)(jdbcObject != null ? jdbcObject.toString() : null);
     }
 
     @Override
@@ -86,7 +77,7 @@ public class NumberResultRow<T> implements ResultRow<T, Row>
     {
         return null;
     }    
-
+    
     @Override
     public void setColumns(JdbcColumn<Row>[] columns)
     {

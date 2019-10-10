@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.couchdb.result;
+package net.sf.jkniv.whinstone.couchdb.statement;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,7 +41,7 @@ import net.sf.jkniv.whinstone.couchdb.LoggerFactory;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class MapResultRow<T> implements ResultRow<T, ResultSet>
+class MapResultRow<T> implements ResultRow<T, ResultSet>
 {
     private static final Logger  LOG = LoggerFactory.getLogger();
     private final Class<T> returnType;

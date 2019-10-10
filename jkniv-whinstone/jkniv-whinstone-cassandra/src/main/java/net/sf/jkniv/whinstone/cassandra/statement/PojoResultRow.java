@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.cassandra.result;
+package net.sf.jkniv.whinstone.cassandra.statement;
 
 import java.sql.SQLException;
 import java.util.Collection;
@@ -54,7 +54,7 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class PojoResultRow<T> implements ResultRow<T, Row>
+class PojoResultRow<T> implements ResultRow<T, Row>
 {
     private final static Logger      LOG    = LoggerFactory.getLogger(PojoResultRow.class);
     private static final Logger      SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();

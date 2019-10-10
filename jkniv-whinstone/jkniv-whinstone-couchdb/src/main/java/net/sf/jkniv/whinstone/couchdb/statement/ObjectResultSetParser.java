@@ -17,10 +17,10 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.result;
+package net.sf.jkniv.whinstone.couchdb.statement;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -40,19 +40,19 @@ import net.sf.jkniv.whinstone.classification.Groupable;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class ObjectResultSetParser<T> implements ResultSetParser<T, ResultSet>
+class ObjectResultSetParser<T> implements ResultSetParser<T, String>
 {
-    private final static Logger LOG = LoggerFactory.getLogger(ObjectResultSetParser.class);
-    private final ResultRow<T, ResultSet> resultRow;
-    private final Groupable<T, T> groupable;
-    private final int          rows;
+    private final static Logger        LOG = LoggerFactory.getLogger(ObjectResultSetParser.class);
+    private final ResultRow<T, String> resultRow;
+    private final Groupable<T, T>      groupable;
+    private final int                  rows;
     
-    public ObjectResultSetParser(ResultRow<T, ResultSet> resultRow, Groupable<T, T> groupable)
+    public ObjectResultSetParser(ResultRow<T, String> resultRow, Groupable<T, T> groupable)
     {
         this(resultRow, groupable, 0);
     }
     
-    public ObjectResultSetParser(ResultRow<T, ResultSet> resultRow, Groupable<T, T> groupable, int rows)
+    public ObjectResultSetParser(ResultRow<T, String> resultRow, Groupable<T, T> groupable, int rows)
     {
         this.resultRow = resultRow;
         this.groupable = groupable;
@@ -60,38 +60,20 @@ public class ObjectResultSetParser<T> implements ResultSetParser<T, ResultSet>
         
     }
     
-    public List<T> parser(ResultSet rs) throws SQLException
+    public List<T> parser(String json) throws SQLException
     {
-        try
-        {
-            int rownum = 0;
-            while (rs.next())
-            {
-                T row = resultRow.row(rs, rownum++);
-                groupable.classifier(row);
-            }
-        }
-        finally
-        {
-            close(rs);
-        }
-        List<T> l =groupable.asList();
-        return l;
+        List<String> list = new ArrayList<String>();
+        list.add(json);
+        int rownum = 0;
+        //            while (!rs.isExhausted())
+        //            {
+        //                T row = resultRow.row(rs.one(), rownum++);
+        //                groupable.classifier(row); FIXME
+        //            }
+        return (List<T>) list;//groupable.asList();
     }
     
-    public void close(ResultSet rs)
+    public void close(String json)
     {
-        if (rs != null)
-        {
-            try
-            {
-                rs.close();
-            }
-            catch (SQLException e)
-            {
-                LOG.warn("Cannot close resultset!", e);
-            }
-            rs = null;
-        }
     }
 }

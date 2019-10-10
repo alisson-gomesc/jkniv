@@ -17,18 +17,17 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.cassandra.result;
+package net.sf.jkniv.whinstone.jdbc.statement;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.slf4j.Logger;
 
-import com.datastax.driver.core.Row;
-
-import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.Transformable;
+import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
 
 /**
  * 
@@ -38,24 +37,18 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class ScalarResultRow<T> implements ResultRow<T, Row>
+class BooleanResultRow<T> implements ResultRow<T, ResultSet>
 {
-    private static final Logger      SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
-    private static final DataMasking MASKING = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getDataMasking();
-    private JdbcColumn<Row>[]   columns;
+    private static final Logger  LOG = LoggerFactory.getLogger();
+    private JdbcColumn<ResultSet>[] columns;
     
-    public ScalarResultRow()
-    {
-        this(null);
-    }
-    
-    public ScalarResultRow(JdbcColumn<Row>[] columns)
+    public BooleanResultRow(JdbcColumn<ResultSet>[] columns)
     {
         this.columns = columns;
     }
     
     @SuppressWarnings("unchecked")
-    public T row(Row rs, int rownum) throws SQLException
+    public T row(ResultSet rs, int rownum) throws SQLException
     {
         Object jdbcObject = null;
         if (columns[0].isBinary())
@@ -63,24 +56,21 @@ public class ScalarResultRow<T> implements ResultRow<T, Row>
         else
             jdbcObject = columns[0].getValue(rs);
         
-        if (SQLLOG.isTraceEnabled())
-            SQLLOG.trace("Mapping index [0] column [{}] type of [{}] to value [{}]", 
-                columns[0].getAttributeName(), 
-                (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), 
-                MASKING.mask(columns[0].getAttributeName(), jdbcObject));
-        
-        return (T) jdbcObject;
+        if(LOG.isTraceEnabled())
+            LOG.trace("Column index [0] named [{}] value of [{}] as Boolean", jdbcObject, columns[0].getAttributeName());
+        return (T)Boolean.valueOf(jdbcObject != null ? jdbcObject.toString() : "false");
     }
-    
+
     @Override
     public Transformable<T> getTransformable()
     {
         return null;
-    }
+    }    
     
     @Override
-    public void setColumns(JdbcColumn<Row>[] columns)
+    public void setColumns(JdbcColumn<ResultSet>[] columns)
     {
         this.columns = columns;
     }
+
 }

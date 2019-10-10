@@ -17,20 +17,18 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.result;
+package net.sf.jkniv.whinstone.cassandra.statement;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.slf4j.Logger;
 
-import net.sf.jkniv.reflect.NumberFactory;
-import net.sf.jkniv.reflect.Numerical;
+import com.datastax.driver.core.Row;
+
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.Transformable;
-import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
 
 /**
  * 
@@ -40,35 +38,40 @@ import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class NumberResultRow<T> implements ResultRow<T, ResultSet>
+class ScalarResultRow<T> implements ResultRow<T, Row>
 {
-    private static final Logger  LOG = LoggerFactory.getLogger();
-    private static final DataMasking  MASKING = LoggerFactory.getDataMasking();
-
-    private final Numerical numerical;
-    private JdbcColumn<ResultSet>[] columns;
+    private static final Logger      SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
+    private static final DataMasking MASKING = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getDataMasking();
+    private JdbcColumn<Row>[]   columns;
     
-    public NumberResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns)
+    public ScalarResultRow()
+    {
+        this(null);
+    }
+    
+    public ScalarResultRow(JdbcColumn<Row>[] columns)
     {
         this.columns = columns;
-        this.numerical = NumberFactory.getInstance(returnType.getCanonicalName());
     }
     
     @SuppressWarnings("unchecked")
-    public T row(ResultSet rs, int rownum) throws SQLException
+    public T row(Row rs, int rownum) throws SQLException
     {
         Object jdbcObject = null;
         if (columns[0].isBinary())
             jdbcObject = columns[0].getBytes(rs);
         else
             jdbcObject = columns[0].getValue(rs);
-        if(LOG.isTraceEnabled())
-            LOG.trace("Column index [0] named [{}] type of [{}] to value [{}]", columns[0].getAttributeName(), 
-                    numerical.getClass().getCanonicalName(), MASKING.mask(columns[0].getAttributeName(), jdbcObject));
-  
-        return (T) numerical.valueOf(jdbcObject);
+        
+        if (SQLLOG.isTraceEnabled())
+            SQLLOG.trace("Mapping index [0] column [{}] type of [{}] to value [{}]", 
+                columns[0].getAttributeName(), 
+                (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), 
+                MASKING.mask(columns[0].getAttributeName(), jdbcObject));
+        
+        return (T) jdbcObject;
     }
-
+    
     @Override
     public Transformable<T> getTransformable()
     {
@@ -76,9 +79,8 @@ public class NumberResultRow<T> implements ResultRow<T, ResultSet>
     }
     
     @Override
-    public void setColumns(JdbcColumn<ResultSet>[] columns)
+    public void setColumns(JdbcColumn<Row>[] columns)
     {
         this.columns = columns;
     }
-
 }

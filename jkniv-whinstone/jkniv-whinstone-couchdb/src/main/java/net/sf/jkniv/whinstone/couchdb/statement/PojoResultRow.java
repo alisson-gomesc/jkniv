@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.result;
+package net.sf.jkniv.whinstone.couchdb.statement;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -53,17 +53,22 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class PojoResultRow<T> implements ResultRow<T, ResultSet>
+class PojoResultRow<T> implements ResultRow<T, ResultSet>
 {
     private final static Logger      LOG     = LoggerFactory.getLogger(PojoResultRow.class);
-    private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
-    private static final DataMasking MASKING = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getDataMasking();
+    private final static Logger      SQLLOG  = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
+    private final static DataMasking MASKING = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getDataMasking();
     private final static MethodName  SETTER  = MethodNameFactory.getInstanceSetter();
     private final static MethodName  GETTER  = MethodNameFactory.getInstanceGetter();
     private final Class<T>           returnType;
     private final Set<OneToMany>     oneToManies;
     private final Transformable<T>   transformable;
     private JdbcColumn<ResultSet>[]  columns;
+    
+    public PojoResultRow(Class<T> returnType, Set<OneToMany> oneToManies)
+    {
+        this(returnType, null, oneToManies);
+    }
     
     @SuppressWarnings("unchecked")
     public PojoResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns, Set<OneToMany> oneToManies)
@@ -117,11 +122,7 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
             jdbcObject = column.getBytes(rs);
         else
             jdbcObject = column.getValue(rs);
-    
-        if(SQLLOG.isTraceEnabled())
-            SQLLOG.trace("Mapping index [0] column [{}] type of [{}] to value [{}]", column.getIndex(), column.getAttributeName(), 
-                (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), MASKING.mask(column.getAttributeName(), jdbcObject));
-
+        
         if (column.isNestedAttribute())
             reflect.inject(column.getAttributeName(), jdbcObject);
         else
@@ -130,7 +131,7 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
             if (proxy.hasMethod(method))
                 reflect.inject(method, jdbcObject);
             else
-                LOG.warn("Method [{}] doesn't exists for [{}] to set value [{}]", method,
+                LOG.info("Method [{}] doesn't exists for [{}] to set value [{}]", method,
                         proxy.getTargetClass().getName(), jdbcObject);
         }
     }
@@ -154,7 +155,7 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
         return otm;
     }
     
-    private void prepareOneToManyValue(OneToMany otm, JdbcColumn<ResultSet> column, ResultSet rs,
+    private void prepareOneToManyValue(OneToMany otm, JdbcColumn column, ResultSet rs,
             final Map<OneToMany, Object> otmValues) throws SQLException
     {
         ObjectProxy<?> proxy = ObjectProxyFactory.of(otmValues.get(otm));
@@ -166,11 +167,6 @@ public class PojoResultRow<T> implements ResultRow<T, ResultSet>
             jdbcObject = column.getValue(rs);
         // otm.property : 'book', JdbcColumn: book.name, capitalize -> setName
         String method = SETTER.capitalize(column.getName().substring(otm.getProperty().length() + 1));
-        if(SQLLOG.isTraceEnabled())
-            SQLLOG.trace("Mapping index [{}] column [{}] type of [{}] to value [{}]", 
-                    column.getIndex(), column.getAttributeName(), 
-                    (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), 
-                    MASKING.mask(column.getAttributeName(), jdbcObject));
         reflect.inject(method, jdbcObject);
     }
     /*

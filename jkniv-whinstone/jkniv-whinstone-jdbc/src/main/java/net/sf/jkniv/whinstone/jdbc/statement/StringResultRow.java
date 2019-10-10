@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.result;
+package net.sf.jkniv.whinstone.jdbc.statement;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,12 +37,12 @@ import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class ScalarResultRow<T> implements ResultRow<T, ResultSet>
+class StringResultRow<T> implements ResultRow<T, ResultSet>
 {
     private static final Logger  LOG = LoggerFactory.getLogger();
     private JdbcColumn<ResultSet>[] columns;
     
-    public ScalarResultRow(JdbcColumn<ResultSet>[] columns)
+    public StringResultRow(JdbcColumn<ResultSet>[] columns)
     {
         this.columns = columns;
     }
@@ -55,10 +55,11 @@ public class ScalarResultRow<T> implements ResultRow<T, ResultSet>
             jdbcObject = columns[0].getBytes(rs);
         else
             jdbcObject = columns[0].getValue(rs);
+        
+        if(LOG.isTraceEnabled())
+            LOG.trace("Column index [0] named [{}] with value [{}] as String", jdbcObject, columns[0].getAttributeName());
 
-        if (LOG.isTraceEnabled())
-            LOG.trace("Mapping index [0] column [{}]  type of [{}] to set scalar value [{}]", columns[0].getAttributeName(), (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), jdbcObject);
-        return (T) jdbcObject;
+        return (T)(jdbcObject != null ? jdbcObject.toString() : null);
     }
 
     @Override

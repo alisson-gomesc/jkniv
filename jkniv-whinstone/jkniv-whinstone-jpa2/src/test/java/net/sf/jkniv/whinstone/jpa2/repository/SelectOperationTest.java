@@ -23,12 +23,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -136,33 +133,5 @@ public class SelectOperationTest extends BaseTest
             Assert.assertEquals(name + " " + i, b.getName());
             repository.remove(b);
         }
-    }
-    
-    @Test
-    @Transactional
-    //@Ignore("NEED refacory ORM query")
-    public void selectORMQuery()
-    {
-        Repository repository = getRepository();
-
-        String name = "Spoke Zarathustra", isbn = "978-0679601753";
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("name", name);
-        Book b1 = new Book(), b2 = null;
-        b1.setName(name);
-        b1.setIsbn(isbn);
-        repository.add(b1);
-        Assert.assertNotNull(b1.getId());
-        
-        Queryable q1 = QueryFactory.of("jpql_getBookOrdered");
-        Queryable q2 = QueryFactory.of("jpql_getBookByName", params);
-        
-        List<Book> list = repository.list(q1);
-        b2 = repository.get(q2);
-        Assert.assertNotNull(list);
-        Assert.assertFalse(list.isEmpty());
-        Assert.assertNotNull(b2);
-        Assert.assertEquals(name, b2.getName());
-        Assert.assertEquals(isbn, b2.getIsbn());
     }
 }

@@ -17,8 +17,9 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.couchdb.result;
+package net.sf.jkniv.whinstone.couchdb.statement;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.slf4j.Logger;
@@ -36,33 +37,32 @@ import net.sf.jkniv.whinstone.couchdb.LoggerFactory;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class StringResultRow<T> implements ResultRow<T, String>
+class ScalarResultRow<T> implements ResultRow<T, ResultSet>
 {
-    private final static Logger  sqlLogger = LoggerFactory.getLogger();
-    private JdbcColumn<String>[] columns;
+    private static final Logger  LOG = LoggerFactory.getLogger();
+    private JdbcColumn<ResultSet>[] columns;
 
-    public StringResultRow()
+    public ScalarResultRow()
     {
         this(null);
     }
 
-    public StringResultRow(JdbcColumn<String>[] columns)
+    public ScalarResultRow(JdbcColumn<ResultSet>[] columns)
     {
         this.columns = columns;
     }
     
     @SuppressWarnings("unchecked")
-    public T row(String  json, int rownum) throws SQLException
+    public T row(ResultSet rs, int rownum) throws SQLException
     {
         Object jdbcObject = null;
-//        if (columns[0].isBinary())
-//            jdbcObject = columns[0].getBytes(rs);
-//        else
-//            jdbcObject = columns[0].getValue(rs);
-
-        // FIXME couchdb logger ResultSet
-        sqlLogger.trace("Column index [0] named [{}] to set String", columns[0].getAttributeName());
-        return (T)(jdbcObject != null ? jdbcObject.toString() : null);
+        if (columns[0].isBinary())
+            jdbcObject = columns[0].getBytes(rs);
+        else
+            jdbcObject = columns[0].getValue(rs);
+        if(LOG.isTraceEnabled())
+            LOG.trace("Mapping index [0] column [{}] to set scalar value", columns[0].getAttributeName());
+        return (T) jdbcObject;
     }
 
     @Override
@@ -72,7 +72,7 @@ public class StringResultRow<T> implements ResultRow<T, String>
     }    
     
     @Override
-    public void setColumns(JdbcColumn<String>[] columns)
+    public void setColumns(JdbcColumn<ResultSet>[] columns)
     {
         this.columns = columns;
     }

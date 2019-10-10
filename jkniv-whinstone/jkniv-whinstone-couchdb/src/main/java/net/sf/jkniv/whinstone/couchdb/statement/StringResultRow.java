@@ -17,9 +17,8 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.result;
+package net.sf.jkniv.whinstone.couchdb.statement;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.slf4j.Logger;
@@ -27,7 +26,7 @@ import org.slf4j.Logger;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.Transformable;
-import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
+import net.sf.jkniv.whinstone.couchdb.LoggerFactory;
 
 /**
  * 
@@ -37,28 +36,33 @@ import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class BooleanResultRow<T> implements ResultRow<T, ResultSet>
+class StringResultRow<T> implements ResultRow<T, String>
 {
-    private static final Logger  LOG = LoggerFactory.getLogger();
-    private JdbcColumn<ResultSet>[] columns;
-    
-    public BooleanResultRow(JdbcColumn<ResultSet>[] columns)
+    private final static Logger  sqlLogger = LoggerFactory.getLogger();
+    private JdbcColumn<String>[] columns;
+
+    public StringResultRow()
+    {
+        this(null);
+    }
+
+    public StringResultRow(JdbcColumn<String>[] columns)
     {
         this.columns = columns;
     }
     
     @SuppressWarnings("unchecked")
-    public T row(ResultSet rs, int rownum) throws SQLException
+    public T row(String  json, int rownum) throws SQLException
     {
         Object jdbcObject = null;
-        if (columns[0].isBinary())
-            jdbcObject = columns[0].getBytes(rs);
-        else
-            jdbcObject = columns[0].getValue(rs);
-        
-        if(LOG.isTraceEnabled())
-            LOG.trace("Column index [0] named [{}] value of [{}] as Boolean", jdbcObject, columns[0].getAttributeName());
-        return (T)Boolean.valueOf(jdbcObject != null ? jdbcObject.toString() : "false");
+//        if (columns[0].isBinary())
+//            jdbcObject = columns[0].getBytes(rs);
+//        else
+//            jdbcObject = columns[0].getValue(rs);
+
+        // FIXME couchdb logger ResultSet
+        sqlLogger.trace("Column index [0] named [{}] to set String", columns[0].getAttributeName());
+        return (T)(jdbcObject != null ? jdbcObject.toString() : null);
     }
 
     @Override
@@ -68,9 +72,8 @@ public class BooleanResultRow<T> implements ResultRow<T, ResultSet>
     }    
     
     @Override
-    public void setColumns(JdbcColumn<ResultSet>[] columns)
+    public void setColumns(JdbcColumn<String>[] columns)
     {
         this.columns = columns;
     }
-
 }

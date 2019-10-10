@@ -19,7 +19,6 @@
  */
 package net.sf.jkniv.whinstone.jpa2;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;

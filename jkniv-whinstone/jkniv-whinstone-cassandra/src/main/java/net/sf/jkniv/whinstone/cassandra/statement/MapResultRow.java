@@ -17,21 +17,21 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.result;
+package net.sf.jkniv.whinstone.cassandra.statement;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
 
+import com.datastax.driver.core.Row;
+
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.MapTransform;
 import net.sf.jkniv.whinstone.classification.Transformable;
-import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
 
 /**
  * 
@@ -41,15 +41,21 @@ import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class MapResultRow<T> implements ResultRow<T, ResultSet>
+class MapResultRow<T> implements ResultRow<T, Row>
 {
-    private static final Logger  LOG = LoggerFactory.getLogger();
+    //private final static Logger LOG = LoggerFactory.getLogger();
+    private static final Logger      SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
     private final Class<T> returnType;
+    private JdbcColumn<Row>[] columns;
     private final Transformable<T> transformable;
-    private JdbcColumn<ResultSet>[] columns;
+
+    public MapResultRow(Class<T> returnType)
+    {
+        this(returnType, null);
+    }
     
     @SuppressWarnings("unchecked")
-    public MapResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns)
+    public MapResultRow(Class<T> returnType, JdbcColumn<Row>[] columns)
     {
         this.returnType = returnType;
         this.columns = columns;
@@ -57,24 +63,27 @@ public class MapResultRow<T> implements ResultRow<T, ResultSet>
     }
     
     @SuppressWarnings("unchecked")
-    public T row(ResultSet rs, int rownum) throws SQLException
+    public T row(Row row, int rownum) throws SQLException
     {
         Map<String, Object> map = newInstance();
-        for (JdbcColumn<ResultSet> column : columns)
-            setValueOf(column, rs, map);
+        int i = 0;
+        for (JdbcColumn<Row> column : columns)
+        {
+            setValueOf(column, row, map, i++);
+        }
 
         return (T) map;
     }
 
-    private void setValueOf(JdbcColumn column, ResultSet rs, Map<String, Object> map) throws SQLException
+    private void setValueOf(JdbcColumn<Row> column, Row row, Map<String, Object> map, int index) throws SQLException
     {
         Object jdbcObject = null;
         if (column.isBinary())
-            jdbcObject = column.getBytes(rs);
+            jdbcObject = column.getBytes(row);
         else
-            jdbcObject = column.getValue(rs);
-        
-        LOG.trace("Using [{}] column name as sensitive key for Map", column.getAttributeName());
+            jdbcObject = column.getValue(row);
+        if(SQLLOG.isTraceEnabled())
+            SQLLOG.trace("Using sensitive key [{}] for type [{}] with value [{}]", column.getAttributeName(), (jdbcObject == null ? "null" : jdbcObject.getClass()), jdbcObject);
         map.put(column.getAttributeName(), jdbcObject);
     }
     
@@ -107,7 +116,7 @@ public class MapResultRow<T> implements ResultRow<T, ResultSet>
     }
 
     @Override
-    public void setColumns(JdbcColumn<ResultSet>[] columns)
+    public void setColumns(JdbcColumn<Row>[] columns)
     {
         this.columns = columns;
     }

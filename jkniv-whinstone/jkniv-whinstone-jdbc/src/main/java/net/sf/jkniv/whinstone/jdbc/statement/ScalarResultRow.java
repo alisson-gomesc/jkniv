@@ -17,19 +17,17 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.cassandra.result;
+package net.sf.jkniv.whinstone.jdbc.statement;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.slf4j.Logger;
 
-import com.datastax.driver.core.Row;
-
-import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
-import net.sf.jkniv.whinstone.cassandra.LoggerFactory;
 import net.sf.jkniv.whinstone.classification.Transformable;
+import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
 
 /**
  * 
@@ -39,38 +37,28 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-public class StringResultRow<T> implements ResultRow<T, Row>
+class ScalarResultRow<T> implements ResultRow<T, ResultSet>
 {
-    private static final Logger      SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
-    private static final DataMasking MASKING = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getDataMasking();
-    private JdbcColumn<Row>[] columns;
-
-    public StringResultRow()
-    {
-        this(null);
-    }
-
-    public StringResultRow(JdbcColumn<Row>[] columns)
+    private static final Logger  LOG = LoggerFactory.getLogger();
+    private JdbcColumn<ResultSet>[] columns;
+    
+    public ScalarResultRow(JdbcColumn<ResultSet>[] columns)
     {
         this.columns = columns;
     }
     
     @SuppressWarnings("unchecked")
-    public T row(Row rs, int rownum) throws SQLException
+    public T row(ResultSet rs, int rownum) throws SQLException
     {
         Object jdbcObject = null;
         if (columns[0].isBinary())
             jdbcObject = columns[0].getBytes(rs);
         else
             jdbcObject = columns[0].getValue(rs);
-        
-        if(SQLLOG.isTraceEnabled())
-            SQLLOG.trace("Mapping index [0] column [{}] type of [{}] to value [{}]", 
-                columns[0].getAttributeName(), 
-                (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), 
-                MASKING.mask(columns[0].getAttributeName(), jdbcObject));
-        
-        return (T)(jdbcObject != null ? jdbcObject.toString() : null);
+
+        if (LOG.isTraceEnabled())
+            LOG.trace("Mapping index [0] column [{}]  type of [{}] to set scalar value [{}]", columns[0].getAttributeName(), (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), jdbcObject);
+        return (T) jdbcObject;
     }
 
     @Override
@@ -80,8 +68,9 @@ public class StringResultRow<T> implements ResultRow<T, Row>
     }    
     
     @Override
-    public void setColumns(JdbcColumn<Row>[] columns)
+    public void setColumns(JdbcColumn<ResultSet>[] columns)
     {
         this.columns = columns;
     }
+
 }
