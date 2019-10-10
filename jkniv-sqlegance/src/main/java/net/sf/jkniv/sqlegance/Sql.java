@@ -124,7 +124,13 @@ public interface Sql
      * @throws UnsupportedOperationException when this instance isn't {@link Deletable}
      */
     Deletable asDeletable();
-    
+
+    /**
+     * Verify if command is a STORED PROCEDURE
+     * @return {@code true} when is STORED PROCEDURE, {@code false} otherwise
+     */
+    boolean isStorable();
+
     /**
      * {@link Storable} instance
      * @return this instance

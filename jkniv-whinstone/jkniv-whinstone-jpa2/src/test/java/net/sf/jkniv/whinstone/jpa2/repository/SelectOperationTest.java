@@ -140,7 +140,7 @@ public class SelectOperationTest extends BaseTest
     
     @Test
     @Transactional
-    @Ignore("NEED refacory ORM query")
+    //@Ignore("NEED refacory ORM query")
     public void selectORMQuery()
     {
         Repository repository = getRepository();

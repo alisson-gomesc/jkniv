@@ -429,23 +429,29 @@ public abstract class AbstractSqlTag implements SqlTag
     }
     
     @Override
-    public ResultSetType getResultSetType()
-    {
-        return resultSetType;
-    }
-    
-    @Override
     public Deletable asDeletable()
     {
         throw new UnsupportedOperationException("Isn't deletable object instance");
     }
     
     @Override
+    public boolean isStorable() 
+    {
+        return false;
+    }
+
+    @Override
     public Storable asStorable()
     {
         throw new UnsupportedOperationException("Isn't Storable object instance");
     }
     
+    @Override
+    public ResultSetType getResultSetType()
+    {
+        return resultSetType;
+    }
+
     public void setResultSetType(ResultSetType resultSetType)
     {
         this.resultSetType = resultSetType;

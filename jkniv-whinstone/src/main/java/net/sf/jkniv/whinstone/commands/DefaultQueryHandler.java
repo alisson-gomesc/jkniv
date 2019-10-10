@@ -69,7 +69,7 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
                 try
                 {
                     preCallback();
-                    Command command = asCommand();//cmdAdapter.asSelectCommand(queryable, overloadResultRow);
+                    Command command = asCommand();
                     list = command.execute();
                     postCallback();
                     if (selectable.hasCache() && !list.isEmpty())

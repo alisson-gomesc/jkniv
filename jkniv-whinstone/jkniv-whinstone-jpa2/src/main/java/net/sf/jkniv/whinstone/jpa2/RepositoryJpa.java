@@ -290,7 +290,7 @@ class RepositoryJpa implements RepositoryJpaExtend
     public int add(Queryable queryable)// FIXME CommandHandler must be used (refactoring)
     {
         NOT_NULL.verify(queryable);
-        Sql sql = sqlContext.getQuery(queryable.getName());
+        Sql sql = getQuery(queryable);
         CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
         int rows = handler.with(queryable)
                 .with(sql)
@@ -363,7 +363,7 @@ class RepositoryJpa implements RepositoryJpaExtend
     public int remove(Queryable queryable)// FIXME CommandHandler must be used (refactoring)
     {
         NOT_NULL.verify(queryable);
-        Sql sql = sqlContext.getQuery(queryable.getName());
+        Sql sql = getQuery(queryable);
         CommandHandler handler = CommandHandlerFactory.ofRemove(this.cmdAdapter);
         int rows = handler.with(queryable)
                 .with(sql)
@@ -414,7 +414,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         NOT_NULL.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
-        Sql sql = sqlContext.getQuery(queryable.getName());
+        Sql sql = getQuery(queryable);
         CommandHandler handler = CommandHandlerFactory.ofUpdate(this.cmdAdapter);
         int rows = handler.with(queryable)
                 .with(sql)
@@ -684,7 +684,7 @@ class RepositoryJpa implements RepositoryJpaExtend
     private <T, R> T handleGet(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         T ret = null;
-        Sql sql = sqlContext.getQuery(queryable.getName());
+        Sql sql = getQuery(queryable);
         CommandHandler handler = CommandHandlerFactory.ofSelect(this.cmdAdapter);
         List<T> list = handler
                 .with(queryable)
@@ -706,7 +706,7 @@ class RepositoryJpa implements RepositoryJpaExtend
     
     private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
-        Sql sql = sqlContext.getQuery(queryable.getName());
+        Sql sql = getQuery(queryable);
         CommandHandler handler = CommandHandlerFactory.ofSelect(this.cmdAdapter);
         List<T> list = handler
                 .with(queryable)
@@ -741,7 +741,23 @@ class RepositoryJpa implements RepositoryJpaExtend
             LOG.trace("executing EntityManager flush");
         getEntityManager().flush();
     }
-    
+
+    private Sql getQuery(Queryable queryable)
+    {
+        Sql sql = null;
+        String queryName = queryable.getName();
+        if (sqlContext.containsQuery(queryName))
+        {
+            sql = sqlContext.getQuery(queryName);
+        }
+        else
+        {
+            sql = new NamedQueryForSql(queryName, queryable.getReturnType());
+            sqlContext.add(sql);
+        }
+        return sql;
+    }
+
     @Override
     public boolean containsQuery(String name)
     {
