@@ -29,9 +29,9 @@ package net.sf.jkniv.sqlegance.statement;
 public interface ColumnParser
 {
     /**
-     * Extract the column names or alias from SQL.
+     * Extract the column or alias names from SQL.
      * @param sql statement query language
-     * @return an array with the column names or aliases.
+     * @return an array with the column or aliases names.
      */
     String[] extract(String sql);
 }

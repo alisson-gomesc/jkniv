@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+  <select id="subselect-into-select">
+    select id, name, status, (select role from Role where id = 1) role
+    from users
+  </select>
+  <select id="subselect-into-join">
+    select id, name, status
+    from users
+    inner join (select t.* from (select role, permission from Role where id = 1) t
+  </select>
+  <select id="join-and-subselect-double-quote-etc">
+  select DISTINCT 
+  cast(stra.codigo_unidade as varchar) + '_' + 
+  cast(rtrim(cu.cac_code) as varchar)+ '_' + 
+  cast(COALESCE(ca.channel_code,99) as varchar)+ '_' + 
+  cast(COALESCE(ca.subchannel_code, 99) as varchar) AS fds_code
+  ,convert(VARCHAR(6),vp.referencia, 112) as reference
+  ,cast(convert(VARCHAR(8),su.in_date, 112) as int) as survey_dt
+  ,su.survey_id           as survey_sk
+  ,su.in_date             as date_in
+  ,su.sync_date           as sync_date
+  ,su.route_id            as survey_route
+  ,su.presale_route_id    as survey_presale_route
+  ,cu.cust_sk             as cust_sk
+  ,cu.cust_name           as cust_name
+  ,su.cust_id             as cust_code
+  ,ca.presale_route_code  as cust_route
+  ,ca.presale_route_code  as cust_presale_route
+  ,stra.codigo_unidade    as unit_code
+  ,cu.cac_code            as cac_code
+  ,cast(COALESCE(ca.channel_code, 99) as varchar) as channel_code
+  ,cast(COALESCE(ca.subchannel_code, 99) as varchar) as subchannel_code
+  ,ca.presale_route_code 
+  ,vp.faixainicial        as range_ini
+  ,vp.faixafinal          as range_end
+  ,vp.datainicial         as valid_date_ini
+  ,vp.datafinal           as valid_date_end
+  ,FDSVIGENTE."fds.id" 
+  ,FDSVIGENTE."fds.status"
+  ,FDSVIGENTE."fds.descricao"
+  ,FDSVIGENTE."fds.codigoSegmento"
+  ,FDSVIGENTE."fds.peso"
+  ,FDSVIGENTE."fds.tipo"
+  ,FDSVIGENTE."fds.conformidadePreco"
+  ,FDSVIGENTE.id_fds_vigente
+from RED_800_39_T.dbo.t_survey su WITH (NOLOCK)
+INNER JOIN RED_800_39_DW.dbo.t_dim_customers cu WITH (NOLOCK) 
+ ON cu.cust_code = su.cust_id 
+INNER JOIN ine.cust_association ca WITH (NOLOCK)
+ ON ca.cust_id = cu.cust_code
+ AND ca.ref = LEFT(CONVERT(INT,CONVERT(VARCHAR(10), su.in_date, 112)), 6)
+INNER JOIN ine.estrutura_comercial_cliente stra WITH (NOLOCK) 
+ ON stra.codigo_rota = ca.presale_route_code
+INNER JOIN ine.periodovigenciapesquisa vp 
+ON vp.unidade = stra.codigo_unidade and vp.situacao = 'A' 
+and cast(convert(VARCHAR(6),vp.referencia, 112) as int) = :referenciaAsAnoMes
+INNER JOIN 
+  (select tablerank.* from (
+  SELECT DISTINCT  
+    row_number() OVER 
+      (PARTITION by unid.codigo_unidade, seg.cac_id, COALESCE(ch.channel_id,99), COALESCE(sch.subchannel_id, 99) 
+           ORDER BY unid.codigo_unidade, seg.cac_id, COALESCE(ch.channel_id,99), COALESCE(sch.subchannel_id, 99), fdsv."data" desc) AS rnum  
+   ,cast(unid.codigo_unidade as varchar) + '_' + 
+    cast(rtrim(seg.cac_id) as varchar)+ '_' + 
+    cast(COALESCE(ch.channel_id,99) as varchar)+ '_' + 
+    cast(COALESCE(sch.subchannel_id, 99) as varchar) AS fds_code
+   ,fds.id                 as "fds.id" 
+   ,fds.status             as "fds.status"
+   ,fds.descricao          as "fds.descricao"
+   ,fds.dataInativacao     as "fds.dataInativacao"
+   ,seg.cac_id             as "fds.codigoSegmento"
+   ,fds.peso               as "fds.peso"
+   ,fds.tipo               as "fds.tipo"
+   ,fds.conformidade_preco as "fds.conformidadePreco"
+   ,fdsv."data"            as "dataVigencia"
+   ,unid.codigo_unidade 
+   ,rtrim(seg.cac_id)      as cac_id
+   ,COALESCE(ch.channel_id,99) AS channel_id
+   ,COALESCE(sch.subchannel_id, 99) AS subchannel_id 
+   ,fdsv.id                as id_fds_vigente
+  FROM cluster.fds fds WITH (NOLOCK)
+  LEFT JOIN cluster.fds_unidade unid   WITH (NOLOCK) ON unid.fds_id = fds.id 
+  LEFT JOIN cluster.fds_segmento seg   WITH (NOLOCK) ON seg.fds_id = fds.id 
+  LEFT JOIN cluster.fds_canal     ch   WITH (NOLOCK) ON ch.fds_id = fds.id 
+  LEFT JOIN cluster.fds_subcanal sch   WITH (NOLOCK) ON sch.fds_id = fds.id
+  INNER JOIN cluster.fds_vigencia fdsv WITH (NOLOCK) ON fdsv.fds_id = fds.id
+  WHERE fds.status = 'A' AND fds.tipo = :tiposFDS
+) tablerank 
+where tablerank.rnum = 1) 
+  FDSVIGENTE ON 
+     FDSVIGENTE.codigo_unidade = stra.codigo_unidade
+     AND FDSVIGENTE.cac_id = cu.cac_code
+     AND FDSVIGENTE.channel_id = COALESCE(ca.channel_code, 99)
+     AND FDSVIGENTE.subchannel_id = COALESCE(ca.subchannel_code, 99)
+WHERE 
+    su.survey_status_id = 1
+    and cast(convert(varchar(6),su.in_date,112) as int) = :referenciaAsAnoMes
+    and ca.ref = :referenciaAsAnoMes
+    ORDER BY cu.cust_sk, su.survey_id
+  </select>
+
+  <select id="select-asterisk">
+    select * from users
+    from users
+  </select>
+  
+</statements>
