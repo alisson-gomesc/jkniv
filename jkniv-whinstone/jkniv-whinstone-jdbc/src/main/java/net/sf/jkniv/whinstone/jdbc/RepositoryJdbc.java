@@ -194,13 +194,7 @@ class RepositoryJdbc implements Repository
             showMetadata();
         
     }
-        
-/*
-    private WorkJdbc currentWork()
-    {
-        return SessionFactory.currentWork(connectionFactory, this.repositoryConfig);
-    }
-  */  
+
     @Override
     public <T> T get(Queryable queryable)
     {
@@ -247,106 +241,7 @@ class RepositoryJdbc implements Repository
         return handleGet(queryable, customResultRow);
     }
 
-    /*
-    @Override
-    public <T> T get(Queryable queryable)
-    {
-        NOT_NULL.verify(queryable);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as get command", queryable);
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        
-        checkSqlType(isql, SqlType.SELECT);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        List<T> list = currentWork().select(queryable, null, null);
-        T ret = null;
-        if (list.size() > 1)
-            throw new NonUniqueResultException("No unique result for query ["+queryable.getName()+"]");
-        
-        else if (list.size() == 1)
-            ret = list.get(0);
-        
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(), queryable.getTotal());
-        return ret;
-    }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T, R> T get(Queryable queryable, ResultRow<T, R> resultRow)
-    {
-        return get(queryable, null, (ResultRow<T, ResultSet>) resultRow);
-    }
-
-    @Override
-    public <T> T get(Queryable queryable, Class<T> returnType)
-    {
-        return get(queryable, returnType, null);
-    }
-    
-    private <T> T get(Queryable queryable, Class<T> returnType, ResultRow<T, ResultSet> resultRow)
-    {
-        NOT_NULL.verify(queryable);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as get command", queryable);
-
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        
-        checkSqlType(isql, SqlType.SELECT);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        List<T> list = currentWork().select(queryable, returnType, resultRow);
-        T ret = null;
-        if (list.size() > 1)
-            throw new NonUniqueResultException("No unique result for query ["+queryable.getName()+"]");
-        
-        else if (list.size() == 1)
-            ret = list.get(0);
-        
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(), queryable.getTotal());
-
-        return ret;
-    }
-    
-    @Override
-    public <T> T get(T entity)
-    {
-        return get(null, entity);
-    }
-    
-    @Override
-    public <T> T get(Class<T> returnType, Object entity)
-    {
-        NOT_NULL.verify(entity);
-        String queryName = this.strategyQueryName.toGetName(entity);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as get command", queryName);
-
-        Queryable queryable = QueryFactory.of(queryName, entity);
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.SELECT);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        List<T> list = currentWork().select(queryable, returnType);
-        T ret = null;
-        if (list.size() > 1)
-            throw new NonUniqueResultException("No unique result for query ["+queryable.getName()+"]");
-        
-        else if (list.size() == 1)
-            ret = list.get(0);
-
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(), queryable.getTotal());
-
-        return ret;
-    }
-*/
     @Override
     public <T> List<T> list(Queryable queryable)
     {
@@ -403,26 +298,6 @@ class RepositoryJdbc implements Repository
         return ret;
     }
 
-    /*
-    private <T,R> List<T> __list__(Queryable queryable, Class<T> returnType, ResultRow<T, ResultSet> customResultRow)
-    {
-        NOT_NULL.verify(queryable);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as list command", queryable);
-        
-        Selectable isql = sqlContext.getQuery(queryable.getName()).asSelectable();
-        checkSqlType(isql, SqlType.SELECT);
-        isql.getValidateType().assertValidate(queryable.getParams());
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        List<T> list = currentWork().select(queryable, returnType, customResultRow);
-        
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(), queryable.getTotal());
-        return list;
-    }
-    */
     @Override
     public <T> T scalar(Queryable queryable)
     {
@@ -433,56 +308,16 @@ class RepositoryJdbc implements Repository
         queryable.scalar();
         List<T> list = handleList(queryable, null);
 
-//        queryable.scalar();
-//        Sql isql = sqlContext.getQuery(queryable.getName());
-//        checkSqlType(isql, SqlType.SELECT);
-//        if (!queryable.isBoundSql())
-//            queryable.bind(isql);
-//        
-//        isql.getValidateType().assertValidate(queryable.getParams());
-//        
-//        List<T> list = currentWork().select(queryable);
         if (list.size() == 1)
             result = list.get(0);
         else if (list.size() > 1)// TODO test NonUniqueResultException for scalar method
             throw new NonUniqueResultException("Query ["+queryable.getName()+"] no return scalar value, scalar function must return unique row and column");
-            //throw new NonUniqueResultException("Not a single result was generated, scalar function must return unique row and column!");
         
         if (isDebugEnabled)
             LOG.debug("Executed scalar query [{}] retrieving [{}] type of [{}]", queryable.getName(), result, (result !=null ? result.getClass().getName() : "NULL"));
         return result;
     }
 
-/*    
-    @Override
-    public <T> T scalar(Queryable queryable)
-    {
-        NOT_NULL.verify(queryable);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as scalar command", queryable);
-        T result = null;
-        queryable.scalar();
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.SELECT);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        
-        List<T> list = currentWork().select(queryable);
-        if (list.size() == 1)
-            result = list.get(0);
-        else if (list.size() > 1)// TODO test NonUniqueResultException for scalar method
-            throw new NonUniqueResultException("Query ["+queryable.getName()+"] no return scalar value, scalar function must return unique row and column");
-            //throw new NonUniqueResultException("Not a single result was generated, scalar function must return unique row and column!");
-        
-        if (isDebugEnabled)
-            LOG.debug("Executed scalar query [{}] retrieving [{}] type of [{}]", queryable.getName(), result, (result !=null ? result.getClass().getName() : "NULL"));
-        return result;
-    }
-*/    
-    
     @Override
     public int add(Queryable queryable)
     {
@@ -516,67 +351,6 @@ class RepositoryJdbc implements Repository
         return entity;
     }
 
-    /*
-    @Override
-    public int add(Queryable queryable)
-    {
-        NOT_NULL.verify(queryable);
-        Sql sql = sqlContext.getQuery(queryable.getName());
-        CommandHandler handler = new AddHandler(getConnection(sql.getIsolation()));
-        int rows = handler.with(queryable)
-        .with(sql)
-        .with(handlerException)
-        .run();
-        return rows;
-    }
-    
-    /*
-    @Override
-    public int add(Queryable queryable)
-    {
-        notNull.verify(queryable);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as add command with dialect [{}]", queryable, this.repositoryConfig.getSqlDialect());
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.INSERT);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        
-        int affected = currentWork().execute(queryable);
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
-        return affected;
-    }
-    */
-    
-    /*
-    @Override
-    public <T> T add(T entity)
-    {
-        notNull.verify(entity);
-        String queryName = this.strategyQueryName.toAddName(entity);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as add command", queryName);
-        //LOG.trace("trying query " + queryName);
-        Queryable queryable = QueryFactory.of(queryName, entity);
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.INSERT);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-
-        int affected = currentWork().execute(queryable);
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
-        return entity;
-    }
-    */
-    
     @Override
     public boolean enrich(Queryable queryable) // FIXME test enrich method 
     {
@@ -609,7 +383,7 @@ class RepositoryJdbc implements Repository
     }
     
     @Override
-    public <T> T update(T entity)// FIXME design update must return a number
+    public <T> T update(T entity)
     {
         NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toUpdateName(entity);
@@ -625,64 +399,6 @@ class RepositoryJdbc implements Repository
                 .run();
         return entity;
     }
-
-
-    /*
-    @Override
-    public int update(Queryable queryable)
-    {
-        NOT_NULL.verify(queryable);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as update command", queryable);
-
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.UPDATE);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-
-        int affected = currentWork().execute(queryable);
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by update [{}] command", affected, queryable.getName());
-        return affected;
-    }
-    */
-
-    /*
-    @Override
-    public <T> T update(T entity)// FIXME design update must return a number
-    {
-        NOT_NULL.verify(entity);
-        String queryName = this.strategyQueryName.toUpdateName(entity);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as update command", queryName);
-        //LOG.trace("trying query " + queryName);
-        Queryable queryable = QueryFactory.of(queryName, entity);
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.UPDATE);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-
-        int affected = currentWork().execute(queryable);
-        if (affected > 1)
-        {
-            LOG.error(
-                    "{} records was affected by update command, the query [{}] must update the record using primary key or using unique columns",
-                    affected, queryable.getName());
-            handlerException
-                    .throwMessage("update(T) cannot update more one records, to update several objects use update(Query)");
-        }
-        
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by update [{}] command", affected, queryable.getName());
-        
-        return entity;
-    }
-    */
  
     @Override
     public int remove(Queryable queryable)
@@ -715,63 +431,6 @@ class RepositoryJdbc implements Repository
                 .run();
         return rows;
     }
-    
-    /*
-    @Override
-    public int remove(Queryable queryable)
-    {
-        NOT_NULL.verify(queryable);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as remove command", queryable);
-
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.DELETE);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        
-        int affected = currentWork().execute(queryable);
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by remove [{}] command", affected, queryable.getName());
-        return affected;
-    }
-    */
-    
-    /*
-    @Override
-    public <T> int remove(T entity)
-    {
-        NOT_NULL.verify(entity);
-        String queryName = this.strategyQueryName.toRemoveName(entity);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as remove command", queryName);
-        //LOG.trace("trying query " + queryName);
-        Queryable queryable = QueryFactory.of(queryName, entity);
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.DELETE);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-
-        int affected = currentWork().execute(queryable);
-        if (affected > 1)
-        {
-            LOG.error(
-                    "{} records was affected by remove command, the query [{}] must delete records using primary key or set of unique columns",
-                    affected, queryable.getName());
-            handlerException
-                    .throwMessage("remove(T) cannot delete more one records, to remove many objects use remove(Query)");
-        }
-        
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by remove [{}] command", affected, queryable.getName());
-
-        return affected;
-    }
-    */
     
     @Override
     public void flush()
@@ -838,109 +497,6 @@ class RepositoryJdbc implements Repository
             connectionFactory.close(conn);
         }
     }
-    
-//    private void checkSqlType(Sql isql, SqlType expected)
-//    {
-//        if (isql.getSqlType() != expected)
-//            throw new IllegalArgumentException("Cannot execute sql ["+isql.getName()+"] as ["+isql.getSqlType()+"], exptected is "+ expected);
-//    }
-    
-    /*
-    private Connection getConnection(ISql isql)
-    {
-        Connection conn = jdbcConnection.open(isql.getIsolation());
-        if (LOG.isTraceEnabled())
-        {
-            try
-            {
-                DatabaseMetaData metaDb = conn.getMetaData();
-                //metaDb.getDriverVersion()
-                LOG.trace("JDBC driver version: {}, name: {}, dbversion: {}",
-                        metaDb.getJDBCMajorVersion() + "." + metaDb.getJDBCMinorVersion(), metaDb.getDriverName(),
-                        metaDb.getDriverVersion());
-            }
-            catch (SQLException sqle)
-            {
-                LOG.warn("Cannot read database metadata: " + sqle.getMessage());
-            }
-        }
-        return conn;
-    }
-    private int executeUpdate(final Queryable query)
-    {
-        Query q = (Query) query;
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        int affected = 0;
-        try
-        {
-            ISql isql = XmlBuilderSql.getQuery(q.getName());
-            if (isql.getSqlCommandType() == SqlCommandType.SELECT)
-                handlerException.throwMessage("SELECT SQL cannot be execute as INSERT | UPDATE | DELETE");
-            
-            conn = getConnection(isql);
-            PreparedStatementStrategy stmtStrategy = getPreparedStatementStrategy(isql, query);
-            stmt = stmtStrategy.prepareStatement(conn);
-            affected = stmt.executeUpdate();
-        }
-        catch (SQLException e)
-        {
-            handlerException.handleUnchecked(e, "Cannot execute SQL reason: " + e.getMessage());// TODO Exception message
-        }
-        finally
-        {
-            jdbcConnection.close(conn, stmt, null);
-        }
-        return affected;
-    }
-    
-    private <T> List<T> executeQuery(final Queryable query)
-    {
-        Query q = (Query) query;
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        List<T> list = null;
-        try
-        {
-            ISql isql = XmlBuilderSql.getQuery(q.getName());
-            conn = getConnection(isql);
-            PreparedStatementStrategy stmtStrategy = getPreparedStatementStrategy(isql, query);
-            stmt = stmtStrategy.prepareStatement(conn);
-            rs = stmt.executeQuery();
-            Class<T> clazz = ReflectionUtils.forName(isql.getReturnType());
-            
-            FlatObjectResultSetParser<T> rsParser = new FlatObjectResultSetParser<T>(clazz);
-            list = rsParser.parse(rs);
-        }
-        catch (SQLException e)
-        {
-            handlerException.handleUnchecked(e, e.getMessage());// TODO Exception message
-        }
-        finally
-        {
-            jdbcConnection.close(conn, stmt, rs);
-        }
-        return list;
-    }
-    
-    private PreparedStatementStrategy getPreparedStatementStrategy(ISql isql, Queryable q)
-    {
-        PreparedStatementStrategy stmtStrategy = null;
-        String stmtNameDefaultStrategy = XmlBuilderSql.getProperty(RepositoryProperty.PREPARED_STATEMENT_STRATEGY);
-        if (stmtNameDefaultStrategy == null || "".equals(stmtNameDefaultStrategy))
-        {
-            stmtStrategy = new DefaultPreparedStatementStrategy(isql, q.getParams());
-        }
-        else
-        {
-            ObjectProxy<PreparedStatementStrategy> proxy = new DefaultObjectProxy<PreparedStatementStrategy>(
-                    stmtNameDefaultStrategy);
-            stmtStrategy = proxy.createInstance();
-        }
-        return stmtStrategy;
-    }
-    */
     
     private ConnectionFactory getJdbcAdapterFactory(
             String adpterClassName,

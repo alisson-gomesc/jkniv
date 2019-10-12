@@ -94,22 +94,8 @@ class HttpCookieCommandAdapter implements CommandAdapter
         StatementAdapter<T, R> stmt = new CouchDbStatementAdapter(this.httpBuilder, sql, queryable.getDynamicSql().getParamParser());
 
         queryable.bind(stmt).on();
-        
-        //if (queryable.getReturnType() != null)
-            returnType = queryable.getReturnType();
-        //else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-        //    returnType = queryable.getDynamicSql().getReturnTypeAsClass();
-        
-            stmt.with(overloadResultRow);
-//            stmt
-//            .returnType(returnType)
-//            .resultRow(overloadResultRow)
-            //.oneToManies(dynamicSql.asSelectable().getOneToMany())
-            //.groupingBy(dynamicSql.asSelectable().getGroupByAsList())
-            ;
-
-//        if(queryable.isScalar())
-//            stmt.scalar();
+        returnType = queryable.getReturnType();
+        stmt.with(overloadResultRow);
             
         if (CouchDbSqlContext.isGet(queryable.getName()))
             command = new GetCommand(this.httpBuilder, queryable);

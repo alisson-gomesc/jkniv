@@ -93,12 +93,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         //this.groupingBy = Collections.emptyList();
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
         this.queryable = queryable;
-        //this.returnType = (Class<T>) Map.class;
-        //if (queryable.getReturnType() != null)
-            returnType = (Class<T>)queryable.getReturnType();
-        //else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-        //    returnType = (Class<T>)queryable.getDynamicSql().getReturnTypeAsClass();
-
+        returnType = (Class<T>)queryable.getReturnType();
         this.reset();
     }
     
@@ -243,8 +238,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         {
             TimerKeeper.start();
             rs = session.execute(bound);
-            if(queryable != null)// TODO design improve for use sql stats
-                queryable.getDynamicSql().getStats().add(TimerKeeper.clear());
+            queryable.getDynamicSql().getStats().add(TimerKeeper.clear());
             
             JdbcColumn<Row>[] columns = getJdbcColumns(rs.getColumnDefinitions());
             setResultRow(columns);
@@ -259,9 +253,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         }
         catch (SQLException e)
         {
-            if(queryable != null) // TODO design improve for use sql stats
-                queryable.getDynamicSql().getStats().add(e);
-            
+            queryable.getDynamicSql().getStats().add(e);
             handlerException.handle(e, e.getMessage());
         }
         finally {

@@ -88,27 +88,15 @@ public class JpaCommandAdapter implements CommandAdapter
     @Override
     public <T, R> Command asSelectCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
-        Class returnType = Map.class;
         DefaultQuery command = null;
         String sql = queryable.query();
         if (SQLLOG.isInfoEnabled())
             SQLLOG.info("Bind Native SQL\n{}", sql);
         
         Query queryJpa = build(queryable);
-        
         StatementAdapter<T, R> stmt = new JpaStatementAdapter(queryJpa, queryable, this.handlerException);
         queryable.bind(stmt).on();
-        
-        //if (queryable.getReturnType() != null)
-            returnType = queryable.getReturnType();
-        //else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-        //    returnType = queryable.getDynamicSql().getReturnTypeAsClass();
-        
         stmt.with(overloadResultRow);
-        
-//        if (queryable.isScalar())
-//            stmt.scalar();
-        
         command = new DefaultQuery(stmt, queryable);
         return command;
     }

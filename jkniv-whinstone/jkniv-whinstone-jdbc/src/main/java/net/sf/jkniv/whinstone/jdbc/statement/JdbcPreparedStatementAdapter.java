@@ -21,7 +21,6 @@ import net.sf.jkniv.reflect.beans.MethodName;
 import net.sf.jkniv.reflect.beans.MethodNameFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
-import net.sf.jkniv.sqlegance.KeyGeneratorType;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
@@ -49,7 +48,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     private final HandlerException  handlerException;
     private final SqlDateConverter  dtConverter;
     private int                     index, indexIN;
-    private Class<T>                returnType;
+    //private Class<?>                returnType;
     private ResultRow<T, ResultSet> resultRow;
     private Queryable               queryable;
     private AutoKey                 autoKey;
@@ -68,24 +67,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         //this.groupingBy = Collections.emptyList();
         //this.scalar = false;
         this.queryable = queryable;
-        this.returnType = (Class<T>) Map.class;
-
-        if(queryable != null)// TODO check if queryable can be null
-        {
-            //if (queryable.isScalar())
-            //    scalar();
-            //if (queryable.getReturnType() != null)
-                returnType = (Class<T>)queryable.getReturnType();
-            //else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-            //    returnType = (Class<T>)queryable.getDynamicSql().getReturnTypeAsClass();
-        }
         this.reset();
-    }
-    
-    public StatementAdapter<T, ResultSet> returnType(Class<T> returnType)
-    {
-        this.returnType = returnType;
-        return this;
     }
     
     @Override
@@ -94,40 +76,6 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         this.resultRow = resultRow;
         return this;
     }
-    
-//    @Override
-//    public StatementAdapter<T, ResultSet> scalar()
-//    {
-//        this.scalar = true;
-//        return this;
-//    }
-    
-//    @Override
-//    public StatementAdapter<T, ResultSet> oneToManies(Set<OneToMany> oneToManies)
-//    {
-//        this.oneToManies = oneToManies;
-//        return this;
-//    }
-//    
-//    @Override
-//    public StatementAdapter<T, ResultSet> groupingBy(List<String> groupingBy)
-//    {
-//        this.groupingBy = groupingBy;
-//        return this;
-//    }
-//    
-//    @Override
-//    public StatementAdapter<T, ResultSet> with(KeyGeneratorType keyGeneratorType)
-//    {
-//        this.keyGeneratorType = keyGeneratorType;
-//        return this;
-//    }
-//
-//    @Override
-//    public KeyGeneratorType getKeyGeneratorType()
-//    {
-//        return this.keyGeneratorType;
-//    }
     
     @Override
     public StatementAdapter<T, ResultSet> bind(String name, Object value)
@@ -216,8 +164,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         {
             TimerKeeper.start();
             rs = stmt.executeQuery();
-            if(queryable != null)// TODO design improve for use sql stats
-                queryable.getDynamicSql().getStats().add(TimerKeeper.clear());
+            queryable.getDynamicSql().getStats().add(TimerKeeper.clear());
             
             JdbcColumn<ResultSet>[] columns = getJdbcColumns(rs.getMetaData());
             setResultRow(columns);
@@ -232,8 +179,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         }
         catch (SQLException e)
         {
-            if(queryable != null) // TODO design improve for use sql stats
-                queryable.getDynamicSql().getStats().add(e);
+            queryable.getDynamicSql().getStats().add(e);
             handlerException.handle(e, e.getMessage());
         }
         finally {
@@ -254,7 +200,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         /*
         try
         {
-            if (!this.queryable.isTypeOfArray() && !this.queryable.isTypeOfCollection())// TODO test generate key params input as collection or array
+            if (!this.queryable.isTypeOfArray() && !this.queryable.isTypeOfCollection())
             {
                 ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(queryable.getParams());
                 ResultSet generatedKeys = stmt.getGeneratedKeys();
@@ -270,7 +216,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
                         setValue(proxy, properties[i], generatedKeys.getObject(i+1));
                 }
             }
-            else if(this.queryable.isTypeOfMap())// TODO test generate key params input as Map
+            else if(this.queryable.isTypeOfMap())
             {
                 Map<String, Object> instance = (Map)queryable.getParams();
                 ResultSet generatedKeys = stmt.getGeneratedKeys();
@@ -440,7 +386,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void setResultRow(JdbcColumn<ResultSet>[] columns)
     {
-        //Class returnType = queryable.getReturnType();
+        Class<?> returnType = queryable.getReturnType();
         if (resultRow != null)
             return;
         

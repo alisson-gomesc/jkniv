@@ -99,7 +99,7 @@ public class SqlSelectTest extends BaseJdbc
         repositoryDerby.remove(new Account());
     }
 
-    @Test @Ignore("mockito")
+    @Test @Ignore("implemented with mockito")
     public void whenSelectWrongClassType()
     {
         catcher.expect(RepositoryException.class);
@@ -110,7 +110,7 @@ public class SqlSelectTest extends BaseJdbc
     }
     
     //public void whenSelectOneRecordByUniqueValue()
-    @Test @Ignore("mockito")
+    @Test @Ignore("implemented with mockito")
     public void whenSelectAllRecords()
     {
         Queryable q = QueryFactory.of("getBookByISBN");
@@ -127,7 +127,7 @@ public class SqlSelectTest extends BaseJdbc
         }
     }
     
-    @Test @Ignore("mockito")
+    @Test @Ignore("implemented with mockito")
     public void whenSelectOverloadReturnType()
     {
         Queryable q = QueryFactory.of("getBookToOverloadType");
@@ -142,7 +142,7 @@ public class SqlSelectTest extends BaseJdbc
         }
     }
     
-    @Test @Ignore("mockito")
+    @Test @Ignore("implemented with mockito")
     public void whenSelectDoesntDefinedReturnType()
     {
         //catcher.expect(RepositoryException.class); //now, default is java.util.Map
@@ -153,7 +153,7 @@ public class SqlSelectTest extends BaseJdbc
         assertThat(list.get(0), instanceOf(HashMap.class));
     }
     
-    @Test @Ignore("mockito")
+    @Test @Ignore("implemented with mockito")
     public void whenSelectWithoutTypeAndCustomResultSetParser()
     {
         CustomResultRow parser = null;
@@ -164,7 +164,7 @@ public class SqlSelectTest extends BaseJdbc
         assertThat(String.valueOf(list.get(0).get("name")), is("Beyond Good and Evil"));
     }
     
-    @Test @Ignore("mockito")
+    @Test @Ignore("implemented with mockito")
     public void whenSelectDoesntDefinedReturnTypeButForceOne()
     {
         Queryable q = QueryFactory.of("listBooksNoSpecificType");
@@ -173,7 +173,7 @@ public class SqlSelectTest extends BaseJdbc
         Assert.assertTrue(list.get(0) instanceof Book);
     }
     
-    @Test @Ignore("mockito")
+    @Test @Ignore("implemented with mockito")
     public void whenSelectOneRecordByUniqueValueWithMapParams()
     {
         Map<String, String> map = new HashMap<String, String>();
@@ -213,7 +213,7 @@ public class SqlSelectTest extends BaseJdbc
         Assert.assertTrue(list.size() == 1);
     }
     
-    @Test @Ignore("mockito")
+    @Test @Ignore("implemented with mockito")
     public void whenGetRecordWithoutQueryable()
     {
         FlatBook b = new FlatBook();

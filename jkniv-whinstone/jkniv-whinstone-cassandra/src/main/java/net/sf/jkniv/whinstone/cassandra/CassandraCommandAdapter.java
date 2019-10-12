@@ -204,20 +204,8 @@ class CassandraCommandAdapter implements CommandAdapter
             stmt = new CassandraPreparedStatementAdapter(this.session, stmtPrep, queryable);
         }
         queryable.bind(stmt).on();
-        
-        //if (queryable.getReturnType() != null)
-            returnType = queryable.getReturnType();
-        //else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-        //    returnType = queryable.getDynamicSql().getReturnTypeAsClass();
-        
+        returnType = queryable.getReturnType();
         stmt.with(overloadResultRow);
-            //.returnType(returnType)
-            //.oneToManies(queryable.getDynamicSql().asSelectable().getOneToMany())
-            //.groupingBy(queryable.getDynamicSql().asSelectable().getGroupByAsList())
-        
-//        if (queryable.isScalar())
-//            stmt.scalar();
-        
         command = new DefaultQuery(stmt, queryable);
         return command;
     }

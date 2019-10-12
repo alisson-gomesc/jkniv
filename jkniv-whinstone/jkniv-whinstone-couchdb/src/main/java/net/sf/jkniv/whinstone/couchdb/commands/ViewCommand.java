@@ -80,11 +80,7 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
             int statusCode = response.getStatusLine().getStatusCode();
             if (isOk(statusCode))
             {
-                //if (queryable.getReturnType() != null)
-                    returnType = queryable.getReturnType();
-                //else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-                //    returnType = queryable.getDynamicSql().getReturnTypeAsClass();
-                
+                returnType = queryable.getReturnType();
                 answer = JsonMapper.mapper(json, AllDocsAnswer.class);
                 if (returnType != null)
                 {

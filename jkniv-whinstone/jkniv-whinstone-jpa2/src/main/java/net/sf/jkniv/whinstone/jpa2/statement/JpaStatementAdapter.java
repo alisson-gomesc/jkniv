@@ -201,7 +201,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
         {
             TimerKeeper.start();
             rs = query.getResultList();
-            if (queryable != null)// TODO design improve for use sql stats
+            if (queryable != null)
                 queryable.getDynamicSql().getStats().add(TimerKeeper.clear());
             
             JdbcColumn<ResultSet>[] columns = getJdbcColumns(rs.getMetaData());
@@ -217,7 +217,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
         }
         catch (SQLException e)
         {
-            if (queryable != null) // TODO design improve for use sql stats
+            if (queryable != null)
                 queryable.getDynamicSql().getStats().add(e);
             handlerException.handle(e, e.getMessage());
         }
@@ -242,8 +242,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
             }
             TimerKeeper.start();
             list = query.getResultList();
-            if (queryable != null)// TODO design improve for use sql stats
-                queryable.getDynamicSql().getStats().add(TimerKeeper.clear());
+            queryable.getDynamicSql().getStats().add(TimerKeeper.clear());
             
             if (queryable.getDynamicSql().getLanguageType() == LanguageType.NATIVE
                     && queryable.getDynamicSql().hasReturnType() && list.size() > 0)
@@ -259,8 +258,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
         }
         catch (Exception e)
         {
-            if (queryable != null) // TODO design improve for use sql stats
-                queryable.getDynamicSql().getStats().add(e);
+            queryable.getDynamicSql().getStats().add(e);
             handlerException.handle(e);
         }
         finally {
