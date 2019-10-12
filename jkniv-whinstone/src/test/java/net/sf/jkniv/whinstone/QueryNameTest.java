@@ -127,11 +127,11 @@ public class QueryNameTest
         assertThat(query.isCacheIgnore(), is(true));
     }
 
-    @Test
+    @Test//error
     public void whenQueryReturnType()
     {
         Queryable query = QueryFactory.of("dummy");
-        assertThat(query.getReturnType(), nullValue());
+        assertThat(query.getReturnType().getName(), is(Map.class.getName()));
 
         query = QueryFactory.of("dummy", AuthorFlat.class);
         assertThat(query.getReturnType(), notNullValue());

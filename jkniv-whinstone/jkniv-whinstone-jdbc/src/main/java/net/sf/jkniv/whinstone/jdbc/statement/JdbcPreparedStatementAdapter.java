@@ -74,10 +74,10 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         {
             //if (queryable.isScalar())
             //    scalar();
-            if (queryable.getReturnType() != null)
+            //if (queryable.getReturnType() != null)
                 returnType = (Class<T>)queryable.getReturnType();
-            else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-                returnType = (Class<T>)queryable.getDynamicSql().getReturnTypeAsClass();
+            //else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
+            //    returnType = (Class<T>)queryable.getDynamicSql().getReturnTypeAsClass();
         }
         this.reset();
     }

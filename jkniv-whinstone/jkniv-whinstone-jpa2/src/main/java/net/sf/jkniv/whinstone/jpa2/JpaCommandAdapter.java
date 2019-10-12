@@ -99,10 +99,10 @@ public class JpaCommandAdapter implements CommandAdapter
         StatementAdapter<T, R> stmt = new JpaStatementAdapter(queryJpa, queryable, this.handlerException);
         queryable.bind(stmt).on();
         
-        if (queryable.getReturnType() != null)
+        //if (queryable.getReturnType() != null)
             returnType = queryable.getReturnType();
-        else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-            returnType = queryable.getDynamicSql().getReturnTypeAsClass();
+        //else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
+        //    returnType = queryable.getDynamicSql().getReturnTypeAsClass();
         
         stmt.with(overloadResultRow);
         
@@ -225,7 +225,7 @@ public class JpaCommandAdapter implements CommandAdapter
                 {
                     try
                     {
-                        if (sql.hasReturnType())
+                        if (!Map.class.getName().equals(queryable.getReturnType().getName()))
                             queryJpa = em.createNamedQuery(sql.getName(), sql.getReturnTypeAsClass());
                         else
                             queryJpa = em.createNamedQuery(sql.getName());

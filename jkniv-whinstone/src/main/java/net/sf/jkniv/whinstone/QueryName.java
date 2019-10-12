@@ -586,7 +586,13 @@ class QueryName implements Queryable
     @Override
     public Class<?> getReturnType()
     {
-        return this.returnType;
+        Class<?> returnAnswer = Map.class;
+        if (this.returnType != null)
+            returnAnswer = this.returnType;
+        else if (isBoundSql() && getDynamicSql().getReturnTypeAsClass() != null)
+            returnAnswer = getDynamicSql().getReturnTypeAsClass();
+        
+        return returnAnswer;
     }
     
     void setReturnType(Class<?> clazz)

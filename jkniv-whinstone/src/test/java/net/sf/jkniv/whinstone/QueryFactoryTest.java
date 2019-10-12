@@ -178,7 +178,7 @@ public class QueryFactoryTest
         assertThat(q.getTotal(), is(-1L));
         assertThat(q.isScalar(), is(false));
         assertThat(q.isPaging(), is(true));
-        assertThat(q.getReturnType(), nullValue());
+        assertThat(q.getReturnType().getName(), is(Map.class.getName()));
 
         Queryable clone = QueryFactory.clone(q, null);
         assertThat(clone.getOffset(), is(5));
@@ -188,7 +188,7 @@ public class QueryFactoryTest
         assertThat(clone.isPaging(), is(true));
         assertThat(clone.isScalar(), is(false));
         assertThat(clone.isCached(), is(false));
-        assertThat(clone.getReturnType(), nullValue());
+        assertThat(clone.getReturnType().getName(), is(Map.class.getName()));
     }
     
     @Test
@@ -200,7 +200,7 @@ public class QueryFactoryTest
         assertThat(q.getTotal(), is(-1L));
         assertThat(q.isScalar(), is(false));
         assertThat(q.isPaging(), is(true));
-        assertThat(q.getReturnType(), nullValue());
+        assertThat(q.getReturnType().getName(), is(Map.class.getName()));
 
         Queryable clone = QueryFactory.clone(q, Map.class);
         assertThat(clone.getOffset(), is(5));
@@ -273,7 +273,7 @@ public class QueryFactoryTest
         assertThat(q.isScalar(), is(false));
         assertThat(q.isPaging(), is(true));
         assertThat(q.isCacheIgnore(), is(false));
-        assertThat(q.getReturnType(), nullValue());
+        assertThat(q.getReturnType().getName(), is(Map.class.getName()));
         
         q.cached();
         q.scalar();

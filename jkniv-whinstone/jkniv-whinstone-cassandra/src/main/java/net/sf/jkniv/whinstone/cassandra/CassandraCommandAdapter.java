@@ -205,10 +205,10 @@ class CassandraCommandAdapter implements CommandAdapter
         }
         queryable.bind(stmt).on();
         
-        if (queryable.getReturnType() != null)
+        //if (queryable.getReturnType() != null)
             returnType = queryable.getReturnType();
-        else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-            returnType = queryable.getDynamicSql().getReturnTypeAsClass();
+        //else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
+        //    returnType = queryable.getDynamicSql().getReturnTypeAsClass();
         
         stmt.with(overloadResultRow);
             //.returnType(returnType)

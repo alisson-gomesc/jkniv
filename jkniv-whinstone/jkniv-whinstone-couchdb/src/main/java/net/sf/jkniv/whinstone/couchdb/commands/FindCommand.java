@@ -83,10 +83,10 @@ public class FindCommand extends AbstractCommand implements CouchCommand
             int statusCode = response.getStatusLine().getStatusCode();
             if (isOk(statusCode))
             {
-                if (queryable.getReturnType() != null)
+                //if (queryable.getReturnType() != null)
                     returnType = queryable.getReturnType();
-                else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-                    returnType = queryable.getDynamicSql().getReturnTypeAsClass();
+                //else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
+                //    returnType = queryable.getDynamicSql().getReturnTypeAsClass();
 
                 answer = JsonMapper.mapper(json, FindAnswer.class);
                 if (answer.getWarning() != null)

@@ -97,11 +97,11 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         //this.groupingBy = Collections.emptyList();
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
         this.queryable = queryable;
-        this.returnType = (Class<T>) Map.class;
-        if (queryable.getReturnType() != null)
-            returnType = (Class<T>) queryable.getReturnType();
-        else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-            returnType = (Class<T>) queryable.getDynamicSql().getReturnTypeAsClass();
+        //this.returnType = (Class<T>) Map.class;
+//        if (queryable.getReturnType() != null)
+            this.returnType = (Class<T>) queryable.getReturnType();
+        //else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
+        //    returnType = (Class<T>) queryable.getDynamicSql().getReturnTypeAsClass();
         
         this.reset();
     }

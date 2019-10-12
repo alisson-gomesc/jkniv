@@ -86,10 +86,10 @@ public class GetCommand extends AbstractCommand implements CouchCommand
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HTTP_OK)
             {
-                if (queryable.getReturnType() != null)
+                //if (queryable.getReturnType() != null)
                     answer =  (T) JsonMapper.mapper(json, queryable.getReturnType());
-                else
-                    answer = (T) JsonMapper.mapper(json, Map.class);
+                //else
+                //    answer = (T) JsonMapper.mapper(json, Map.class);
                 
                 list.add(answer);
             }
