@@ -369,13 +369,6 @@ public class DefaultCommandHandlerTest
     private CommandAdapter newCommandAdapter() {
         return new CommandAdapter()
         {
-            
-            @Override
-            public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
-            {
-                return null;
-            }
-            
             @Override
             public String getContextName()
             {

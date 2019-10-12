@@ -77,11 +77,11 @@ class HttpCookieCommandAdapter implements CommandAdapter
         LOG.debug("CouchDb repository doesn't implement close() method!");
     }
     
-    @Override
-    public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
-    {
-        throw new UnsupportedOperationException("CouchDb repository  doesn't implement this method yet!");
-    }
+//    @Override
+//    public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
+//    {
+//        throw new UnsupportedOperationException("CouchDb repository  doesn't implement this method yet!");
+//    }
     
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -103,8 +103,9 @@ class HttpCookieCommandAdapter implements CommandAdapter
             stmt
             .returnType(returnType)
             .resultRow(overloadResultRow)
-            .oneToManies(dynamicSql.asSelectable().getOneToMany())
-            .groupingBy(dynamicSql.asSelectable().getGroupByAsList());
+            //.oneToManies(dynamicSql.asSelectable().getOneToMany())
+            //.groupingBy(dynamicSql.asSelectable().getGroupByAsList())
+            ;
 
             if(queryable.isScalar())
                 stmt.scalar();

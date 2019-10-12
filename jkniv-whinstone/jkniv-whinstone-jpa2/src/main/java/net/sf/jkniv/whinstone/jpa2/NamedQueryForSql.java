@@ -52,20 +52,17 @@ class NamedQueryForSql implements Sql, Selectable
     private Date        timestamp;
     private SqlDialect  sqlDialect;
     private Statistical stats;
-    //private ParamParser paramParser;
-    private String          groupBy;
-    //private Set<OneToMany>  oneToMany;
-    //private String          cacheName;
-    //private Cacheable       cache;
-    private Class<?>  returnType;
+    private String      groupBy;
+    private Class<?>    returnType;
     
-    public NamedQueryForSql(String name, Class<?> returnType)
+    public NamedQueryForSql(String name, Class<?> returnType, SqlDialect sqlDialect, Statistical stats)
     {
         this.name = name;
         this.timestamp = new Date();
-        this.stats = new SqlStats();// TODO review
+        this.stats = stats;
         this.groupBy = "";
         this.returnType = returnType;
+        this.sqlDialect = sqlDialect;
         //this.paramParser = ParamParserNoMark.emptyParser();
         //this.oneToMany = new HashSet<OneToMany>();
         //this.cacheName = null;

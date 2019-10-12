@@ -87,22 +87,23 @@ public interface StatementAdapter<T, R>
     // @deprecated Command must to know return type TODO change design
     StatementAdapter<T, R> scalar();
     
-    /**
+    /*
      * one to many
      * @param oneToManies one-to-many relationship
      * @return instance of this object
-    */
+     *
     // @deprecated Command must to know one to many TODO change design
     StatementAdapter<T, R> oneToManies(Set<OneToMany> oneToManies);
+    */
     
-    /**
+    /*
      * group by
      * @param groupingBy list of fields to group the rows
      * @return instance of this object
-     */
+     *
     // @deprecated Command must to know group by TODO change design
     StatementAdapter<T, R> groupingBy(List<String> groupingBy);
-
+    */
     /**
      * key generator type
      * @param keyGeneratorType type of generator key

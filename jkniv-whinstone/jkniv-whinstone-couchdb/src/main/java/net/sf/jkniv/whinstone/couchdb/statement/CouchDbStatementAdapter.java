@@ -103,19 +103,19 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
         return this;
     }
     
-    @Override
-    public StatementAdapter<T, String> oneToManies(Set<OneToMany> oneToManies)
-    {
-        this.oneToManies = oneToManies;
-        return this;
-    }
-    
-    @Override
-    public StatementAdapter<T, String> groupingBy(List<String> groupingBy)
-    {
-        this.groupingBy = groupingBy;
-        return this;
-    }
+//    @Override
+//    public StatementAdapter<T, String> oneToManies(Set<OneToMany> oneToManies)
+//    {
+//        this.oneToManies = oneToManies;
+//        return this;
+//    }
+//    
+//    @Override
+//    public StatementAdapter<T, String> groupingBy(List<String> groupingBy)
+//    {
+//        this.groupingBy = groupingBy;
+//        return this;
+//    }
     
     @Override
     public StatementAdapter<T, String> keyGeneratorType(KeyGeneratorType keyGeneratorType)

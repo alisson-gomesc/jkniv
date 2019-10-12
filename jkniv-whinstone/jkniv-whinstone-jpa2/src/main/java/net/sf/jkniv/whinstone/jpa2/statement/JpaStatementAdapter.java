@@ -69,8 +69,8 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
     private Class<T>                  returnType;
     private ResultRow<T, ResultSet>   resultRow;
     private boolean                   scalar;
-    private Set<OneToMany>            oneToManies;
-    private List<String>              groupingBy;
+    //private Set<OneToMany>            oneToManies;
+    //private List<String>              groupingBy;
     private KeyGeneratorType          keyGeneratorType;
     
     public JpaStatementAdapter(Query query, Queryable queryable, HandleableException handlerException)
@@ -148,19 +148,19 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
         return this;
     }
     
-    @Override
-    public StatementAdapter<T, ResultSet> oneToManies(Set<OneToMany> oneToManies)
-    {
-        this.oneToManies = oneToManies;
-        return this;
-    }
-    
-    @Override
-    public StatementAdapter<T, ResultSet> groupingBy(List<String> groupingBy)
-    {
-        this.groupingBy = groupingBy;
-        return this;
-    }
+//    @Override
+//    public StatementAdapter<T, ResultSet> oneToManies(Set<OneToMany> oneToManies)
+//    {
+//        this.oneToManies = oneToManies;
+//        return this;
+//    }
+//    
+//    @Override
+//    public StatementAdapter<T, ResultSet> groupingBy(List<String> groupingBy)
+//    {
+//        this.groupingBy = groupingBy;
+//        return this;
+//    }
     
     @Override
     public StatementAdapter<T, ResultSet> keyGeneratorType(KeyGeneratorType keyGeneratorType)
@@ -244,6 +244,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
                     if (sqlDialect.supportsFeature(SqlFeatureSupport.LIMIT_OFF_SET))
                         query.setFirstResult(queryable.getOffset());
             }
+            TimerKeeper.start();
             list = query.getResultList();
             if (queryable != null)// TODO design improve for use sql stats
                 queryable.getDynamicSql().getStats().add(TimerKeeper.clear());
@@ -265,6 +266,9 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
             if (queryable != null) // TODO design improve for use sql stats
                 queryable.getDynamicSql().getStats().add(e);
             handlerException.handle(e);
+        }
+        finally {
+            TimerKeeper.clear();
         }
         
         return list;
@@ -422,4 +426,9 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
                     name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
+    private boolean hasGroupBy()
+    {
+        return !queryable.getDynamicSql().asSelectable().getGroupByAsList().isEmpty();
+    }
+
 }

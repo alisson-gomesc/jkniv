@@ -76,9 +76,10 @@ public class DefaultQueryHandlerTest
     private CommandHandler            commandHandler = newQueryHandler();
     
     private Command                   commandMock;
+    private Command                   commandPagingMock;
     private CommandHandler            commandHandlerMock;
     private CommandAdapter            commandAdapterMock;
-    private StatementAdapter          stmtAdapterMock;
+    //private StatementAdapter          stmtAdapterMock;
     private AutoBindParams            autoBindMock;
     private Queryable                 queryMock;
     private Selectable                selectableMock;
@@ -104,7 +105,8 @@ public class DefaultQueryHandlerTest
         this.commandAdapterMock = mock(CommandAdapter.class);
         this.commandHandlerMock = mock(CommandHandler.class);
         this.commandMock = mock(Command.class);
-        this.stmtAdapterMock = mock(StatementAdapter.class);
+        this.commandPagingMock = mock(Command.class);
+        //this.stmtAdapterMock = mock(StatementAdapter.class);
         this.autoBindMock = mock(AutoBindParams.class);
         //this.queryMock = mock(Queryable.class);
         this.selectableMock = mock(Selectable.class);
@@ -125,7 +127,7 @@ public class DefaultQueryHandlerTest
         given(this.selectableMock.hasCache()).willReturn(false);
         given(this.selectableMock.getCache()).willReturn(null);
         given(this.selectableMock.asSelectable()).willReturn(selectableMock);
-        given(this.selectableMock.getSql(null)).willReturn("select id, name from author");
+        given(this.selectableMock.getSql(any())).willReturn("select id, name from author");
         given(this.selectableMock.getParamParser()).willReturn(ParamParserColonMark.getInstance());
         given(this.selectableMock.getSqlType()).willReturn(SqlType.SELECT);
         given(this.selectableMock.getLanguageType()).willReturn(LanguageType.NATIVE);
@@ -133,9 +135,11 @@ public class DefaultQueryHandlerTest
         given(this.selectableMock.getSqlDialect()).willReturn(this.sqlDialect);
         given(this.commandHandlerMock.asCommand()).willReturn(this.commandMock);
         given(this.commandMock.execute()).willReturn(list);
-        given(this.commandAdapterMock.newStatement(anyString(), any(LanguageType.class))).willReturn(stmtAdapterMock);
-        given(this.stmtAdapterMock.returnType(any(Class.class))).willReturn(stmtAdapterMock);
-        given(this.stmtAdapterMock.rows()).willReturn(listOfRows);
+        given(this.commandPagingMock.execute()).willReturn(listOfRows);
+        given(this.commandAdapterMock.asSelectCommand(any(Queryable.class), any(ResultRow.class))).willReturn(commandPagingMock);
+        //given(this.commandAdapterMock.newStatement(anyString(), any(LanguageType.class))).willReturn(stmtAdapterMock);
+        //given(this.stmtAdapterMock.returnType(any(Class.class))).willReturn(stmtAdapterMock);
+        //given(this.stmtAdapterMock.rows()).willReturn(listOfRows);
         given(this.sqlDialect.supportsFeature(SqlFeatureSupport.PAGING_ROUNDTRIP)).willReturn(true);
 
         //doThrow(new RepositoryException()).when(this.handlerException).handle(this.exception);
@@ -194,6 +198,9 @@ public class DefaultQueryHandlerTest
     {
         given(this.cacheableMock.getEntry(anyString())).willReturn(null);
         given(this.selectableMock.getCache()).willReturn(this.cacheableMock);
+        given(this.selectableMock.extractNames(any())).willReturn(new String[0]);
+        given(this.sqlDialect.buildQueryPaging(anyString(), any(Integer.class), any(Integer.class))).willReturn("select id, name from users LIMIT 10,5");
+        given(this.sqlDialect.buildQueryCount(anyString())).willReturn("select count(1) from users");
         
         queryMock = QueryFactory.of("dummy", 5, 2);
         DefaultQueryHandler queryHandler = newDefaultQueryHandler();
@@ -250,7 +257,10 @@ public class DefaultQueryHandlerTest
     {
         given(this.cacheableMock.getEntry(anyString())).willReturn(null);
         given(this.selectableMock.getCache()).willReturn(this.cacheableMock);
-        doThrow(new RepositoryException()).when(this.stmtAdapterMock).rows();
+        given(this.selectableMock.extractNames(any())).willReturn(new String[0]);
+        given(this.sqlDialect.buildQueryPaging(anyString(), any(Integer.class), any(Integer.class))).willReturn("select id, name from users LIMIT 10,5");
+        given(this.sqlDialect.buildQueryCount(anyString())).willReturn("select count(1) from users");        
+        doThrow(new RepositoryException()).when(this.commandPagingMock).execute();
 
         queryMock = QueryFactory.of("dummy", 5, 2);
         DefaultQueryHandler queryHandler = newDefaultQueryHandler();
@@ -483,13 +493,6 @@ public class DefaultQueryHandlerTest
     {
         return new CommandAdapter()
         {
-            
-            @Override
-            public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
-            {
-                return null;
-            }
-            
             @Override
             public String getContextName()
             {
