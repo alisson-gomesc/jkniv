@@ -89,7 +89,11 @@ public interface StatementAdapter<T, R>
      * @param oneToManies one-to-many relationship
      * @return instance of this object
      *
+<<<<<<< HEAD
     // @deprecated Command must to know one to many change design
+=======
+    // @deprecated Command must to know one to many TODO change design
+>>>>>>> branch '0.6.0.M52' of https://github.com/alisson-gomesc/jkniv.git
     StatementAdapter<T, R> oneToManies(Set<OneToMany> oneToManies);
     */
     

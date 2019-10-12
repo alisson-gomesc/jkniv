@@ -101,6 +101,12 @@ class HttpCookieCommandAdapter implements CommandAdapter
             returnType = queryable.getDynamicSql().getReturnTypeAsClass();
         
             stmt.with(overloadResultRow);
+//            stmt
+//            .returnType(returnType)
+//            .resultRow(overloadResultRow)
+            //.oneToManies(dynamicSql.asSelectable().getOneToMany())
+            //.groupingBy(dynamicSql.asSelectable().getGroupByAsList())
+            ;
 
 //        if(queryable.isScalar())
 //            stmt.scalar();
