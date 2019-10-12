@@ -25,9 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.slf4j.Logger;
@@ -41,7 +39,6 @@ import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.KeyGeneratorType;
 import net.sf.jkniv.sqlegance.LanguageType;
-import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
@@ -62,16 +59,15 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
     private static final DataMasking  MASKING = net.sf.jkniv.whinstone.jpa2.LoggerFactory.getDataMasking();
     private final Query               query;
     private int                       index;
-    //private int                       indexIN;
-    
     private final HandleableException handlerException;
     private Queryable                 queryable;
-    private Class<T>                  returnType;
-    private ResultRow<T, ResultSet>   resultRow;
     private boolean                   scalar;
-    private Set<OneToMany>            oneToManies;
-    private List<String>              groupingBy;
-    private KeyGeneratorType          keyGeneratorType;
+    //private int                       indexIN;
+    //private Class<T>                  returnType;
+    //private ResultRow<T, ResultSet>   resultRow;
+    //private Set<OneToMany>            oneToManies;
+    //private List<String>              groupingBy;
+    //private KeyGeneratorType          keyGeneratorType;
     
     public JpaStatementAdapter(Query query, Queryable queryable, HandleableException handlerException)
     {
@@ -127,53 +123,53 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
         return this;
     }
     
+//    @Override
+//    public StatementAdapter<T, ResultSet> returnType(Class<T> returnType)
+//    {
+//        this.returnType = returnType;
+//        return this;
+//    }
+    
     @Override
-    public StatementAdapter<T, ResultSet> returnType(Class<T> returnType)
+    public StatementAdapter<T, ResultSet> with(ResultRow<T, ResultSet> resultRow)
     {
-        this.returnType = returnType;
+        //this.resultRow = resultRow;
         return this;
     }
     
-    @Override
-    public StatementAdapter<T, ResultSet> resultRow(ResultRow<T, ResultSet> resultRow)
-    {
-        this.resultRow = resultRow;
-        return this;
-    }
-    
-    @Override
-    public StatementAdapter<T, ResultSet> scalar()
-    {
-        this.scalar = true;
-        return this;
-    }
-    
-    @Override
-    public StatementAdapter<T, ResultSet> oneToManies(Set<OneToMany> oneToManies)
-    {
-        this.oneToManies = oneToManies;
-        return this;
-    }
-    
-    @Override
-    public StatementAdapter<T, ResultSet> groupingBy(List<String> groupingBy)
-    {
-        this.groupingBy = groupingBy;
-        return this;
-    }
-    
-    @Override
-    public StatementAdapter<T, ResultSet> keyGeneratorType(KeyGeneratorType keyGeneratorType)
-    {
-        this.keyGeneratorType = keyGeneratorType;
-        return this;
-    }
-    
-    @Override
-    public KeyGeneratorType getKeyGeneratorType()
-    {
-        return this.keyGeneratorType;
-    }
+//    @Override
+//    public StatementAdapter<T, ResultSet> scalar()
+//    {
+//        this.scalar = true;
+//        return this;
+//    }
+//    
+//    @Override
+//    public StatementAdapter<T, ResultSet> oneToManies(Set<OneToMany> oneToManies)
+//    {
+//        this.oneToManies = oneToManies;
+//        return this;
+//    }
+//    
+//    @Override
+//    public StatementAdapter<T, ResultSet> groupingBy(List<String> groupingBy)
+//    {
+//        this.groupingBy = groupingBy;
+//        return this;
+//    }
+//    
+//    @Override
+//    public StatementAdapter<T, ResultSet> with(KeyGeneratorType keyGeneratorType)
+//    {
+//        this.keyGeneratorType = keyGeneratorType;
+//        return this;
+//    }
+//    
+//    @Override
+//    public KeyGeneratorType getKeyGeneratorType()
+//    {
+//        return this.keyGeneratorType;
+//    }
     
     @Override
     public void bindKey()
@@ -244,6 +240,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
                     if (sqlDialect.supportsFeature(SqlFeatureSupport.LIMIT_OFF_SET))
                         query.setFirstResult(queryable.getOffset());
             }
+            TimerKeeper.start();
             list = query.getResultList();
             if (queryable != null)// TODO design improve for use sql stats
                 queryable.getDynamicSql().getStats().add(TimerKeeper.clear());
@@ -265,6 +262,9 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
             if (queryable != null) // TODO design improve for use sql stats
                 queryable.getDynamicSql().getStats().add(e);
             handlerException.handle(e);
+        }
+        finally {
+            TimerKeeper.clear();
         }
         
         return list;
@@ -422,4 +422,9 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
                     name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
+    private boolean hasGroupBy()
+    {
+        return !queryable.getDynamicSql().asSelectable().getGroupByAsList().isEmpty();
+    }
+
 }

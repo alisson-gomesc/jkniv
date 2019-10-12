@@ -111,7 +111,7 @@ public class ResultSetParserTest extends BaseJdbc
         assertThat(list.get(0), instanceOf(ConcurrentHashMap.class));
     }
     
-    @Test
+    @Test//error
     public void whenSelectWithCustomResultSetParser()
     {
         Queryable q = QueryFactory.of("listWithMapInterface");

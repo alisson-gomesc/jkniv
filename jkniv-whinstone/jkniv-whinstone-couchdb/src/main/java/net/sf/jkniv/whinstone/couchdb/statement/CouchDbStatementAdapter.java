@@ -39,19 +39,19 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     protected static final String  REGEX_QUESTION_MARK = "[\\?]+";    //"\\?";
     protected static final Pattern PATTERN_QUESTION = Pattern.compile(REGEX_QUESTION_MARK, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private final HandlerException   handlerException;
-    //private final SqlDateConverter   dtConverter;
     private int                      index, indexIN;
-    private Class<T>                 returnType;
-    private ResultRow<T, String>     resultRow;
     private boolean                  scalar;
     private Set<OneToMany>           oneToManies;
     private List<String>             groupingBy;
-    private KeyGeneratorType         keyGeneratorType;
     private String                   body;
+    private boolean                  boundParams;
+    private List<Object>             params;
+    //private final SqlDateConverter   dtConverter;
+    //private Class<T>                 returnType;
+    //private ResultRow<T, String>     resultRow;
     //private ParamParser              paramParser;
     //private HttpBuilder              httpBuilder;
-    private List<Object>             params;
-    private boolean                  boundParams;
+    //private KeyGeneratorType         keyGeneratorType;
     //private static BasicType         basicType = new BasicType();
     
     public CouchDbStatementAdapter(HttpBuilder httpBuilder, String body, ParamParser paramParser)//HttpRequestBase request)
@@ -82,53 +82,53 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
         handlerException.config(IOException.class, "Error from I/O json content [%s]");
     }
     
+//    @Override
+//    public StatementAdapter<T, String> returnType(Class<T> returnType)
+//    {
+//        this.returnType = returnType;
+//        return this;
+//    }
+//    
     @Override
-    public StatementAdapter<T, String> returnType(Class<T> returnType)
+    public StatementAdapter<T, String> with(ResultRow<T, String> resultRow)
     {
-        this.returnType = returnType;
+        //this.resultRow = resultRow;
         return this;
     }
     
-    @Override
-    public StatementAdapter<T, String> resultRow(ResultRow<T, String> resultRow)
-    {
-        this.resultRow = resultRow;
-        return this;
-    }
+//    @Override
+//    public StatementAdapter<T, String> scalar()
+//    {
+//        this.scalar = true;
+//        return this;
+//    }
+//    
+//    @Override
+//    public StatementAdapter<T, String> oneToManies(Set<OneToMany> oneToManies)
+//    {
+//        this.oneToManies = oneToManies;
+//        return this;
+//    }
+//    
+//    @Override
+//    public StatementAdapter<T, String> groupingBy(List<String> groupingBy)
+//    {
+//        this.groupingBy = groupingBy;
+//        return this;
+//    }
+//    
+//    @Override
+//    public StatementAdapter<T, String> with(KeyGeneratorType keyGeneratorType)
+//    {
+//        this.keyGeneratorType = keyGeneratorType;
+//        return this;
+//    }
     
-    @Override
-    public StatementAdapter<T, String> scalar()
-    {
-        this.scalar = true;
-        return this;
-    }
-    
-    @Override
-    public StatementAdapter<T, String> oneToManies(Set<OneToMany> oneToManies)
-    {
-        this.oneToManies = oneToManies;
-        return this;
-    }
-    
-    @Override
-    public StatementAdapter<T, String> groupingBy(List<String> groupingBy)
-    {
-        this.groupingBy = groupingBy;
-        return this;
-    }
-    
-    @Override
-    public StatementAdapter<T, String> keyGeneratorType(KeyGeneratorType keyGeneratorType)
-    {
-        this.keyGeneratorType = keyGeneratorType;
-        return this;
-    }
-    
-    @Override
-    public KeyGeneratorType getKeyGeneratorType()
-    {
-        return this.keyGeneratorType;
-    }
+//    @Override
+//    public KeyGeneratorType getKeyGeneratorType()
+//    {
+//        return this.keyGeneratorType;
+//    }
     
     @Override
     public StatementAdapter<T, String> bind(String name, Object value)

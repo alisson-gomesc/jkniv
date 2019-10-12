@@ -24,10 +24,12 @@ import java.util.Iterator;
 /**
  * Bound the key(s) to a entity model.
  * 
+ * @param <K> key type (String, Long, etc) 
+ * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public interface AutoKey<E>
+public interface AutoKey<K>
 {
     /**
      * Get a unique identifier 
@@ -39,9 +41,9 @@ public interface AutoKey<E>
      * Get a identifier 
      * @return identifier 
      */
-    E getId();
+    K getId();
     
-    Iterator<E> iterator();
+    Iterator<K> iterator();
     
     boolean hasItem();
     

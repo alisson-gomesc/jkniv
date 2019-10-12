@@ -104,12 +104,10 @@ public class JpaCommandAdapter implements CommandAdapter
         else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
             returnType = queryable.getDynamicSql().getReturnTypeAsClass();
         
-        stmt.returnType(returnType).resultRow(overloadResultRow)
-                .oneToManies(queryable.getDynamicSql().asSelectable().getOneToMany())
-                .groupingBy(queryable.getDynamicSql().asSelectable().getGroupByAsList());
+        stmt.with(overloadResultRow);
         
-        if (queryable.isScalar())
-            stmt.scalar();
+//        if (queryable.isScalar())
+//            stmt.scalar();
         
         command = new DefaultQuery(stmt, queryable);
         return command;
@@ -198,13 +196,13 @@ public class JpaCommandAdapter implements CommandAdapter
                 || queryable.getDynamicSql().getLanguageType() == LanguageType.JPQL));
     }
     
-    @Override
-    public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
-    {
-        Query queryJpa = getEntityManager().createQuery(sql);
-        StatementAdapter<T, R> stmt = new JpaStatementAdapter(queryJpa, null, this.handlerException);
-        return stmt;
-    }
+//    @Override
+//    public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
+//    {
+//        Query queryJpa = getEntityManager().createQuery(sql);
+//        StatementAdapter<T, R> stmt = new JpaStatementAdapter(queryJpa, null, this.handlerException);
+//        return stmt;
+//    }
 
     private Query build(Queryable queryable)
     {

@@ -38,7 +38,7 @@ import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
 import net.sf.jkniv.whinstone.statement.AutoKey;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
-public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
+public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
 {
     private static final Logger  LOG = LoggerFactory.getLogger();
     private static final Logger SQLLOG = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
@@ -51,30 +51,29 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
     private int                     index, indexIN;
     private Class<T>                returnType;
     private ResultRow<T, ResultSet> resultRow;
-    private boolean                 scalar;
-    private Set<OneToMany>          oneToManies;
-    private List<String>            groupingBy;
-    private KeyGeneratorType        keyGeneratorType;
     private Queryable               queryable;
     private AutoKey                 autoKey;
+    //private KeyGeneratorType        keyGeneratorType;
+    //private boolean                 scalar;
+    //private Set<OneToMany>          oneToManies;
+    //private List<String>            groupingBy;
     
     @SuppressWarnings("unchecked")
-    public PreparedStatementAdapter(PreparedStatement stmt, Queryable queryable)
+    public JdbcPreparedStatementAdapter(PreparedStatement stmt, Queryable queryable)
     {
         this.stmt = stmt;
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
         this.dtConverter = new SqlDateConverter();
-        this.oneToManies = Collections.emptySet();
-        this.groupingBy = Collections.emptyList();
-        this.scalar = false;
+        //this.oneToManies = Collections.emptySet();
+        //this.groupingBy = Collections.emptyList();
+        //this.scalar = false;
         this.queryable = queryable;
         this.returnType = (Class<T>) Map.class;
 
-        if(queryable != null)
+        if(queryable != null)// TODO check if queryable can be null
         {
-            if (queryable.isScalar())
-                scalar();
-            
+            //if (queryable.isScalar())
+            //    scalar();
             if (queryable.getReturnType() != null)
                 returnType = (Class<T>)queryable.getReturnType();
             else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
@@ -89,43 +88,46 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
         return this;
     }
     
-    
-    public StatementAdapter<T, ResultSet> resultRow(ResultRow<T, ResultSet> resultRow)
+    @Override
+    public StatementAdapter<T, ResultSet> with(ResultRow<T, ResultSet> resultRow)
     {
         this.resultRow = resultRow;
         return this;
     }
     
-    public StatementAdapter<T, ResultSet> scalar()
-    {
-        this.scalar = true;
-        return this;
-    }
+//    @Override
+//    public StatementAdapter<T, ResultSet> scalar()
+//    {
+//        this.scalar = true;
+//        return this;
+//    }
     
-    public StatementAdapter<T, ResultSet> oneToManies(Set<OneToMany> oneToManies)
-    {
-        this.oneToManies = oneToManies;
-        return this;
-    }
-    
-    public StatementAdapter<T, ResultSet> groupingBy(List<String> groupingBy)
-    {
-        this.groupingBy = groupingBy;
-        return this;
-    }
-    
-    @Override
-    public StatementAdapter<T, ResultSet> keyGeneratorType(KeyGeneratorType keyGeneratorType)
-    {
-        this.keyGeneratorType = keyGeneratorType;
-        return this;
-    }
-
-    @Override
-    public KeyGeneratorType getKeyGeneratorType()
-    {
-        return this.keyGeneratorType;
-    }
+//    @Override
+//    public StatementAdapter<T, ResultSet> oneToManies(Set<OneToMany> oneToManies)
+//    {
+//        this.oneToManies = oneToManies;
+//        return this;
+//    }
+//    
+//    @Override
+//    public StatementAdapter<T, ResultSet> groupingBy(List<String> groupingBy)
+//    {
+//        this.groupingBy = groupingBy;
+//        return this;
+//    }
+//    
+//    @Override
+//    public StatementAdapter<T, ResultSet> with(KeyGeneratorType keyGeneratorType)
+//    {
+//        this.keyGeneratorType = keyGeneratorType;
+//        return this;
+//    }
+//
+//    @Override
+//    public KeyGeneratorType getKeyGeneratorType()
+//    {
+//        return this.keyGeneratorType;
+//    }
     
     @Override
     public StatementAdapter<T, ResultSet> bind(String name, Object value)
@@ -162,7 +164,6 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
     }
     
     @Override
-    //public StatementAdapter<T, ResultSet> bind(int position, Object value)
     public StatementAdapter<T, ResultSet> bind(Object value)
     {
         //this.index = position;
@@ -222,9 +223,9 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
             setResultRow(columns);
             
             Transformable<T> transformable = resultRow.getTransformable();
-            if (!groupingBy.isEmpty())
+            if (hasGroupingBy())
             {
-                grouping = new GroupingBy(groupingBy, queryable.getReturnType(), transformable);
+                grouping = new GroupingBy(getGroupingBy(), queryable.getReturnType(), transformable);
             }
             rsParser = new ObjectResultSetParser(resultRow, grouping);
             list = rsParser.parser(rs);
@@ -234,6 +235,9 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
             if(queryable != null) // TODO design improve for use sql stats
                 queryable.getDynamicSql().getStats().add(e);
             handlerException.handle(e, e.getMessage());
+        }
+        finally {
+            TimerKeeper.clear();
         }
         return list;
     }
@@ -440,7 +444,7 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
         if (resultRow != null)
             return;
         
-        if (scalar)
+        if (queryable.isScalar())
         {
             resultRow = new ScalarResultRow(columns);
         }
@@ -460,13 +464,13 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
         {
             resultRow = new BooleanResultRow(columns);
         }
-        else if (oneToManies.isEmpty())
+        else if (!hasOneToMany())
         {
             resultRow = new FlatObjectResultRow(returnType, columns);
         }
         else
         {
-            resultRow = new PojoResultRow(returnType, columns, oneToManies);
+            resultRow = new PojoResultRow(returnType, columns, getOneToMany());
         }
     }
     
@@ -552,5 +556,25 @@ public class PreparedStatementAdapter<T, R> implements StatementAdapter<T, Resul
         {
             this.handlerException.handle(e);// TODO design handlerException for Statement setFetchSize exception
         }
+    }
+    
+    private boolean hasOneToMany()
+    {
+        return !queryable.getDynamicSql().asSelectable().getOneToMany().isEmpty();
+    }
+
+    private Set<OneToMany> getOneToMany()
+    {
+        return queryable.getDynamicSql().asSelectable().getOneToMany();
+    }
+
+    private boolean hasGroupingBy()
+    {
+        return !queryable.getDynamicSql().asSelectable().getGroupByAsList().isEmpty();
+    }
+
+    private List<String> getGroupingBy()
+    {
+        return queryable.getDynamicSql().asSelectable().getGroupByAsList();        
     }
 }

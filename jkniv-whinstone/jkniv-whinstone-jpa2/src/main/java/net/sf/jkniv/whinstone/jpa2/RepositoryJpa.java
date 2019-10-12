@@ -752,7 +752,9 @@ class RepositoryJpa implements RepositoryJpaExtend
         }
         else
         {
-            sql = new NamedQueryForSql(queryName, queryable.getReturnType());
+            sql = new NamedQueryForSql(queryName, queryable.getReturnType(), 
+                    sqlContext.getSqlDialect(),
+                    sqlContext.getRepositoryConfig().getStatistical());
             sqlContext.add(sql);
         }
         return sql;
