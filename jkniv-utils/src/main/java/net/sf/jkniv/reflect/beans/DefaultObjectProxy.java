@@ -21,6 +21,7 @@ package net.sf.jkniv.reflect.beans;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -141,6 +142,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
                 .config(InstantiationException.class,
                         "[InstantiationException] -> Cannot create new instance of class %s")
                 .config(NoSuchMethodException.class, "[NoSuchMethodException] -> Cannot invoke or get the method %s")
+                .config(NoSuchFieldException.class, "[NoSuchFieldException] -> Cannot get the field %s")
                 .config(SecurityException.class, "[SecurityException] -> Cannot invoke or get method %s");
         
         /* newInstance
@@ -509,6 +511,36 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         return false;
     }
 
+    @Override
+    public <T extends Annotation> T getAnnotationMethod(Class<? extends Annotation> annotation, String methodName, Class<?>... paramTypes)
+    {
+        Method method = null;
+        try
+        {
+            method = this.targetClass.getMethod(methodName, paramTypes);
+        }
+        catch (Exception e) // SecurityException, NoSuchMethodException, NullPointerException 
+        {
+            this.handleException.handle(e);
+        }
+        return (T) method.getAnnotation(annotation);
+    }
+
+    @Override
+    public <T extends Annotation> T getAnnotationField(Class<? extends Annotation> annotation, String fieldName)
+    {
+        Field field = null;
+        try
+        {
+            field = this.targetClass.getDeclaredField(fieldName);
+        }
+        catch (Exception e)// SecurityException, NoSuchFieldException, NullPointerException
+        {
+            this.handleException.handle(e);
+        }
+        return (T) field.getAnnotation(annotation);
+    }
+    
     private Class<?>[] getTypes(Object[] args)
     {
         if (args == null)
@@ -535,4 +567,6 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
                 || GregorianCalendar.class.getCanonicalName().equals(type.getCanonicalName()));
     }
     */
+
+
 }

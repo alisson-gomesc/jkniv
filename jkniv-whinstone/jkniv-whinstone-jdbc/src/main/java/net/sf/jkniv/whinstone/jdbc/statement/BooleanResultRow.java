@@ -33,9 +33,10 @@ import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
  * 
  * Inject the ResultSet at java basic type instance...
  * 
- * @author Alisson Gomes
- *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
+ *
+ * @author Alisson Gomes
+ * @since 0.6.0
  */
 class BooleanResultRow<T> implements ResultRow<T, ResultSet>
 {

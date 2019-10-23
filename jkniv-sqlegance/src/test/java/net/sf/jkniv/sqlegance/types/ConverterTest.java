@@ -17,31 +17,30 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.dialect;
+package net.sf.jkniv.sqlegance.types;
 
-import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
-import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
-import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
-/**
- * Dialect to Derby version 10.4
- * 
- * <ul>
- *  <li>Supports limits? false</li>
- *  <li>Supports limit off set? false</li>
- *  <li>Supports rownum? true</li>
- * </ul>
- *
- * @author Alisson Gomes
- * @since 0.6.0
- */
-public class Derby10o4Dialect extends AnsiDialect
+import org.junit.Test;
+
+import net.sf.jkniv.reflect.beans.ObjectProxy;
+import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.sqlegance.types.Converter;
+
+public class ConverterTest
 {
-    public Derby10o4Dialect()
+
+    @Test 
+    public void whenCheckIfAnnotationIsPresent()
     {
-        super();
-        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, false));
-        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, false));
-        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.ROWNUM, true));
+        ObjectProxy<MixModelType> proxy = ObjectProxyFactory.of(MixModelType.class);
+        Converter converter = proxy.getAnnotationMethod(Converter.class, "getActive");
+        assertThat(converter, notNullValue());
+        assertThat(converter.allowNull(), is(true));
+        assertThat(converter.pattern(), is("1"));
     }
+    
+    
 }

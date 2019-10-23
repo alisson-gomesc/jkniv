@@ -24,12 +24,12 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 class PositionalArrayParams extends AbstractParam implements AutoBindParams
 {
-    private StatementAdapter<?,?> stmtAdapter;
-    private Object           params;
-    private String           queryName;
-    private String[] paramsNames;
+    private StatementAdapter<?, ?> stmtAdapter;
+    private Object                 params;
+    private String                 queryName;
+    private String[]               paramsNames;
     
-    public PositionalArrayParams(StatementAdapter<?,?> stmtAdapter, Queryable queryable)
+    public PositionalArrayParams(StatementAdapter<?, ?> stmtAdapter, Queryable queryable)
     {
         super();
         this.stmtAdapter = stmtAdapter;

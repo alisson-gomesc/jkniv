@@ -56,7 +56,7 @@ import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
  * @see <a href="http://www.ibm.com/support/knowledgecenter/SSEPGG_10.1.0/com.ibm.db2.luw.apdv.porting.doc/doc/r0052867.html">DB2 compatibility Oracle/Sybase/MySQL</a>
  *
  * @author Alisson Gomes 
- *
+ * @since 0.6.0
  */
 public class DB2EnableMYSDialect extends AnsiDialect
 {

@@ -28,7 +28,7 @@ import net.sf.jkniv.whinstone.ResultRow;
 
 /**
  * Adapter for Statements {@link java.sql.Statement}, {@link java.sql.PreparedStatement}, 
- * {@code java.sql.CallableStatement} or {@code javax.persistence.Query}
+ * {@link java.sql.CallableStatement} or {@link javax.persistence.Query}
  * 
  * @param <T> type of object to return by {@link Repository}
  * @param <R> The driver result of a query like {@link ResultSet}
@@ -62,14 +62,6 @@ public interface StatementAdapter<T, R>
      */
     StatementAdapter<T, R> bind(Object... values);
 
-    /*
-     * return type
-     * @param returnType type of return
-     * @return instance of this object
-     */
-    // @deprecated Command must to know return type change design
-    //StatementAdapter<T, R> returnType(Class<T> returnType);
-
     /**
      * result row
      * @param resultRow how to process the rows
@@ -77,55 +69,12 @@ public interface StatementAdapter<T, R>
      */
     StatementAdapter<T, R> with(ResultRow<T, R> resultRow);
     
-    /*
-     * scalar value
-     * @return instance of this object
-     */
-    // @deprecated Command must to know return type change design
-    //StatementAdapter<T, R> scalar();
-    
-    /*
-     * one to many
-     * @param oneToManies one-to-many relationship
-     * @return instance of this object
-     *
-<<<<<<< HEAD
-    // @deprecated Command must to know one to many change design
-=======
-    // @deprecated Command must to know one to many TODO change design
->>>>>>> branch '0.6.0.M52' of https://github.com/alisson-gomesc/jkniv.git
-    StatementAdapter<T, R> oneToManies(Set<OneToMany> oneToManies);
-    */
-    
-    /*
-     * group by
-     * @param groupingBy list of fields to group the rows
-     * @return instance of this object
-     *
-    // @deprecated Command must to know group by TODO change design
-    StatementAdapter<T, R> groupingBy(List<String> groupingBy);
-    */
-    /*
-     * key generator type
-     * @param keyGeneratorType type of generator key
-     * @return instance of this object
-     */
-    // @deprecated Command must to know return type TODO change design
-    //StatementAdapter<T, R> with(KeyGeneratorType keyGeneratorType);
-
     StatementAdapter<T, R> with(AutoKey generateKey);
 
     /**
      * bind the keys generated
      */
     void bindKey();
-
-    /*
-     * get key generator type
-     * @return instance of this object
-     */
-    // @deprecated Command must to know return type TODO change design
-    //KeyGeneratorType getKeyGeneratorType();
 
     List<T> rows();
     

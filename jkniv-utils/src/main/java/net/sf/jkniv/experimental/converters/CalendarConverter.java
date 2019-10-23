@@ -21,7 +21,6 @@ package net.sf.jkniv.experimental.converters;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * Convert object value to java.util.Calendar
@@ -29,7 +28,7 @@ import java.util.GregorianCalendar;
  * @author Alisson Gomes 
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "unchecked" })
 public class CalendarConverter extends AbstractConverter // TODO Test me
 {
     public CalendarConverter()// FIXME design to supports locale and another formats

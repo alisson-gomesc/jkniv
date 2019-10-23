@@ -39,19 +39,19 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
 {
-    private static final Logger  LOG = LoggerFactory.getLogger();
-    private static final Logger SQLLOG = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
-    private static final DataMasking  MASKING = LoggerFactory.getDataMasking();
-    private static final MethodName SETTER = MethodNameFactory.getInstanceSetter();
+    private static final Logger      LOG = LoggerFactory.getLogger();
+    private static final Logger      SQLLOG = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
+    private static final DataMasking MASKING = LoggerFactory.getDataMasking();
+    private static final MethodName  SETTER = MethodNameFactory.getInstanceSetter();
 
     private final PreparedStatement stmt;
     private final HandlerException  handlerException;
     private final SqlDateConverter  dtConverter;
     private int                     index, indexIN;
-    //private Class<?>                returnType;
     private ResultRow<T, ResultSet> resultRow;
     private Queryable               queryable;
     private AutoKey                 autoKey;
+    //private Class<?>                returnType;
     //private KeyGeneratorType        keyGeneratorType;
     //private boolean                 scalar;
     //private Set<OneToMany>          oneToManies;
@@ -196,7 +196,6 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         Iterator<Object> it = autoKey.iterator();
         for(int i=0; i<properties.length; i++)
             setValueOfKey(proxy, properties[i], it.next());
-        
         /*
         try
         {
@@ -287,55 +286,6 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         indexIN = 0;
         return before;
     }
-    /*
-    @SuppressWarnings(
-    { "unchecked", "rawtypes" })
-    private void setValue(String name, Object paramValue)
-    {
-        log(name, paramValue);
-        try
-        {
-            if (name.toLowerCase().startsWith("in:"))
-            {
-                int j = 0;
-                Object[] paramsIN = (Object[]) paramValue;
-                if (paramsIN == null)
-                    throw new ParameterException("Cannot set parameter [" + name + "] from IN clause with NULL");
-                
-                for (; j < paramsIN.length; j++)
-                    stmt.setObject(j + index, paramsIN[j]);
-                indexIN = indexIN + j;
-            }
-            else
-            {
-                if (paramValue == null)
-                {
-                    stmt.setObject(index + indexIN, paramValue);
-                }
-                else if (paramValue.getClass().isEnum())
-                {
-                    ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(paramValue);
-                    stmt.setObject(index + indexIN, proxy.invoke("name"));
-                }
-                else if (paramValue instanceof Date)
-                {
-                    SqlDateConverter converter = new SqlDateConverter();
-                    java.sql.Timestamp timestamp = converter.convert(java.sql.Timestamp.class, paramValue);
-                    stmt.setObject(index + indexIN, timestamp);
-                }
-                else
-                {
-                    stmt.setObject(index + indexIN, paramValue);
-                }
-            }
-        }
-        catch (SQLException e)
-        {
-            throw new RepositoryException(
-                    "Cannot set parameter [" + name + "] value [" + sqlLogger.mask(name, paramValue) + "]", e);
-        }
-    }
-    */
     
     private void setValueOfKey(ObjectProxy<?> proxy, String property, Object value)
     {

@@ -19,21 +19,20 @@
  */
 package net.sf.jkniv.reflect.beans;
 
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.*;
+import javax.annotation.PostConstruct;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -198,7 +197,7 @@ public class ObjectProxyTest
     @Test
     public void whenCheckIfAnnotationIsPresentAtClass()
     {
-        ObjectProxy<Book> proxy = ObjectProxyFactory.of(Book.class);
+        ObjectProxy<Item> proxy = ObjectProxyFactory.of(Item.class);
         proxy.newInstance();
         assertThat(proxy.hasAnnotation("javax.annotation.Resource"), is(true));
         assertThat(proxy.hasAnnotation(javax.annotation.Resource.class), is(true));
@@ -207,9 +206,59 @@ public class ObjectProxyTest
     @Test
     public void whenCheckIfAnnotationIsPresentWithoutInstanceOfClass()
     {
-        ObjectProxy<Book> proxy = ObjectProxyFactory.of(Book.class);
+        ObjectProxy<Item> proxy = ObjectProxyFactory.of(Item.class);
         assertThat(proxy.hasAnnotation("javax.annotation.Resource"), is(true));
         assertThat(proxy.hasAnnotation(javax.annotation.Resource.class), is(true));
+    }
+
+    @Test
+    public void whenGetAnnotatedMethod()
+    {
+        ObjectProxy<Item> proxy = ObjectProxyFactory.of(Item.class);
+        Annotation annotation = proxy.getAnnotationMethod(PostConstruct.class, "init");
+        assertThat(annotation, notNullValue());
+    }
+
+    @Test
+    public void whenGetMethodNotAnnotated()
+    {
+        ObjectProxy<Item> proxy = ObjectProxyFactory.of(Item.class);
+        Annotation annotation = proxy.getAnnotationMethod(PostConstruct.class, "getId");
+        assertThat(annotation, nullValue());
+    }
+
+    @Test
+    public void whenGetAnnotatedMethodForMethodNotExists()
+    {
+        catcher.expect(ReflectionException.class);
+        catcher.expectMessage("[NoSuchMethodException] -> Cannot invoke or get the method net.sf.jkniv.reflect.beans.Item.id()");
+        ObjectProxy<Item> proxy = ObjectProxyFactory.of(Item.class);
+        proxy.getAnnotationMethod(PostConstruct.class, "id");
+    }
+
+    @Test
+    public void whenGetAnnotatedField()
+    {
+        ObjectProxy<Item> proxy = ObjectProxyFactory.of(Item.class);
+        Annotation annotation = proxy.getAnnotationField(Rule.class, "id");
+        assertThat(annotation, notNullValue());
+    }
+
+    @Test
+    public void whenGetFieldNotAnnotated()
+    {
+        ObjectProxy<Item> proxy = ObjectProxyFactory.of(Item.class);
+        Annotation annotation = proxy.getAnnotationField(Rule.class, "name");
+        assertThat(annotation, nullValue());
+    }
+
+    @Test
+    public void whenGetAnnotatedFieldForFiledNotExists()
+    {
+        catcher.expect(ReflectionException.class);
+        catcher.expectMessage("[NoSuchFieldException] -> Cannot get the field init");
+        ObjectProxy<Item> proxy = ObjectProxyFactory.of(Item.class);
+        proxy.getAnnotationField(PostConstruct.class, "init");
     }
 
 }

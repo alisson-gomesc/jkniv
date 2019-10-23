@@ -66,7 +66,6 @@ import net.sf.jkniv.whinstone.commands.CommandAdapter;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.commands.DefaultQueryHandler;
 import net.sf.jkniv.whinstone.params.AutoBindParams;
-import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 @SuppressWarnings("unchecked")
 public class DefaultQueryHandlerTest

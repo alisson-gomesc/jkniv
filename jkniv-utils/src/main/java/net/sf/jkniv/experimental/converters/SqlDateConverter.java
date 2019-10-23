@@ -40,7 +40,7 @@ public class SqlDateConverter extends AbstractConverter // TODO Test me
         this.patterns.add("yyyy-MM-dd");
         this.patterns.add("yyyyMMdd");
     }
-        
+    
     public <T> T convert(Class<T> type, Object value)
     {
         T result = null;

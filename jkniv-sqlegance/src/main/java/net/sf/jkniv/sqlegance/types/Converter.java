@@ -17,31 +17,39 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.dialect;
+package net.sf.jkniv.sqlegance.types;
 
-import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
-import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
-import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * Dialect to Derby version 10.4
+ * The converter is used to change the value/type from original object
+ * to a destiny object.
  * 
- * <ul>
- *  <li>Supports limits? false</li>
- *  <li>Supports limit off set? false</li>
- *  <li>Supports rownum? true</li>
- * </ul>
- *
+ * Just methods can be annotated because whinstone not violate yours objects.
+ * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public class Derby10o4Dialect extends AnsiDialect
+@Target(METHOD)
+@Retention(RUNTIME)
+public @interface Converter
 {
-    public Derby10o4Dialect()
-    {
-        super();
-        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT, false));
-        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.LIMIT_OFF_SET, false));
-        addFeature(SqlFeatureFactory.newInstance(SqlFeatureSupport.ROWNUM, true));
-    }
+    /**
+     * Specifies the converter to be used.
+     */
+    Class converter() default void.class;
+    
+    /**
+     * The pattern describing to be used to define or formatter a value.
+     */
+    String pattern() default "";
+
+    /**
+     * Used to make constraints when null values is not allowed into converter process.
+     */
+    boolean allowNull() default true;
 }

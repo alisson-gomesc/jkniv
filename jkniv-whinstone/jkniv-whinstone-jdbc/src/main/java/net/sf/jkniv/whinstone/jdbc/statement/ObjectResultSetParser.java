@@ -36,9 +36,10 @@ import net.sf.jkniv.whinstone.classification.Groupable;
  * <p>
  * <strong>This class doesn't supports inject value at Oriented-Object model, like nested objects.</strong>
  * 
- * @author Alisson Gomes
- *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
  */
 class ObjectResultSetParser<T> implements ResultSetParser<T, ResultSet>
 {

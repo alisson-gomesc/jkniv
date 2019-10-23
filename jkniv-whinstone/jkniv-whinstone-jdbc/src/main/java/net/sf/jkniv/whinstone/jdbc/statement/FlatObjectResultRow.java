@@ -36,14 +36,15 @@ import net.sf.jkniv.whinstone.classification.ObjectTransform;
 import net.sf.jkniv.whinstone.classification.Transformable;
 
 /**
- * 
  * Inject the ResultSet at flat Object, basic types like: String, Date, Numbers, Clob, Blob...
  * <p>
  * <strong>This class doesn't supports inject value at Oriented-Object model, like nested objects.</strong>
  * 
- * @author Alisson Gomes
- *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ * 
  */
 class FlatObjectResultRow<T> implements ResultRow<T, ResultSet>
 {

@@ -37,7 +37,7 @@ import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
  * </ul>
  * 
  * @author Alisson Gomes
- *
+ * @since 0.6.0
  */
 public class Derby10o7Dialect extends Derby10o4Dialect
 {

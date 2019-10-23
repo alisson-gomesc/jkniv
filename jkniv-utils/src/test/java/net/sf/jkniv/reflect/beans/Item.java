@@ -18,31 +18,31 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.acme.domain;
+package net.sf.jkniv.reflect.beans;
 
-public class Book
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+
+import org.junit.Rule;
+
+@Resource
+public class Item
 {
+    @Rule()
     private Long   id;
     private String name;
-    private String isbn;
-    private Author author;
     
-    public Book()
+    public Item()
     {
         // TODO Auto-generated constructor stub
     }
-    
-    public Book(Long id, String name, String isbn, String author)
+
+    @PostConstruct
+    public void init()
     {
-        super();
-        this.id = id;
-        this.name = name;
-        this.isbn = isbn;
-        this.author = new Author(author);
+        System.out.println("initiated");
     }
-
-
-
+    
     public Long getId()
     {
         return id;
@@ -62,52 +62,4 @@ public class Book
     {
         this.name = name;
     }
-    
-    public String getIsbn()
-    {
-        return isbn;
-    }
-    
-    public void setIsbn(String isbn)
-    {
-        this.isbn = isbn;
-    }
-    
-    public Author getAuthor()
-    {
-        return author;
-    }
-    
-    public void setAuthor(Author author)
-    {
-        this.author = author;
-    }
-    
-    public void open()
-    {
-        System.out.println("Book opened");
-    }
-    
-    public void close()
-    {
-        System.out.println("Book closed");
-    }
-    
-    public void borrow()
-    {
-        System.out.println("Book borrowed");
-    }
-
-    public void borrow(String to)
-    {
-        System.out.println("Book borrowed for " + to);
-    }
-
-    
-    @Override
-    public String toString()
-    {
-        return "Book [id=" + id + ", name=" + name + ", isbn=" + isbn + ", author=" + author + "]";
-    }
-    
 }

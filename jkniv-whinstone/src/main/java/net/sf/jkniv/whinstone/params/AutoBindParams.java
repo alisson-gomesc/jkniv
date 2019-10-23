@@ -33,6 +33,7 @@ public interface AutoBindParams
 {
     /**
      * Bind all parameters from {@link Queryable} to {@link StatementAdapter} automatically
+     * @throws ParameterException when a parameter values not correspond the type expected
      */
     public void on();
 
@@ -44,6 +45,7 @@ public interface AutoBindParams
      * <p><b>Note:</b>
      * <p><code>-2</code> no count of the number of rows it affected is available</p>
      * <p><code>-3</code> indicating that an error occurred while executing a bulk statement</p>
+     * @throws ParameterException when a parameter values not correspond the type expected
      */
     public int onBulk();
 

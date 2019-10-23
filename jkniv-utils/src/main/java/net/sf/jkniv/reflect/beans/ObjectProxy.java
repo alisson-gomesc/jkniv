@@ -34,11 +34,6 @@ import net.sf.jkniv.reflect.ReflectionException;
  */
 public interface ObjectProxy<T>
 {
-    /*
-    * <code>Constructor</code> provides information about, and access to, a single
-    * constructor for a class.
-*/
-    
     /**
      * Arguments to build object using contructor
      * @param constructorArgs argument values
@@ -107,8 +102,36 @@ public interface ObjectProxy<T>
      */
     ObjectProxy<T> mute(Class<? extends Exception> ex);
     
+    /**
+     * check if this proxy class has {@code annotation}
+     * @param annotation name of annotation
+     * @return {@code true} when the class has this annotation, {@code false} otherwise
+     */
     boolean hasAnnotation(String annotation);
 
+    /**
+     * check if this proxy class has {@code annotation}
+     * @param annotation name of annotation
+     * @return {@code true} when the class has this annotation, {@code false} otherwise
+     */
     boolean hasAnnotation(Class<? extends Annotation> annotation);
+
+    /**
+     * check if this proxy class has {@code annotation} for a method name
+     * @param annotation name of the annotation
+     * @param methodName name of the method
+     * @return the Annotation instance or {@code null} if not found
+     * @throws ReflectionException when the {@code methodName} not exists
+     */
+    <T extends Annotation> T getAnnotationMethod(Class<? extends Annotation> annotation, String methodName, Class<?>... paramTypes);
+
+    /**
+     * check if this proxy class has {@code annotation} for a method name
+     * @param annotation name of the annotation
+     * @param fieldName attribute name
+     * @return the Annotation instance or {@code null} if not found
+     * @throws ReflectionException when the {@code attributeName} not exists
+     */
+    <T extends Annotation> T getAnnotationField(Class<? extends Annotation> annotation, String fieldName);
 
 }

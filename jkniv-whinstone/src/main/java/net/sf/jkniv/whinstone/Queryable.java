@@ -231,13 +231,15 @@ public interface Queryable
      * @param names array of names to get yours values
      * @return an {@code array} of values from {@code params}, base-zero array is returned when 
      * the names doesn't match.
+     * @throws ParameterException when a parameter values not correspond the type expected
      */
     Object[] values(String[] names);
     
     /**
      * Bind Sql to {@link Queryable} instance generating the raw query.
      * 
-     * @param sql The instance of static or dynamic SQL statement 
+     * @param sql The instance of static or dynamic SQL statement
+     * @throws IllegalStateException when o {@code sql} is tried to be reassigned 
      */
     void bind(Sql sql);
     
@@ -314,6 +316,8 @@ public interface Queryable
     /**
      * Define a page selected to mark the reader's place
      * @param bookmark A string that enables you to specify which page of results you require
+     * @see <a href="https://docs.datastax.com/en/developer/java-driver/3.2/manual/paging/#saving-and-reusing-the-paging-state">Saving and reusing the paging state</a>
+     * @see <a href="https://docs.couchdb.org/en/stable/api/database/find.html#pagination">Find Pagination</a>
      */
     void setBookmark(String bookmark);
 }

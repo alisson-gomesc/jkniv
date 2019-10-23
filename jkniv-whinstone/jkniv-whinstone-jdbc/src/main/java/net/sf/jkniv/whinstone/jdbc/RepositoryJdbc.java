@@ -59,7 +59,7 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
  * Repository pattern implementation for JDBC API.
  * 
  * @author Alisson Gomes
- *
+ * @since 0.6.0
  */
 class RepositoryJdbc implements Repository
 {

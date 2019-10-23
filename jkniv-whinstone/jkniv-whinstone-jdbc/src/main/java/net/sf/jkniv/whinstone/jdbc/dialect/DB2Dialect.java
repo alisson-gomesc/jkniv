@@ -19,11 +19,9 @@
  */
 package net.sf.jkniv.whinstone.jdbc.dialect;
 
-import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
-import net.sf.jkniv.whinstone.Queryable;
 
 /**
  * Default dialect to DB2.
@@ -38,7 +36,7 @@ import net.sf.jkniv.whinstone.Queryable;
  * </ul>
  *
  * @author Alisson Gomes 
- *
+ * @since 0.6.0
  */
 public class DB2Dialect extends AnsiDialect
 {

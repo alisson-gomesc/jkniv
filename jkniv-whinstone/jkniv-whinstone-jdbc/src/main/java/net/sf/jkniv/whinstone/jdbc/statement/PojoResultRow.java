@@ -49,9 +49,10 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  * <p>
  * <strong>This class doesn't supports inject value at Oriented-Object model, like nested objects.</strong>
  * 
+ * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
+ * 
  * @author Alisson Gomes
  * @since 0.6.0
- * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
 class PojoResultRow<T> implements ResultRow<T, ResultSet>
 {
@@ -173,50 +174,6 @@ class PojoResultRow<T> implements ResultRow<T, ResultSet>
                     MASKING.mask(column.getAttributeName(), jdbcObject));
         reflect.inject(method, jdbcObject);
     }
-    /*
-    private void __prepareOneToManyValue__(OneToMany otm, JdbcColumn column, ResultSet rs) throws SQLException
-    {
-        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(otmValues.get(otm));
-        Injectable<?> reflect = InjectableFactory.newMethodInjection(proxy);
-        Object jdbcObject = null;
-        if (column.isBinary())
-            jdbcObject = column.getBytes(rs);
-        else
-            jdbcObject = column.getValue(rs);
-        
-        // otm.property : 'book', JdbcColumn: book.name, capitalize -> setName
-        String attrName = column.getName().substring(otm.getProperty().length()+1);
-        String getterName = GETTER.capitalize(attrName);
-        String setterName = SETTER.capitalize(attrName);
-        Collection<?> collection = (Collection<?>) reflect.inject(getterName, jdbcObject);
-        if (collection ==    null)
-        {
-            collection = (Collection<?>) ObjectProxyFactory.newProxy(otm.getImpl()).newInstance();
-        }
-        //String method = SETTER.capitalize(column.getName().substring(otm.getProperty().length()+1));
-        reflect.inject(method, jdbcObject);
-    }
-    */
-    /*
-     * Append prefix <code>set<code> to attributeColumnName and capitalize it.
-     * @param attributeColumnName attribute name to capitalize with <code>set</code> prefix
-     * @return return capitalize attribute name, sample: identityName -> setIdentityName
-     *
-    private String capitalizeSetter(String attributeColumnName)// TODO design config capitalize algorithm
-    {
-        String capitalize = "";
-        
-        if (attributeColumnName != null)
-        {
-            int length = attributeColumnName.length();
-            capitalize = attributeColumnName.substring(0, 1).toUpperCase(Locale.ENGLISH);
-            if (length > 1)
-                capitalize += attributeColumnName.substring(1, length);
-        }
-        //sqlLogger.log(LogLevel.RESULTSET, "Mapping column [{}] to property [{}]", attributeColumnName, "set" + capitalize);
-        return "set" + capitalize;
-    }
-    */
     
     @Override
     public Transformable<T> getTransformable()
@@ -229,5 +186,4 @@ class PojoResultRow<T> implements ResultRow<T, ResultSet>
     {
         this.columns = columns;
     }
-    
 }
