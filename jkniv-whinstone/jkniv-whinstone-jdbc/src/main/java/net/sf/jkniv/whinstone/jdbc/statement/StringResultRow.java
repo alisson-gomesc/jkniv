@@ -24,6 +24,7 @@ import java.sql.SQLException;
 
 import org.slf4j.Logger;
 
+import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.Transformable;
@@ -40,8 +41,10 @@ import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
  */
 class StringResultRow<T> implements ResultRow<T, ResultSet>
 {
-    private static final Logger  LOG = LoggerFactory.getLogger();
-    private JdbcColumn<ResultSet>[] columns;
+    private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
+    private static final DataMasking MASKING = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getDataMasking();
+    
+    private JdbcColumn<ResultSet>[]  columns;
     
     public StringResultRow(JdbcColumn<ResultSet>[] columns)
     {
@@ -57,22 +60,23 @@ class StringResultRow<T> implements ResultRow<T, ResultSet>
         else
             jdbcObject = columns[0].getValue(rs);
         
-        if(LOG.isTraceEnabled())
-            LOG.trace("Column index [0] named [{}] with value [{}] as String", jdbcObject, columns[0].getAttributeName());
-
-        return (T)(jdbcObject != null ? jdbcObject.toString() : null);
+        if (SQLLOG.isTraceEnabled())
+            SQLLOG.trace("Column index [0] named [{}] with value [{}] as String", columns[0].getAttributeName(),
+                    MASKING.mask(columns[0].getAttributeName(), jdbcObject));
+        
+        return (T) (jdbcObject != null ? jdbcObject.toString() : null);
     }
-
+    
     @Override
     public Transformable<T> getTransformable()
     {
         return null;
-    }    
+    }
     
     @Override
     public void setColumns(JdbcColumn<ResultSet>[] columns)
     {
         this.columns = columns;
     }
-
+    
 }

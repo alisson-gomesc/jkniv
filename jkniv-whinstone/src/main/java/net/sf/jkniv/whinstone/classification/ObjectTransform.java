@@ -23,7 +23,7 @@ import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 
 @SuppressWarnings("unchecked")
-public class ObjectTransform  implements Transformable<Object>
+public class ObjectTransform implements Transformable<Object>
 {
     public <T> T transform(Object row, Class<T> type)
     {

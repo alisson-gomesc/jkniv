@@ -17,40 +17,49 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.domain.acme;
+package net.sf.jkniv.sqlegance.types;
 
-import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.sql.Types;
 
-
-public class Foo implements Serializable
+public class EnumOrdinalType implements Convertible<Enum<?>, Integer>
 {
-    private static final long serialVersionUID = -2617198422945648684L;
-    private Long       id;
-    private String     name;
+    private final static int[] TYPES = {Types.INTEGER};
+    private Field field;
     
-    public Long getId()
+    public EnumOrdinalType(Field field)
     {
-        return id;
-    }
-    
-    public void setId(Long id)
-    {
-        this.id = id;
-    }
-    
-    public String getName()
-    {
-        return name;
-    }
-    
-    public void setName(String name)
-    {
-        this.name = name;
+        this.field = field;
     }
     
     @Override
-    public String toString()
+    public Integer toJdbc(Enum<?> attribute)
     {
-        return "Author [id=" + id + ", name=" + name + "]";
+        if (attribute == null)
+            return null;
+        
+        return attribute.ordinal();
     }
+
+    @Override 
+    public Enum<?> toAttribute(Integer jdbc)
+    {
+        if (jdbc == null)
+            return null;
+        
+        return (Enum<?>) this.field.getType().getEnumConstants()[jdbc.intValue()];
+    }
+
+    @Override
+    public int[] getTypes()
+    {
+        return TYPES;
+    }
+
+    @Override @SuppressWarnings({ "rawtypes", "unchecked" })
+    public Class getClassType()
+    {
+        return field.getType();
+    }
+    
 }

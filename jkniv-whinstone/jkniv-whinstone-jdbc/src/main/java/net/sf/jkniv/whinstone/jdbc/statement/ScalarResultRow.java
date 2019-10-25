@@ -24,6 +24,7 @@ import java.sql.SQLException;
 
 import org.slf4j.Logger;
 
+import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.Transformable;
@@ -40,7 +41,9 @@ import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
  */
 class ScalarResultRow<T> implements ResultRow<T, ResultSet>
 {
-    private static final Logger  LOG = LoggerFactory.getLogger();
+    private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
+    private static final DataMasking MASKING = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getDataMasking();
+
     private JdbcColumn<ResultSet>[] columns;
     
     public ScalarResultRow(JdbcColumn<ResultSet>[] columns)
@@ -56,22 +59,24 @@ class ScalarResultRow<T> implements ResultRow<T, ResultSet>
             jdbcObject = columns[0].getBytes(rs);
         else
             jdbcObject = columns[0].getValue(rs);
-
-        if (LOG.isTraceEnabled())
-            LOG.trace("Mapping index [0] column [{}]  type of [{}] to set scalar value [{}]", columns[0].getAttributeName(), (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), jdbcObject);
+        
+        if (SQLLOG.isTraceEnabled())
+            SQLLOG.trace("Mapping index [0] column [{}] type of [{}] to set scalar value [{}]",
+                    columns[0].getAttributeName(), (jdbcObject != null ? jdbcObject.getClass().getName() : "null"),
+                    MASKING.mask(columns[0].getAttributeName(), jdbcObject));
         return (T) jdbcObject;
     }
-
+    
     @Override
     public Transformable<T> getTransformable()
     {
         return null;
-    }    
+    }
     
     @Override
     public void setColumns(JdbcColumn<ResultSet>[] columns)
     {
         this.columns = columns;
     }
-
+    
 }

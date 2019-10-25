@@ -19,13 +19,38 @@
  */
 package net.sf.jkniv.reflect;
 
+/**
+ * Create number instance representing a specific implementation.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public interface Numerical
 {
+    /**
+     * Returns a numerical object holding the value of the specified {@code Object.toString()}. 
+     * @param n the instance of object to be parsed to a number
+     * @return Return the parsed number
+     */
     Number valueOf(Object n);
 
+    /**
+     * Returns a numerical object holding the value of the specified String. 
+     * @param n the string to be parsed to a number
+     * @return Return the parsed number
+     */
     Number valueOf(String n);
     
+    /**
+     * Returns a numerical object holding the value of the specified String. 
+     * @param n the number to be cast to specific number type
+     * @return Return the casted number
+     */
     Number valueOf(Number n);
     
+    /**
+     * The type of the number that this numerical implementation works
+     * @return class that represent a number.
+     */
     Class<? extends Number> typeOf();
 }

@@ -40,6 +40,7 @@ import org.junit.rules.ExpectedException;
 import net.sf.jkniv.acme.domain.Book;
 import net.sf.jkniv.domain.orm.Animal;
 import net.sf.jkniv.domain.orm.Cat;
+import net.sf.jkniv.reflect.ObjectNotFoundException;
 import net.sf.jkniv.reflect.ReflectionException;
 
 public class ObjectProxyTest
@@ -255,8 +256,8 @@ public class ObjectProxyTest
     @Test
     public void whenGetAnnotatedFieldForFiledNotExists()
     {
-        catcher.expect(ReflectionException.class);
-        catcher.expectMessage("[NoSuchFieldException] -> Cannot get the field init");
+        catcher.expect(ObjectNotFoundException.class);
+        catcher.expectMessage("[NoSuchFieldException] Can not found the field [init]");
         ObjectProxy<Item> proxy = ObjectProxyFactory.of(Item.class);
         proxy.getAnnotationField(PostConstruct.class, "init");
     }

@@ -396,18 +396,15 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
      * @return Array of columns with name and index
      * @throws SQLException Errors that occurs when access {@code ResultSetMetaData} methods.
      */
-    private JdbcColumn[] getJdbcColumns(ResultSetMetaData metadata) throws SQLException
+    @SuppressWarnings("unchecked")
+    private JdbcColumn<ResultSet>[] getJdbcColumns(ResultSetMetaData metadata) throws SQLException
     {
-        JdbcColumn[] columns = new JdbcColumn[metadata.getColumnCount()];
-        
+        JdbcColumn<ResultSet>[] columns = new JdbcColumn[metadata.getColumnCount()];
         for (int i = 0; i < columns.length; i++)
         {
             int columnNumber = i + 1;
             String columnName = getColumnName(metadata, columnNumber);
             int columnType = metadata.getColumnType(columnNumber);
-            //boolean binaryData = false;
-            //if (columnType == Types.CLOB || columnType == Types.BLOB)
-            //    binaryData = true;
             columns[i] = new DefaultJdbcColumn(columnNumber, columnName, columnType);
         }
         return columns;

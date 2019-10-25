@@ -19,33 +19,46 @@
  */
 package net.sf.jkniv.sqlegance.types;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.sql.Types;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-/**
- * The converter is used to change the value/type from original object
- * to a destiny object.
- * 
- * Just Methods and Fields can be annotated.
- * 
- * @author Alisson Gomes
- * @since 0.6.0
- */
-@Target({METHOD, FIELD})
-@Retention(RUNTIME)
-public @interface Converter
+public class NoConverterType implements Convertible<Object, Object>
 {
-    /**
-     * Specifies the converter to be used.
-     */
-    Class converter() default void.class;
+    private final static int[] TYPES = {Types.CHAR, Types.VARCHAR, Types.NCHAR, Types.NVARCHAR};
+    private final static Convertible<Object, Object> INSTANCE = new NoConverterType();
     
-    /**
-     * The pattern describing to be used to define or formatter a value.
-     */
-    String pattern();
+    
+    public static Convertible<Object, Object> getInstance()
+    {
+        return INSTANCE;
+    }
+    
+    private NoConverterType()
+    {
+        // TODO Auto-generated constructor stub
+    }
+    
+    @Override
+    public Object toJdbc(Object attribute)
+    {
+        return attribute;
+    }
+
+    @Override
+    public Object toAttribute(Object jdbc)
+    {
+        return jdbc;
+    }
+
+    @Override
+    public int[] getTypes()
+    {
+        return TYPES;
+    }
+
+    @Override
+    public Class<Object> getClassType()
+    {
+        return Object.class;
+    }
+    
 }

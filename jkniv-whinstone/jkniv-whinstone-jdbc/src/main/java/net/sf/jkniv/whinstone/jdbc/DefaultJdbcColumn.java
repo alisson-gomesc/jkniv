@@ -37,7 +37,8 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
     private final String                  methodName;
     private final int                     jdbcType;
     private boolean nestedAttribute;
-    private final static JdbcColumnMapper jdbcColumnMapper = new UnderscoreToCamelCaseMapper();// TODO design property to config;
+    // TODO design property to config UnderscoreToCamelCaseMapper
+    private final static JdbcColumnMapper JDBC_COLUMN_MAPPER = new UnderscoreToCamelCaseMapper();
     
     public DefaultJdbcColumn(int columnIndex, String columnName, int jdbcType)
     {
@@ -53,11 +54,10 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
         }
         else
         {
-            this.attributeName = jdbcColumnMapper.map(columnName);
+            this.attributeName = JDBC_COLUMN_MAPPER.map(columnName);
             this.methodName = capitalizeSetter(attributeName);
         }
         this.jdbcType = jdbcType;
-        //this.jdbcColumnMapper = new UnderscoreToCamelCaseMapper();// TODO design property to config
     }
     
     public String getAttributeName()
@@ -146,7 +146,6 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
         return this.jdbcType;
     }
 
-    
     /**
      * Append prefix <code>set<code> to attributeColumnName and capitalize it.
      * @param attributeColumnName attribute name to capitalize with <code>set</code> prefix

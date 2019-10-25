@@ -30,6 +30,9 @@ import net.sf.jkniv.reflect.InjectableFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
+import net.sf.jkniv.sqlegance.types.Converter;
+import net.sf.jkniv.sqlegance.types.Convertible;
+import net.sf.jkniv.sqlegance.types.NoConverterType;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.ObjectTransform;
@@ -48,12 +51,12 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  */
 class FlatObjectResultRow<T> implements ResultRow<T, ResultSet>
 {
-    private final static Logger LOG = LoggerFactory.getLogger(FlatObjectResultRow.class);
-    private static final Logger  SQLLOG = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
-    private static final DataMasking  MASKING = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getDataMasking();
-    private final Class<T>     returnType;
-    private final Transformable<T> transformable;
-    private JdbcColumn<ResultSet>[] columns;
+    private final static Logger      LOG     = LoggerFactory.getLogger(FlatObjectResultRow.class);
+    private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
+    private static final DataMasking MASKING = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getDataMasking();
+    private final Class<T>           returnType;
+    private final Transformable<T>   transformable;
+    private JdbcColumn<ResultSet>[]  columns;
     
     @SuppressWarnings("unchecked")
     public FlatObjectResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns)
@@ -72,7 +75,7 @@ class FlatObjectResultRow<T> implements ResultRow<T, ResultSet>
         return proxy.getInstance();
     }
     
-    private void setValueOf(JdbcColumn column, ResultSet rs, ObjectProxy<T> proxy) throws SQLException
+    private void setValueOf(JdbcColumn<ResultSet> column, ResultSet rs, ObjectProxy<T> proxy) throws SQLException
     {
         Injectable<T> reflect = InjectableFactory.of(proxy);
         Object jdbcObject = null;
@@ -80,23 +83,45 @@ class FlatObjectResultRow<T> implements ResultRow<T, ResultSet>
             jdbcObject = column.getBytes(rs);
         else
             jdbcObject = column.getValue(rs);
-
-        if(SQLLOG.isTraceEnabled())
-            SQLLOG.trace("Mapping index [0] column [{}] type of [{}] to value [{}]", column.getIndex(), column.getAttributeName(), 
-                    (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), MASKING.mask(column.getAttributeName(), jdbcObject));
-
+        
+        if (SQLLOG.isTraceEnabled())
+            SQLLOG.trace("Mapping index [{}] column [{}] type of [{}] to value [{}]", column.getIndex(),
+                    column.getAttributeName(), (jdbcObject != null ? jdbcObject.getClass().getName() : "null"),
+                    MASKING.mask(column.getAttributeName(), jdbcObject));
+        
         if (column.isNestedAttribute())
+        {
             reflect.inject(column.getAttributeName(), jdbcObject);
+        }
         else
         {
             String method = column.getMethodName();
             if (proxy.hasMethod(method))
                 reflect.inject(method, jdbcObject);
             else
-                LOG.warn("Method [{}] doesn't exists for [{}] to set value [{}]", method, proxy.getTargetClass().getName(), jdbcObject);
+                LOG.warn("Method [{}] doesn't exists for [{}] to set value [{}]", method,
+                        proxy.getTargetClass().getName(), jdbcObject);
         }
     }
-
+    
+    private Convertible<?, ?> getConverter(JdbcColumn<ResultSet> column, ObjectProxy<T> proxy)
+    {
+        // TODO make me a cache
+        Convertible<?, ?> convertible = NoConverterType.getInstance();
+        Converter converter = proxy.getAnnotationMethod(Converter.class, column.getMethodName());
+        if (converter == null)
+            converter  = proxy.getAnnotationField(Converter.class, column.getAttributeName());
+        
+        if (converter != null)
+        {
+            ObjectProxy<Convertible<?, ?>> proxyConvertible = ObjectProxyFactory.of(converter.converter());
+            if(converter.pattern() != null)
+                proxyConvertible.setConstructorArgs(converter.pattern());
+            convertible = proxyConvertible.newInstance();
+        }
+        return convertible;
+    }
+    
     @Override
     public Transformable<T> getTransformable()
     {
@@ -108,5 +133,5 @@ class FlatObjectResultRow<T> implements ResultRow<T, ResultSet>
     {
         this.columns = columns;
     }
-
+    
 }

@@ -43,8 +43,8 @@ import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
  */
 class NumberResultRow<T> implements ResultRow<T, ResultSet>
 {
-    private static final Logger  LOG = LoggerFactory.getLogger();
-    private static final DataMasking  MASKING = LoggerFactory.getDataMasking();
+    private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
+    private static final DataMasking MASKING = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getDataMasking();
 
     private final Numerical numerical;
     private JdbcColumn<ResultSet>[] columns;
@@ -63,8 +63,8 @@ class NumberResultRow<T> implements ResultRow<T, ResultSet>
             jdbcObject = columns[0].getBytes(rs);
         else
             jdbcObject = columns[0].getValue(rs);
-        if(LOG.isTraceEnabled())
-            LOG.trace("Column index [0] named [{}] type of [{}] to value [{}]", columns[0].getAttributeName(), 
+        if(SQLLOG.isTraceEnabled())
+            SQLLOG.trace("Column index [0] named [{}] type of [{}] to value [{}]", columns[0].getAttributeName(), 
                     numerical.getClass().getCanonicalName(), MASKING.mask(columns[0].getAttributeName(), jdbcObject));
   
         return (T) numerical.valueOf(jdbcObject);

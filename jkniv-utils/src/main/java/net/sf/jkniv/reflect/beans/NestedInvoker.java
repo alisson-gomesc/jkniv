@@ -75,7 +75,6 @@ class NestedInvoker extends AbstractInvoker implements Invokable
             nestedInstance = createNestedInstances(methodName, nestedMethodsNames, theInstance);
             MethodInfo methodInfoSeter = getMethodByName(SETTER.capitalize(nestedMethodsNames[nestedMethodsNames.length - 1]), nestedInstance.getClass());
             ret = pojoInvoker.invoke(methodInfoSeter.method, nestedInstance, values);
-
             //setValue(nestedInstance, nestedMethodsNames[nestedMethodsNames.length - 1], values);
         }
         catch (Exception e)//IllegalArgumentException , InvocationTargetException,IllegalAccessException,  InstantiationException

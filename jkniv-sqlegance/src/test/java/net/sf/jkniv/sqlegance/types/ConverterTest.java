@@ -20,6 +20,7 @@
 package net.sf.jkniv.sqlegance.types;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -38,9 +39,29 @@ public class ConverterTest
         ObjectProxy<MixModelType> proxy = ObjectProxyFactory.of(MixModelType.class);
         Converter converter = proxy.getAnnotationMethod(Converter.class, "getActive");
         assertThat(converter, notNullValue());
-        assertThat(converter.allowNull(), is(true));
+        //assertThat(converter.allowNull(), is(true));
         assertThat(converter.pattern(), is("1"));
-    }
+        assertThat(converter.converter().getName(), is(TrueType.class.getName()));
+
+        converter = proxy.getAnnotationMethod(Converter.class, "getCreatedAt");
+        assertThat(converter, notNullValue());
+        //assertThat(converter.allowNull(), is(true));
+        assertThat(converter.pattern(), is("yyyyMMdd"));
+
+        converter = proxy.getAnnotationField(Converter.class, "timestamp");
+        assertThat(converter, notNullValue());
+        //assertThat(converter.allowNull(), is(true));
+        assertThat(converter.pattern(), is("yyyyMMddHHmmss.MMM"));
     
+    }
+
+    @Test 
+    public void whenCheckIfAnnotationIsPresentWithNestedObject()
+    {
+        ObjectProxy<A> proxy = ObjectProxyFactory.of(A.class);
+        Converter converter = proxy.getAnnotationField(Converter.class, "b.c.makeMeTrue");
+        assertThat(converter, notNullValue());
+        assertThat(converter.pattern(), is("1|0"));
+    }
     
 }

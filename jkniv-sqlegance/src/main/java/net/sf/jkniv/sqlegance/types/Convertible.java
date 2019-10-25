@@ -54,4 +54,5 @@ public interface Convertible<A, B>
     
     Class<A> getClassType();
     
+    //void setPattern(String pattern);
 }

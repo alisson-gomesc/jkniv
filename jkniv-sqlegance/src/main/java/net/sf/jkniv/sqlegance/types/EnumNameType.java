@@ -17,40 +17,48 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.domain.acme;
+package net.sf.jkniv.sqlegance.types;
 
-import java.io.Serializable;
+import java.sql.Types;
 
-
-public class Foo implements Serializable
+public class EnumNameType implements Convertible<Enum<?>, String>
 {
-    private static final long serialVersionUID = -2617198422945648684L;
-    private Long       id;
-    private String     name;
+    private final static int[] TYPES = {Types.CHAR, Types.VARCHAR, Types.NCHAR, Types.NVARCHAR};
+    private Enum<?> enumType;
     
-    public Long getId()
+    public EnumNameType(Enum<?> enumType)
     {
-        return id;
-    }
-    
-    public void setId(Long id)
-    {
-        this.id = id;
-    }
-    
-    public String getName()
-    {
-        return name;
-    }
-    
-    public void setName(String name)
-    {
-        this.name = name;
+        this.enumType = enumType;
     }
     
     @Override
-    public String toString()
+    public String toJdbc(Enum<?> attribute)
     {
-        return "Author [id=" + id + ", name=" + name + "]";
+        if (attribute == null)
+            return null;
+        
+        return attribute.name();
     }
+
+    @Override @SuppressWarnings({ "unchecked" })
+    public Enum<?> toAttribute(String jdbc)
+    {
+        if (jdbc == null)
+            return null;
+        
+        return Enum.valueOf(getClassType(), jdbc);
+    }
+
+    @Override
+    public int[] getTypes()
+    {
+        return TYPES;
+    }
+
+    @Override @SuppressWarnings({ "rawtypes", "unchecked" })
+    public Class getClassType()
+    {
+        return this.enumType.getClass();
+    }
+    
 }

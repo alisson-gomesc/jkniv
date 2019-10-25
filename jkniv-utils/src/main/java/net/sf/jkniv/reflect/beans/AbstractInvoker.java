@@ -55,7 +55,7 @@ abstract class AbstractInvoker
         return types;
     }
     
-    protected MethodInfo getMethodByName(String methodName, Class<?> theTargetClass)// FIXME performance gap build cache info
+    protected MethodInfo getMethodByName(String methodName, Class<?> theTargetClass)
     {
         String key = theTargetClass.getCanonicalName() + "." + methodName;
         MethodInfo methodInfo = cacheMethods.get(key);

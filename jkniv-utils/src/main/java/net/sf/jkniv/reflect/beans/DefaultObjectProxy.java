@@ -45,16 +45,17 @@ import net.sf.jkniv.reflect.ReflectionException;
  * TODO list Reflection ObjectProxy
  * Convert number type to near method BigDecimal->Double->Float->Integer->Float 
  * 
+ * @param <T> Type of proxy class
+ * 
  * @author Alisson Gomes
  * @since 0.6.0
- * @param <T>
  */
 @SuppressWarnings("unchecked")
 class DefaultObjectProxy<T> implements ObjectProxy<T>
 {
     private static final Logger       LOG        = LoggerFactory.getLogger(DefaultObjectProxy.class);
-    private static final Assertable   notNull    = AssertsFactory.getNotNull();
-    private static final Assertable   isNull     = AssertsFactory.getIsNull();
+    private static final Assertable   NOT_NULL    = AssertsFactory.getNotNull();
+    private static final Assertable   IS_NULL     = AssertsFactory.getIsNull();
     private static final MethodName   GETTER     = MethodNameFactory.getInstanceGetter();
     private static final MethodName   SETTER     = MethodNameFactory.getInstanceSetter();
     private static final BasicType    BASIC_TYPE = BasicType.getInstance();
@@ -175,7 +176,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
      */
     public void setConstructorArgs(Object... constructorArgs)
     {
-        notNull.verifyArray(constructorArgs);
+        NOT_NULL.verifyArray(constructorArgs);
         this.constructorArgs = constructorArgs;
         if (this.constructorTypes.length == 0)
         {
@@ -263,7 +264,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
      */
     public void setConstructorTypes(Class<?>... constructorTypes)
     {
-        notNull.verifyArray(constructorTypes);
+        NOT_NULL.verifyArray(constructorTypes);
         this.constructorTypes = constructorTypes;
     }
     
@@ -272,7 +273,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
      */
     public T newInstance()
     {
-        isNull.verify(new ReflectionException("Bean already have an instance cannot create another one"),
+        IS_NULL.verify(new ReflectionException("Bean already have an instance cannot create another one"),
                 this.instance);
         
         try
@@ -314,7 +315,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
      */
     public boolean isInstanceof(Class<?> clazz)
     {
-        notNull.verify(clazz);
+        NOT_NULL.verify(clazz);
         return (clazz.isInstance(this.instance));
     }
     
@@ -369,7 +370,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         Object ret = null;
         if (isWrapperType)
         {
-            instance = (T) basicInvoke.invoke(targetClass, args);
+            this.instance = (T) basicInvoke.invoke(targetClass, args);
         }
         else
         {
@@ -391,7 +392,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     @Override
     public T from(Object object)
     {
-        notNull.verify(object);
+        NOT_NULL.verify(object);
         if (object instanceof Map)// TODO test me merge Object <- Map
         {
             Map<String, Object> map = (Map) object;
@@ -426,7 +427,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     @Override
     public T merge(Object object)
     {
-        notNull.verify(object);
+        NOT_NULL.verify(object);
         if (object instanceof Map)// TODO test me merge Object <- Map
         {
             Map<String, Object> map = (Map) object;
@@ -532,7 +533,8 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         Field field = null;
         try
         {
-            field = this.targetClass.getDeclaredField(fieldName);
+            field = new FieldReflect().getField(fieldName, this.targetClass);
+            //field = this.targetClass.getDeclaredField(fieldName);
         }
         catch (Exception e)// SecurityException, NoSuchFieldException, NullPointerException
         {

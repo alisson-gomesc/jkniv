@@ -27,6 +27,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.MapTransform;
@@ -45,6 +46,8 @@ import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
 class MapResultRow<T> implements ResultRow<T, ResultSet>
 {
     private static final Logger  LOG = LoggerFactory.getLogger();
+    private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
+    private static final DataMasking MASKING = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getDataMasking();
     private final Class<T> returnType;
     private final Transformable<T> transformable;
     private JdbcColumn<ResultSet>[] columns;
@@ -67,7 +70,7 @@ class MapResultRow<T> implements ResultRow<T, ResultSet>
         return (T) map;
     }
 
-    private void setValueOf(JdbcColumn column, ResultSet rs, Map<String, Object> map) throws SQLException
+    private void setValueOf(JdbcColumn<ResultSet> column, ResultSet rs, Map<String, Object> map) throws SQLException
     {
         Object jdbcObject = null;
         if (column.isBinary())
@@ -75,7 +78,12 @@ class MapResultRow<T> implements ResultRow<T, ResultSet>
         else
             jdbcObject = column.getValue(rs);
         
-        LOG.trace("Using [{}] column name as sensitive key for Map", column.getAttributeName());
+        if (SQLLOG.isTraceEnabled())
+            SQLLOG.trace("Mapping index [{}] sensitive column name [{}] type of [{}] to value [{}]", column.getIndex(),
+                    column.getAttributeName(), (jdbcObject != null ? jdbcObject.getClass().getName() : "null"),
+                    MASKING.mask(column.getAttributeName(), jdbcObject));
+        
+        //LOG.trace("Using [{}] column name as sensitive key for Map", column.getAttributeName());
         map.put(column.getAttributeName(), jdbcObject);
     }
     

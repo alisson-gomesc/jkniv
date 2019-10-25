@@ -120,7 +120,7 @@ class PojoResultRow<T> implements ResultRow<T, ResultSet>
             jdbcObject = column.getValue(rs);
     
         if(SQLLOG.isTraceEnabled())
-            SQLLOG.trace("Mapping index [0] column [{}] type of [{}] to value [{}]", column.getIndex(), column.getAttributeName(), 
+            SQLLOG.trace("Mapping index [{}] column [{}] type of [{}] to value [{}]", column.getIndex(), column.getAttributeName(), 
                 (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), MASKING.mask(column.getAttributeName(), jdbcObject));
 
         if (column.isNestedAttribute())

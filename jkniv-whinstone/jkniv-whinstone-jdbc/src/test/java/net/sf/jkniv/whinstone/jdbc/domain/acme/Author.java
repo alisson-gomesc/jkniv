@@ -32,6 +32,7 @@ import net.sf.jkniv.sqlegance.validation.UpdateValidate;
 
 public class Author implements Serializable
 {
+    private static final long serialVersionUID = 5156588764591901293L;
     @NotNull(groups=UpdateValidate.class)
     private Long       id;
     //@NotNull
