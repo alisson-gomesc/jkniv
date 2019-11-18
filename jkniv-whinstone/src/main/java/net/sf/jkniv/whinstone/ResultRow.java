@@ -31,12 +31,13 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  * @author Alisson Gomes
  * @since 0.6.0
  * @param <T> Type of objects thats must be returned.
- * @param <R> Type of objects thats database connection return as row, JDBC is {@code ResultSet} JPA is {@code Object[]}.
+ * @param <R> Type of objects thats database connection return as row, JDBC is {link ResultSet} 
+ * JPA is {@code Object[]}.
  */
 public interface ResultRow<T,R>
 {
     /**
-     * Retrieve column values from the current row, implementations doesn't call {@code next} 
+     * Retrieve column values from the current row, implementations must don't call {@code next} 
      * neither {@code close} methods.
      * 
      * @param rs A ResultSet or Object[] pointing to its current row of data

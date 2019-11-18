@@ -17,13 +17,15 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jdbc.datatype;
+package net.sf.jkniv.whinstone.jdbc.convertible;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,37 +36,19 @@ import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.BaseJdbc;
 import net.sf.jkniv.whinstone.jdbc.domain.flat.MyTypes;
 
-public class DerbyNullSafeDataTypeTest extends BaseJdbc
+public class ConvertibleDataTypeTest extends BaseJdbc
 {
     @Autowired
     Repository repositoryDerby;
     
     @Test
-    public void whenNullValuesDoesnotGenerateNullPointerException()
-    {
-        Queryable q = getQuery("getNulValues");
-        Map<String, Object> data = repositoryDerby.get(q);
-        assertThat(data.get("MY_SMALLINT"), nullValue());
-        assertThat(data.get("MY_INTEGER"), nullValue());
-        assertThat(data.get("MY_BIGINT"), nullValue());
-        assertThat(data.get("MY_FLOAT"), nullValue());
-        assertThat(data.get("MY_DECIMAL"), nullValue());
-        assertThat(data.get("MY_VARCHAR"), nullValue());
-        assertThat(data.get("MY_CHAR"), nullValue());
-        assertThat(data.get("MY_BLOB"), nullValue());
-        assertThat(data.get("MY_CLOB"), nullValue());
-        assertThat(data.get("MY_DATE"), nullValue());
-        assertThat(data.get("MY_TIME"), nullValue());
-        assertThat(data.get("MY_TIMESTAMP"), nullValue());
-    }
-
-    @Test
-    public void whenById()
+    public void whenGetDataUsingConvertibleAnnotation() throws ParseException
     {
         Queryable q = QueryFactory.of("by-id", "id", 1000);
         MyTypes data = repositoryDerby.get(q);
 
         SimpleDateFormat sfDate = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sfDateInt = new SimpleDateFormat("yyyyMMdd");
         SimpleDateFormat sfTime = new SimpleDateFormat("HH:mm:ss");
         SimpleDateFormat sfTimestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         
@@ -80,6 +64,9 @@ public class DerbyNullSafeDataTypeTest extends BaseJdbc
         assertThat(sfTime.format(data.getMyTime()), is("13:00:00"));
         assertThat(sfTimestamp.format(data.getMyTimestamp()), is("2016-02-01 13:00:00"));
         assertThat(data.getMyBoolChar(), is(Boolean.TRUE));
+        assertThat(data.getMyDateInt(), is(sfDateInt.parse("20190228")));
         
+        assertThat(data.getTimeUnit1(), is(TimeUnit.HOURS));
+        assertThat(data.getTimeUnit2(), is(TimeUnit.MINUTES));
     }
 }

@@ -8,11 +8,21 @@
   
 
   <select id="getNulValues" type="NATIVE" returnType="java.util.Map">
-  SELECT 
-   MY_SMALLINT, MY_INTEGER, MY_BIGINT, MY_FLOAT,
-   MY_DECIMAL, MY_VARCHAR, MY_CHAR, MY_BLOB, MY_CLOB, MY_DATE, 
-   MY_TIME, MY_TIMESTAMP 
+   SELECT 
+    MY_SMALLINT, MY_INTEGER, MY_BIGINT, MY_FLOAT,
+    MY_DECIMAL, MY_VARCHAR, MY_CHAR, MY_BLOB, MY_CLOB, MY_DATE, 
+    MY_TIME, MY_TIMESTAMP, MY_BOOL_CHAR, MY_DATE_INT,
+    TIME_UNIT_1, TIME_UNIT_2
    FROM MY_TYPES where ID = 2
+  </select>
+
+  <select id="by-id" returnType="net.sf.jkniv.whinstone.jdbc.domain.flat.MyTypes">
+   SELECT 
+    ID, MY_SMALLINT, MY_INTEGER, MY_BIGINT, MY_FLOAT,
+    MY_DECIMAL, MY_VARCHAR, MY_CHAR, MY_DATE, 
+    MY_TIME, MY_TIMESTAMP, MY_BOOL_CHAR, MY_DATE_INT,
+    TIME_UNIT_1, TIME_UNIT_2
+   FROM MY_TYPES where ID = :id
   </select>
 
 </statements>

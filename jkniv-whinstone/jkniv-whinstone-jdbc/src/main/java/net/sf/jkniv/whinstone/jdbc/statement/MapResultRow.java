@@ -43,7 +43,7 @@ import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-class MapResultRow<T> implements ResultRow<T, ResultSet>
+class MapResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultSet>
 {
     private static final Logger  LOG = LoggerFactory.getLogger();
     private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
@@ -55,6 +55,7 @@ class MapResultRow<T> implements ResultRow<T, ResultSet>
     @SuppressWarnings("unchecked")
     public MapResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns)
     {
+        super(SQLLOG, MASKING);
         this.returnType = returnType;
         this.columns = columns;
         this.transformable = (Transformable<T>) new MapTransform();

@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.experimental.TimerKeeper;
 import net.sf.jkniv.experimental.converters.SqlDateConverter;
-import net.sf.jkniv.reflect.beans.MethodName;
+import net.sf.jkniv.reflect.beans.Capitalize;
 import net.sf.jkniv.reflect.beans.MethodNameFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
@@ -42,7 +42,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     private static final Logger      LOG = LoggerFactory.getLogger();
     private static final Logger      SQLLOG = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
     private static final DataMasking MASKING = LoggerFactory.getDataMasking();
-    private static final MethodName  SETTER = MethodNameFactory.getInstanceSetter();
+    private static final Capitalize  SETTER = MethodNameFactory.getInstanceSetter();
 
     private final PreparedStatement stmt;
     private final HandlerException  handlerException;
@@ -298,7 +298,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         else if (value instanceof java.sql.Timestamp)
             parsedValue = new Date(((java.sql.Timestamp)value).getTime());
         
-        proxy.invoke(SETTER.capitalize(property), parsedValue);
+        proxy.invoke(SETTER.does(property), parsedValue);
     }
 
     private void setValue(Object value) throws SQLException

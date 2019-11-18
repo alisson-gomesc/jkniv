@@ -19,14 +19,20 @@
  */
 package net.sf.jkniv.reflect.beans;
 
-public interface MethodName
+/**
+ * Capitalize words or methods like {@code setter's} and {@code getter's}
+ * @author Alisson Gomes
+ * @since 0.6.0
+ *
+ */
+public interface Capitalize
 {
     public static final String GET = "get";
     public static final String SET = "set";
     public static final String IS  = "is";
     
-    String capitalize(String name);// TODO javadoc
+    String does(String name);
     
-    String uncapitalize(String name);// TODO javadoc
+    String undo(String name);
     
 }

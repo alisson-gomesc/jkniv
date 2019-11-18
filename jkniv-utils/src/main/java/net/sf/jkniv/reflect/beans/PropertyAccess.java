@@ -19,19 +19,10 @@
  */
 package net.sf.jkniv.reflect.beans;
 
-public class MethodNameFactory
+public class PropertyAccess
 {
-    private static final Capitalize SETTER = new SetterMethod();
-    private static final Capitalize GETTER = new GetterMethod();
+    private String baseName;
+    private String writeMethodName;
+    private String readMethodName;
     
-    public static Capitalize getInstanceSetter()
-    {
-        return SETTER;
-    }
-
-    public static Capitalize getInstanceGetter()
-    {
-        return GETTER;
-    }
-
 }

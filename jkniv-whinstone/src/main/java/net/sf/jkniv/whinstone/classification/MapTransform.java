@@ -23,7 +23,7 @@ import java.util.Map;
 
 import net.sf.jkniv.reflect.Injectable;
 import net.sf.jkniv.reflect.InjectableFactory;
-import net.sf.jkniv.reflect.beans.MethodName;
+import net.sf.jkniv.reflect.beans.Capitalize;
 import net.sf.jkniv.reflect.beans.MethodNameFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
@@ -31,7 +31,7 @@ import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 @SuppressWarnings("unchecked")
 public class MapTransform implements Transformable<Map<String, Object>>
 {
-    private static final MethodName SETTER = MethodNameFactory.getInstanceSetter();
+    private static final Capitalize SETTER = MethodNameFactory.getInstanceSetter();
 
     /* (non-Javadoc)
      * @see net.sf.jkniv.sqlegance.classifier.Transformable#transform(java.lang.Object, java.lang.Class)
@@ -44,7 +44,7 @@ public class MapTransform implements Transformable<Map<String, Object>>
         for(String key : row.keySet())
         {
             Object v = row.get(key);
-            inject.inject(SETTER.capitalize(key), v);
+            inject.inject(SETTER.does(key), v);
         }
         return (T)proxy.getInstance();
     }
@@ -60,7 +60,7 @@ public class MapTransform implements Transformable<Map<String, Object>>
         for(String key : row.keySet())
         {
             Object v = row.get(key);
-            inject.inject(SETTER.capitalize(key), v);
+            inject.inject(SETTER.does(key), v);
         }
     }
 }

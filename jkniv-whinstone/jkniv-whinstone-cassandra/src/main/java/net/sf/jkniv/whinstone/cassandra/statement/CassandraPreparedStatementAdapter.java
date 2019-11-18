@@ -23,11 +23,10 @@ import com.datastax.driver.core.Session;
 
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.experimental.TimerKeeper;
-import net.sf.jkniv.reflect.beans.MethodName;
+import net.sf.jkniv.reflect.beans.Capitalize;
 import net.sf.jkniv.reflect.beans.MethodNameFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
-import net.sf.jkniv.sqlegance.KeyGeneratorType;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
@@ -65,7 +64,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     private static final Logger  LOG = LoggerFactory.getLogger();
     private static final Logger SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
     private static final DataMasking  MASKING = LoggerFactory.getDataMasking();
-    private static final MethodName SETTER = MethodNameFactory.getInstanceSetter();
+    private static final Capitalize  SETTER = MethodNameFactory.getInstanceSetter();
     private final HandlerException  handlerException;
     private final PreparedStatement stmt;
     private BoundStatement          bound;
@@ -282,7 +281,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         else if (value instanceof java.sql.Timestamp)
             parsedValue = new Date(((java.sql.Timestamp)value).getTime());
         
-        proxy.invoke(SETTER.capitalize(property), parsedValue);
+        proxy.invoke(SETTER.does(property), parsedValue);
     }
 
     

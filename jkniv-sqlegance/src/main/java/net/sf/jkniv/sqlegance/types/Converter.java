@@ -39,6 +39,8 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 public @interface Converter
 {
+    enum EnumType {NONE, STRING, ORDINAL};
+    
     /**
      * Specifies the converter to be used.
      */
@@ -47,5 +49,7 @@ public @interface Converter
     /**
      * The pattern describing to be used to define or formatter a value.
      */
-    String pattern();
+    String pattern() default "";
+    
+    EnumType isEnum() default EnumType.NONE;
 }

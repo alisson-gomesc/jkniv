@@ -7,16 +7,21 @@ import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.ObjectNotFoundException;
 import net.sf.jkniv.reflect.ReflectionException;
 
-public class FieldReflect
+class FieldReflect
 {
-    private static final HandleableException HANDLE_EXCEPTION;
+    private final HandleableException handler;
     
-    static {
-        HANDLE_EXCEPTION = 
-                new HandlerException(ReflectionException.class, "Error into reflect this class")
+    public FieldReflect()
+    {
+        handler = new HandlerException(ReflectionException.class, "Error into reflect this class")
                 .config(NoSuchFieldException.class, ObjectNotFoundException.class, "[NoSuchFieldException] Can not found the field [%s]");
     }
-    
+
+    public FieldReflect(HandleableException handler)
+    {
+        this.handler = handler;
+    }
+
     public Field getField(String name, Class<?> classTarget)
     {
         Field nestedField = null;
@@ -26,7 +31,7 @@ public class FieldReflect
         if (nestedMethodsNames == null || nestedMethodsNames.length == 0)
             throw new ObjectNotFoundException("Can not found the field ["+classTarget.getName() + "." + name +"]");
         
-        int found = 0;
+        //int found = 0;
         for(int i=0; i<nestedMethodsNames.length; i++)
         {
             try
@@ -34,16 +39,16 @@ public class FieldReflect
                 //example: Field nested= c.getDeclaredField("address").getType().getDeclaredField("description");
                 nestedField = nestedClass.getDeclaredField(nestedMethodsNames[i]);
                 nestedClass = nestedField.getType();
-                found++;
+                //found++;
             }
             catch (Exception e)
             {
-                HANDLE_EXCEPTION.handle(e);
+                handler.handle(e);
             }
         }
-        if(found != nestedMethodsNames.length)
-            HANDLE_EXCEPTION.throwMessage("The field %s was found into %, but must be from %s", 
-                    nestedField.getName(), nestedField.getDeclaringClass().getName(), name);
+//        if(found != nestedMethodsNames.length)
+//            handler.throwMessage("The field %s was found into %, but must be from %s", 
+//                    nestedField.getName(), nestedField.getDeclaringClass().getName(), name);
         
         return nestedField;
     }

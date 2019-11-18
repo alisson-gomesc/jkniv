@@ -56,8 +56,8 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     private static final Logger       LOG        = LoggerFactory.getLogger(DefaultObjectProxy.class);
     private static final Assertable   NOT_NULL    = AssertsFactory.getNotNull();
     private static final Assertable   IS_NULL     = AssertsFactory.getIsNull();
-    private static final MethodName   GETTER     = MethodNameFactory.getInstanceGetter();
-    private static final MethodName   SETTER     = MethodNameFactory.getInstanceSetter();
+    private static final Capitalize   GETTER     = MethodNameFactory.getInstanceGetter();
+    private static final Capitalize   SETTER     = MethodNameFactory.getInstanceSetter();
     private static final BasicType    BASIC_TYPE = BasicType.getInstance();
     /** {@code getClass} */
     private static final List<String> SKIP_NAMES = Arrays.asList("getClass");
@@ -398,7 +398,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
             Map<String, Object> map = (Map) object;
             for (Entry<String, Object> entry : map.entrySet())
             {
-                invoke(SETTER.capitalize(entry.getKey()), entry.getValue());
+                invoke(SETTER.does(entry.getKey()), entry.getValue());
             }
         }
         else
@@ -412,12 +412,12 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
                 if (method.getName().startsWith("get"))
                 {
                     Object v = pojoInvoke.invoke(method, object);
-                    invoke(SETTER.capitalize(method.getName().substring(3)), v);
+                    invoke(SETTER.does(method.getName().substring(3)), v);
                 }
                 else if (method.getName().startsWith("is"))
                 {
                     Object v = pojoInvoke.invoke(method, object);
-                    invoke(SETTER.capitalize(method.getName().substring(2)), v);
+                    invoke(SETTER.does(method.getName().substring(2)), v);
                 }
             }
         }
@@ -433,7 +433,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
             Map<String, Object> map = (Map) object;
             for (Entry<String, Object> entry : map.entrySet())
             {
-                invoke(SETTER.capitalize(entry.getKey()), entry.getValue());
+                invoke(SETTER.does(entry.getKey()), entry.getValue());
             }
         }
         else
@@ -459,13 +459,13 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
                     }
                     else
                     {
-                        invoke(SETTER.capitalize(method.getName().substring(3)), v);
+                        invoke(SETTER.does(method.getName().substring(3)), v);
                     }
                 }
                 else if (method.getName().startsWith("is"))
                 {
                     Object v = pojoInvoke.invoke(method, object);
-                    invoke(SETTER.capitalize(method.getName().substring(2)), v);
+                    invoke(SETTER.does(method.getName().substring(2)), v);
                 }
             }
         }
@@ -528,19 +528,11 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     }
 
     @Override
-    public <T extends Annotation> T getAnnotationField(Class<? extends Annotation> annotation, String fieldName)
+    public <G extends Annotation> G getAnnotationField(Class<? extends Annotation> annotation, String fieldName)
     {
         Field field = null;
-        try
-        {
-            field = new FieldReflect().getField(fieldName, this.targetClass);
-            //field = this.targetClass.getDeclaredField(fieldName);
-        }
-        catch (Exception e)// SecurityException, NoSuchFieldException, NullPointerException
-        {
-            this.handleException.handle(e);
-        }
-        return (T) field.getAnnotation(annotation);
+        field = new FieldReflect(this.handleException).getField(fieldName, this.targetClass);
+        return field == null ? null : (G) field.getAnnotation(annotation);
     }
     
     private Class<?>[] getTypes(Object[] args)

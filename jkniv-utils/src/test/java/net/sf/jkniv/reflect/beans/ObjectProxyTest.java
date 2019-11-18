@@ -256,8 +256,9 @@ public class ObjectProxyTest
     @Test
     public void whenGetAnnotatedFieldForFiledNotExists()
     {
-        catcher.expect(ObjectNotFoundException.class);
-        catcher.expectMessage("[NoSuchFieldException] Can not found the field [init]");
+        //[NoSuchFieldException] -> Cannot get the field
+        catcher.expect(ReflectionException.class);
+        catcher.expectMessage("[NoSuchFieldException] -> Cannot get the field init");
         ObjectProxy<Item> proxy = ObjectProxyFactory.of(Item.class);
         proxy.getAnnotationField(PostConstruct.class, "init");
     }

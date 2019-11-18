@@ -25,7 +25,7 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.reflect.ReflectionException;
 
-class SetterMethod implements MethodName // TODO test me
+class SetterMethod implements Capitalize
 {
     private final static Assertable notNull = AssertsFactory.getNotNull();
     
@@ -34,7 +34,7 @@ class SetterMethod implements MethodName // TODO test me
      * @param attributeColumnName attribute name to capitalize with <code>set</code> prefix
      * @return return capitalize attribute name, sample: identityName -> setIdentityName
      */
-    public String capitalize(String attributeColumnName)
+    public String does(String attributeColumnName)
     {
         notNull.verify(attributeColumnName);
         
@@ -50,14 +50,14 @@ class SetterMethod implements MethodName // TODO test me
         return SET + capitalize;
     }
     
-    public String uncapitalize(String attributeColumnName)
+    public String undo(String attributeColumnName)
     {
         notNull.verify(attributeColumnName);
         String name = attributeColumnName;
         if (attributeColumnName.startsWith(SET))
             name = attributeColumnName.substring(3);
         
-        int length = attributeColumnName.length();
+        int length = name.length();
         if (length == 0)
             throw new ReflectionException("Cannot uncapitalize the value of [" + attributeColumnName + "]");
         

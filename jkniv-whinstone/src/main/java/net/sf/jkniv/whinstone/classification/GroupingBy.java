@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.jkniv.reflect.beans.MethodName;
+import net.sf.jkniv.reflect.beans.Capitalize;
 import net.sf.jkniv.reflect.beans.MethodNameFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
@@ -44,7 +44,7 @@ import net.sf.jkniv.whinstone.classification.Transformable.TransformableType;
  */
 public class GroupingBy<T, R> implements Groupable<T, R>
 {
-    private static final MethodName GETTER = MethodNameFactory.getInstanceGetter();
+    private static final Capitalize GETTER = MethodNameFactory.getInstanceGetter();
     private final Transformable<R>  transform;
     private final Map<String, T>    grouped;
     private final List<String>      keys;
@@ -86,7 +86,7 @@ public class GroupingBy<T, R> implements Groupable<T, R>
             if (row instanceof Map)
                 keyValue = ((Map) row).get(k);
             else
-                keyValue = rowProxy.invoke(GETTER.capitalize(k));
+                keyValue = rowProxy.invoke(GETTER.does(k));
             
             if (keyValue != null)
                 keySb.append(keyValue.toString());
