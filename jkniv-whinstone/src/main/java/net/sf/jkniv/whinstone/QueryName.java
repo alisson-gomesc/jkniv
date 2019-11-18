@@ -241,12 +241,6 @@ class QueryName implements Queryable
         return this.boundParams;
     }
 
-//    @Override
-//    public boolean isBoundReturnType()
-//    {
-//        return (this.returnType != null);
-//    }
-
     @Override
     public boolean isTypeOfNull()
     {
@@ -409,7 +403,9 @@ class QueryName implements Queryable
             throw new NullPointerException("Cannot iterate over null reference");
         
         Iterator<Object> it = null;
-        if (isTypeOfArray())
+        if (this.params instanceof Map)
+            it = ((Map)this.params).values().iterator();
+        else if (isTypeOfArray())
             it = new ArrayIterator(this.params, this.size);
         else if (isTypeOfCollection())
             it = ((Collection) this.params).iterator();
@@ -423,11 +419,20 @@ class QueryName implements Queryable
     @Override
     public Object[] values(String[] paramsNames)
     {
-        List<Object> params = new ArrayList<Object>();
+        List<Object> paramsValues = new ArrayList<Object>();
         int i = 0;
         if (isTypeOfBasic())
         {
-            params.add(getParams());
+            paramsValues.add(getParams());
+        }
+        else if(isTypeOfArrayFromBasicTypes())
+        {
+            if(!hasInClause(paramsNames) && paramsNames.length != getParamsAsArray().length)
+            {
+                throw new ParameterException("A query [" + this.name
+                        + "] with positional parameters needs an array exactly have the same number of parameters from query.");
+            }
+            return (Object[]) this.params;
         }
         else
         {
@@ -454,14 +459,25 @@ class QueryName implements Queryable
                                 "Cannot set parameter [" + paramsNames[i] + "] from IN clause with NULL");
                     
                     for (; j < paramsIN.length; j++)
-                        params.add(paramsIN[j]);//params[j + i + 1] = paramsIN[j];
+                        paramsValues.add(paramsIN[j]);//params[j + i + 1] = paramsIN[j];
+                }
+                else if ("?".equals(name))
+                {
+                    if(isTypeOfArrayFromBasicTypes())
+                    {
+                        paramsValues.add(getParamsAsArray()[i]);
+                    }
+//                    else if(isTypeOfCollectionFromBasicTypes())
+//                    {
+//                        paramsValues.add(((Collection)this.params). ); CANNOT ACCESS COLLECTION BY INDEX
+//                    }
                 }
                 else
-                    params.add(getProperty(name));
+                    paramsValues.add(getProperty(name));
                 i++;
             }
         }
-        return params.toArray(new Object[0]);
+        return paramsValues.toArray(new Object[0]);
     }
     
     @Override
@@ -708,6 +724,29 @@ class QueryName implements Queryable
     public String getBookmark()
     {
         return this.bookmark;
+    }
+    
+    private Object[] getParamsAsArray() 
+    {
+        if(this.params == null)
+            return new Object[0];
+        
+        return (Object[]) this.params;
+    }
+    
+    private boolean hasInClause(String[] paramsNames)
+    {
+        for (String p : paramsNames)
+        {
+            if (hasInClause(p))
+                return true;
+        }
+        return false;
+    }
+    
+    private boolean hasInClause(String paramName)
+    {
+        return (paramName.toLowerCase().startsWith("in:"));
     }
 /*
     private void checkIfParamIsEntity() {

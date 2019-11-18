@@ -20,45 +20,38 @@
 package net.sf.jkniv.sqlegance.types;
 
 import java.sql.Types;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 
-public class DateAsNumberType implements Convertible<Date, Integer>
+public class CalendarAsSqlTimestampType implements Convertible<java.util.Calendar, java.sql.Timestamp>
 {
     private final static int[] TYPES = {Types.DATE, Types.TIME, Types.TIMESTAMP};
-    private String pattern;
     
-    public DateAsNumberType(String pattern)
+    public CalendarAsSqlTimestampType()
     {
-        this.pattern = pattern;
+    }
+    
+    public CalendarAsSqlTimestampType(String pattern)
+    {
     }
     
     @Override
-    public Integer toJdbc(Date attribute)
+    public java.sql.Timestamp toJdbc(java.util.Calendar attribute)
     {
         if (attribute == null)
             return null;
         
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-        return Integer.valueOf(sdf.format(attribute));
+        return new java.sql.Timestamp(attribute.getTime().getTime());
     }
 
     @Override
-    public Date toAttribute(Integer jdbc)
+    public java.util.Calendar  toAttribute(java.sql.Timestamp jdbc)
     {
         if (jdbc == null)
             return null;
-        
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-        try
-        {
-            return sdf.parse(String.valueOf(jdbc));
-        }
-        catch (ParseException e)
-        {
-            throw new ConverterException(e);
-        }
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(jdbc);
+        return cal;
     }
 
     @Override
@@ -68,9 +61,9 @@ public class DateAsNumberType implements Convertible<Date, Integer>
     }
 
     @Override
-    public Class<Date> getClassType()
+    public Class<java.util.Calendar> getClassType()
     {
-        return Date.class;
+        return java.util.Calendar.class;
     }
     
 }

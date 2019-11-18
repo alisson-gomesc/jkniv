@@ -23,8 +23,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Date;
-import java.util.Locale;
 
+import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.JdbcColumnMapper;
 import net.sf.jkniv.whinstone.UnderscoreToCamelCaseMapper;
@@ -37,6 +37,7 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
     private final String                  methodName;
     private final int                     jdbcType;
     private boolean nestedAttribute;
+    private PropertyAccess propertyAccess;
     // TODO design property to config UnderscoreToCamelCaseMapper
     private final static JdbcColumnMapper JDBC_COLUMN_MAPPER = new UnderscoreToCamelCaseMapper();
     
@@ -54,37 +55,52 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
         }
         else
         {
-            this.attributeName = JDBC_COLUMN_MAPPER.map(columnName);
-            this.methodName = capitalizeSetter(attributeName);
+            this.propertyAccess = new PropertyAccess(JDBC_COLUMN_MAPPER.map(columnName));
+            this.attributeName = propertyAccess.getFieldName();
+            this.methodName = propertyAccess.getWriterMethod();
+            //this.attributeName = JDBC_COLUMN_MAPPER.map(columnName);
+            //this.methodName = capitalizeSetter(attributeName);
         }
         this.jdbcType = jdbcType;
     }
     
+    @Override
+    public PropertyAccess getPropertyAccess()
+    {
+        return propertyAccess;
+    }
+    
+    @Override
     public String getAttributeName()
     {
         return this.attributeName;
     }
     
+    @Override
     public String getMethodName()
     {
         return methodName;
     }
     
+    @Override
     public String getName()
     {
         return this.columnName;
     }
     
+    @Override
     public int getIndex()
     {
         return this.columnIndex;
     }
     
+    @Override
     public boolean isBinary()
     {
         return (this.jdbcType == Types.CLOB || jdbcType == Types.BLOB);
     }
     
+    @Override
     public boolean isClob()
     {
         // FIXME implements read CLOB as string, 
@@ -92,27 +108,32 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
         return (this.jdbcType == Types.CLOB);
     }
     
+    @Override
     public boolean isBlob()
     {
         // FIXME implements write BLOB to database
         return (this.jdbcType == Types.BLOB);
     }
     
+    @Override
     public boolean isDate()
     {
         return (this.jdbcType == Types.DATE);
     }
     
+    @Override
     public boolean isTimestamp()
     {
         return (this.jdbcType == Types.TIMESTAMP);
     }
     
+    @Override
     public boolean isTime()
     {
         return (this.jdbcType == Types.TIME);
     }
     
+    @Override
     public boolean isNestedAttribute()
     {
         return nestedAttribute;
@@ -146,11 +167,11 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
         return this.jdbcType;
     }
 
-    /**
+    /*
      * Append prefix <code>set<code> to attributeColumnName and capitalize it.
      * @param attributeColumnName attribute name to capitalize with <code>set</code> prefix
      * @return return capitalize attribute name, sample: identityName -> setIdentityName
-     */
+     *
     private String capitalizeSetter(String attributeColumnName)// TODO design config capitalize algorithm
     {
         String capitalize = "";
@@ -165,7 +186,7 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
         //sqlLogger.log(LogLevel.RESULTSET, "Mapping column [{}] to property [{}]", attributeColumnName, "set" + capitalize);
         return "set" + capitalize;
     }
-
+*/
     @Override
     public String toString()
     {

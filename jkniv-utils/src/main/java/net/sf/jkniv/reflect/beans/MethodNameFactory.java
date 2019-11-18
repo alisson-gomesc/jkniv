@@ -19,17 +19,23 @@
  */
 package net.sf.jkniv.reflect.beans;
 
+/**
+ * Class to build capitalize method name.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public class MethodNameFactory
 {
-    private static final MethodName SETTER = new SetterMethod();
-    private static final MethodName GETTER = new GetterMethod();
+    private static final Capitalize SETTER = new SetterMethod();
+    private static final Capitalize GETTER = new GetterMethod();
     
-    public static MethodName getInstanceSetter()
+    public static Capitalize getInstanceSetter()
     {
         return SETTER;
     }
 
-    public static MethodName getInstanceGetter()
+    public static Capitalize getInstanceGetter()
     {
         return GETTER;
     }

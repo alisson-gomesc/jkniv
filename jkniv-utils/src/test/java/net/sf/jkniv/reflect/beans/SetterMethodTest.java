@@ -12,10 +12,18 @@ public class SetterMethodTest
     @Test
     public void whenCapitalizeSetterMethods()
     {
-        SetterMethod setter = new SetterMethod();
-        
-        assertThat(setter.capitalize("identityName"), is("setIdentityName"));
-        assertThat(setter.capitalize("setIdentityName"), is("setIdentityName"));
-        assertThat(setter.capitalize("getIdentityName"), is("setGetIdentityName"));
+        Capitalize setterCapital = new SetterMethod();
+        assertThat(setterCapital.does("identityName"), is("setIdentityName"));
+        assertThat(setterCapital.does("setIdentityName"), is("setIdentityName"));
+        assertThat(setterCapital.does("getIdentityName"), is("setGetIdentityName"));
     }
+    
+    @Test
+    public void whenUnCapitalizeSetterMethods()
+    {
+        SetterMethod setterCapital = new SetterMethod();
+        assertThat(setterCapital.undo("IdentityName"), is("identityName"));
+        assertThat(setterCapital.undo("setIdentityName"), is("identityName"));
+    }
+
 }

@@ -20,41 +20,47 @@
 package net.sf.jkniv.sqlegance.types;
 
 import java.sql.Types;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
-public class TrueType implements Convertible<Boolean, String>
+public class CalendarAsIntType implements Convertible<Calendar, Integer>
 {
-    private final static int[] TYPES = {Types.CHAR, Types.VARCHAR, Types.NCHAR, Types.NVARCHAR};
-    //private final static String FALSE = "FALSE", TRUE = "TRUE";
-    //private final static TrueType INSTANCE = new TrueType();
-    //private final static ThreadLocal<String> PATTERN = new ThreadLocal<String>();
-    private String truePattern;
-    private String falsePattern;
-
-    public TrueType(String pattern)
+    private final static int[] TYPES = {Types.DATE, Types.TIME, Types.TIMESTAMP};
+    private String pattern;
+    
+    public CalendarAsIntType(String pattern)
     {
-        String[] patterns = pattern.split("\\|");
-        if (patterns.length != 2)
-            throw new ConverterException("TrueType expect a separator \"|\" to handle true and false values, for example \"1|0\". The value was: "+pattern);
-        this.truePattern = patterns[0];
-        this.falsePattern = patterns[1];
+        this.pattern = pattern;
     }
     
     @Override
-    public String toJdbc(Boolean attribute)
+    public Integer toJdbc(Calendar attribute)
     {
         if (attribute == null)
             return null;
         
-        return (attribute.booleanValue() ? truePattern : falsePattern);
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        return Integer.valueOf(sdf.format(attribute.getTime()));
     }
 
     @Override
-    public Boolean toAttribute(String jdbc)
+    public Calendar toAttribute(Integer jdbc)
     {
         if (jdbc == null)
             return null;
         
-        return (jdbc.equals(truePattern) ? Boolean.TRUE : Boolean.FALSE);
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        try
+        {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(sdf.parse(String.valueOf(jdbc)));
+            return calendar;
+        }
+        catch (ParseException e)
+        {
+            throw new ConverterException(e);
+        }
     }
 
     @Override
@@ -64,9 +70,9 @@ public class TrueType implements Convertible<Boolean, String>
     }
 
     @Override
-    public Class<Boolean> getClassType()
+    public Class<Calendar> getClassType()
     {
-        return Boolean.class;
+        return Calendar.class;
     }
     
 }

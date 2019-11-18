@@ -24,9 +24,9 @@ import java.sql.Types;
 public class EnumNameType implements Convertible<Enum<?>, String>
 {
     private final static int[] TYPES = {Types.CHAR, Types.VARCHAR, Types.NCHAR, Types.NVARCHAR};
-    private Enum<?> enumType;
+    private Class<?> enumType;
     
-    public EnumNameType(Enum<?> enumType)
+    public EnumNameType(Class<?> enumType)
     {
         this.enumType = enumType;
     }
@@ -58,7 +58,7 @@ public class EnumNameType implements Convertible<Enum<?>, String>
     @Override @SuppressWarnings({ "rawtypes", "unchecked" })
     public Class getClassType()
     {
-        return this.enumType.getClass();
+        return this.enumType;
     }
     
 }

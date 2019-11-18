@@ -11,8 +11,7 @@
     select b.ID as id, b.ISBN as isbn,
     b.NAME as name, a.name as author
     from BOOK b inner join AUTHOR a on a.ID = b.AUTHOR_ID
-    where a.name in
-    (:in:authors)
+    where a.name in (:in:authors)
   </select>
 
   <select id="getBooksUsingINAnotherParam" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook">

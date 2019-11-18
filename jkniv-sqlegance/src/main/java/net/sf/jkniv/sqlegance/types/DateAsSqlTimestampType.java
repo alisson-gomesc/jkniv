@@ -21,40 +21,34 @@ package net.sf.jkniv.sqlegance.types;
 
 import java.sql.Types;
 
-public class TrueType implements Convertible<Boolean, String>
+public class DateAsSqlTimestampType implements Convertible<java.util.Date, java.sql.Timestamp>
 {
-    private final static int[] TYPES = {Types.CHAR, Types.VARCHAR, Types.NCHAR, Types.NVARCHAR};
-    //private final static String FALSE = "FALSE", TRUE = "TRUE";
-    //private final static TrueType INSTANCE = new TrueType();
-    //private final static ThreadLocal<String> PATTERN = new ThreadLocal<String>();
-    private String truePattern;
-    private String falsePattern;
-
-    public TrueType(String pattern)
+    private final static int[] TYPES = {Types.DATE, Types.TIME, Types.TIMESTAMP};
+    
+    public DateAsSqlTimestampType()
     {
-        String[] patterns = pattern.split("\\|");
-        if (patterns.length != 2)
-            throw new ConverterException("TrueType expect a separator \"|\" to handle true and false values, for example \"1|0\". The value was: "+pattern);
-        this.truePattern = patterns[0];
-        this.falsePattern = patterns[1];
+    }
+    
+    public DateAsSqlTimestampType(String pattern)
+    {
     }
     
     @Override
-    public String toJdbc(Boolean attribute)
+    public java.sql.Timestamp toJdbc(java.util.Date attribute)
     {
         if (attribute == null)
             return null;
         
-        return (attribute.booleanValue() ? truePattern : falsePattern);
+        return new java.sql.Timestamp(attribute.getTime());
     }
 
     @Override
-    public Boolean toAttribute(String jdbc)
+    public java.util.Date toAttribute(java.sql.Timestamp jdbc)
     {
         if (jdbc == null)
             return null;
-        
-        return (jdbc.equals(truePattern) ? Boolean.TRUE : Boolean.FALSE);
+
+        return new java.util.Date(jdbc.getTime());
     }
 
     @Override
@@ -64,9 +58,9 @@ public class TrueType implements Convertible<Boolean, String>
     }
 
     @Override
-    public Class<Boolean> getClassType()
+    public Class<java.util.Date> getClassType()
     {
-        return Boolean.class;
+        return java.util.Date.class;
     }
     
 }

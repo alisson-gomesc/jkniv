@@ -16,14 +16,18 @@ import org.slf4j.Logger;
 
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.experimental.TimerKeeper;
-import net.sf.jkniv.experimental.converters.SqlDateConverter;
-import net.sf.jkniv.reflect.beans.MethodName;
+import net.sf.jkniv.reflect.beans.Capitalize;
 import net.sf.jkniv.reflect.beans.MethodNameFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
+import net.sf.jkniv.sqlegance.types.CalendarAsSqlTimestampType;
+import net.sf.jkniv.sqlegance.types.Convertible;
+import net.sf.jkniv.sqlegance.types.DateAsSqlTimestampType;
+import net.sf.jkniv.sqlegance.types.NoConverterType;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
@@ -35,38 +39,40 @@ import net.sf.jkniv.whinstone.classification.Transformable;
 import net.sf.jkniv.whinstone.jdbc.DefaultJdbcColumn;
 import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
 import net.sf.jkniv.whinstone.statement.AutoKey;
+import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
 {
-    private static final Logger      LOG = LoggerFactory.getLogger();
-    private static final Logger      SQLLOG = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
+    private static final Logger      LOG     = LoggerFactory.getLogger();
+    private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
     private static final DataMasking MASKING = LoggerFactory.getDataMasking();
-    private static final MethodName  SETTER = MethodNameFactory.getInstanceSetter();
-
-    private final PreparedStatement stmt;
-    private final HandlerException  handlerException;
-    private final SqlDateConverter  dtConverter;
-    private int                     index, indexIN;
-    private ResultRow<T, ResultSet> resultRow;
-    private Queryable               queryable;
-    private AutoKey                 autoKey;
+    private static final Capitalize  SETTER  = MethodNameFactory.getInstanceSetter();
+    
+    private final PreparedStatement  stmt;
+    private final HandlerException   handlerException;
+    private int                      index;
+    private ResultRow<T, ResultSet>  resultRow;
+    private Queryable                queryable;
+    private AutoKey                  autoKey;
+    private String[]                 paramNames;
+    //private final SqlDateConverter  dtConverter;
     //private Class<?>                returnType;
     //private KeyGeneratorType        keyGeneratorType;
     //private boolean                 scalar;
     //private Set<OneToMany>          oneToManies;
     //private List<String>            groupingBy;
     
-    @SuppressWarnings("unchecked")
     public JdbcPreparedStatementAdapter(PreparedStatement stmt, Queryable queryable)
     {
         this.stmt = stmt;
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
-        this.dtConverter = new SqlDateConverter();
+        //this.dtConverter = new SqlDateConverter();
         //this.oneToManies = Collections.emptySet();
         //this.groupingBy = Collections.emptyList();
         //this.scalar = false;
         this.queryable = queryable;
+        this.paramNames = this.queryable.getParamsNames();
         this.reset();
     }
     
@@ -114,7 +120,6 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     @Override
     public StatementAdapter<T, ResultSet> bind(Object value)
     {
-        //this.index = position;
         log(value);
         try
         {
@@ -145,7 +150,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     @Override
     public StatementAdapter<T, ResultSet> bind(Object... values)
     {
-        for (int j=0; j< values.length; j++)
+        for (int j = 0; j < values.length; j++)
         {
             Object v = values[j];
             bind(v);
@@ -153,7 +158,8 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         return this;
     }
     
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings(
+    { "rawtypes", "unchecked" })
     public List<T> rows()
     {
         ResultSet rs = null;
@@ -182,19 +188,21 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
             queryable.getDynamicSql().getStats().add(e);
             handlerException.handle(e, e.getMessage());
         }
-        finally {
+        finally
+        {
             TimerKeeper.clear();
         }
         return list;
     }
     
     @Override
+    @SuppressWarnings("unchecked")
     public void bindKey()
     {
         String[] properties = queryable.getDynamicSql().asInsertable().getAutoGeneratedKey().getPropertiesAsArray();
         ObjectProxy<?> proxy = ObjectProxyFactory.of(queryable.getParams());
         Iterator<Object> it = autoKey.iterator();
-        for(int i=0; i<properties.length; i++)
+        for (int i = 0; i < properties.length; i++)
             setValueOfKey(proxy, properties[i], it.next());
         /*
         try
@@ -281,59 +289,84 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     @Override
     public int reset()
     {
-        int before = (index+indexIN);
+        int before = index;
         index = 1;
-        indexIN = 0;
         return before;
     }
     
     private void setValueOfKey(ObjectProxy<?> proxy, String property, Object value)
     {
         Object parsedValue = value;
-        
-        if(value instanceof java.sql.Time)
-            parsedValue = new Date(((java.sql.Time)value).getTime());
+        if (value instanceof java.sql.Time)
+            parsedValue = new Date(((java.sql.Time) value).getTime());
         else if (value instanceof java.sql.Date)
-            parsedValue = new Date(((java.sql.Date)value).getTime());
+            parsedValue = new Date(((java.sql.Date) value).getTime());
         else if (value instanceof java.sql.Timestamp)
-            parsedValue = new Date(((java.sql.Timestamp)value).getTime());
+            parsedValue = new Date(((java.sql.Timestamp) value).getTime());
         
-        proxy.invoke(SETTER.capitalize(property), parsedValue);
+        proxy.invoke(SETTER.does(property), parsedValue);
     }
-
+    
     private void setValue(Object value) throws SQLException
     {
-        stmt.setObject(currentIndex(), value);
+        int i = currentIndex();
+        Convertible<Object, Object> convertible = NoConverterType.getInstance();// getConverter(new PropertyAccess(this.paramNames[i - 1]));
+        stmt.setObject(i, convertible.toJdbc(value));
     }
     
     private void setValue(Object[] paramsIN) throws SQLException
     {
         int j = 0;
         for (; j < paramsIN.length; j++)
-            stmt.setObject(index+indexIN + j, paramsIN[j]);
-        indexIN = indexIN + j;
+            stmt.setObject(index + j, paramsIN[j]);
     }
     
+    @SuppressWarnings("rawtypes")
     private void setValue(Date value) throws SQLException
     {
-        java.sql.Timestamp timestamp = dtConverter.convert(java.sql.Timestamp.class, value);
-        stmt.setObject(currentIndex(), timestamp);
+        //java.sql.Timestamp timestamp = dtConverter.convert(java.sql.Timestamp.class, value);
+        int i = currentIndex();
+        Convertible convertible = getConverter(new PropertyAccess(this.paramNames[i - 1]));
+        if (convertible instanceof NoConverterType)
+        {
+            Convertible<java.util.Date, java.sql.Timestamp> convert2Timestamp = new DateAsSqlTimestampType();
+            stmt.setObject(i, convert2Timestamp.toJdbc(value));
+        }
+        else
+            stmt.setObject(i, convertible.toJdbc(value));
     }
     
     private void setValue(Calendar value) throws SQLException
     {
-        java.sql.Timestamp timestamp = dtConverter.convert(java.sql.Timestamp.class, value.getTime());
-        stmt.setObject(currentIndex(), timestamp);
+        int i = currentIndex();
+        Convertible<java.util.Calendar, java.sql.Timestamp> convertible = new CalendarAsSqlTimestampType();
+        //java.sql.Timestamp timestamp = dtConverter.convert(java.sql.Timestamp.class, value.getTime());
+        stmt.setObject(i, convertible.toJdbc(value));
     }
     
     private void setValue(Enum<?> value) throws SQLException
     {
-        //ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(value);
-        //stmt.setObject(currentIndex(), proxy.invoke("name"));
-        stmt.setObject(currentIndex(), value.name());// FIXME design converter to allow save ordinal value or other value from enum
+        int i = currentIndex();
+        Convertible<Object, Object> convertible = getConverter(new PropertyAccess(this.paramNames[i - 1]));
+        stmt.setObject(i, convertible.toJdbc(value));
     }
     
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    /**
+     * Retrieve a {@link Convertible} instance to customize the
+     * value of database to class field.
+     * @param column Column of row
+     * @param proxy of return type from query
+     * @return A convertible instance if found into class proxy or {@link NoConverterType}
+     * instance when the field or method is not annotated.
+     */
+    private Convertible<Object, Object> getConverter(PropertyAccess access)
+    {
+        ObjectProxy<?> proxy = ObjectProxyFactory.of(queryable.getParams());
+        return ConvertibleFactory.getConverter(access, proxy);
+    }
+    
+    @SuppressWarnings(
+    { "unchecked", "rawtypes" })
     private void setResultRow(JdbcColumn<ResultSet>[] columns)
     {
         Class<?> returnType = queryable.getReturnType();
@@ -372,24 +405,24 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     
     private int currentIndex()
     {
-        return ( index++ +indexIN);
+        return (index++);
     }
     
     private void log(String name, Object value)
     {
         if (SQLLOG.isDebugEnabled())
             SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index,
-                        name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
+                    name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
     private void log(Object value)
     {
-        String name = String.valueOf(index+indexIN);
+        String name = String.valueOf(index);
         if (SQLLOG.isDebugEnabled())
             SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index,
-                        name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
+                    name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
-
+    
     /**
      * Summarize the columns from SQL result in binary data or not.
      * @param metadata  object that contains information about the types and properties of the columns in a <code>ResultSet</code> 
@@ -421,11 +454,11 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
             return metaData.getColumnName(columnIndex);
         }
     }
-
+    
     @Override
     public void close()
     {
-        if (this.stmt != null) 
+        if (this.stmt != null)
         {
             try
             {
@@ -455,19 +488,19 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     {
         return !queryable.getDynamicSql().asSelectable().getOneToMany().isEmpty();
     }
-
+    
     private Set<OneToMany> getOneToMany()
     {
         return queryable.getDynamicSql().asSelectable().getOneToMany();
     }
-
+    
     private boolean hasGroupingBy()
     {
         return !queryable.getDynamicSql().asSelectable().getGroupByAsList().isEmpty();
     }
-
+    
     private List<String> getGroupingBy()
     {
-        return queryable.getDynamicSql().asSelectable().getGroupByAsList();        
+        return queryable.getDynamicSql().asSelectable().getGroupByAsList();
     }
 }

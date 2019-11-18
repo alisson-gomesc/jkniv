@@ -21,8 +21,8 @@ package net.sf.jkniv.whinstone.couchdb;
 
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Locale;
 
+import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.JdbcColumnMapper;
 import net.sf.jkniv.whinstone.UnderscoreToCamelCaseMapper;
@@ -35,6 +35,7 @@ public class CouchDbColumn implements JdbcColumn<String>
     private final String                  methodName;
     private final int                     jdbcType;
     private boolean nestedAttribute;
+    private PropertyAccess propertyAccess;
     private final static JdbcColumnMapper jdbcColumnMapper = new UnderscoreToCamelCaseMapper();// TODO design property to config;
     
     public CouchDbColumn(int columnIndex, String columnName, int jdbcType)
@@ -51,8 +52,11 @@ public class CouchDbColumn implements JdbcColumn<String>
         }
         else
         {
-            this.attributeName = jdbcColumnMapper.map(columnName);
-            this.methodName = capitalizeSetter(attributeName);
+            this.propertyAccess = new PropertyAccess(jdbcColumnMapper.map(columnName));
+            this.attributeName = propertyAccess.getFieldName();
+            this.methodName = propertyAccess.getWriterMethod();
+//            this.attributeName = jdbcColumnMapper.map(columnName);
+//            this.methodName = capitalizeSetter(attributeName);
         }
         this.jdbcType = jdbcType;
         //this.jdbcColumnMapper = new UnderscoreToCamelCaseMapper();// TODO design property to config
@@ -153,11 +157,11 @@ public class CouchDbColumn implements JdbcColumn<String>
         //return row.getBytes(columnIndex);
     }
     
-    /**
+    /*
      * Append prefix <code>set<code> to attributeColumnName and capitalize it.
      * @param attributeColumnName attribute name to capitalize with <code>set</code> prefix
      * @return return capitalize attribute name, sample: identityName -> setIdentityName
-     */
+     *
     private String capitalizeSetter(String attributeColumnName)// TODO design config capitalize algorithm
     {
         String capitalize = "";
@@ -171,8 +175,14 @@ public class CouchDbColumn implements JdbcColumn<String>
         }
         //sqlLogger.log(LogLevel.RESULTSET, "Mapping column [{}] to property [{}]", attributeColumnName, "set" + capitalize);
         return "set" + capitalize;
-    }
+    }*/
 
+    @Override
+    public PropertyAccess getPropertyAccess()
+    {
+        return this.propertyAccess;
+    }
+    
     @Override
     public String toString()
     {

@@ -136,7 +136,7 @@ public class SqlSelectInClauseTest extends BaseJdbc
     public void whenSelectRecordsUsingInClauseWithWrongParameterType()
     {
         catcher.expect(RepositoryException.class);
-        catcher.expectMessage("Cannot prepare statement [Syntax error: Encountered \":\" at line 5, column 6.]");
+        catcher.expectMessage("Cannot prepare statement [Syntax error: Encountered \":\" at line 4, column 22.]");
         
         Map<String, String> map = new HashMap<String, String>();
         map.put("a", "A");

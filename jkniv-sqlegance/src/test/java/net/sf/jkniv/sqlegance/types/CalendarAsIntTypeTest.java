@@ -19,46 +19,29 @@
  */
 package net.sf.jkniv.sqlegance.types;
 
-import java.sql.Types;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
-public class EnumOrdinalType implements Convertible<Enum<?>, Integer>
+import java.util.Calendar;
+import java.util.Date;
+
+import org.junit.Test;
+
+public class CalendarAsIntTypeTest
 {
-    private final static int[] TYPES = {Types.INTEGER};
-    private Class<?> enumType;
-    
-    public EnumOrdinalType(Class<?> enumType)
+    @Test
+    public void whenCalendarIsInt()  
     {
-        this.enumType = enumType;
-    }
-    
-    @Override
-    public Integer toJdbc(Enum<?> attribute)
-    {
-        if (attribute == null)
-            return null;
+        CalendarAsIntType type = new CalendarAsIntType("yyyyMMdd");
+        Calendar d1 = Calendar.getInstance();
+        Calendar d2 = Calendar.getInstance();
+        d1.setTime(new Date(2019-1900, 0, 1));
+        d2.setTime(new Date(2019-1900, 1, 10));
         
-        return attribute.ordinal();
-    }
+        assertThat(type.toAttribute(20190101), is(d1));
+        assertThat(type.toAttribute(20190210), is(d2));
 
-    @Override 
-    public Enum<?> toAttribute(Integer jdbc)
-    {
-        if (jdbc == null)
-            return null;
-        
-        return (Enum<?>) this.enumType.getEnumConstants()[jdbc.intValue()];
+        assertThat(type.toJdbc(d1), is(20190101));
+        assertThat(type.toJdbc(d2), is(20190210));
     }
-
-    @Override
-    public int[] getTypes()
-    {
-        return TYPES;
-    }
-
-    @Override @SuppressWarnings({ "rawtypes", "unchecked" })
-    public Class getClassType()
-    {
-        return enumType;
-    }
-    
 }

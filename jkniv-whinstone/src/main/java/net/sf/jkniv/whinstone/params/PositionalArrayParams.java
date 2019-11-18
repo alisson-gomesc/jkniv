@@ -19,34 +19,35 @@
  */
 package net.sf.jkniv.whinstone.params;
 
+import java.util.Iterator;
+
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 class PositionalArrayParams extends AbstractParam implements AutoBindParams
 {
     private StatementAdapter<?, ?> stmtAdapter;
-    private Object                 params;
     private String                 queryName;
+    private Object[]               params;
     private String[]               paramsNames;
     
     public PositionalArrayParams(StatementAdapter<?, ?> stmtAdapter, Queryable queryable)
     {
         super();
         this.stmtAdapter = stmtAdapter;
-        this.params = queryable.getParams();
         this.queryName = queryable.getName();
         this.paramsNames = queryable.getParamsNames();
+        this.params = queryable.values(paramsNames);
     }
     
     @Override
     public void on()
     {
-        Object[] objs = (Object[]) params;
-        if (objs.length != paramsNames.length && !hasInClause(paramsNames))
-            throw new ParameterException("A query [" + queryName
-                    + "] with positional parameters needs an array exactly have the same number of parameters from query.");
+//        if (params.length != paramsNames.length && !hasInClause(paramsNames))
+//            throw new ParameterException("A query [" + queryName
+//                    + "] with positional parameters needs an array exactly have the same number of parameters from query.");
         
-        for (Object o : objs)
+        for (Object o : params)
         {
             stmtAdapter.bind(o);
         }

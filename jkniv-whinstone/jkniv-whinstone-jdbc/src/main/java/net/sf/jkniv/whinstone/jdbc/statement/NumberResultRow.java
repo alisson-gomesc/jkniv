@@ -30,7 +30,6 @@ import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.Transformable;
-import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
 
 /**
  * 

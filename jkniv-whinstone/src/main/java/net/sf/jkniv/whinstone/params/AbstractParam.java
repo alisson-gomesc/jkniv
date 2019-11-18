@@ -1,11 +1,5 @@
 package net.sf.jkniv.whinstone.params;
 
-import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.Date;
-
-import net.sf.jkniv.reflect.beans.ObjectProxy;
-
 abstract class AbstractParam
 {
     protected boolean hasInClause(String[] paramsNames)

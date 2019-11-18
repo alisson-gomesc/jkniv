@@ -19,46 +19,29 @@
  */
 package net.sf.jkniv.sqlegance.types;
 
-import java.sql.Types;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
-public class EnumOrdinalType implements Convertible<Enum<?>, Integer>
+import org.junit.Test;
+
+public class TrueTypeTest
 {
-    private final static int[] TYPES = {Types.INTEGER};
-    private Class<?> enumType;
-    
-    public EnumOrdinalType(Class<?> enumType)
+
+    @Test
+    public void whenTrueIsOneAndFalseIsZero()  
     {
-        this.enumType = enumType;
-    }
-    
-    @Override
-    public Integer toJdbc(Enum<?> attribute)
-    {
-        if (attribute == null)
-            return null;
+        TrueType type = new TrueType("1|0");
         
-        return attribute.ordinal();
-    }
+        assertThat(type.toAttribute("0"), is(Boolean.FALSE));
+        assertThat(type.toAttribute("1"), is(Boolean.TRUE));
+        assertThat(type.toAttribute("2"), is(Boolean.FALSE));
+        assertThat(type.toAttribute("A"), is(Boolean.FALSE));
 
-    @Override 
-    public Enum<?> toAttribute(Integer jdbc)
-    {
-        if (jdbc == null)
-            return null;
-        
-        return (Enum<?>) this.enumType.getEnumConstants()[jdbc.intValue()];
+        assertThat(type.toJdbc(Boolean.FALSE), is("0"));
+        assertThat(type.toJdbc(Boolean.TRUE), is("1"));
+        assertThat(type.toJdbc(true), is("1"));
+        assertThat(type.toJdbc(false), is("0"));
     }
-
-    @Override
-    public int[] getTypes()
-    {
-        return TYPES;
-    }
-
-    @Override @SuppressWarnings({ "rawtypes", "unchecked" })
-    public Class getClassType()
-    {
-        return enumType;
-    }
-    
 }
