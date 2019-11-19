@@ -43,7 +43,7 @@ class CollectionInvoker extends AbstractInvoker implements Invokable
     {
         throw new UnsupportedOperationException("Collection Invoke cannot call anything without a instance object");
     }
-
+    
     @Override
     @SuppressWarnings("unchecked")
     public Object invoke(String methodName, Object theInstance, Object... values)

@@ -65,6 +65,7 @@ public class ConvertibleDataTypeTest extends BaseJdbc
         assertThat(sfTime.format(data.getMyTime()), is("13:00:00"));
         assertThat(sfTimestamp.format(data.getMyTimestamp()), is("2016-02-01 13:00:00"));
         assertThat(data.getMyBoolChar(), is(Boolean.TRUE));
+        assertThat(data.getMyBoolCharOverride(), is(Boolean.TRUE));
         assertThat(data.getMyDateInt(), is(sfDateInt.parse("20190228")));
         
         assertThat(data.getTimeUnit1(), is(TimeUnit.HOURS));

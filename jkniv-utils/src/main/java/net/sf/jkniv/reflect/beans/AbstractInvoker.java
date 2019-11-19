@@ -55,7 +55,13 @@ abstract class AbstractInvoker
         return types;
     }
     
-    protected MethodInfo getMethodByName(String methodName, Class<?> theTargetClass)
+    public Method getMethodByName(String methodName, Class<?> targetClass)
+    {
+        MethodInfo methodInfo =  getMethodByNameCached(methodName, targetClass);
+        return methodInfo.method;
+    }
+
+    protected MethodInfo getMethodByNameCached(String methodName, Class<?> theTargetClass)
     {
         String key = theTargetClass.getCanonicalName() + "." + methodName;
         MethodInfo methodInfo = cacheMethods.get(key);
@@ -98,7 +104,7 @@ abstract class AbstractInvoker
 
     public boolean hasMethod(String methodName, Class<?> theTargetClass)
     {
-        MethodInfo info = getMethodByName(methodName, theTargetClass);
+        MethodInfo info = getMethodByNameCached(methodName, theTargetClass);
         return (info.count >= 1);
     }
 

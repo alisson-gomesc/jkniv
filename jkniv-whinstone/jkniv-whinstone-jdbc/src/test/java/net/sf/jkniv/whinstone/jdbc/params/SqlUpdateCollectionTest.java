@@ -19,15 +19,10 @@
  */
 package net.sf.jkniv.whinstone.jdbc.params;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import org.hamcrest.Matchers;
-
 //import static org.hamcrest.Matchers.*;
-import static org.hamcrest.CoreMatchers.*;
-
-import org.junit.Test;
-//import static org.hamcrest.core.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,8 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.Test;
+//import static org.hamcrest.core.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jkniv.whinstone.QueryFactory;
@@ -44,8 +39,6 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.BaseJdbc;
 import net.sf.jkniv.whinstone.jdbc.domain.acme.Book;
-import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatAuthor;
-import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook;
 
 public class SqlUpdateCollectionTest extends BaseJdbc
 {

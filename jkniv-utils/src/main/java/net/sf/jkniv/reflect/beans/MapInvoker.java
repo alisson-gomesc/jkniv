@@ -43,7 +43,7 @@ class MapInvoker extends AbstractInvoker implements Invokable
     {
         throw new UnsupportedOperationException("Collection Invoke cannot call anything without a instance object");
     }
-
+   
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public Object invoke(String methodName, Object theInstance, Object... values)
