@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.experimental.converters;
+package net.sf.jkniv.reflect.beans;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -25,14 +25,11 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 
 /**
- * 
- * TODO document ME
- * TODO Test ME
  * @author Alisson Gomes 
- *
+ * @deprecated Needs change Argument Converter
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class NumberConverter extends AbstractConverter
+class NumberConverter extends AbstractConverter
 {
     
     public NumberConverter()

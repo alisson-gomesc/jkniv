@@ -17,17 +17,14 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.experimental.converters;
+package net.sf.jkniv.reflect.beans;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO document me
- * TODO Test case all
- * 
  * @author Alisson Gomes
- *
+ * @deprecated Needs change Argument Converter
  */
 abstract class AbstractConverter implements TypeConvertible
 {

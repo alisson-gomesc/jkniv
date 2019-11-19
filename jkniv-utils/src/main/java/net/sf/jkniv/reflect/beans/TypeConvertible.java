@@ -17,29 +17,21 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.experimental.converters;
+package net.sf.jkniv.reflect.beans;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-
-import org.junit.Test;
-
-import net.sf.jkniv.acme.domain.FooColor;
-
-public class EnumConverterTest
+/**
+ * TODO javadoc
+ * 
+ * @author Alisson Gomes
+ * @deprecated Needs change Argument Converter
+ */
+interface TypeConvertible
 {
+    <T> T convert(Class<T> type, Object value);
     
-    @Test
-    public void whenHaveEnumRuntimeAsString() throws ClassNotFoundException
-    {
-        EnumConverter converter = new EnumConverter();
-        FooColor result1 = converter.convert(FooColor.class, "RED");
-        FooColor result2 = converter.convert(FooColor.class, 2);
-        assertThat(result1, is(FooColor.RED));
-        assertThat(result2, is(FooColor.WHITE));
-        
-    }
+    boolean nullable();
     
+    void withPattern(String pattern);
     
+    void cleanPatterns();
 }

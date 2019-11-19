@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.experimental.converters;
+package net.sf.jkniv.reflect.beans;
 
 
 /**
@@ -33,10 +33,10 @@ package net.sf.jkniv.experimental.converters;
  * if number, the number one (1) is <code>Boolean.TRUE</code> any other is <code>Boolean.FALSE</code>.
  * 
  * @author Alisson Gomes 
- *
+ * @deprecated Needs change Argument Converter
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class BooleanConverter extends AbstractConverter // TODO Test ME
+class BooleanConverter extends AbstractConverter // TODO Test ME
 {
     
     public BooleanConverter()

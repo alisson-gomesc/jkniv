@@ -22,7 +22,6 @@ package net.sf.jkniv.reflect.beans;
 import java.lang.reflect.Method;
 
 import net.sf.jkniv.exception.HandleableException;
-import net.sf.jkniv.experimental.converters.ArgumentsConvert;
 import net.sf.jkniv.reflect.ReflectionException;
 
 class PojoInvoker extends AbstractInvoker implements Invokable

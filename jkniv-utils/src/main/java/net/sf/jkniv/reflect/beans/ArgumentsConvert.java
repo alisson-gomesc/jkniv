@@ -1,4 +1,4 @@
-package net.sf.jkniv.experimental.converters;
+package net.sf.jkniv.reflect.beans;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -6,7 +6,10 @@ import java.math.BigInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ArgumentsConvert
+/**
+ * @deprecated Needs change Argument Converter
+ */
+class ArgumentsConvert
 {
     private static final Logger LOG = LoggerFactory.getLogger(ArgumentsConvert.class);
     

@@ -17,13 +17,16 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.experimental.converters;
+package net.sf.jkniv.reflect.beans;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated Needs change Argument Converter
+ */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class EnumConverter extends AbstractConverter
+class EnumConverter extends AbstractConverter
 {
     private static final Logger LOG = LoggerFactory.getLogger(EnumConverter.class);
     private boolean allowNull;
