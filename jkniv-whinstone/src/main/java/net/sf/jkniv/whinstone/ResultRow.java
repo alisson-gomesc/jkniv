@@ -21,6 +21,7 @@ package net.sf.jkniv.whinstone;
 
 import java.sql.SQLException;
 
+import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.whinstone.classification.Transformable;
 
 /**
@@ -28,11 +29,12 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  * <p>
  * <b>Note:</b> ResultRow must be {@code stateless}.
  * 
- * @author Alisson Gomes
- * @since 0.6.0
  * @param <T> Type of objects thats must be returned.
  * @param <R> Type of objects thats database connection return as row, JDBC is {link ResultSet} 
  * JPA is {@code Object[]}.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
  */
 public interface ResultRow<T,R>
 {
@@ -50,4 +52,13 @@ public interface ResultRow<T,R>
     Transformable<T> getTransformable();
     
     void setColumns(JdbcColumn<R>[] columns);
+    
+    /*
+     * Set into {@code proxy} the value of {@code jdbcObject}
+     * @param column metadata
+     * @param jdbcObject value of column row
+     * @param proxy for object that represents a row {@code T}
+     */
+    //void setValueOf(JdbcColumn<?> column, Object jdbcObject, ObjectProxy<?> proxy);
+
 }

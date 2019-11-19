@@ -38,7 +38,7 @@ class PojoInvoker extends AbstractInvoker implements Invokable
         super(handleException);
         this.basicInvoker = basicInvoker;
     }
-
+    
     @Override
     public Object invoke(Method method, Object theInstance, Object... values)
     {
@@ -54,7 +54,7 @@ class PojoInvoker extends AbstractInvoker implements Invokable
         Method method = null;
         Class<?>[] types = getTypes(values);
         Class<?> instanceType = theInstance.getClass();
-        MethodInfo methodInfo =  getMethodByName(methodName, instanceType);
+        MethodInfo methodInfo =  getMethodByNameCached(methodName, instanceType);
         if (methodInfo.count == 1 || (methodInfo.noParameters && types.length == 0) )
             method = methodInfo.method;
         else if (methodInfo.count > 1 && types.length > 0)
@@ -82,7 +82,6 @@ class PojoInvoker extends AbstractInvoker implements Invokable
         Object ret = null;
         try
         {
-            //
             if (method.getParameterTypes().length > 0)
                 ret = method.invoke(theInstance, values);
             else
@@ -96,5 +95,4 @@ class PojoInvoker extends AbstractInvoker implements Invokable
         }
         return ret;
     }
-
 }

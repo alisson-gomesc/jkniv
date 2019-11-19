@@ -19,6 +19,9 @@
  */
 package net.sf.jkniv.whinstone.statement;
 
+import java.util.Collection;
+import java.util.Map;
+
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.reflect.beans.PropertyAccess;
@@ -33,11 +36,9 @@ import net.sf.jkniv.sqlegance.types.NoConverterType;
  * 
  * @author Alisson Gomes
  * @since 0.6.0
- *
  */
 public class ConvertibleFactory
 {
-    
     /**
      * Retrieve a {@link Convertible} instance to customize the
      * value of database to class field.
@@ -48,7 +49,7 @@ public class ConvertibleFactory
      */
     public static <T> Convertible<Object, Object> toJdbc(PropertyAccess access, ObjectProxy<T> proxy)
     {
-        return getConverter(access.getFieldName(), access.getReadMethod(), proxy);     
+        return getConverter(proxy, access.getFieldName(), access.getReadMethod());     
     }
     
     /**
@@ -61,28 +62,34 @@ public class ConvertibleFactory
      */
     public static <T> Convertible<Object, Object> toAttribute(PropertyAccess access, ObjectProxy<T> proxy)
     {
-        return getConverter(access.getFieldName(), access.getWriterMethod(), proxy);
-    }    
+        return getConverter(proxy, access.getFieldName(), access.getWriterMethod());
+    }
     
     /**
      * Retrieve a {@link Convertible} instance to customize the
      * value of database to class field.
+     * @param proxy of return type from query
      * @param fieldName attribute name from class
      * @param methodName getter or setter method
-     * @param proxy of return type from query
      * @return A convertible instance if found into class proxy or {@link NoConverterType}
      * instance when the field or method is not annotated.
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static <T> Convertible<Object, Object> getConverter(String fieldName, String methodName, ObjectProxy<T> proxy)
+    private static <T> Convertible<Object, Object> getConverter(
+            ObjectProxy<T> proxy, String fieldName, String methodName)
     {
-        // TODO make me a cache
+        // TODO cache for @Converter annotations
         Convertible convertible = NoConverterType.getInstance();
+        
+        if (Map.class.isAssignableFrom(proxy.getTargetClass()) || 
+            Collection.class.isAssignableFrom(proxy.getTargetClass()) ||
+            proxy.getTargetClass().isArray())
+            return convertible;
+        
         proxy.mute(NoSuchFieldException.class);
         proxy.mute(NoSuchMethodException.class);
-        Converter converter = null;
-        converter = (Converter) proxy.getAnnotationMethod(Converter.class, methodName);
-        
+        Converter converter = (Converter) proxy.getAnnotationMethod(Converter.class, methodName);
+            
         if (converter == null)
             converter = (Converter) proxy.getAnnotationField(Converter.class, fieldName);
         

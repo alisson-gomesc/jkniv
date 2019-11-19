@@ -33,19 +33,26 @@ public class PropertyAccess
     private String                  writerMethod;
     private String                  readMethod;
     private PropertyAccess          inner;
+    private Class                   paramType;
     
     public PropertyAccess(String fieldName)
     {
-//        if (fieldName.indexOf(".") > 0)
-//        {
-//            this.inner = new PropertyAccess(fieldName.ssubstring("\\\\."));
-//        }
-//        else
-//        {
-            this.fieldName = fieldName;
-            this.writerMethod = CAPITAL_SETTER.does(fieldName);
-            this.readMethod = CAPITAL_GETTER.does(fieldName);
-//        }
+        this(fieldName, null);
+    }
+
+    public PropertyAccess(String fieldName, Object paramValue)
+    {
+//      if (fieldName.indexOf(".") > 0)
+//      { 
+//          this.inner = new PropertyAccess(fieldName.ssubstring("\\\\."));
+//      }
+//      else
+//      {
+          this.fieldName = fieldName;
+          this.writerMethod = CAPITAL_SETTER.does(fieldName);
+          this.readMethod = CAPITAL_GETTER.does(fieldName);
+          this.setParamType(paramValue);
+//      }
     }
     
     public String getFieldName()
@@ -69,5 +76,16 @@ public class PropertyAccess
             return readMethod;
         
         return getReadMethod();
+    }
+    
+    public Class getParamType()
+    {
+        return paramType;
+    }
+    
+    public void setParamType(Object paramValue)
+    {
+        
+        this.paramType = (paramValue != null ? paramValue.getClass() : null);
     }
 }

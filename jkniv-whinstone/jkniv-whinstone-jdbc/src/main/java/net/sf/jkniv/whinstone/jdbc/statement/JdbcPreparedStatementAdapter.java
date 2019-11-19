@@ -331,7 +331,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         int i = currentIndex();
         Convertible<Object, Object> convertible = NoConverterType.getInstance();
         if(queryable.isTypeOfPojo() || queryable.isTypeOfCollectionFromPojo() || queryable.isTypeOfArrayFromPojo())
-            convertible = getConverter(new PropertyAccess(this.paramNames[i - 1]));
+            convertible = getConverter(new PropertyAccess(this.paramNames[i-1], value));
         stmt.setObject(i, convertible.toJdbc(value));
     }
     
@@ -347,7 +347,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     {
         //java.sql.Timestamp timestamp = dtConverter.convert(java.sql.Timestamp.class, value);
         int i = currentIndex();
-        Convertible convertible = getConverter(new PropertyAccess(this.paramNames[i - 1]));
+        Convertible convertible = getConverter(new PropertyAccess(this.paramNames[i - 1], value));
         if (convertible instanceof NoConverterType)
         {
             Convertible<java.util.Date, java.sql.Timestamp> convert2Timestamp = new DateAsSqlTimestampType();
@@ -368,7 +368,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     private void setValue(Enum<?> value) throws SQLException
     {
         int i = currentIndex();
-        Convertible<Object, Object> convertible = getConverter(new PropertyAccess(this.paramNames[i - 1]));
+        Convertible<Object, Object> convertible = getConverter(new PropertyAccess(this.paramNames[i-1], value));
         stmt.setObject(i, convertible.toJdbc(value));
     }
     

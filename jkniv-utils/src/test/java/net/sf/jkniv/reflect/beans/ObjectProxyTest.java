@@ -160,14 +160,14 @@ public class ObjectProxyTest
     public void whenLookingForAnnotationMethods()
     {
         ObjectProxy<Animal> proxy = ObjectProxyFactory.of(Animal.class);
-        List<Method> methods = proxy.getAnnotationMethods(Before.class);
+        List<Method> methods = proxy.getMethodsAnnotatedWith(Before.class);
         
         assertThat(methods.size(), is(1));
         assertThat(methods.get(0).getAnnotations()[0], instanceOf(Before.class));
         
         ObjectProxy<Cat> proxyCat = ObjectProxyFactory.of(Cat.class);
-        List<Method> methodBefore = proxyCat.getAnnotationMethods(Before.class);
-        List<Method> methodDeprecated = proxyCat.getAnnotationMethods(Deprecated.class);
+        List<Method> methodBefore = proxyCat.getMethodsAnnotatedWith(Before.class);
+        List<Method> methodDeprecated = proxyCat.getMethodsAnnotatedWith(Deprecated.class);
         
         assertThat(methodBefore.size(), is(1));
         assertThat(methodDeprecated.size(), is(1));

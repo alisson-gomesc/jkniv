@@ -27,6 +27,8 @@ public class MyTypes
     private Date    myTimestamp;
     @Converter(converter = TrueType.class, pattern = "S|N")
     private Boolean myBoolChar;
+    @Converter(converter = TrueType.class, pattern = "S|N")
+    private Boolean myBoolCharOverride;
     @Converter(converter = DateAsIntType.class, pattern = "yyyyMMdd")
     private Date myDateInt;
 
@@ -154,6 +156,18 @@ public class MyTypes
     public void setMyBoolChar(Boolean myBoolChar)
     {
         this.myBoolChar = myBoolChar;
+    }
+    
+    @Converter(converter = TrueType.class, pattern = "YES|NO")
+    public Boolean getMyBoolCharOverride()
+    {
+        return myBoolCharOverride;
+    }
+    
+    @Converter(converter = TrueType.class, pattern = "YES|NO")
+    public void setMyBoolCharOverride(Boolean myBoolCharOverride)
+    {
+        this.myBoolCharOverride = myBoolCharOverride;
     }
     
     public Date getMyDateInt()

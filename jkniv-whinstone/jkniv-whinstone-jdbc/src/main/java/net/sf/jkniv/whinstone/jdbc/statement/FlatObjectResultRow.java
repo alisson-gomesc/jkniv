@@ -44,7 +44,7 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  * @since 0.6.0
  * 
  */
-class FlatObjectResultRow<T> extends AbstractResultRow<T> implements ResultRow<T, ResultSet>
+class FlatObjectResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultSet>
 {
     //private final static Logger      LOG     = LoggerFactory.getLogger(FlatObjectResultRow.class);
     private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
@@ -66,8 +66,14 @@ class FlatObjectResultRow<T> extends AbstractResultRow<T> implements ResultRow<T
     {
         ObjectProxy<T> proxy = ObjectProxyFactory.of(returnType);
         for (JdbcColumn<ResultSet> column : columns)
-            setValueOf(column, rs, proxy);
-        
+        {
+          Object jdbcObject = null;
+          if (column.isBinary())
+              jdbcObject = column.getBytes(rs);
+          else
+              jdbcObject = column.getValue(rs);
+            setValueOf(column, jdbcObject, proxy);
+        }
         return proxy.getInstance();
     }
     /*

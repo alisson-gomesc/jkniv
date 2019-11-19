@@ -83,7 +83,7 @@ public class GroupingByTest extends BaseJdbc
     {
         Queryable q = QueryFactory.of("oneToManyBooksFromAuthors");
         List<Author> authors = repositoryDerby.list(q);
-        assetOneToMany(authors);
+        assertOneToMany(authors);
     }
     
     @Test
@@ -91,10 +91,10 @@ public class GroupingByTest extends BaseJdbc
     {
         Queryable q = QueryFactory.of("oneToManyBooksFromAuthorsWithourOrderBy");
         List<Author> authors = repositoryDerby.list(q);
-        assetOneToMany(authors);
+        assertOneToMany(authors);
     }    
 
-    private void assetOneToMany(List<Author> authors)
+    private void assertOneToMany(List<Author> authors)
     {
         Iterator<Author> it = authors.iterator();
         

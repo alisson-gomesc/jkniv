@@ -188,7 +188,7 @@ public class HandlerException implements HandleableException
             }
         }
         else
-            LOG.warn("Be careful the Handler exception is mute for configured exceptions [{}]",
+            LOG.info("Be careful the Handler exception is mute for configured exceptions [{}]",
                     caught.getClass().getName());
         return theException;
     }

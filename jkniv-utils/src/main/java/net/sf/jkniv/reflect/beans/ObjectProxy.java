@@ -89,13 +89,6 @@ public interface ObjectProxy<T>
     T merge(Object o);
 
     /**
-     * Retrieve all public methods annotated with {@code annotation}
-     * @param annotation looked for
-     * @return a list of all public methods annotated with {@code annotation} or empty list otherwise.
-     */
-    List<Method> getAnnotationMethods(final Class<? extends Annotation> annotation);
-    
-    /**
      * When the proxy catch a Exception to handler by {@code ReflectionException}
      * a mute rule is used to not throw the exception. 
      * @param ex exception class type
@@ -117,9 +110,17 @@ public interface ObjectProxy<T>
     boolean hasAnnotation(Class<? extends Annotation> annotation);
 
     /**
+     * Retrieve all public methods annotated with {@code annotation}
+     * @param annotation looked for
+     * @return a list of all public methods annotated with {@code annotation} or empty list otherwise.
+     */
+    List<Method> getMethodsAnnotatedWith(final Class<? extends Annotation> annotation);
+
+    /**
      * check if this proxy class has {@code annotation} for a method name
      * @param annotation name of the annotation
      * @param methodName name of the method
+     * @param paramTypes type of parameters
      * @return the Annotation instance or {@code null} if not found
      * @throws ReflectionException when the {@code methodName} not exists
      */

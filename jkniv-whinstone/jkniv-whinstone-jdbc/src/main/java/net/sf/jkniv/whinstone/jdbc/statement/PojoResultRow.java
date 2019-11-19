@@ -36,12 +36,16 @@ import net.sf.jkniv.reflect.beans.Capitalize;
 import net.sf.jkniv.reflect.beans.MethodNameFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
+import net.sf.jkniv.sqlegance.types.Convertible;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.ObjectTransform;
 import net.sf.jkniv.whinstone.classification.Transformable;
+import net.sf.jkniv.whinstone.jdbc.DefaultJdbcColumn;
+import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
 
 /**
  * 
@@ -54,7 +58,7 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-class PojoResultRow<T> extends AbstractResultRow<T> implements ResultRow<T, ResultSet>
+class PojoResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultSet>
 {
     private final static Logger      LOG     = LoggerFactory.getLogger(PojoResultRow.class);
     private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
@@ -76,16 +80,24 @@ class PojoResultRow<T> extends AbstractResultRow<T> implements ResultRow<T, Resu
         this.transformable = (Transformable<T>) new ObjectTransform();
     }
     
+    @SuppressWarnings("unchecked")
     public T row(ResultSet rs, int rownum) throws SQLException
     {
-        final Map<OneToMany, Object> otmValues;
-        otmValues = new HashMap<OneToMany, Object>();
+        final Map<OneToMany, Object> otmValues = new HashMap<OneToMany, Object>();
         ObjectProxy<T> proxyRow = ObjectProxyFactory.of(returnType);
         for (JdbcColumn<ResultSet> column : columns)
         {
             OneToMany otm = getOneToMany(column, otmValues);
             if (otm == null)
-                setValueOf(column, rs, proxyRow);
+            {
+                Object jdbcObject = null;
+                if (column.isBinary())
+                    jdbcObject = column.getBytes(rs);
+                else
+                    jdbcObject = column.getValue(rs);
+
+                setValueOf(column, jdbcObject, proxyRow);
+            }
             else
             {
                 prepareOneToManyValue(otm, column, rs, otmValues);
@@ -93,7 +105,6 @@ class PojoResultRow<T> extends AbstractResultRow<T> implements ResultRow<T, Resu
         }
         for (Entry<OneToMany, Object> entry : otmValues.entrySet())
         {
-            
             String attrName = entry.getKey().getProperty();
             String getterName = GETTER.does(attrName);
             String setterName = SETTER.does(attrName);
@@ -160,20 +171,24 @@ class PojoResultRow<T> extends AbstractResultRow<T> implements ResultRow<T, Resu
             final Map<OneToMany, Object> otmValues) throws SQLException
     {
         ObjectProxy<?> proxy = ObjectProxyFactory.of(otmValues.get(otm));
-        Injectable<?> reflect = InjectableFactory.of(proxy);
+        //Injectable<?> reflect = InjectableFactory.of(proxy);
         Object jdbcObject = null;
         if (column.isBinary())
             jdbcObject = column.getBytes(rs);
         else
             jdbcObject = column.getValue(rs);
-        // otm.property : 'book', JdbcColumn: book.name, capitalize -> setName
-        String method = SETTER.does(column.getName().substring(otm.getProperty().length() + 1));
-        if(SQLLOG.isTraceEnabled())
-            SQLLOG.trace("Mapping index [{}] column [{}] type of [{}] to value [{}]", 
-                    column.getIndex(), column.getAttributeName(), 
-                    (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), 
-                    MASKING.mask(column.getAttributeName(), jdbcObject));
-        reflect.inject(method, jdbcObject);
+        // otm.property : 'books', JdbcColumn: books.name, capitalize -> setName
+        String fieldName = column.getName().substring(otm.getProperty().length() + 1);
+        
+        JdbcColumn<ResultSet> otmColumn = new DefaultJdbcColumn(column.getIndex(),  fieldName, column.getJdbcType());
+        setValueOf(otmColumn, jdbcObject, proxy);
+//        if(SQLLOG.isTraceEnabled())
+//            SQLLOG.trace("Mapping index [{}] column [{}] type of [{}] to value [{}]", 
+//                    column.getIndex(), column.getAttributeName(), 
+//                    (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), 
+//                    MASKING.mask(column.getAttributeName(), jdbcObject));
+//        
+        //reflect.inject(method, jdbcObject);
     }
     
     @Override

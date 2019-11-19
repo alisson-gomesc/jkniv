@@ -43,8 +43,8 @@ public class AnnotationTest
     {
         ObjectProxy<Cat> proxy = ObjectProxyFactory.of(Cat.class);
         
-        List<Method> precallbacks = proxy.getAnnotationMethods(PreCallBack.class);
-        List<Method> postcallbacks = proxy.getAnnotationMethods(PostCallBack.class);
+        List<Method> precallbacks = proxy.getMethodsAnnotatedWith(PreCallBack.class);
+        List<Method> postcallbacks = proxy.getMethodsAnnotatedWith(PostCallBack.class);
         
         List<Method> preAdd = new ArrayList<Method>();
         List<Method> postAdd = new ArrayList<Method>();

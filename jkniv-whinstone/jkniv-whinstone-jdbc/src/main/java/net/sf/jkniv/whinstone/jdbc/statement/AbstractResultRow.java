@@ -19,25 +19,16 @@
  */
 package net.sf.jkniv.whinstone.jdbc.statement;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.reflect.Injectable;
 import net.sf.jkniv.reflect.InjectableFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
-import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
-import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
-import net.sf.jkniv.sqlegance.types.Converter;
-import net.sf.jkniv.sqlegance.types.Converter.EnumType;
 import net.sf.jkniv.sqlegance.types.Convertible;
-import net.sf.jkniv.sqlegance.types.EnumNameType;
-import net.sf.jkniv.sqlegance.types.EnumOrdinalType;
-import net.sf.jkniv.sqlegance.types.NoConverterType;
 import net.sf.jkniv.whinstone.JdbcColumn;
+import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
 
 /**
@@ -47,7 +38,7 @@ import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-abstract class AbstractResultRow<T> //implements ResultRow
+abstract class AbstractResultRow //implements ResultRow
 {
     private final static Logger LOG = LoggerFactory.getLogger(AbstractResultRow.class);
     private final Logger        sqlLog;
@@ -59,14 +50,14 @@ abstract class AbstractResultRow<T> //implements ResultRow
         this.masking = masking;
     }
     
-    protected void setValueOf(JdbcColumn<ResultSet> column, ResultSet rs, ObjectProxy<T> proxy) throws SQLException
+    public void setValueOf(JdbcColumn<?> column, Object jdbcObject, ObjectProxy<?> proxy)
     {
-        Injectable<T> reflect = InjectableFactory.of(proxy);
-        Object jdbcObject = null;
-        if (column.isBinary())
-            jdbcObject = column.getBytes(rs);
-        else
-            jdbcObject = column.getValue(rs);
+        Injectable<?> reflect = InjectableFactory.of(proxy);
+//        Object jdbcObject = null;
+//        if (column.isBinary())
+//            jdbcObject = column.getBytes(rs);
+//        else
+//            jdbcObject = column.getValue(rs);
         
         if (sqlLog.isTraceEnabled())
             sqlLog.trace("Mapping index [{}] column [{}] type of [{}] to value [{}]", column.getIndex(),
