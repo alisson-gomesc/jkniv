@@ -513,7 +513,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     }
 
     @Override
-    public <T extends Annotation> T getAnnotationMethod(Class<? extends Annotation> annotation, String methodName, Class<?>... paramTypes)
+    public <G extends Annotation> G getAnnotationMethod(Class<? extends Annotation> annotation, String methodName, Class<?>... paramTypes)
     {
         Method method = null;
         try
@@ -524,7 +524,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         {
             this.handleException.handle(e);
         }
-        return (T) method.getAnnotation(annotation);
+        return method == null ? null : (G) method.getAnnotation(annotation);
     }
 
     @Override
