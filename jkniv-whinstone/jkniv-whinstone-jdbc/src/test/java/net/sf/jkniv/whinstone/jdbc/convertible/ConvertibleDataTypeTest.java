@@ -42,7 +42,7 @@ public class ConvertibleDataTypeTest extends BaseJdbc
     @Autowired
     Repository repositoryDerby;
     
-    @Test @Ignore("fixing Positional clause in parameters")
+    @Test
     public void whenGetDataUsingConvertibleAnnotation() throws ParseException
     {
         Queryable q = QueryFactory.of("by-id", "id", 1000);

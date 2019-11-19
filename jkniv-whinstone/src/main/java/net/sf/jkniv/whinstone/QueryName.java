@@ -252,6 +252,12 @@ class QueryName implements Queryable
     {
         return (this.paramType == TYPEOF_PARAM.BASIC);
     }
+
+    @Override
+    public boolean isTypeOfPojo()
+    {
+        return (this.paramType == TYPEOF_PARAM.POJO);
+    }
     
     @Override
     public boolean isTypeOfArrayFromBasicTypes()

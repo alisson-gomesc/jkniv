@@ -213,6 +213,12 @@ public interface Queryable
      */
     boolean isTypeOfMap();
 
+    /**
+     * verify if the parameter is a pojo
+     * @return <code>true</code> when is, <code>false</code> otherwise
+     */
+    boolean isTypeOfPojo();
+
     // TODO test iterator over basic types (String, Date, Numbers...)
     /**
      * 

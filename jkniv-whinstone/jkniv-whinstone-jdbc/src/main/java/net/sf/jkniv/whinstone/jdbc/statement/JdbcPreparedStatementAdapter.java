@@ -310,7 +310,9 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     private void setValue(Object value) throws SQLException
     {
         int i = currentIndex();
-        Convertible<Object, Object> convertible = NoConverterType.getInstance();// getConverter(new PropertyAccess(this.paramNames[i - 1]));
+        Convertible<Object, Object> convertible = NoConverterType.getInstance();
+        if(queryable.isTypeOfPojo() || queryable.isTypeOfCollectionFromPojo() || queryable.isTypeOfArrayFromPojo())
+            convertible = getConverter(new PropertyAccess(this.paramNames[i - 1]));
         stmt.setObject(i, convertible.toJdbc(value));
     }
     
