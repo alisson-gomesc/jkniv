@@ -90,13 +90,7 @@ class PojoResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultS
             OneToMany otm = getOneToMany(column, otmValues);
             if (otm == null)
             {
-                Object jdbcObject = null;
-                if (column.isBinary())
-                    jdbcObject = column.getBytes(rs);
-                else
-                    jdbcObject = column.getValue(rs);
-
-                setValueOf(column, jdbcObject, proxyRow);
+                setValueOf(proxyRow, column, rs);
             }
             else
             {
@@ -172,16 +166,13 @@ class PojoResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultS
     {
         ObjectProxy<?> proxy = ObjectProxyFactory.of(otmValues.get(otm));
         //Injectable<?> reflect = InjectableFactory.of(proxy);
-        Object jdbcObject = null;
-        if (column.isBinary())
-            jdbcObject = column.getBytes(rs);
-        else
-            jdbcObject = column.getValue(rs);
+        //Object jdbcObject = getValueOf(column, rs);
         // otm.property : 'books', JdbcColumn: books.name, capitalize -> setName
         String fieldName = column.getName().substring(otm.getProperty().length() + 1);
         
         JdbcColumn<ResultSet> otmColumn = new DefaultJdbcColumn(column.getIndex(),  fieldName, column.getJdbcType());
-        setValueOf(otmColumn, jdbcObject, proxy);
+        setValueOf(proxy, otmColumn, rs);
+        //setValueOf(otmColumn, jdbcObject, proxy);
 //        if(SQLLOG.isTraceEnabled())
 //            SQLLOG.trace("Mapping index [{}] column [{}] type of [{}] to value [{}]", 
 //                    column.getIndex(), column.getAttributeName(), 

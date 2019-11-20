@@ -67,12 +67,7 @@ class FlatObjectResultRow<T> extends AbstractResultRow implements ResultRow<T, R
         ObjectProxy<T> proxy = ObjectProxyFactory.of(returnType);
         for (JdbcColumn<ResultSet> column : columns)
         {
-          Object jdbcObject = null;
-          if (column.isBinary())
-              jdbcObject = column.getBytes(rs);
-          else
-              jdbcObject = column.getValue(rs);
-            setValueOf(column, jdbcObject, proxy);
+          setValueOf(proxy, column, rs);
         }
         return proxy.getInstance();
     }

@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.whinstone.jdbc.statement;
 
+import java.sql.SQLException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,15 +52,29 @@ abstract class AbstractResultRow //implements ResultRow
         this.masking = masking;
     }
     
-    public void setValueOf(JdbcColumn<?> column, Object jdbcObject, ObjectProxy<?> proxy)
+    /**
+     * 
+     * @param <T> {@code ResultSet} implementation, that contains the rows of database
+     * @param column metadata
+     * @param rs {@code ResultSet} instance
+     * @return The value of column
+     * @throws SQLException if
+     */
+    public <R> Object getValueOf(JdbcColumn<R> column, R rs) throws SQLException
+    {
+        return column.isBinary() ? column.getBytes(rs): column.getValue(rs); 
+    }
+    
+//    public <T,R> void setValueOf(final ObjectProxy<T> proxy,final JdbcColumn<R> column, R rs) throws SQLException
+//    {
+//        Object jdbcObject = getValueOf(column, rs);
+//        setValueOf(proxy, column, jdbcObject);
+//    }    
+
+    public <T,R> void setValueOf(final ObjectProxy<T> proxy, final JdbcColumn<R> column, R rs) throws SQLException
     {
         Injectable<?> reflect = InjectableFactory.of(proxy);
-//        Object jdbcObject = null;
-//        if (column.isBinary())
-//            jdbcObject = column.getBytes(rs);
-//        else
-//            jdbcObject = column.getValue(rs);
-        
+        Object jdbcObject = getValueOf(column, rs);
         if (sqlLog.isTraceEnabled())
             sqlLog.trace("Mapping index [{}] column [{}] type of [{}] to value [{}]", column.getIndex(),
                     column.getAttributeName(), (jdbcObject != null ? jdbcObject.getClass().getName() : "null"),

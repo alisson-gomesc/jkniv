@@ -140,6 +140,5 @@ public class GroupingByTest extends BaseJdbc
         assertThat(author5.getBooks().size(), is(2));
         assertThat(author5.getBooks().get(0).getName(), is("The Rebel: An Essay on Man in Revolt"));
         assertThat(author5.getBooks().get(1).getName(), is("The Stranger"));
-
     }
 }
