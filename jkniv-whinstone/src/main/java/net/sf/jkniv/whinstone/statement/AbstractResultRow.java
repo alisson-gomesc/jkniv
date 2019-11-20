@@ -74,7 +74,6 @@ public abstract class AbstractResultRow //implements ResultRow
         
         if (column.isNestedAttribute())
         {
-            // FIXME Convertible for nested attributes
             Convertible<Object, Object> convertible = ConvertibleFactory.toAttribute(column.getPropertyAccess(), proxy);
             reflect.inject(column.getAttributeName(), convertible.toAttribute(jdbcObject));
         }
