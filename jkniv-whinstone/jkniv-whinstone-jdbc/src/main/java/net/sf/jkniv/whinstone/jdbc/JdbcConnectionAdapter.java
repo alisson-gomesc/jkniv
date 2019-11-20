@@ -13,9 +13,7 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.Insertable;
-import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
@@ -170,7 +168,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
     private <T, R> StatementAdapter<T, R> newStatement(Queryable queryable)
     {
         PreparedStatement stmt = prepareStatement(queryable);
-        StatementAdapter<T, R> adapter = new net.sf.jkniv.whinstone.jdbc.statement.PreparedStatementAdapter(stmt,
+        StatementAdapter<T, R> adapter = new net.sf.jkniv.whinstone.jdbc.statement.JdbcPreparedStatementAdapter(stmt,
                 queryable);
         return adapter;
     }
@@ -193,7 +191,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
             auto = new JdbcSequenceGeneratedKey(isql, conn, handlerException);
 
         }
-        StatementAdapter<T, R> adapter = new net.sf.jkniv.whinstone.jdbc.statement.PreparedStatementAdapter(stmt,
+        StatementAdapter<T, R> adapter = new net.sf.jkniv.whinstone.jdbc.statement.JdbcPreparedStatementAdapter(stmt,
                 queryable);
 
         adapter.with(auto);
@@ -238,23 +236,23 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
         return stmt;
     }
     
-    @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
-    {
-        PreparedStatement stmt = null;
-        StatementAdapter<T, R> adapter = null;
-        try
-        {
-            stmt = conn.prepareStatement(sql);
-            adapter = new net.sf.jkniv.whinstone.jdbc.statement.PreparedStatementAdapter(stmt, null);
-        }
-        catch (SQLException sqle)
-        {
-            throw new RepositoryException("Cannot prepare statement to [" + sql + "]", sqle);
-        }
-        return adapter;
-    }
+//    @Override
+//    @SuppressWarnings({ "rawtypes", "unchecked" })
+//    public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
+//    {
+//        PreparedStatement stmt = null;
+//        StatementAdapter<T, R> adapter = null;
+//        try
+//        {
+//            stmt = conn.prepareStatement(sql);
+//            adapter = new net.sf.jkniv.whinstone.jdbc.statement.JdbcPreparedStatementAdapter(stmt, null);
+//        }
+//        catch (SQLException sqle)
+//        {
+//            throw new RepositoryException("Cannot prepare statement to [" + sql + "]", sqle);
+//        }
+//        return adapter;
+//    }
     
     @Override
     public Object getMetaData()
@@ -294,7 +292,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
             LOG.trace("Preparing SQL statement [{}] type [{}], concurrency [{}], holdability [{}] with [{}] parameters",
                     queryable.getName(), isql.getResultSetType(), isql.getResultSetConcurrency(), isql.getResultSetHoldability(),
                     queryable.getParamsNames().length);
-        stmt = buildNewStatement(queryable, isql);
+        stmt = buildNewStatement(queryable);
         /*
         SqlDialect dialect = queryable.getDynamicSql().getSqlDialect();
         int rsType = isql.getResultSetType().getTypeScroll();
@@ -334,9 +332,10 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
         return stmt;
     }
     
-    private PreparedStatement buildNewStatement(Queryable queryable, Sql isql)
+    private PreparedStatement buildNewStatement(Queryable queryable)
     {
         PreparedStatement stmt = null;
+        Sql isql = queryable.getDynamicSql();
         int rsType = isql.getResultSetType().getTypeScroll();
         int rsConcurrency = isql.getResultSetConcurrency().getConcurrencyMode();
         int rsHoldability = isql.getResultSetHoldability().getHoldability();
@@ -470,10 +469,10 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
         //    adapterStmtCount = newStatement(queryable.queryCount());
         
         StatementAdapter<T, R> stmt = this.newStatement(queryable);
-        Selectable select = queryable.getDynamicSql().asSelectable();
-        stmt.resultRow(overloadResultRow)
-            .oneToManies(select.getOneToMany())
-            .groupingBy(select.getGroupByAsList());
+        //Selectable select = queryable.getDynamicSql().asSelectable();
+        stmt.with(overloadResultRow);
+            //.oneToManies(select.getOneToMany())
+            //.groupingBy(select.getGroupByAsList())
         
         command = new DefaultJdbcQuery(stmt, queryable, this.conn);
         return command;

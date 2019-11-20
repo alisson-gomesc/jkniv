@@ -49,7 +49,6 @@ import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
-import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
@@ -74,7 +73,6 @@ class RepositoryCouchDb implements Repository
     private static final Assertable           notNull            = AssertsFactory.getNotNull();
     private QueryNameStrategy                 strategyQueryName;
     private HandleableException               handlerException;
-    //private RepositoryConfig                  repositoryConfig;
     private CouchDbSqlContext                 sqlContext;
     private HttpCookieCommandAdapter          cmdAdapter;
     private final static Map<String, Boolean> DOC_SCHEMA_UPDATED = new HashMap<String, Boolean>();
@@ -316,7 +314,7 @@ class RepositoryCouchDb implements Repository
         .checkSqlType(SqlType.INSERT)
         .with(handlerException)
         .run();
-        return entity;// FIXME design update must return a number
+        return entity;
     }
     
     @Override
@@ -345,7 +343,7 @@ class RepositoryCouchDb implements Repository
         .checkSqlType(SqlType.UPDATE)
         .with(handlerException)
         .run();
-        return entity;// FIXME design update must return a number 
+        return entity; 
     }
     
     @Override

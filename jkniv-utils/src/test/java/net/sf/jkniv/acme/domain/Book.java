@@ -20,9 +20,6 @@
  */
 package net.sf.jkniv.acme.domain;
 
-import javax.annotation.Resource;
-
-@Resource
 public class Book
 {
     private Long   id;
@@ -32,10 +29,7 @@ public class Book
     
     public Book()
     {
-        // TODO Auto-generated constructor stub
     }
-    
-    
     
     public Book(Long id, String name, String isbn, String author)
     {
@@ -45,9 +39,7 @@ public class Book
         this.isbn = isbn;
         this.author = new Author(author);
     }
-
-
-
+    
     public Long getId()
     {
         return id;
@@ -102,12 +94,11 @@ public class Book
     {
         System.out.println("Book borrowed");
     }
-
+    
     public void borrow(String to)
     {
         System.out.println("Book borrowed for " + to);
     }
-
     
     @Override
     public String toString()

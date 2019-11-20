@@ -21,7 +21,6 @@ package net.sf.jkniv.reflect.beans;
 
 public class ObjectProxyFactory
 {
-    
     /**
      * Build proxy object for class type of <code>className</code>
      * @param className canonical name for class name
@@ -32,7 +31,7 @@ public class ObjectProxyFactory
     {
         return new DefaultObjectProxy<T>(className);
     }
-    
+        
     /**
      * Build proxy object for instance of object <code>target</code>
      * @param target instance of object that proxy will be represent

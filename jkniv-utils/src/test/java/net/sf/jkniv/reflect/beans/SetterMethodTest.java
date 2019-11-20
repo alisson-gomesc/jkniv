@@ -12,10 +12,20 @@ public class SetterMethodTest
     @Test
     public void whenCapitalizeSetterMethods()
     {
-        SetterMethod setter = new SetterMethod();
-        
-        assertThat(setter.capitalize("identityName"), is("setIdentityName"));
-        assertThat(setter.capitalize("setIdentityName"), is("setIdentityName"));
-        assertThat(setter.capitalize("getIdentityName"), is("setGetIdentityName"));
+        Capitalize capitalSet = new SetterMethod();
+        assertThat(capitalSet.does("identityName"), is("setIdentityName"));
+        assertThat(capitalSet.does("setIdentityName"), is("setIdentityName"));
+        assertThat(capitalSet.does("getIdentityName"), is("setGetIdentityName"));
+        assertThat(capitalSet.getPropertyType(), is(Capitalize.PropertyType.SET));
     }
+    
+    @Test
+    public void whenUnCapitalizeSetterMethods()
+    {
+        SetterMethod capitalSet = new SetterMethod();
+        assertThat(capitalSet.undo("IdentityName"), is("identityName"));
+        assertThat(capitalSet.undo("setIdentityName"), is("identityName"));
+        assertThat(capitalSet.getPropertyType(), is(Capitalize.PropertyType.SET));
+    }
+
 }

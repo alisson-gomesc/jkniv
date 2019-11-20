@@ -149,7 +149,7 @@ public class HandlerException implements HandleableException
     {
         if (this.defaultException.isAssignableFrom(caught.getClass()))
             throw (RuntimeException) caught;
-
+        
         RuntimeException theException = prepareToThrowException(customMessage, caught);
         if (theException != null)
             throw theException;
@@ -168,31 +168,27 @@ public class HandlerException implements HandleableException
         if (!isMute() && !isMute(caught))
         {
             MapException theMappedException = getMappedException(customMessage, caught);
-            // FIXME whats happen when MapException is NULL
-            if (theMappedException != null)
+            /*
+             * TODO test me when caught instance of the mapped exception
+             */
+            try
             {
-                /*
-                 * TODO test me when caught instance of the mapped exception
-                 */
-                try
-                {
-                    Constructor<? extends RuntimeException> constructor = theMappedException.getTranslate()
-                            .getConstructor(String.class, Throwable.class);
-                    theException = constructor
-                            .newInstance(buildMessage(theMappedException.getMessage(), customMessage, caught), caught);
-                    if (caught != null)//  TODO alternative method when caught is null
-                        theException.setStackTrace(caught.getStackTrace());
-                }
-                catch (Exception e)
-                {
-                    theException = new RuntimeException(customMessage, caught);
-                    if (caught != null)//  TODO alternative method when caught is null
-                        theException.setStackTrace(caught.getStackTrace());
-                }
+                Constructor<? extends RuntimeException> constructor = theMappedException.getTranslate()
+                        .getConstructor(String.class, Throwable.class);
+                theException = constructor
+                        .newInstance(buildMessage(theMappedException.getMessage(), customMessage, caught), caught);
+                if (caught != null)//  TODO alternative method when caught is null
+                    theException.setStackTrace(caught.getStackTrace());
+            }
+            catch (Exception e)
+            {
+                theException = new RuntimeException(customMessage, caught);
+                if (caught != null)//  TODO alternative method when caught is null
+                    theException.setStackTrace(caught.getStackTrace());
             }
         }
         else
-            LOG.warn("Be careful the Handler exception is mute for configured exceptions [{}]",
+            LOG.info("Be careful the Handler exception is mute for configured exceptions [{}]",
                     caught.getClass().getName());
         return theException;
     }
@@ -205,9 +201,8 @@ public class HandlerException implements HandleableException
         if (message == null)
             theMessage = this.defaultMessage;
         else
-        {
             theMessage = message;
-        }
+        
         if (rootCause == null)
             theException = this.defaultException;
         else
@@ -228,23 +223,26 @@ public class HandlerException implements HandleableException
         return defaultException;
     }
     
-    public void mute()
+    public HandleableException mute()
     {
         this.mute = true;
+        return this;
     }
     
-    public void mute(Class<? extends Exception> clazz)
+    public HandleableException mute(Class<? extends Exception> clazz)
     {
-//        if (this.exceptions.containsKey(clazz))
-//            throw new UnsupportedOperationException("Already exist an exception configured to exception ["
-//                    + clazz.getName() + "] cannot change mute status from exception");
-
+        //        if (this.exceptions.containsKey(clazz))
+        //            throw new UnsupportedOperationException("Already exist an exception configured to exception ["
+        //                    + clazz.getName() + "] cannot change mute status from exception");
+        
         MapException map = this.exceptions.get(clazz);
-        if(map == null)
+        if (map == null)
             map = new MapException(clazz, RuntimeException.class, "", true);
         else
             map.mute();
         this.exceptions.put(clazz, map);
+        
+        return this;
     }
     
     public boolean isMute()
@@ -283,7 +281,8 @@ public class HandlerException implements HandleableException
     {
         String newMessage = "";
         if (hasParameterAtMessage(message))
-            newMessage = String.format(message, (customMessage != null? customMessage + " " : "") + caught.getMessage()); //newMessage = String.format(message, customMessage);
+            newMessage = String.format(message,
+                    (customMessage != null ? customMessage + " " : "") + caught.getMessage()); //newMessage = String.format(message, customMessage);
         else
             newMessage = message;
         return newMessage;

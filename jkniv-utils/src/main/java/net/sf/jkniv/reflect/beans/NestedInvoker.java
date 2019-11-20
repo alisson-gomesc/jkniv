@@ -31,8 +31,8 @@ import net.sf.jkniv.reflect.ReflectionException;
 class NestedInvoker extends AbstractInvoker implements Invokable
 {
     private static final Logger LOG = LoggerFactory.getLogger(NestedInvoker.class);
-    private static final MethodName GETTER  = new GetterMethod();
-    private static final MethodName SETTER  = new SetterMethod();
+    private static final Capitalize GETTER  = new GetterMethod();
+    private static final Capitalize SETTER  = new SetterMethod();
     private final Invokable pojoInvoker;
 
     public NestedInvoker(HandleableException handleException)
@@ -73,9 +73,8 @@ class NestedInvoker extends AbstractInvoker implements Invokable
         try
         {
             nestedInstance = createNestedInstances(methodName, nestedMethodsNames, theInstance);
-            MethodInfo methodInfoSeter = getMethodByName(SETTER.capitalize(nestedMethodsNames[nestedMethodsNames.length - 1]), nestedInstance.getClass());
+            MethodInfo methodInfoSeter = getMethodByNameCached(SETTER.does(nestedMethodsNames[nestedMethodsNames.length - 1]), nestedInstance.getClass());
             ret = pojoInvoker.invoke(methodInfoSeter.method, nestedInstance, values);
-
             //setValue(nestedInstance, nestedMethodsNames[nestedMethodsNames.length - 1], values);
         }
         catch (Exception e)//IllegalArgumentException , InvocationTargetException,IllegalAccessException,  InstantiationException
@@ -107,8 +106,8 @@ class NestedInvoker extends AbstractInvoker implements Invokable
             String methodName = nestedMethodsNames[i];
             MethodInfo methodInfo = null;
             Object o = null;
-            String methodNameCaptilized = GETTER.capitalize(methodName);
-            methodInfo = getMethodByName(methodNameCaptilized, useTargetClass);
+            String methodNameCaptilized = GETTER.does(methodName);
+            methodInfo = getMethodByNameCached(methodNameCaptilized, useTargetClass);
             notNull.verify(new ReflectionException("Cannot find method [" + methodNameCaptilized  + "] for [" + useTargetClass.getName() + "]"), methodInfo.method);// TODO design custom message
 
             o = pojoInvoker.invoke(methodInfo.method, useInstance);
@@ -127,7 +126,7 @@ class NestedInvoker extends AbstractInvoker implements Invokable
                             + "] to set nested values.");
                 
                 nestedInstance = fieldType.newInstance();
-                MethodInfo methodInfoSeter = getMethodByName(SETTER.capitalize(methodName), useTargetClass);
+                MethodInfo methodInfoSeter = getMethodByNameCached(SETTER.does(methodName), useTargetClass);
                 pojoInvoker.invoke(methodInfoSeter.method, useInstance, nestedInstance);
                 //invokeDirect(methodInfoSeter.method, useInstance, nestedInstance);
             }

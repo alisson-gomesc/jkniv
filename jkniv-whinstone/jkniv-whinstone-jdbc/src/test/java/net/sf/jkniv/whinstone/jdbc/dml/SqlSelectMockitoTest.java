@@ -155,15 +155,15 @@ public class SqlSelectMockitoTest
         assertThat(list.get(0), instanceOf(HashMap.class));
     }
     
-    @Test
+    @Test//error
     public void whenSelectWithoutTypeAndCustomResultSetParser()
     {
         JdbcQueryMock jdbcMock = new JdbcQueryMock(Map.class);
         Repository repository = jdbcMock.columns(new String[]
                 { "id", "isbn", "name"}).buildFifteenFlatBook();
-        CustomResultRow parser = new CustomResultRow();
+        CustomResultRow resultRow = new CustomResultRow();
         Queryable q = QueryFactory.of("listBooksNoSpecificType");
-        List<HashMap<String, Object>> list = repository.list(q, parser);
+        List<HashMap<String, Object>> list = repository.list(q, resultRow);
         assertThat(list.get(0), instanceOf(Map.class));
         assertThat(list.get(0), instanceOf(HashMap.class));
         assertThat(String.valueOf(list.get(0).get("0")), is("1001"));

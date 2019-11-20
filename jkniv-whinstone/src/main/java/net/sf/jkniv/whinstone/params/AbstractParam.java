@@ -1,7 +1,5 @@
 package net.sf.jkniv.whinstone.params;
 
-import org.apache.commons.beanutils.PropertyUtils;
-
 abstract class AbstractParam
 {
     protected boolean hasInClause(String[] paramsNames)
@@ -18,7 +16,43 @@ abstract class AbstractParam
     {
         return (paramName.toLowerCase().startsWith("in:"));
     }
+    /*
+    private void setValue(Date value) throws SQLException
+    {
+        java.sql.Timestamp timestamp = dtConverter.convert(java.sql.Timestamp.class, value);
+        stmt.setObject(currentIndex(), timestamp);
+    }
+    
+    private void setValue(Calendar value) throws SQLException
+    {
+        java.sql.Timestamp timestamp = dtConverter.convert(java.sql.Timestamp.class, value.getTime());
+        stmt.setObject(currentIndex(), timestamp);
+    }
+    
+    private void setValue(Enum<?> value) throws SQLException
+    {
+        //ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(value);
+        //stmt.setObject(currentIndex(), proxy.invoke("name"));
+        stmt.setObject(currentIndex(), value.name());// FIXME design converter to allow save ordinal value or other value from enum
+    }
+    
+    private void setValueOfKey(ObjectProxy<?> proxy, String property, Object value)
+    {
+        Object parsedValue = value;
+        
+        if(value instanceof java.sql.Time)
+            parsedValue = new Date(((java.sql.Time)value).getTime());
+        else if (value instanceof java.sql.Date)
+            parsedValue = new Date(((java.sql.Date)value).getTime());
+        else if (value instanceof java.sql.Timestamp)
+            parsedValue = new Date(((java.sql.Timestamp)value).getTime());
+        
+        proxy.invoke(SETTER.capitalize(property), parsedValue);
+    }
+    
 
+     */
+/*
     protected Object getProperty(String name, Object params)
     {
         Object o = null;
@@ -33,5 +67,5 @@ abstract class AbstractParam
         }
         return o;
     }
-
+*/
 }

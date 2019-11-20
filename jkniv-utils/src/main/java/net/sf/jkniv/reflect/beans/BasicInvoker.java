@@ -79,13 +79,14 @@ class BasicInvoker extends AbstractInvoker implements Invokable
         }
         return ret;
     }
-    
+       
+    @Override
     public Object invoke(String methodName, Object theInstance, Object... values)
     {
         Method method = null;
         Class<?>[] types = getTypes(values);
         Class<?> instanceType = theInstance.getClass();
-        MethodInfo methodInfo =  getMethodByName(methodName, instanceType);
+        MethodInfo methodInfo =  getMethodByNameCached(methodName, instanceType);
         if (methodInfo.count == 1 || (methodInfo.noParameters && types.length == 0) )
             method = methodInfo.method;
         else if (methodInfo.count > 1 && types.length > 0)

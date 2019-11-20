@@ -21,6 +21,8 @@ package net.sf.jkniv.whinstone;
 
 import java.sql.SQLException;
 
+import net.sf.jkniv.reflect.beans.PropertyAccess;
+
 /**
  * 
  * TODO docme
@@ -38,6 +40,8 @@ public interface JdbcColumn<R>
     
     String getMethodName();
     
+    PropertyAccess getPropertyAccess();
+
     int getIndex();
     
     int getJdbcType();

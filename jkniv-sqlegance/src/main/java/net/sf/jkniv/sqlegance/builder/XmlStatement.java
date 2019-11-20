@@ -107,11 +107,11 @@ class XmlStatement
         this.timestamp = new Date();
         final Map<String, Sql> statements = new HashMap<String, Sql>();
         
-        processTagsElements(ROOT_NODE + "/" + Selectable.TAG_NAME, "", statements, repositoryConfig.getSqlDialect(), repositoryConfig.getStatistical());
-        processTagsElements(ROOT_NODE + "/" + Insertable.TAG_NAME, "", statements, repositoryConfig.getSqlDialect(), repositoryConfig.getStatistical());
-        processTagsElements(ROOT_NODE + "/" + Updateable.TAG_NAME, "", statements, repositoryConfig.getSqlDialect(), repositoryConfig.getStatistical());
-        processTagsElements(ROOT_NODE + "/" + Deletable.TAG_NAME, "", statements, repositoryConfig.getSqlDialect(), repositoryConfig.getStatistical());
-        processProcedureElements(ROOT_NODE + "/" + ProcedureTag.TAG_NAME, "", statements, repositoryConfig.getSqlDialect(), repositoryConfig.getStatistical());
+        processTagsElements(ROOT_NODE + "/" + Selectable.TAG_NAME, "", statements, repositoryConfig);
+        processTagsElements(ROOT_NODE + "/" + Insertable.TAG_NAME, "", statements, repositoryConfig);
+        processTagsElements(ROOT_NODE + "/" + Updateable.TAG_NAME, "", statements, repositoryConfig);
+        processTagsElements(ROOT_NODE + "/" + Deletable.TAG_NAME, "", statements, repositoryConfig);
+        processProcedureElements(ROOT_NODE + "/" + ProcedureTag.TAG_NAME, "", statements, repositoryConfig);
         NodeList nodes = xmlReader.evaluateXpath(ROOT_NODE_PACKAGE);
         if (nodes != null)
         {
@@ -122,11 +122,11 @@ class XmlStatement
                 {
                     Element element = (Element) node;
                     String name = element.getAttribute("name");
-                    processTagsElements(NODE_PACKAGE_BYNAME + Selectable.TAG_NAME, name, statements, repositoryConfig.getSqlDialect(), repositoryConfig.getStatistical());
-                    processTagsElements(NODE_PACKAGE_BYNAME + Insertable.TAG_NAME, name, statements, repositoryConfig.getSqlDialect(), repositoryConfig.getStatistical());
-                    processTagsElements(NODE_PACKAGE_BYNAME + Updateable.TAG_NAME, name, statements, repositoryConfig.getSqlDialect(), repositoryConfig.getStatistical());
-                    processTagsElements(NODE_PACKAGE_BYNAME + Deletable.TAG_NAME, name, statements, repositoryConfig.getSqlDialect(), repositoryConfig.getStatistical());
-                    processProcedureElements(NODE_PACKAGE_BYNAME + ProcedureTag.TAG_NAME, name, statements, repositoryConfig.getSqlDialect(), repositoryConfig.getStatistical());
+                    processTagsElements(NODE_PACKAGE_BYNAME + Selectable.TAG_NAME, name, statements, repositoryConfig);
+                    processTagsElements(NODE_PACKAGE_BYNAME + Insertable.TAG_NAME, name, statements, repositoryConfig);
+                    processTagsElements(NODE_PACKAGE_BYNAME + Updateable.TAG_NAME, name, statements, repositoryConfig);
+                    processTagsElements(NODE_PACKAGE_BYNAME + Deletable.TAG_NAME, name, statements, repositoryConfig);
+                    processProcedureElements(NODE_PACKAGE_BYNAME + ProcedureTag.TAG_NAME, name, statements, repositoryConfig);
                 }
             }
         }
@@ -153,9 +153,9 @@ class XmlStatement
 
         
     private void processTagsElements(String expressionXpath, String packet, 
-                                     Map<String, Sql> statements,
-                                     SqlDialect sqlDialect, Statistical stats)
+                                     Map<String, Sql> statements,RepositoryConfig repositoryConfig)
     {
+        SqlDialect sqlDialect = repositoryConfig.getSqlDialect(); 
         String xpathSql = String.format(expressionXpath, packet);
         NodeList nodes = xmlReader.evaluateXpath(xpathSql);
         if (nodes != null)
@@ -166,7 +166,7 @@ class XmlStatement
                 if (node.getNodeType() == Node.ELEMENT_NODE)
                 {
                     Element element = (Element) node;
-                    SqlTag tag = buildSql(element, node.getNodeName(), xpathSql, stats);
+                    SqlTag tag = buildSql(element, node.getNodeName(), xpathSql, repositoryConfig.getStatistical());
                     tag.bind(sqlDialect);
                     Sql oldSql = put(packet, statements, tag);
                     if (oldSql != null)
@@ -251,9 +251,9 @@ class XmlStatement
     }
 
     private void processProcedureElements(String expressionXpath, String packet, 
-                                          Map<String, Sql> statements, 
-                                          SqlDialect sqlDialect, Statistical stats)
+                                          Map<String, Sql> statements, RepositoryConfig repositoryConfig)
     {
+        SqlDialect sqlDialect = repositoryConfig.getSqlDialect();
         String xpathSql = String.format(expressionXpath, packet);
         NodeList procedures = xmlReader.evaluateXpath(expressionXpath);
         if (procedures != null)
@@ -264,7 +264,7 @@ class XmlStatement
                 if (firstNode.getNodeType() == Node.ELEMENT_NODE)
                 {
                     Element element = (Element) firstNode;
-                    ProcedureTag tag = buildProcedure(element, xpathSql, stats);
+                    ProcedureTag tag = buildProcedure(element, xpathSql, repositoryConfig.getStatistical());
                     tag.bind(sqlDialect);
                     Sql oldSql = put(packet, statements, tag);
                     if (oldSql != null)

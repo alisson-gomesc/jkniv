@@ -33,7 +33,7 @@ import net.sf.jkniv.whinstone.ConnectionAdapter;
  * Responsible to release (close) the connection with data source.
  * 
  * @author Alisson Gomes
- *
+ * @since 0.6.0
  */
 public class TransactionSessions
 {

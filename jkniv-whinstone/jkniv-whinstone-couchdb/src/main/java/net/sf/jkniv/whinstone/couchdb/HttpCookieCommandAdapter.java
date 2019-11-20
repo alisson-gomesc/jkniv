@@ -77,11 +77,11 @@ class HttpCookieCommandAdapter implements CommandAdapter
         LOG.debug("CouchDb repository doesn't implement close() method!");
     }
     
-    @Override
-    public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
-    {
-        throw new UnsupportedOperationException("CouchDb repository  doesn't implement this method yet!");
-    }
+//    @Override
+//    public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
+//    {
+//        throw new UnsupportedOperationException("CouchDb repository  doesn't implement this method yet!");
+//    }
     
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -94,31 +94,19 @@ class HttpCookieCommandAdapter implements CommandAdapter
         StatementAdapter<T, R> stmt = new CouchDbStatementAdapter(this.httpBuilder, sql, queryable.getDynamicSql().getParamParser());
 
         queryable.bind(stmt).on();
-        
-        if (queryable.getReturnType() != null)
-            returnType = queryable.getReturnType();
-        else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-            returnType = queryable.getDynamicSql().getReturnTypeAsClass();
-        
-            stmt
-            .returnType(returnType)
-            .resultRow(overloadResultRow)
-            .oneToManies(dynamicSql.asSelectable().getOneToMany())
-            .groupingBy(dynamicSql.asSelectable().getGroupByAsList());
-
-            if(queryable.isScalar())
-                stmt.scalar();
+        returnType = queryable.getReturnType();
+        stmt.with(overloadResultRow);
             
-            if (CouchDbSqlContext.isGet(queryable.getName()))
-                command = new GetCommand(this.httpBuilder, queryable);
-            else if (CouchDbSqlContext.isAllDocs(queryable.getName()))
-                command = new AllDocsCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
-            else if (queryable.getDynamicSql().getLanguageType() == LanguageType.STORED)
-                command = new ViewCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
-            else if (queryable.getReturnType() != null && FindAnswer.class.getName().equals(queryable.getReturnType().getName()))
-                command = new FullResponseFindCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
-            else
-                command = new FindCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
+        if (CouchDbSqlContext.isGet(queryable.getName()))
+            command = new GetCommand(this.httpBuilder, queryable);
+        else if (CouchDbSqlContext.isAllDocs(queryable.getName()))
+            command = new AllDocsCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
+        else if (queryable.getDynamicSql().getLanguageType() == LanguageType.STORED)
+            command = new ViewCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
+        else if (queryable.getReturnType() != null && FindAnswer.class.getName().equals(queryable.getReturnType().getName()))
+            command = new FullResponseFindCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
+        else
+            command = new FindCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
         return command;
     }
 

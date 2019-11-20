@@ -31,7 +31,7 @@ The steps to start are:
 
 1. Configure your datasource
 2. write your SQL queries
-3. run, forrest, run...
+3. run, Forrest, run...
 
 No annotations, no mapping (except if you want to use JPA), easily to test. The power of the database query language is yours and `whinstone` gives to you **the plain java objects with automatic bind to input parameters and result set output**, reducing a boilerplate of code to set JDBC parameters and ResultSet *getters*.
 
@@ -85,26 +85,26 @@ The library is 100% protected against [SQL injection](https://www.owasp.org/inde
 
 ### Traceability for Whinstone Features (Roadmap)
 
-|Version| Features            | whinstone-jpa2 | whinstone-jdbc | whinstone-cassandra | whinstone-couchdb |
-|-------| ------------------- | -------------- | -------------- |---------------------|-------------------|
-|`0.6.0 version`| Auto Bind Parameters| ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk] |
-|`0.6.0 version`| Auto Bind Result    | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk] |
+|Version| Features            | whinstone-jpa2 | whinstone-jdbc | whinstone-cassandra | whinstone-couchdb     |
+|-------| ------------------- | -------------- | -------------- |---------------------|-----------------------|
+|`0.6.0 version`| Auto Bind Parameters| ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]  |
+|`0.6.0 version`| Auto Bind Result    | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]  |
 |`0.6.0 version`| One-to-One          | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk](native) |
 |`0.6.0 version`| One-to-Many         | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk](native) |
 |`x.x.x version`| Many-to-Many        | ![close][chk](native)  | ![open][clo]  | ![open][clo] | ![open][clo]   |
-|`0.6.0 version`| JSR Bean Validation | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]   |
-|`0.6.0 version`| Transaction         | ![close][chk]  | ![close][chk]  | ![open][clo]        | ![open][clo]    |
-|`0.6.0 version`| Paginate Query      | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]   |
-|`0.6.0 version`| Retrieving auto-generated keys| ![close][chk]| ![close][chk]| ![open][clo]  | ![close][chk]   |
-|`0.6.0 version`| Bulk Commands       | ![open][clo]   | ![close][chk]  | ![close][chk]       | ![close][chk]   |
-|`0.6.0 version`| Callback Methods    | ![open][clo]   | ![close][chk]  | ![close][chk]       | ![close][chk]   |
-|`0.6.0 version`| Query Cache         | ![open][clo]   | ![close][chk]  | ![close][chk]       | ![close][chk]   |
-|`0.6.0 version`| Query Statistics    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]    |
-|`0.7.0 version`| Batch Commands      | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]    |
-|`0.7.0 version`| Converter Annotation| ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]    |
-|`0.7.0 version`| Triggers Events     | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]    |
-|`0.7.0 version`| Stored Procedure    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]    |
-|`0.7.0 version`| Jdk8 Timers         | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]    |
+|`0.6.0 version`| JSR Bean Validation | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]  |
+|`0.6.0 version`| Transaction         | ![close][chk]  | ![close][chk]  | ![open][clo]        | ![open][clo]   |
+|`0.6.0 version`| Paginate Query      | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]  |
+|`0.6.0 version`| Retrieving auto-generated keys| ![close][chk]| ![close][chk]| ![open][clo]  | ![close][chk]  |
+|`0.6.0 version`| Bulk Commands       | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]  |
+|`0.6.0 version`| Callback Methods    | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]  |
+|`0.6.0 version`| Query Cache         | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]  |
+|`0.6.0 version`| Query Statistics    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]   |
+|`0.7.0 version`| Batch Commands      | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]   |
+|`0.7.0 version`| Converter Annotation| ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]   |
+|`0.7.0 version`| Triggers Events     | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]   |
+|`0.7.0 version`| Stored Procedure    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]   |
+|`0.7.0 version`| Jdk8 Timers         | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]   |
 
 
 ### Transaction supports

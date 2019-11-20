@@ -53,6 +53,7 @@ class SelectTag extends AbstractSqlTag implements Selectable
     private String          cacheName;
     private Cacheable       cache;
     private Statistical     statsPaging;
+    
     /**
      * Build a new <code>select</code> tag from XML file.
      * 

@@ -59,7 +59,7 @@ import net.sf.jkniv.sqlegance.validation.ValidateType;
  */
 public abstract class AbstractSqlTag implements SqlTag
 {
-    protected static final Assertable notNull                         = AssertsFactory.getNotNull();
+    protected static final Assertable NOT_NULL                         = AssertsFactory.getNotNull();
     private static final Logger       log                             = LoggerFactory.getLogger(AbstractSqlTag.class);
     // find the pattern #{id}
     private static final String       REGEX_HASH_MARK                 = "#\\{[\\w\\.?]+\\}";
@@ -92,9 +92,7 @@ public abstract class AbstractSqlTag implements SqlTag
     protected String                  id;
     protected LanguageType            languageType;
     private Isolation                 isolation;
-    //private String                    hint;
     private int                       timeout;
-    //private boolean                   batch;
     private ResultSetType             resultSetType;
     private ResultSetConcurrency      resultSetConcurrency;
     private ResultSetHoldability      resultSetHoldability;
@@ -102,17 +100,18 @@ public abstract class AbstractSqlTag implements SqlTag
     private List<ITextTag>            textTag;
     private String                    returnType;
     private Class<?>                  returnTypeClass;
-    //private boolean            returnTypeManaged;
     private String                    xpath;
     private String                    resourceName;
     private Date                      timestamp;
     private ParamParser               paramParser;
     private String                    paket;
-    //private long                 timeToLive;
-    
-    //private ResultRow<?, ?> parserRow;
     private SqlDialect                sqlDialect;
     private Statistical               stats;
+    //private boolean                 returnTypeManaged;
+    //private boolean                 batch;
+    //private String                  hint;
+    //private long                    timeToLive;    
+    //private ResultRow<?, ?>         parserRow;
     
     /**
      * Build a new SQL tag from XML file.
@@ -429,23 +428,29 @@ public abstract class AbstractSqlTag implements SqlTag
     }
     
     @Override
-    public ResultSetType getResultSetType()
-    {
-        return resultSetType;
-    }
-    
-    @Override
     public Deletable asDeletable()
     {
         throw new UnsupportedOperationException("Isn't deletable object instance");
     }
     
     @Override
+    public boolean isStorable() 
+    {
+        return false;
+    }
+
+    @Override
     public Storable asStorable()
     {
         throw new UnsupportedOperationException("Isn't Storable object instance");
     }
     
+    @Override
+    public ResultSetType getResultSetType()
+    {
+        return resultSetType;
+    }
+
     public void setResultSetType(ResultSetType resultSetType)
     {
         this.resultSetType = resultSetType;

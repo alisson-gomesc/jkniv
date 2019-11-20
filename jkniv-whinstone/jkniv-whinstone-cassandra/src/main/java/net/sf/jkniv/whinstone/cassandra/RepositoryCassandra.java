@@ -142,30 +142,6 @@ class RepositoryCassandra implements Repository
         return handleGet(queryable, customResultRow);
     }
     
-    /*
-    @Override
-    public <T> T get(Queryable queryable)
-    {
-        return get(queryable, null, null);
-    }
-    */
-    
-    /*
-    @Override
-    public <T> T get(Queryable queryable, Class<T> returnType)
-    {
-        return get(queryable, returnType, null);
-    }
-    */
-    
-    /*
-    @Override
-    public <T, R> T get(Queryable queryable, ResultRow<T, R> customResultRow)
-    {
-        return get(queryable, null, customResultRow);
-    }
-    */
-    
     @Override
     @SuppressWarnings("unchecked")
     public <T> T get(T entity)
@@ -187,52 +163,6 @@ class RepositoryCassandra implements Repository
         T ret = (T) handleGet(queryable, null);
         return ret;
     }
-    
-    /*
-    @Override
-    public <T> T get(T entity)
-    {
-        NOT_NULL.verify(entity);
-        String queryName = this.strategyQueryName.toGetName(entity);
-        Queryable queryable = QueryFactory.of(queryName, entity);
-        return get(queryable, null, null);
-    }
-    */
-    
-    /*
-    @Override
-    public <T> T get(Class<T> returnType, Object entity)
-    {
-        NOT_NULL.verify(returnType, entity);
-        String queryName = this.strategyQueryName.toGetName(entity);
-        Queryable queryable = QueryFactory.of(queryName, entity);
-        return get(queryable, returnType, null);
-    }
-    */
-    
-    /*
-    private <T, R> T get(Queryable queryable, Class<T> returnType, ResultRow<T, R> resultRow)
-    {
-        NOT_NULL.verify(queryable);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as get command", queryable);
-        
-        List<T> list = list(queryable, returnType, resultRow);
-        
-        T ret = null;
-        if (list.size() > 1)
-            throw new NonUniqueResultException("No unique result for query [" + queryable.getName() + "]");
-        
-        else if (list.size() == 1)
-            ret = list.get(0);
-        
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {}/{} rows fetched", queryable.getName(), list.size(),
-                    queryable.getTotal());
-        
-        return ret;
-    }
-    */
     
     @Override
     @SuppressWarnings(
@@ -272,20 +202,6 @@ class RepositoryCassandra implements Repository
     {
         return handleList(queryable, null);
     }
-    /*
-    @Override
-    public <T> List<T> list(Queryable queryable)
-    {
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as list command", queryable);
-        
-        List<T> list = list(queryable, null, null);
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
-        
-        return list;
-    }
-    */
     
     @Override
     public <T> List<T> list(Queryable queryable, Class<T> overloadReturnType)
@@ -303,44 +219,11 @@ class RepositoryCassandra implements Repository
         return list;
     }
     
-    /*
-    @Override
-    public <T> List<T> list(Queryable queryable, Class<T> returnType)
-    {
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as list command", queryable);
-        
-        List<T> list = list(queryable, returnType, null);
-        
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
-        
-        return list;
-    }
-    */
-    
     @Override
     public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> customResultRow)
     {
         return handleList(queryable, customResultRow);
     }
-    
-    /*
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> customResultRow)
-    {
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as list command", queryable);
-        
-        List<T> list = list(queryable, null, customResultRow);
-        
-        if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
-        
-        return list;
-    }
-    */
     
     private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
@@ -376,47 +259,6 @@ class RepositoryCassandra implements Repository
         
         return ret;
     }
-    
-    /*
-    @SuppressWarnings("unchecked")
-    private <T, R> List<T> list(Queryable q, Class<T> overloadReturnType, ResultRow<T, R> customResultRow)
-    {
-        Queryable queryable = QueryFactory.clone(q, overloadReturnType);
-        
-        List<T> list = Collections.emptyList();
-        
-        Selectable selectable = sqlContext.getQuery(queryable.getName()).asSelectable();
-        
-        selectable.getValidateType().assertValidate(queryable.getParams());
-        
-        if (!queryable.isBoundSql())
-            queryable.bind(selectable);
-        
-        Cacheable.Entry entry = null;
-        
-        if (!queryable.isCacheIgnore())
-            entry = selectable.getCache().getEntry(queryable);
-        
-        if (entry == null)
-        {
-            Command command = adapterConn.asSelectCommand(queryable, customResultRow);
-            list = command.execute();
-            if (selectable.hasCache() && !list.isEmpty())
-                selectable.getCache().put(queryable, list);
-        }
-        else
-        {
-            if (LOG.isDebugEnabled())
-                LOG.debug("{} object(s) was returned from cache [{}] using query [{}] since {}", list.size(),
-                        selectable.getCache().getName(), selectable.getName(), entry.getTimestamp());
-            list = (List<T>) entry.getValue();
-            q.cached();
-        }
-        q.setTotal(queryable.getTotal());
-        
-        return list;
-    }
-    */
     
     @Override
     public int add(Queryable queryable)
@@ -460,7 +302,7 @@ class RepositoryCassandra implements Repository
     }
     
     @Override
-    public <T> T update(T entity)// FIXME design update must return a number
+    public <T> T update(T entity)
     {
         NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toUpdateName(entity);
@@ -472,113 +314,6 @@ class RepositoryCassandra implements Repository
         int rows = handler.with(queryable).with(sql).checkSqlType(SqlType.UPDATE).with(handlerException).run();
         return entity;
     }
-    
-    /*
-    @Override
-    public int add(Queryable queryable)
-    {
-        NOT_NULL.verify(queryable);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as add command with dialect [{}]", queryable);//, this.repositoryConfig.getSqlDialect());
-            
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.INSERT);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        
-        Command command = adapterConn.asAddCommand(queryable);
-        int affected = command.execute();
-        
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
-        return affected;
-    }
-    */
-    /*
-    @Override
-    public <T> T add(T entity)
-    {
-        NOT_NULL.verify(entity);
-        String queryName = this.strategyQueryName.toAddName(entity);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as add command", queryName);
-        
-        Queryable queryable = QueryFactory.of(queryName, entity);
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.INSERT);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        
-        Command command = adapterConn.asAddCommand(queryable);
-        int affected = command.execute();
-        
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
-        return entity;
-    }
-    */
-    /*
-    @Override
-    public int update(Queryable queryable)
-    {
-        NOT_NULL.verify(queryable);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as add command with dialect [{}]", queryable);
-        
-        Updateable updateable = sqlContext.getQuery(queryable.getName()).asUpdateable();
-        if (!queryable.isBoundSql())
-            queryable.bind(updateable);
-        
-        updateable.getValidateType().assertValidate(queryable.getParams());
-        
-        Command command = adapterConn.asUpdateCommand(queryable);
-        int affected = command.execute();
-        
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by add [{}] command", affected, queryable.getName());
-        return affected;
-    }
-    */
-    /*
-    @Override
-    public <T> T update(T entity)
-    {
-        NOT_NULL.verify(entity);
-        String queryName = this.strategyQueryName.toUpdateName(entity);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as update command", queryName);
-        
-        Queryable queryable = QueryFactory.of(queryName, entity);
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.UPDATE);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        
-        Command command = adapterConn.asUpdateCommand(queryable);
-        int affected = command.execute();
-        
-        if (affected > 1)
-        {
-            LOG.error(
-                    "{} records was affected by update command, the query [{}] must update the record using primary key or using unique columns",
-                    affected, queryable.getName());
-            handlerException.throwMessage(
-                    "update(T) cannot update more one records, to update several objects use update(Query)");
-        }
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by update [{}] command", affected, queryable.getName());
-        
-        return entity;
-    }
-    */
     
     @Override
     public int remove(Queryable queryable)
@@ -604,52 +339,6 @@ class RepositoryCassandra implements Repository
         return rows;
     }
     
-    /*
-    @Override
-    public int remove(Queryable queryable)
-    {
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as remove command", queryable);
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.DELETE);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        
-        Command command = adapterConn.asDeleteCommand(queryable);
-        int affected = command.execute();
-        
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by remove [{}] command", affected, queryable.getName());
-        return affected;
-    }
-    
-    @Override
-    public <T> int remove(T entity)
-    {
-        NOT_NULL.verify(entity);
-        String queryName = this.strategyQueryName.toRemoveName(entity);
-        Queryable queryable = QueryFactory.of(queryName, entity);
-        if (isTraceEnabled)
-            LOG.trace("Executing [{}] as remove command", queryable);
-        
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.DELETE);
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        isql.getValidateType().assertValidate(queryable.getParams());
-        
-        Command command = adapterConn.asDeleteCommand(queryable);
-        int affected = command.execute();
-        
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by remove [{}] command", affected, queryable.getName());
-        return affected;
-    }
-    */
     @Override
     public void flush()
     {
@@ -673,23 +362,10 @@ class RepositoryCassandra implements Repository
     @Override
     public void close()
     {
-        //        try
-        //        {
         if (this.cmdAdapter instanceof CassandraCommandAdapter)
             ((CassandraCommandAdapter) cmdAdapter).shutdown();
-        //        }
-        //        catch (SQLException e)
-        //        {
-        //            LOG.warn("Error to try close Cassandra session/cluster [{}]", adapterConn, e);
-        //        }
+
         sqlContext.close();
-    }
-    
-    private void checkSqlType(Sql isql, SqlType expected)
-    {
-        if (isql.getSqlType() != expected)
-            throw new IllegalArgumentException("Cannot execute sql [" + isql.getName() + "] as [" + isql.getSqlType()
-                    + "], exptected is " + expected);
     }
     
     private Properties lookup(String remaining)

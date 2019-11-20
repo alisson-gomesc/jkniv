@@ -54,7 +54,7 @@ public final class NumberFactory
                 factory = new FactoryByte();
             else
                 throw new UnsupportedOperationException("Cannot build a factory number to ["+n.getClass()+"] type");
-            // new java 8 number types
+            // TODO new java 8 number types
             /*
             else if ("java.util.concurrent.atomic.DoubleAccumulator".equals(type.getCanonicalName()))
                 isNumber = true;
@@ -96,7 +96,7 @@ public final class NumberFactory
                 factory = new FactoryByte();
             else
                 throw new UnsupportedOperationException("Cannot build a factory number to ["+n.getClass()+"] type");
-            // new java 8 number types
+            //TODO new java 8 number types
             /*
             else if ("java.util.concurrent.atomic.DoubleAccumulator".equals(type.getCanonicalName()))
                 isNumber = true;

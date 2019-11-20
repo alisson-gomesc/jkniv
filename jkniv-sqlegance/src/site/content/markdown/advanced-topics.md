@@ -15,7 +15,7 @@ Define a number of seconds the driver will wait for a statement to be executed.
     
 ### isolation
 
-<a href="https://docs.oracle.com/javase/tutorial/jdbc/basics/transactions.html#transactions_data_integrity">The transaction isolation level</a>.
+<a href="https://docs.oracle.com/javase/tutorial/jdbc/basics/transactions.html#transactions_data_integrity">The transaction isolation level.</a>
 
     <select isolation="READ_COMMITTED">
 
@@ -44,7 +44,7 @@ To enable the property `jkniv.repository.short_name_enable` must be `true` into 
 
 ### Validation
 
-To support <a href="https://docs.oracle.com/javaee/6/tutorial/doc/gircz.html">Bean Validation</a>.
+To support <a href="https://docs.oracle.com/javaee/6/tutorial/doc/gircz.html">Bean Validation.</a>
 
     <select validation="UPDATE">
 
@@ -101,4 +101,8 @@ To enable a level of result cache.
     <select cache="user-cache">
     
 
-A full implementation of this characteristics was implemented on top of <a href="http://jkniv.sourceforge.net/jkniv-whinstone/index.html">jkniv-whinstone</a> framework that will help you eliminate the boilerplate code. `jkniv-whinstone` is tight coupled with JDBC, where you will not are miss it. One repository contract to get a java code agnostic for database and API like: JPA, JDBC, Apache CouchDB, Apache Cassandra. Run, forrest, run...
+<<<<<<< HEAD
+A full implementation of this characteristics was implemented on top of <a href="http://jkniv.sourceforge.net/jkniv-whinstone/index.html">jkniv-whinstone</a> framework that will help you eliminate the boilerplate code. `jkniv-whinstone` is tight coupled with JDBC, but you will not remember it. One repository contract to get a java code agnostic for database and API like: JPA, JDBC, Apache CouchDB, Apache Cassandra. Run, Forrest, run...
+=======
+A full implementation of this characteristics was implemented on top of <a href="http://jkniv.sourceforge.net/jkniv-whinstone/index.html">jkniv-whinstone</a> framework that will help you eliminate the boilerplate code. `jkniv-whinstone` is tight coupled with JDBC, but you will not remember it. One repository contract to get a java code agnostic for database and API like: JPA, JDBC, Apache CouchDB, Apache Cassandra. Run, forrest, run...
+>>>>>>> branch '0.6.0.M52' of https://github.com/alisson-gomesc/jkniv.git

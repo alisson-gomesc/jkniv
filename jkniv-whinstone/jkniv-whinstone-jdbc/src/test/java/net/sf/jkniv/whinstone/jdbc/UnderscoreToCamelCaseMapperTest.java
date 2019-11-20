@@ -24,7 +24,7 @@ public class UnderscoreToCamelCaseMapperTest
         assertThat(mapper.map("ROW_NUMBER_ID"), is("rowNumberId"));
         assertThat(mapper.map("rowNumberId"), is("rownumberid"));
         assertThat(mapper.map("author.name"), is("author.name"));
-        assertThat(mapper.map("author.phoneNumber"), is("author.phonenumber"));
+        assertThat(mapper.map("author.phoneNumber"), is("author.phoneNumber"));
         
     }
 }

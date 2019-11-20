@@ -23,10 +23,15 @@ import java.util.Calendar;
 import java.util.Date;
 
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
-import net.sf.jkniv.sqlegance.params.ParamParser;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
+/**
+ * Factory to create new instances of {@link AutoBindParams}.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public class PrepareParamsFactory
 {
     
@@ -74,10 +79,6 @@ public class PrepareParamsFactory
         return new PositionalCollectionMapParams(adapter, queryable);
     }
 
-//    public static <T,R> AutoBindParams newPositionalArrayMapParams(StatementAdapter<T,R> adapter, Queryable queryable)
-//    {
-//        return new PositionalarCollectionMapParams(adapter, queryable);
-//    }
 
     public static <T,R> AutoBindParams newPositionalCollectionPojoParams(StatementAdapter<T,R> adapter, Queryable queryable)
     {
@@ -99,5 +100,8 @@ public class PrepareParamsFactory
         return new NamedParams(adapter, queryable);
     }
 
-
+//    public static <T,R> AutoBindParams newPositionalArrayMapParams(StatementAdapter<T,R> adapter, Queryable queryable)
+//    {
+//        return new PositionalarCollectionMapParams(adapter, queryable);
+//    }
 }

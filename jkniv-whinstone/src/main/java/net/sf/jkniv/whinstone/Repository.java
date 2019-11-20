@@ -23,7 +23,6 @@ import java.util.List;
 
 import net.sf.jkniv.sqlegance.NonUniqueResultException;
 import net.sf.jkniv.sqlegance.QueryNotFoundException;
-import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
 /**

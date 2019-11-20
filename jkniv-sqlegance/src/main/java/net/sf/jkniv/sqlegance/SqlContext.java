@@ -81,5 +81,4 @@ public interface SqlContext
      * retrieve a SQL {@code QueryNotFoundException} is throw.  
      */
     void close();
-
 }

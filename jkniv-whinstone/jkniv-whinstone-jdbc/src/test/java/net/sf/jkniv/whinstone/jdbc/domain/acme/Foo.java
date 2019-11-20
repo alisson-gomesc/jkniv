@@ -24,6 +24,7 @@ import java.io.Serializable;
 
 public class Foo implements Serializable
 {
+    private static final long serialVersionUID = -2617198422945648684L;
     private Long       id;
     private String     name;
     

@@ -29,8 +29,11 @@ import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
+import net.sf.jkniv.sqlegance.builder.xml.SqlTag;
+import net.sf.jkniv.sqlegance.builder.xml.TagFactory;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
-import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.QueryFactory;
+import net.sf.jkniv.whinstone.Queryable;
 
 /**
  * 
@@ -69,7 +72,7 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
                 try
                 {
                     preCallback();
-                    Command command = asCommand();//cmdAdapter.asSelectCommand(queryable, overloadResultRow);
+                    Command command = asCommand();
                     list = command.execute();
                     postCallback();
                     if (selectable.hasCache() && !list.isEmpty())
@@ -114,6 +117,20 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
             Sql dynamicSql = queryable.getDynamicSql(); 
             if (dynamicSql.getSqlDialect().supportsFeature(SqlFeatureSupport.PAGING_ROUNDTRIP))
             {
+                try
+                {
+                    Command command = cmdAdapter.asSelectCommand(createQueryableForPaging(), null);
+                    List<Number> rows = command.execute();
+                    queryable.setTotal(rows.get(0).longValue());
+                }
+                catch (RepositoryException e)
+                {
+                    // FIXME BUG select count with ORDER BY 
+                    // The ORDER BY clause is invalid in views, inline functions, derived tables, subqueries, and common table expressions, unless TOP or FOR XML is also specified.
+                    queryable.setTotal(Statement.SUCCESS_NO_INFO);
+                    LOG.error("Could not count the total of rows from full query [{}]", queryable.getName(), e);
+                }
+                /*
                 StatementAdapter<Number, ResultSet> adapterStmtCount = cmdAdapter.newStatement(queryable.queryCount(), dynamicSql.getLanguageType());
                 queryable.bind(adapterStmtCount).on();
                 adapterStmtCount.returnType(Number.class).scalar();
@@ -129,12 +146,30 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
                     queryable.setTotal(Statement.SUCCESS_NO_INFO);
                     LOG.error("Cannot count the total of rows from full query [{}]", queryable.getName(), e);
                 }
+                */
             }
             else
                 queryable.setTotal(Statement.SUCCESS_NO_INFO);
         }
         else if (queryable.getTotal() < 0)
             queryable.setTotal(list.size());
+    }
+    
+    private Queryable createQueryableForPaging()
+    {
+        String queryName = "#paging_"+System.currentTimeMillis()+"_for_"+queryable.getName();
+        String[] paramNames = queryable.getDynamicSql().extractNames(queryable.getParams());
+        Object[] paramValues = queryable.values(paramNames);
+        Queryable paging = QueryFactory.ofArray(queryName, paramValues);
+        Selectable selectable = TagFactory.newSelect(queryName, LanguageType.NATIVE, queryable.getDynamicSql().getSqlDialect());
+        if (selectable instanceof SqlTag)
+        {
+            SqlTag sqlTag = (SqlTag)selectable;
+            sqlTag.addTag(queryable.queryCount());
+            paging.bind(selectable);
+        }
+        paging.scalar();
+        return paging;
     }
     
     private void checkSqlConstraints()

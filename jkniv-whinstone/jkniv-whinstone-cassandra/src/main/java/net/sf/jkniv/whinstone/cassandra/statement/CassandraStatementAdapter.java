@@ -35,6 +35,7 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
 
 import net.sf.jkniv.exception.HandlerException;
+import net.sf.jkniv.experimental.TimerKeeper;
 import net.sf.jkniv.sqlegance.KeyGeneratorType;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
@@ -45,13 +46,6 @@ import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.ResultSetParser;
 import net.sf.jkniv.whinstone.cassandra.CassandraColumn;
 import net.sf.jkniv.whinstone.cassandra.LoggerFactory;
-import net.sf.jkniv.whinstone.cassandra.result.FlatObjectResultRow;
-import net.sf.jkniv.whinstone.cassandra.result.MapResultRow;
-import net.sf.jkniv.whinstone.cassandra.result.NumberResultRow;
-import net.sf.jkniv.whinstone.cassandra.result.ObjectResultSetParser;
-import net.sf.jkniv.whinstone.cassandra.result.PojoResultRow;
-import net.sf.jkniv.whinstone.cassandra.result.ScalarResultRow;
-import net.sf.jkniv.whinstone.cassandra.result.StringResultRow;
 import net.sf.jkniv.whinstone.classification.Groupable;
 import net.sf.jkniv.whinstone.classification.GroupingBy;
 import net.sf.jkniv.whinstone.classification.NoGroupingBy;
@@ -62,22 +56,15 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 /**
  * https://docs.datastax.com/en/developer/java-driver/3.1/manual/statements/prepared/
  * 
- * //FIXME unsupported method bound.setMap(...Map)
- * //FIXME unsupported methodbound.setList(...List)
- * //FIXME unsupported methodbound.setInet(...)
- * //FIXME unsupported methodbound.setSet(...Set)
- * //FIXME unsupported methodbound.setConsistencyLevel(ConsistencyLevel)
- * //FIXME unsupported methodbound.setIdempotent(boolean)
- * //FIXME unsupported methodbound.setBytes(...ByteBuffer)
- * //FIXME unsupported methodbound.setInet(...InetAddress)
- * //FIXME unsupported methodbound.setPartitionKeyToken(Token)
- * //FIXME unsupported methodbound.setRoutingKey(ByteBuffer) 
- * //FIXME unsupported methodbound.setToken(...Token)
- * //FIXME unsupported methodbound.setUUID(...UUID)
- * //FIXME unsupported methodbound.set
- * //FIXME unsupported methodbound.set
- * //FIXME unsupported methodbound.set
- * //FIXME unsupported methodbound.set
+ * //FIXME unsupported method bound.setInet(...)
+ * //FIXME unsupported method bound.setConsistencyLevel(ConsistencyLevel)
+ * //FIXME unsupported method bound.setIdempotent(boolean)
+ * //FIXME unsupported method bound.setBytes(...ByteBuffer)
+ * //FIXME unsupported method bound.setInet(...InetAddress)
+ * //FIXME unsupported method bound.setPartitionKeyToken(Token)
+ * //FIXME unsupported method bound.setRoutingKey(ByteBuffer) 
+ * //FIXME unsupported method bound.setToken(...Token)
+ * //FIXME unsupported method bound.setUUID(...UUID)
  * 
  * @author Alisson Gomes
  * @since 0.6.0
@@ -94,11 +81,11 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     private Class<T>                 returnType;
     private ResultRow<T, Row>        resultRow;
     private boolean                  scalar;
-    private Set<OneToMany>           oneToManies;
-    private List<String>             groupingBy;
-    private KeyGeneratorType         keyGeneratorType;
     private Session                  session;
     private Queryable                queryable;
+    //private Set<OneToMany>           oneToManies;
+    //private List<String>             groupingBy;
+    //private KeyGeneratorType         keyGeneratorType;
     
     @SuppressWarnings("unchecked")
     public CassandraStatementAdapter(Session session, Statement stmt, Queryable queryable)
@@ -106,16 +93,11 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         this.stmt = stmt;
         this.session = session;
         //this.bound = stmt.bind();
-        this.oneToManies = Collections.emptySet();
-        this.groupingBy = Collections.emptyList();
+        //this.oneToManies = Collections.emptySet();
+        //this.groupingBy = Collections.emptyList();
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
         this.queryable = queryable;
-        this.returnType = (Class<T>) Map.class;
-        if (queryable.getReturnType() != null)
-            returnType = (Class<T>) queryable.getReturnType();
-        else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-            returnType = (Class<T>) queryable.getDynamicSql().getReturnTypeAsClass();
-        
+        this.returnType = (Class<T>) queryable.getReturnType();
         this.reset();
     }
     
@@ -129,53 +111,53 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     }
     */
     
-    @Override
-    public StatementAdapter<T, Row> returnType(Class<T> returnType)
-    {
-        this.returnType = returnType;
-        return this;
-    }
+//    @Override
+//    public StatementAdapter<T, Row> returnType(Class<T> returnType)
+//    {
+//        this.returnType = returnType;
+//        return this;
+//    }
     
     @Override
-    public StatementAdapter<T, Row> resultRow(ResultRow<T, Row> resultRow)
+    public StatementAdapter<T, Row> with(ResultRow<T, Row> resultRow)
     {
         this.resultRow = resultRow;
         return this;
     }
     
-    @Override
-    public StatementAdapter<T, Row> scalar()
-    {
-        this.scalar = true;
-        return this;
-    }
+//    @Override
+//    public StatementAdapter<T, Row> scalar()
+//    {
+//        this.scalar = true;
+//        return this;
+//    }
+//    
+//    @Override
+//    public StatementAdapter<T, Row> oneToManies(Set<OneToMany> oneToManies)
+//    {
+//        this.oneToManies = oneToManies;
+//        return this;
+//    }
     
-    @Override
-    public StatementAdapter<T, Row> oneToManies(Set<OneToMany> oneToManies)
-    {
-        this.oneToManies = oneToManies;
-        return this;
-    }
+//    @Override
+//    public StatementAdapter<T, Row> groupingBy(List<String> groupingBy)
+//    {
+//        this.groupingBy = groupingBy;
+//        return this;
+//    }
     
-    @Override
-    public StatementAdapter<T, Row> groupingBy(List<String> groupingBy)
-    {
-        this.groupingBy = groupingBy;
-        return this;
-    }
-    
-    @Override
-    public StatementAdapter<T, Row> keyGeneratorType(KeyGeneratorType keyGeneratorType)
-    {
-        this.keyGeneratorType = keyGeneratorType;
-        return this;
-    }
-    
-    @Override
-    public KeyGeneratorType getKeyGeneratorType()
-    {
-        return this.keyGeneratorType;
-    }
+//    @Override
+//    public StatementAdapter<T, Row> with(KeyGeneratorType keyGeneratorType)
+//    {
+//        this.keyGeneratorType = keyGeneratorType;
+//        return this;
+//    }
+//    
+//    @Override
+//    public KeyGeneratorType getKeyGeneratorType()
+//    {
+//        return this.keyGeneratorType;
+//    }
     
     @Override
     public StatementAdapter<T, Row> bind(String name, Object value)
@@ -263,25 +245,33 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
                 PagingState pagingState = PagingState.fromString(queryable.getBookmark());
                 stmt.setPagingState(pagingState);
             }
+            TimerKeeper.start();
             rs = session.execute(stmt);
+            queryable.getDynamicSql().getStats().add(TimerKeeper.clear());
+            
             JdbcColumn<Row>[] columns = getJdbcColumns(rs.getColumnDefinitions());
             setResultRow(columns);
             
             Transformable<T> transformable = resultRow.getTransformable();
-            if (!groupingBy.isEmpty())
+            if (hasGroupingBy())
             {
-                grouping = new GroupingBy(groupingBy, returnType, transformable);
+                grouping = new GroupingBy(getGroupingBy(), returnType, transformable);
             }
             rsParser = new ObjectResultSetParser(resultRow, grouping);
             list = rsParser.parser(rs);//rs.getExecutionInfo().getPagingStateUnsafe();
             PagingState pagingState = rs.getExecutionInfo().getPagingState();
-            LOG.info("AvailableWithoutFetching={}, FullyFetched={}, Exhausted={}", rs.getAvailableWithoutFetching(), rs.isFullyFetched(), rs.isExhausted());
+            //LOG.info("AvailableWithoutFetching={}, FullyFetched={}, Exhausted={}", rs.getAvailableWithoutFetching(), rs.isFullyFetched(), rs.isExhausted());
             if (pagingState != null)
                 queryable.setBookmark(pagingState.toString());
         }
         catch (SQLException e)
         {
+            queryable.getDynamicSql().getStats().add(e);
+            
             handlerException.handle(e, e.getMessage());
+        }
+        finally {
+            TimerKeeper.clear();            
         }
         return list;
     }
@@ -500,13 +490,13 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         {
             resultRow = new StringResultRow(columns);
         }
-        else if (oneToManies.isEmpty())
+        else if (!hasOneToMany())
         {
             resultRow = new FlatObjectResultRow(returnType, columns);
         }
         else
         {
-            resultRow = new PojoResultRow(returnType, columns, oneToManies);
+            resultRow = new PojoResultRow(returnType, columns, getOneToMany());
         }
     }
     
@@ -559,5 +549,25 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     public void setFetchSize(int rows)
     {
         stmt.setFetchSize(rows);
+    }
+
+    private boolean hasOneToMany()
+    {
+        return !queryable.getDynamicSql().asSelectable().getOneToMany().isEmpty();
+    }
+
+    private Set<OneToMany> getOneToMany()
+    {
+        return queryable.getDynamicSql().asSelectable().getOneToMany();
+    }
+
+    private boolean hasGroupingBy()
+    {
+        return !queryable.getDynamicSql().asSelectable().getGroupByAsList().isEmpty();
+    }
+
+    private List<String> getGroupingBy()
+    {
+        return queryable.getDynamicSql().asSelectable().getGroupByAsList();        
     }
 }

@@ -23,11 +23,12 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Interface overload the methods do inject (by reflection) the right value dynamically at Object instances.
+ * Overloads methods to inject (by reflection) the right value dynamically into object (instance).
+ * 
+ * @param <T> Type of from object that receive the data
  * 
  * @author Alisson Gomes
- *
- * @param <T> Type of from object that recieve the data
+ * @since 0.6.0
  */
 public interface Injectable<T>
 {
@@ -58,5 +59,4 @@ public interface Injectable<T>
     Object inject(String name, Date value);
 
     Object inject(String name, Calendar value);
-
 }

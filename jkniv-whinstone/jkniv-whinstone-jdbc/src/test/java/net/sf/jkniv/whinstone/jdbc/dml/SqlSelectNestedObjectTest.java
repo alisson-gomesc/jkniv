@@ -54,8 +54,5 @@ public class SqlSelectNestedObjectTest extends BaseJdbc
             assertThat(b.getAuthor().getBooks(), notNullValue());
             assertThat(b.getAuthor().getBooks().size(), is(0));
         }
-        
     }
-
-    
 }

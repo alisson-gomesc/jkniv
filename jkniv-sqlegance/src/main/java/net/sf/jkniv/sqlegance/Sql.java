@@ -124,7 +124,13 @@ public interface Sql
      * @throws UnsupportedOperationException when this instance isn't {@link Deletable}
      */
     Deletable asDeletable();
-    
+
+    /**
+     * Verify if command is a STORED PROCEDURE
+     * @return {@code true} when is STORED PROCEDURE, {@code false} otherwise
+     */
+    boolean isStorable();
+
     /**
      * {@link Storable} instance
      * @return this instance
@@ -184,16 +190,6 @@ public interface Sql
 
     Class<?> getReturnTypeAsClass(); // TODO test me, null when haven't return type
 
-    //void setResultRow(ResultRow<?, ?> resultRow);
-
-    //ResultRow<?, ?> getResultRow();
-    /*
-     * Check if return type is managed as {@code javax.persistence.Entity}
-     * @return return {@code true} if is annotated as {@code javax.persistence.Entity}, {@code false} otherwise
-     *
-    boolean isReturnTypeManaged();
-    */
-    
     /**
      * Timestamp when sql was read from xml
      * @return when SQL was read from XML file
@@ -242,6 +238,10 @@ public interface Sql
      
      void bind(SqlDialect sqlDialect);
      
+     /**
+      * dialect for a specific database
+      * @return the dialect
+      */
      SqlDialect getSqlDialect();
      
      /**
@@ -250,13 +250,9 @@ public interface Sql
       */
      String getPackage();
      
-     Statistical getStats();
-     
-     /*
-      * Use validator (JSR 303) to perform validation against params
-      * @param params parameters of query
-      * @throws ConstraintException when some constraint is violated
+     /**
+      * get statistical data from query execution 
+      * @return the statistical like min/max/avg times.
       */
-     //void checkConstraints(Object params);
-     
+     Statistical getStats();
 }

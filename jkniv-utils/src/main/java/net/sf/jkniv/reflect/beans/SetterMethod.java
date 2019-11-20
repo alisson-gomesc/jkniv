@@ -24,19 +24,21 @@ import java.util.Locale;
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.reflect.ReflectionException;
+import net.sf.jkniv.reflect.beans.Capitalize.PropertyType;
 
-class SetterMethod implements MethodName // TODO test me
+class SetterMethod implements Capitalize
 {
-    private final static Assertable notNull = AssertsFactory.getNotNull();
+    private final static Assertable NOT_NULL = AssertsFactory.getNotNull();
+    private static final String SET = "set";
     
     /**
      * Append prefix <code>set<code> to attributeColumnName and capitalize it.
      * @param attributeColumnName attribute name to capitalize with <code>set</code> prefix
      * @return return capitalize attribute name, sample: identityName -> setIdentityName
      */
-    public String capitalize(String attributeColumnName)
+    public String does(String attributeColumnName)
     {
-        notNull.verify(attributeColumnName);
+        NOT_NULL.verify(attributeColumnName);
         
         if (attributeColumnName.startsWith(SET))
             return attributeColumnName;
@@ -50,14 +52,14 @@ class SetterMethod implements MethodName // TODO test me
         return SET + capitalize;
     }
     
-    public String uncapitalize(String attributeColumnName)
+    public String undo(String attributeColumnName)
     {
-        notNull.verify(attributeColumnName);
+        NOT_NULL.verify(attributeColumnName);
         String name = attributeColumnName;
         if (attributeColumnName.startsWith(SET))
             name = attributeColumnName.substring(3);
         
-        int length = attributeColumnName.length();
+        int length = name.length();
         if (length == 0)
             throw new ReflectionException("Cannot uncapitalize the value of [" + attributeColumnName + "]");
         
@@ -69,5 +71,10 @@ class SetterMethod implements MethodName // TODO test me
         
         return uncapitalize;
     }
- 
+
+    @Override
+    public PropertyType getPropertyType()
+    {
+        return Capitalize.PropertyType.SET;
+    }
 }

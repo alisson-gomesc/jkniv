@@ -19,12 +19,18 @@
  */
 package net.sf.jkniv.reflect;
 
+/**
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public class ReflectionException extends RuntimeException
 {
     private static final long serialVersionUID = 960775508858208595L;
 
     public ReflectionException()
     {
+        super();
     }
     
     public ReflectionException(String msg)
@@ -41,5 +47,4 @@ public class ReflectionException extends RuntimeException
     {
         super(cause);
     }
-    
 }

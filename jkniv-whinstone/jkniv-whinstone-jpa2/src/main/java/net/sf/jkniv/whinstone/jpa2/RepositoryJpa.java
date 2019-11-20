@@ -155,9 +155,6 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.sqlContext = sqlContext;
         this.sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
         this.strategyQueryName = null;
-        //this.emFactory = new JpaEmFactoryJndi(persistenceInfo.getUnitName());
-        //if (!emFactory.isActive())
-        //    this.emFactory = new JpaEmFactorySEenv(persistenceInfo.getUnitName());
         this.init();
     }
     
@@ -168,9 +165,6 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.sqlContext = sqlContext;
         this.sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
         this.strategyQueryName = null;
-        //this.emFactory = new JpaEmFactoryJndi(unitName);
-        //if (!emFactory.isActive())
-        //    this.emFactory = new JpaEmFactorySEenv(unitName);
         this.init();
     }
     
@@ -189,8 +183,6 @@ class RepositoryJpa implements RepositoryJpaExtend
     {
         NOT_NULL.verify(em, sqlContext);
         this.persistenceInfo = PersistenceReader.getPersistenceInfo(sqlContext.getName());
-        //this.emFactory = new JpaEmFactoryHard(em);
-        //this.sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
         this.strategyQueryName = null;
         this.sqlContext = sqlContext;
         init();
@@ -228,38 +220,13 @@ class RepositoryJpa implements RepositoryJpaExtend
             this.emFactory = new JpaEmFactorySEenv(persistenceInfo.getUnitName());
     }
     
-    /*
-    public AbstractRepository(EntityManagerFactory emf)
-    {
-        Assert.notNull(emf);
-        this.initialized = false;
-        this.showConfig = false;
-        this.sqlNames = null;
-        this.em = emf.createEntityManager();
-        init();
-    }*/
-    
-    //    @SuppressWarnings("unchecked")
-    //    private void initSqlNameStrategy(String nameStrategy)
-    //    {
-    //        if (nameStrategy == null || "".equals(nameStrategy))
-    //        {
-    //            this.xmlQueryName = new SimpleQueryNameStrategy();
-    //        }
-    //        else
-    //        {
-    //            Class clazz = ReflectionUtils.forName(nameStrategy, SimpleQueryNameStrategy.class);
-    //            this.xmlQueryName = (SimpleQueryNameStrategy) ReflectionUtils.newInstance(clazz);
-    //        }
-    //    }
-    
     /**
      * Add a new Object at repository.
      * 
      * @param entity Entity object to persist
      */
     @Override
-    public <T> T add(T entity) // FIXME CommandHandler must be used (refactoring)
+    public <T> T add(T entity)
     {
         NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toAddName(entity);
@@ -274,23 +241,13 @@ class RepositoryJpa implements RepositoryJpaExtend
             .with(handlerException)
             .run();
         return entity;
-        /*
-        NOT_NULL.verify(entity);
-        //Queryable queryable = QueryFactory.of("dummy", entity);
-        //queryable.is
-        if (isTraceEnabled)
-            LOG.trace("executing EntityManage.persist(" + entity.getClass().getName() + ")");
-        EntityManager em = getEntityManager();
-        em.persist(entity);
-        return entity;
-        */
     }
     
     @Override
-    public int add(Queryable queryable)// FIXME CommandHandler must be used (refactoring)
+    public int add(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
-        Sql sql = sqlContext.getQuery(queryable.getName());
+        Sql sql = getQuery(queryable);
         CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
         int rows = handler.with(queryable)
                 .with(sql)
@@ -298,21 +255,6 @@ class RepositoryJpa implements RepositoryJpaExtend
                 .with(handlerException)
                 .run();
         return rows;
-
-        /*
-        if (isTraceEnabled)
-            LOG.trace("executing add method with query [" + queryable.getName() + "]");
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.INSERT);
-        isql.getValidateType().assertValidate(queryable.getParams());
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        int rowsAffected = executeUpdate(queryable, isql);
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by add [{}] command", rowsAffected, queryable.getName());
-        return rowsAffected;
-        */
     }
     
     /**
@@ -321,7 +263,7 @@ class RepositoryJpa implements RepositoryJpaExtend
      * @param entity Entity object to delete
      */
     @Override
-    public <T> int remove(T entity)// FIXME CommandHandler must be used (refactoring)
+    public <T> int remove(T entity)
     {
         NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toRemoveName(entity);
@@ -337,17 +279,6 @@ class RepositoryJpa implements RepositoryJpaExtend
             .with(handlerException)
             .run();
         return Statement.SUCCESS_NO_INFO;
-        /*
-        NOT_NULL.verify(entity);
-        if (isTraceEnabled)
-            LOG.trace("executing EntityManage.remove(" + entity.getClass().getName() + ")");
-        EntityManager em = getEntityManager();
-        em.remove(entity);
-        if (isDebugEnabled)
-            LOG.debug("1 record [{}] MUST BE affected by remove command", entity);
-        
-        return Statement.SUCCESS_NO_INFO;
-        */
     }
     
     /**
@@ -360,10 +291,10 @@ class RepositoryJpa implements RepositoryJpaExtend
      *             when the query is different from delete
      */
     @Override
-    public int remove(Queryable queryable)// FIXME CommandHandler must be used (refactoring)
+    public int remove(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
-        Sql sql = sqlContext.getQuery(queryable.getName());
+        Sql sql = getQuery(queryable);
         CommandHandler handler = CommandHandlerFactory.ofRemove(this.cmdAdapter);
         int rows = handler.with(queryable)
                 .with(sql)
@@ -371,19 +302,6 @@ class RepositoryJpa implements RepositoryJpaExtend
                 .with(handlerException)
                 .run();
         return rows;
-        /*
-        if (isTraceEnabled)
-            LOG.trace("executing remove method with query [" + queryable.getName() + "]");
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.DELETE);
-        isql.getValidateType().assertValidate(queryable.getParams());
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        int rowsAffected = executeUpdate(queryable, isql);
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by remove [{}] command", rowsAffected, queryable.getName());
-        return rowsAffected;
-        */
     }
     
     public boolean enrich(Queryable queryable) //FIXME test enrich
@@ -409,12 +327,12 @@ class RepositoryJpa implements RepositoryJpaExtend
      *             when the query is different from update sentence
      */
     @Override
-    public int update(Queryable queryable)// FIXME CommandHandler must be used (refactoring)
+    public int update(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
-        Sql sql = sqlContext.getQuery(queryable.getName());
+        Sql sql = getQuery(queryable);
         CommandHandler handler = CommandHandlerFactory.ofUpdate(this.cmdAdapter);
         int rows = handler.with(queryable)
                 .with(sql)
@@ -422,21 +340,6 @@ class RepositoryJpa implements RepositoryJpaExtend
                 .with(handlerException)
                 .run();
         return rows;
-        /*
-        if (isTraceEnabled)
-            LOG.trace("executing update method with query [" + queryable.getName() + "]");
-        Sql isql = sqlContext.getQuery(queryable.getName());
-        checkSqlType(isql, SqlType.UPDATE);
-        isql.getValidateType().assertValidate(queryable.getParams());
-        if (!queryable.isBoundSql())
-            queryable.bind(isql);
-        
-        int rowsAffected = executeUpdate(queryable, isql);
-        if (isDebugEnabled)
-            LOG.debug("{} records was affected by update [{}] command", rowsAffected, queryable.getName());
-        
-        return rowsAffected;
-        */
     }
     
     /**
@@ -445,7 +348,7 @@ class RepositoryJpa implements RepositoryJpaExtend
      * @param entity Entity object to update
      */
     @Override
-    public <T> T update(T entity)// FIXME CommandHandler must be used (refactoring)
+    public <T> T update(T entity)
     {
         NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toUpdateName(entity);
@@ -461,14 +364,6 @@ class RepositoryJpa implements RepositoryJpaExtend
             .with(handlerException)
             .run();
         return merged;
-        /*
-        NOT_NULL.verify(entity);
-        if (isTraceEnabled)
-            LOG.trace("executing EntityManage.merge(" + entity.getClass().getName() + ")");
-        EntityManager em = getEntityManager();
-        T merged = em.merge(entity);
-        return merged
-        */
     }
     
     /**
@@ -493,25 +388,6 @@ class RepositoryJpa implements RepositoryJpaExtend
         // TODO test me case return null object
         // TODO test me case return !null object
         // TODO test me case return list of object
-        NOT_NULL.verify(object);
-        T ret = null;
-        Queryable queryable = getDefaultQuery(object);
-        if (isTraceEnabled)
-            LOG.trace("executing get method with query [" + queryable.getName() + "]");
-        
-        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable,
-                null);
-        ret = queryableJpaAdapter.getSingleResult();
-        /*
-        Query queryJpa = _getQueryJpa_(queryable);
-        try
-        {
-            ret = (T) queryJpa.getSingleResult();
-        }
-        catch (javax.persistence.NoResultException returnNull)
-        {
-        }
-        return ret;
          */
     }
     
@@ -523,40 +399,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         Queryable queryable = QueryFactory.of(queryName, returnType, entity);
         T ret = (T) handleGet(queryable, null);
         return ret;
-        /*
-        NOT_NULL.verify(object, returnType);
-        T ret = null;
-        Queryable queryable = getDefaultQuery(object);
-        if (isTraceEnabled)
-            LOG.trace("executing get method with query [{}] returning [{}]", queryable.getName(), returnType.getName());
-        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable,
-                returnType);
-        ret = queryableJpaAdapter.getSingleResult();
-        return ret;
-        */
     }
-    
-    /*
-     * Get one object instance from repository using a query.
-     * 
-     * @param queryable
-     *            Query with parameters
-     * @return Return the object that matches with query. A null reference is
-     *         returned if the query no match anyone object.
-     *
-    public <T> T __get(Queryable queryable)
-    {
-        NOT_NULL.verify(queryable);
-        
-        if (isTraceEnabled)
-            LOG.trace("executing get method with query [" + queryable.getName() + "]");
-        T ret = null;
-        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable,
-                null);
-        ret = queryableJpaAdapter.getSingleResult();
-        return ret;
-    }
-    */
     
     @Override
     public <T> T get(Queryable queryable)
@@ -574,26 +417,12 @@ class RepositoryJpa implements RepositoryJpaExtend
         T ret = handleGet(queryableClone, null);
         queryable.setTotal(queryableClone.getTotal());
         return ret;
-        /*
-        NOT_NULL.verify(queryable, returnType);
-        if (isTraceEnabled)
-            LOG.trace("executing get method with query [" + queryable.getName() + "]");
-        
-        T ret = null;
-        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable,
-                returnType);
-        ret = queryableJpaAdapter.getSingleResult();
-        return ret;
-        */
     }
     
     @Override
     public <T, R> T get(Queryable queryable, ResultRow<T, R> customResultRow)
     {
         return handleGet(queryable, customResultRow);
-        /*
-        throw new UnsupportedOperationException("Cannot iterate over Jpa query. Not implemented.");
-         */
     }
     
     /**
@@ -609,28 +438,12 @@ class RepositoryJpa implements RepositoryJpaExtend
     public <T> List<T> list(Queryable queryable)
     {
         return handleList(queryable, null);
-
-        /*
-        if (isTraceEnabled)
-            LOG.trace("executing list method with query [" + queryable.getName() + "]");
-        
-        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable,
-                null);
-        
-        List<T> ret = queryableJpaAdapter.getResultList();
-        
-        return ret;
-        */
     }
     
     @Override
     public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> customResultRow)
     {
         return handleList(queryable, customResultRow);
-        /*
-        NOT_NULL.verify(customResultRow);
-        throw new UnsupportedOperationException("Cannot iterate over Jpa query. Not implemented.");
-        */
     }
     
     @Override
@@ -643,17 +456,6 @@ class RepositoryJpa implements RepositoryJpaExtend
         list = handleList(queryableClone, null);
         queryable.setTotal(queryableClone.getTotal());
         return list;
-        /*
-        NOT_NULL.verify(overloadReturnType);
-        if (isTraceEnabled)
-            LOG.trace("executing list method with query [" + queryable.getName() + "]");
-        //throw new UnsupportedOperationException("Not implemented yet. list with Class<T> returnType.");
-        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable,
-                overloadReturnType);
-        
-        List<T> ret = queryableJpaAdapter.getResultList();
-        return ret;
-        */
     }
     
     @Override
@@ -663,28 +465,12 @@ class RepositoryJpa implements RepositoryJpaExtend
         queryable.scalar();
         T ret = handleGet(queryable, null);
         return ret;
-        /*
-        if (isTraceEnabled)
-            LOG.trace("executing get method with query [" + queryable.getName() + "]");
-        queryable.scalar();
-        T ret = null;
-        
-        QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(getEntityManager(), sqlContext, queryable,
-                null);
-        ret = (T) queryableJpaAdapter.getSingleResult();
-        
-        if (isDebugEnabled)
-            LOG.debug("Executed scalar query [{}] retrieving [{}] type of [{}]", queryable.getName(), ret,
-                    (ret != null ? ret.getClass().getName() : "NULL"));
-        
-        return ret;
-        */
     }
     
     private <T, R> T handleGet(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         T ret = null;
-        Sql sql = sqlContext.getQuery(queryable.getName());
+        Sql sql = getQuery(queryable);
         CommandHandler handler = CommandHandlerFactory.ofSelect(this.cmdAdapter);
         List<T> list = handler
                 .with(queryable)
@@ -695,8 +481,6 @@ class RepositoryJpa implements RepositoryJpaExtend
                 .run();
         if (list.size() > 1)
             throw new NonUniqueResultException("No unique result for query [" + queryable.getName() + "] with params ["+ queryable.getParams() + "result fetch ["+list.size()+"] rows, Repository.get(..) method must return just one row]");
-            //throw new NonUniqueResultException("No unique result for query [" + queryable.getName() + "] with params ["+ queryable.getParams() + "]");
-            //throw new NonUniqueResultException("Query ["+queryable.getName()+"] result fetch ["+listGrouped.size()+"] rows, Repository.get(..) method must return just one row");
 
         else if (list.size() == 1)
             ret = list.get(0);
@@ -706,7 +490,7 @@ class RepositoryJpa implements RepositoryJpaExtend
     
     private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
-        Sql sql = sqlContext.getQuery(queryable.getName());
+        Sql sql = getQuery(queryable);
         CommandHandler handler = CommandHandlerFactory.ofSelect(this.cmdAdapter);
         List<T> list = handler
                 .with(queryable)
@@ -741,7 +525,25 @@ class RepositoryJpa implements RepositoryJpaExtend
             LOG.trace("executing EntityManager flush");
         getEntityManager().flush();
     }
-    
+
+    private Sql getQuery(Queryable queryable)
+    {
+        Sql sql = null;
+        String queryName = queryable.getName();
+        if (sqlContext.containsQuery(queryName))
+        {
+            sql = sqlContext.getQuery(queryName);
+        }
+        else
+        {
+            sql = new NamedQueryForSql(queryName, queryable.getReturnType(), 
+                    sqlContext.getSqlDialect(),
+                    sqlContext.getRepositoryConfig().getStatistical());
+            sqlContext.add(sql);
+        }
+        return sql;
+    }
+
     @Override
     public boolean containsQuery(String name)
     {
@@ -760,75 +562,6 @@ class RepositoryJpa implements RepositoryJpaExtend
         return getEntityManager().createQuery(criteriaQuery);
     }
     
-    /*
-    private int executeUpdate(Queryable queryable, Sql isql)
-    {
-        int rowsAffected = 0;
-        EntityManager em = getEntityManager();
-        if (queryable.isTypeOfCollectionFromPojo() || queryable.isTypeOfCollectionFromMap()
-                || queryable.isTypeOfCollectionFromArray() || queryable.isTypeOfArrayFromPojo())
-        {
-            Iterator<Object> it = queryable.iterator();
-            while (it.hasNext())
-            {
-                Queryable queryableIt = QueryFactory.of(queryable.getName(), it.next(), queryable.getOffset(),
-                        queryable.getMax());
-                QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(em, sqlContext, queryableIt, null);
-                rowsAffected += queryableJpaAdapter.executeUpdate();
-            }
-        }
-        else
-        {
-            QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(em, sqlContext, queryable, null);
-            rowsAffected = queryableJpaAdapter.executeUpdate();
-        }
-        return rowsAffected;
-    }
-    */
-    
-    private void setTotalObjectsOfQuery(Queryable queryable, Sql isql)
-    {
-        
-        Number total = 0L;
-        if (queryable.isPaging())
-        {
-            // FIXME design round trip to count total of records
-            /*
-            Query queryJpa = getQueryForAutoCount(queryable, isql);
-            try
-            {
-                total = (Number) queryJpa.getSingleResult();
-                if (total != null)
-                    queryable.setTotal(total.longValue());
-            }
-            catch (NoResultException e)
-            {
-                queryable.setTotal(0L);
-            }
-            */
-        }
-    }
-    
-    /*
-    private Query _getQueryJpa_(Queryable queryable)
-    {
-        Query queryJpa = null;
-        EntityManager em = getEntityManager();
-        ISql isql = null;
-        try
-        {
-            isql = sqlContext.getQuery(queryable.getName());
-            checkSqlCommandType(isql, SqlCommandType.SELECT);
-            isql.getValidateType().assertValidate(queryable.getParams());
-            queryJpa = QueryFactory.newQuery(isql, em, queryable, sqlLogger);
-        }
-        catch (QueryNotFoundException e)
-        {
-            queryJpa = QueryFactory.newNamedQuery(em, queryable);
-        }
-        return queryJpa;
-    }
-    */
     /**
      * Create a default instance of Queryable object to execute list and get
      * methods.

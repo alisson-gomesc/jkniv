@@ -13,5 +13,5 @@
   <select  id="com.acme.sample.security.getUsers" type="NATIVE">
     select id, name from users_sec
   </select>
-  
+
 </statements>

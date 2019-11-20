@@ -25,34 +25,41 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 class PositionalParams extends AbstractParam implements AutoBindParams
 {
     private StatementAdapter<?, ?> stmtAdapter;
-    private Object                  params;
-    private String                  queryName;
-    private String[] paramsNames;
+    private Object[]               params;
+    private String                 queryName;
+    private String[]               paramsNames;
     
     public PositionalParams(StatementAdapter<?, ?> stmtAdapter, Queryable queryable)
     {
         super();
         this.stmtAdapter = stmtAdapter;
-        this.params = queryable.getParams();
         this.queryName = queryable.getName();
+        this.paramsNames = queryable.getParamsNames();
+        this.params = queryable.values(paramsNames);
     }
     
     @Override
     public void on()
     {
+        for (Object o : params)
+        {
+            stmtAdapter.bind(o);
+        }
+        
+        /*
         if (params.getClass().isArray())
         {
-            Object[] objs = (Object[]) params;
-            if (objs.length != paramsNames.length && !hasInClause(paramsNames))
+            if (params.length != paramsNames.length && !hasInClause(paramsNames))
                 throw new ParameterException("A query [" + queryName
                         + "] with positional parameters needs an array exactly have the same number of parameters from query.");
             
-            for (Object o : objs)
+            for (Object o : params)
                 stmtAdapter.bind(o);
         }
         else
             throw new ParameterException(
                     "The parameters of sql [" + queryName + "] is based at array but the parameters is not array");
+        */
     }
     
     @Override

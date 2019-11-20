@@ -45,22 +45,23 @@ public interface HandleableException
      * @return a reference to this object.
      */
     HandleableException config(Class<? extends Exception> root, String message);
-/*
-    RuntimeException handle(RuntimeException catched);
-    
-    RuntimeException handle(RuntimeException catched, String message);
-*/
+
     void handle(Exception catched);
 
     void handle(Exception catched, String message);
 
+    /**
+     * Throw a Default Exception with a specific message using the specified formatted string and arguments. 
+     * @param message a format message, like: {@code can not found method %s for class %s}
+     * @param args Arguments referenced by the format specifiers in the format string.
+     */
     void throwMessage(String message, Object... args); // TODO unit test
 
     Class<? extends RuntimeException> getDefaultException();
 
-    void mute();
+    HandleableException mute();
     
-    void mute(Class<? extends Exception> ex);
+    HandleableException mute(Class<? extends Exception> ex);
     
     // TODO implements new methods muteAsWarn, muteAsInfo
     // TODO implements config exception to rethrow them (just

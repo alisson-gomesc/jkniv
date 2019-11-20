@@ -21,6 +21,7 @@ package net.sf.jkniv.reflect.beans;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -42,20 +43,21 @@ import net.sf.jkniv.reflect.ReflectionException;
 
 /*
  * TODO list Reflection ObjectProxy
- * Convert number type to near method BigDecimal->Double->Float->Integer->Float 
+ * Convert number type to near method BigDecimal->Double->Float->Long->Integer->Short
+ * 
+ * @param <T> Type of proxy class
  * 
  * @author Alisson Gomes
  * @since 0.6.0
- * @param <T>
  */
 @SuppressWarnings("unchecked")
 class DefaultObjectProxy<T> implements ObjectProxy<T>
 {
     private static final Logger       LOG        = LoggerFactory.getLogger(DefaultObjectProxy.class);
-    private static final Assertable   notNull    = AssertsFactory.getNotNull();
-    private static final Assertable   isNull     = AssertsFactory.getIsNull();
-    private static final MethodName   GETTER     = MethodNameFactory.getInstanceGetter();
-    private static final MethodName   SETTER     = MethodNameFactory.getInstanceSetter();
+    private static final Assertable   NOT_NULL    = AssertsFactory.getNotNull();
+    private static final Assertable   IS_NULL     = AssertsFactory.getIsNull();
+    //private static final Capitalize   GETTER     = MethodNameFactory.getInstanceGetter();
+    private static final Capitalize   CAPITAL_SETTER     = CapitalNameFactory.getInstanceOfSetter();
     private static final BasicType    BASIC_TYPE = BasicType.getInstance();
     /** {@code getClass} */
     private static final List<String> SKIP_NAMES = Arrays.asList("getClass");
@@ -90,7 +92,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     
     private DefaultObjectProxy(T target, Class<T> targetClazz, String className)
     {
-        this.handleException = new HandlerException(ReflectionException.class, "");// TODO write message
+        this.handleException = new HandlerException(ReflectionException.class, "");// TODO exception handler design
         //this.cacheMethods = new HashMap<String, MethodInfo>(3);
         if (target != null)
         {
@@ -141,6 +143,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
                 .config(InstantiationException.class,
                         "[InstantiationException] -> Cannot create new instance of class %s")
                 .config(NoSuchMethodException.class, "[NoSuchMethodException] -> Cannot invoke or get the method %s")
+                .config(NoSuchFieldException.class, "[NoSuchFieldException] -> Cannot get the field %s")
                 .config(SecurityException.class, "[SecurityException] -> Cannot invoke or get method %s");
         
         /* newInstance
@@ -148,32 +151,16 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
           # InstantiationException - if this Class represents an abstract class, an interface, an array class, a primitive type, or void; or if the class has no nullary constructor; or if the instantiation fails for some other reason.
           # ExceptionInInitializerError - if the initialization provoked by this method fails.
           # SecurityException - If a security manager, s, is present and any of the following conditions is met: • invocation of s.checkMemberAccess(this, Member.PUBLIC) denies creation of new instances of this class 
-         
          */
-        
-    }
-    
-    @SuppressWarnings("unchecked")
-    private Class<T> forName(String className)
-    {
-        Class<T> clazz = null;
-        try
-        {
-            clazz = (Class<T>) Class.forName(className);
-        }
-        catch (ClassNotFoundException e)
-        {
-            handleException.handle(e, className);
-        }
-        return clazz;
     }
     
     /* (non-Javadoc)
      * @see net.sf.jkniv.reflect.beans.ObjectProxy#setConstructorArgs(java.lang.Object)
      */
+    @Override
     public void setConstructorArgs(Object... constructorArgs)
     {
-        notNull.verifyArray(constructorArgs);
+        NOT_NULL.verifyArray(constructorArgs);
         this.constructorArgs = constructorArgs;
         if (this.constructorTypes.length == 0)
         {
@@ -259,18 +246,20 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     /* (non-Javadoc)
      * @see net.sf.jkniv.reflect.beans.ObjectProxy#setConstructorTypes(java.lang.Class)
      */
+    @Override
     public void setConstructorTypes(Class<?>... constructorTypes)
     {
-        notNull.verifyArray(constructorTypes);
+        NOT_NULL.verifyArray(constructorTypes);
         this.constructorTypes = constructorTypes;
     }
     
     /* (non-Javadoc)
      * @see net.sf.jkniv.reflect.beans.ObjectProxy#newInstance()
      */
+    @Override
     public T newInstance()
     {
-        isNull.verify(new ReflectionException("Bean already have an instance cannot create another one"),
+        IS_NULL.verify(new ReflectionException("Bean already have an instance cannot create another one"),
                 this.instance);
         
         try
@@ -302,6 +291,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     /* (non-Javadoc)
      * @see net.sf.jkniv.reflect.beans.ObjectProxy#hasInstance()
      */
+    @Override
     public boolean hasInstance()
     {
         return (this.instance != null);
@@ -310,15 +300,17 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     /* (non-Javadoc)
      * @see net.sf.jkniv.reflect.beans.ObjectProxy#isInstanceof(java.lang.Class)
      */
+    @Override
     public boolean isInstanceof(Class<?> clazz)
     {
-        notNull.verify(clazz);
+        NOT_NULL.verify(clazz);
         return (clazz.isInstance(this.instance));
     }
     
     /* (non-Javadoc)
      * @see net.sf.jkniv.reflect.beans.ObjectProxy#getInstance()
      */
+    @Override
     public T getInstance()
     {
         //notNull.verify(new NullPointerException("Instance of Bean [" + this.targetClass.getName() + "] is null"), this.instance);
@@ -328,11 +320,13 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     /* (non-Javadoc)
      * @see net.sf.jkniv.reflect.beans.ObjectProxy#getTargetClass()
      */
+    @Override
     public Class<T> getTargetClass()
     {
         return this.targetClass;
     }
 
+    @Override
     public Object invoke(Method method, Object... args) // TODO write unit test
     {
         return invokeDirect(method, this.instance, args);
@@ -362,12 +356,13 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     /* (non-Javadoc)
      * @see net.sf.jkniv.reflect.beans.ObjectProxy#invoke(java.lang.String, java.lang.Object)
      */
+    @Override
     public Object invoke(String methodName, Object... args) // TODO write unit test
     {
         Object ret = null;
         if (isWrapperType)
         {
-            instance = (T) basicInvoke.invoke(targetClass, args);
+            this.instance = (T) basicInvoke.invoke(targetClass, args);
         }
         else
         {
@@ -389,13 +384,13 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     @Override
     public T from(Object object)
     {
-        notNull.verify(object);
+        NOT_NULL.verify(object);
         if (object instanceof Map)// TODO test me merge Object <- Map
         {
             Map<String, Object> map = (Map) object;
             for (Entry<String, Object> entry : map.entrySet())
             {
-                invoke(SETTER.capitalize(entry.getKey()), entry.getValue());
+                invoke(CAPITAL_SETTER.does(entry.getKey()), entry.getValue());
             }
         }
         else
@@ -409,12 +404,12 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
                 if (method.getName().startsWith("get"))
                 {
                     Object v = pojoInvoke.invoke(method, object);
-                    invoke(SETTER.capitalize(method.getName().substring(3)), v);
+                    invoke(CAPITAL_SETTER.does(method.getName().substring(3)), v);
                 }
                 else if (method.getName().startsWith("is"))
                 {
                     Object v = pojoInvoke.invoke(method, object);
-                    invoke(SETTER.capitalize(method.getName().substring(2)), v);
+                    invoke(CAPITAL_SETTER.does(method.getName().substring(2)), v);
                 }
             }
         }
@@ -424,13 +419,13 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     @Override
     public T merge(Object object)
     {
-        notNull.verify(object);
+        NOT_NULL.verify(object);
         if (object instanceof Map)// TODO test me merge Object <- Map
         {
             Map<String, Object> map = (Map) object;
             for (Entry<String, Object> entry : map.entrySet())
             {
-                invoke(SETTER.capitalize(entry.getKey()), entry.getValue());
+                invoke(CAPITAL_SETTER.does(entry.getKey()), entry.getValue());
             }
         }
         else
@@ -456,42 +451,23 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
                     }
                     else
                     {
-                        invoke(SETTER.capitalize(method.getName().substring(3)), v);
+                        invoke(CAPITAL_SETTER.does(method.getName().substring(3)), v);
                     }
                 }
                 else if (method.getName().startsWith("is"))
                 {
                     Object v = pojoInvoke.invoke(method, object);
-                    invoke(SETTER.capitalize(method.getName().substring(2)), v);
+                    invoke(CAPITAL_SETTER.does(method.getName().substring(2)), v);
                 }
             }
         }
         return this.instance;
     }
     
-    private boolean isNestedMethod(String methodName)
-    {
-        return (methodName.indexOf(".") > 0);
-    }
-    
+    @Override
     public boolean hasMethod(String methodName)
     {
         return pojoInvoke.hasMethod(methodName, this.targetClass);
-    }
-    
-    public List<Method> getAnnotationMethods(final Class<? extends Annotation> annotation)
-    {
-        final List<Method> methods = new ArrayList<Method>();
-        final List<Method> allMethods = new ArrayList<Method>(Arrays.asList(this.targetClass.getMethods()));
-        for (final Method method : allMethods)
-        {
-            if (method.isAnnotationPresent(annotation))
-            {
-                //Annotation annotInstance = method.getAnnotation(annotation);
-                methods.add(method);
-            }
-        }
-        return methods;
     }
 
     @Override
@@ -509,6 +485,70 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         return false;
     }
 
+    @Override
+    public List<Method> getMethodsAnnotatedWith(final Class<? extends Annotation> annotation)
+    {
+        final List<Method> methods = new ArrayList<Method>();
+        final List<Method> allMethods = new ArrayList<Method>(Arrays.asList(this.targetClass.getMethods()));
+        for (final Method method : allMethods)
+        {
+            if (method.isAnnotationPresent(annotation))
+            {
+                methods.add(method);
+            }
+        }
+        return methods;
+    }
+
+    @Override
+    public <G extends Annotation> G getAnnotationMethod(Class<? extends Annotation> annotation, String methodName, Class<?>... paramTypes)
+    {
+        Method method = null;
+        try
+        {
+            if (paramTypes.length == 0)
+            {
+                method = pojoInvoke.getMethodByName(methodName, this.targetClass);
+                if (method == null)
+                    this.handleException.throwMessage("[NoSuchMethodException] -> Cannot invoke or get the method "+this.targetClass.getName() + "." + methodName + "()");
+            }
+            else
+                method = this.targetClass.getMethod(methodName, paramTypes);
+        }
+        catch (Exception e) // SecurityException, NoSuchMethodException, NullPointerException 
+        {
+            this.handleException.handle(e);
+        }
+        return method == null ? null : (G) method.getAnnotation(annotation);
+    }
+
+    @Override
+    public <G extends Annotation> G getAnnotationField(Class<? extends Annotation> annotation, String fieldName)
+    {
+        Field field = null;
+        field = new FieldReflect(this.handleException).getField(fieldName, this.targetClass);
+        return field == null ? null : (G) field.getAnnotation(annotation);
+    }
+    
+    @Override
+    public Field getDeclaredField(String name)
+    {
+        return new FieldReflect(this.handleException).getField(name, this.targetClass);
+    }
+    
+    @Override
+    public Method getDeclaredMethod(String name)
+    {
+        return pojoInvoke.getMethodByName(name, this.targetClass);
+    }
+    
+    @Override
+    public ObjectProxy<T> with(HandleableException handle)
+    {
+        this.handleException = handle;
+        return this;
+    }
+    
     private Class<?>[] getTypes(Object[] args)
     {
         if (args == null)
@@ -522,6 +562,28 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         }
         return types;
     }
+    
+    private boolean isNestedMethod(String methodName)
+    {
+        return (methodName.indexOf(".") > 0);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<T> forName(String className)
+    {
+        Class<T> clazz = null;
+        try
+        {
+            clazz = (Class<T>) Class.forName(className);
+        }
+        catch (ClassNotFoundException e)
+        {
+            handleException.handle(e, className);
+        }
+        return clazz;
+    }
+    
+    
     /*
     // FIXME needs supports jdk types like Duration, LocalTime, LocalDateTime, etc
     private boolean isDateType(Class<?> type)// TODO test me Calendar and Gregoria Calendar case
@@ -535,4 +597,6 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
                 || GregorianCalendar.class.getCanonicalName().equals(type.getCanonicalName()));
     }
     */
+
+
 }

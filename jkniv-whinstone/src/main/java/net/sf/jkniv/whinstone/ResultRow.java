@@ -21,6 +21,7 @@ package net.sf.jkniv.whinstone;
 
 import java.sql.SQLException;
 
+import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.whinstone.classification.Transformable;
 
 /**
@@ -28,15 +29,17 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  * <p>
  * <b>Note:</b> ResultRow must be {@code stateless}.
  * 
+ * @param <T> Type of objects thats must be returned.
+ * @param <R> Type of objects thats database connection return as row, JDBC is {link ResultSet} 
+ * JPA is {@code Object[]}.
+ * 
  * @author Alisson Gomes
  * @since 0.6.0
- * @param <T> Type of objects thats must be returned.
- * @param <R> Type of objects thats database connection return as row, JDBC is {@code ResultSet} JPA is {@code Object[]}.
  */
 public interface ResultRow<T,R>
 {
     /**
-     * Retrieve column values from the current row, implementations doesn't call {@code next} 
+     * Retrieve column values from the current row, implementations must don't call {@code next} 
      * neither {@code close} methods.
      * 
      * @param rs A ResultSet or Object[] pointing to its current row of data
@@ -49,4 +52,13 @@ public interface ResultRow<T,R>
     Transformable<T> getTransformable();
     
     void setColumns(JdbcColumn<R>[] columns);
+    
+    /*
+     * Set into {@code proxy} the value of {@code jdbcObject}
+     * @param column metadata
+     * @param jdbcObject value of column row
+     * @param proxy for object that represents a row {@code T}
+     */
+    //void setValueOf(JdbcColumn<?> column, Object jdbcObject, ObjectProxy<?> proxy);
+
 }

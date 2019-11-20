@@ -36,5 +36,7 @@ public interface Invokable
     
     Object invoke(String methodName, Object theInstance, Object... values);
 
+    Method getMethodByName(String methodName, Class<?> targetClass);
+    
     boolean hasMethod(String methodName, Class<?> theTargetClass);
 }

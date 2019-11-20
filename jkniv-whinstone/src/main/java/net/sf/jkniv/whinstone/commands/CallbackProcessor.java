@@ -49,8 +49,8 @@ class CallbackProcessor
         //////if (objectCallback == null)
         //////    return;
         ObjectCallback objectCallback = new ObjectCallback(proxyParams.getTargetClass());
-        List<Method> precallbacks = proxyParams.getAnnotationMethods(PreCallBack.class);
-        List<Method> postcallbacks = proxyParams.getAnnotationMethods(PostCallBack.class);
+        List<Method> precallbacks = proxyParams.getMethodsAnnotatedWith(PreCallBack.class);
+        List<Method> postcallbacks = proxyParams.getMethodsAnnotatedWith(PostCallBack.class);
         for (Method m : precallbacks)
         {
             PreCallBack precallback = m.getAnnotation(PreCallBack.class);

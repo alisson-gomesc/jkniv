@@ -36,6 +36,7 @@ import org.junit.rules.ExpectedException;
 import net.sf.jkniv.domain.flat.AuthorFlat;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
+import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Sql;
@@ -43,6 +44,8 @@ import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.xml.TagFactory;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
+import net.sf.jkniv.sqlegance.types.Convertible;
+import net.sf.jkniv.sqlegance.types.NoConverterType;
 import net.sf.jkniv.whinstone.classification.Transformable;
 import net.sf.jkniv.whinstone.commands.Command;
 import net.sf.jkniv.whinstone.commands.CommandAdapter;
@@ -363,19 +366,13 @@ public class DefaultCommandHandlerTest
             public void setColumns(JdbcColumn<ResultSet>[] columns)
             {
             }
+
         };
     }
 
     private CommandAdapter newCommandAdapter() {
         return new CommandAdapter()
         {
-            
-            @Override
-            public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
-            {
-                return null;
-            }
-            
             @Override
             public String getContextName()
             {

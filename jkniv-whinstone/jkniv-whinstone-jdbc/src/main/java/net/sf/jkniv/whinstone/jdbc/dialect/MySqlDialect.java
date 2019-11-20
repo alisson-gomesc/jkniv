@@ -37,9 +37,8 @@ import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
  *  <li>Supports rownum? false</li>
  * </ul>
  *
- *
  * @author Alisson Gomes 
- *
+ * @since 0.6.0
  */
 public class MySqlDialect extends AnsiDialect
 {

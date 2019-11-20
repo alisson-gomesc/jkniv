@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.commands.Command;
-import net.sf.jkniv.whinstone.commands.CommandAdapter;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 

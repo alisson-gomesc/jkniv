@@ -24,43 +24,44 @@ import java.util.Locale;
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.reflect.ReflectionException;
+import net.sf.jkniv.reflect.beans.Capitalize.PropertyType;
 
-class GetterMethod implements MethodName // TODO test me
+class GetterMethod implements Capitalize
 {
-    private Assertable notNull = AssertsFactory.getNotNull();
+    private static final Assertable NOT_NULL = AssertsFactory.getNotNull();
+    private static final String     GET      = "get";
     
     /**
      * Append prefix <code>get<code> to attributeColumnName and capitalize it.
      * @param attributeColumnName attribute name to capitalize with <code>get</code> prefix
      * @return return capitalize attribute name, sample: identityName -> getIdentityName
      */
-    public String capitalize(String attributeColumnName)
+    @Override
+    public String does(String attributeColumnName)
     {
-        notNull.verify(attributeColumnName);
+        NOT_NULL.verify(attributeColumnName);
         
         if (attributeColumnName.startsWith(GET))
             return attributeColumnName;
         
         String capitalize = "";
         
-        if (attributeColumnName != null)
-        {
-            int length = attributeColumnName.length();
-            capitalize = attributeColumnName.substring(0, 1).toUpperCase(Locale.ENGLISH);
-            if (length > 1)
-                capitalize += attributeColumnName.substring(1, length);
-        }
+        int length = attributeColumnName.length();
+        capitalize = attributeColumnName.substring(0, 1).toUpperCase(Locale.ENGLISH);
+        if (length > 1)
+            capitalize += attributeColumnName.substring(1, length);
         return GET + capitalize;
     }
     
-    public String uncapitalize(String attributeColumnName)
+    @Override
+    public String undo(String attributeColumnName)
     {
-        notNull.verify(attributeColumnName);
+        NOT_NULL.verify(attributeColumnName);
         String name = attributeColumnName;
         if (attributeColumnName.startsWith(GET))
             name = attributeColumnName.substring(3);
         
-        int length = attributeColumnName.length();
+        int length = name.length();
         if (length == 0)
             throw new ReflectionException("Cannot uncapitalize the value of [" + attributeColumnName + "]");
         
@@ -72,5 +73,10 @@ class GetterMethod implements MethodName // TODO test me
         
         return uncapitalize;
     }
-    
+
+    @Override
+    public PropertyType getPropertyType()
+    {
+        return Capitalize.PropertyType.GET;
+    }
 }

@@ -54,9 +54,7 @@ public class SimpleDataMasking implements DataMasking
     
     public Object mask(String attributeName, Object data)
     {
-        return (sensibleAttr.contains(attributeName) ? 
-                (data != null ? MASK : data) 
-                : data);
+        return (sensibleAttr.contains(attributeName) ? MASK : data);
     }
     
 }

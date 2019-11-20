@@ -19,13 +19,6 @@
  */
 package net.sf.jkniv.whinstone.jdbc.dialect;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-import net.sf.jkniv.sqlegance.Insertable;
-import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 
@@ -49,7 +42,7 @@ import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
  * </ul>
  *
  * @author Alisson Gomes
- *
+ * @since 0.6.0
  */
 public class Oracle12cDialect extends OracleDialect
 {

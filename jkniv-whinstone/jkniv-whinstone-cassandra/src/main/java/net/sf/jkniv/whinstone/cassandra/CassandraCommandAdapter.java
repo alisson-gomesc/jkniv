@@ -166,12 +166,12 @@ class CassandraCommandAdapter implements CommandAdapter
     }
      */
     
-    @Override
-    public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
-    {
-        // FIXME UnsupportedOperationException
-        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
-    }
+//    @Override
+//    public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
+//    {
+//        // FIXME UnsupportedOperationException
+//        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
+//    }
     
 //    @Override
 //    public Object unwrap()
@@ -204,20 +204,8 @@ class CassandraCommandAdapter implements CommandAdapter
             stmt = new CassandraPreparedStatementAdapter(this.session, stmtPrep, queryable);
         }
         queryable.bind(stmt).on();
-        
-        if (queryable.getReturnType() != null)
-            returnType = queryable.getReturnType();
-        else if (queryable.getDynamicSql().getReturnTypeAsClass() != null)
-            returnType = queryable.getDynamicSql().getReturnTypeAsClass();
-        
-        stmt//.returnType(returnType)
-            .resultRow(overloadResultRow)
-            .oneToManies(queryable.getDynamicSql().asSelectable().getOneToMany())
-            .groupingBy(queryable.getDynamicSql().asSelectable().getGroupByAsList());
-        
-        if (queryable.isScalar())
-            stmt.scalar();
-        
+        returnType = queryable.getReturnType();
+        stmt.with(overloadResultRow);
         command = new DefaultQuery(stmt, queryable);
         return command;
     }

@@ -20,9 +20,11 @@
 package net.sf.jkniv.reflect.beans;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.reflect.ReflectionException;
 
 /**
@@ -34,11 +36,6 @@ import net.sf.jkniv.reflect.ReflectionException;
  */
 public interface ObjectProxy<T>
 {
-    /*
-    * <code>Constructor</code> provides information about, and access to, a single
-    * constructor for a class.
-*/
-    
     /**
      * Arguments to build object using contructor
      * @param constructorArgs argument values
@@ -94,21 +91,65 @@ public interface ObjectProxy<T>
     T merge(Object o);
 
     /**
-     * Retrieve all public methods annotated with {@code annotation}
-     * @param annotation looked for
-     * @return a list of all public methods annotated with {@code annotation} or empty list otherwise.
-     */
-    List<Method> getAnnotationMethods(final Class<? extends Annotation> annotation);
-    
-    /**
      * When the proxy catch a Exception to handler by {@code ReflectionException}
      * a mute rule is used to not throw the exception. 
      * @param ex exception class type
      */
     ObjectProxy<T> mute(Class<? extends Exception> ex);
     
+    /**
+     * check if this proxy class has {@code annotation}
+     * @param annotation name of annotation
+     * @return {@code true} when the class has this annotation, {@code false} otherwise
+     */
     boolean hasAnnotation(String annotation);
 
+    /**
+     * check if this proxy class has {@code annotation}
+     * @param annotation name of annotation
+     * @return {@code true} when the class has this annotation, {@code false} otherwise
+     */
     boolean hasAnnotation(Class<? extends Annotation> annotation);
 
+    /**
+     * Retrieve all public methods annotated with {@code annotation}
+     * @param annotation looked for
+     * @return a list of all public methods annotated with {@code annotation} or empty list otherwise.
+     */
+    List<Method> getMethodsAnnotatedWith(final Class<? extends Annotation> annotation);
+
+    /**
+     * check if this proxy class has {@code annotation} for a method name
+     * @param annotation name of the annotation
+     * @param methodName name of the method
+     * @param paramTypes type of parameters
+     * @return the Annotation instance or {@code null} if not found
+     * @throws ReflectionException when the {@code methodName} not exists
+     */
+    <T extends Annotation> T getAnnotationMethod(Class<? extends Annotation> annotation, String methodName, Class<?>... paramTypes);
+
+    /**
+     * check if this proxy class has {@code annotation} for a method name
+     * @param annotation name of the annotation
+     * @param fieldName attribute name
+     * @return the Annotation instance or {@code null} if not found
+     * @throws ReflectionException when the {@code attributeName} not exists
+     */
+    <T extends Annotation> T getAnnotationField(Class<? extends Annotation> annotation, String fieldName);
+
+    /**
+     * get the {@link Field} declared by the class or sub-class represented by this proxy
+     * @param name
+     * @return the Field instance or {@code null} if not found
+     */
+    Field getDeclaredField(String name);
+    
+    /**
+     * get the {@link Method} declared by the class or sub-class represented by this proxy
+     * @param name
+     * @return the Method instance or {@code null} if not found
+     */
+    Method getDeclaredMethod(String name);
+    
+    ObjectProxy<T> with(HandleableException handle);
 }

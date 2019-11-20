@@ -29,7 +29,7 @@ import net.sf.jkniv.exception.HandleableException;
 
 abstract class AbstractInvoker
 {
-    protected static final Assertable       notNull    = AssertsFactory.getNotNull();
+    protected static final Assertable     notNull = AssertsFactory.getNotNull();
     protected final HandleableException   handleException;
     private final Map<String, MethodInfo> cacheMethods;
     
@@ -55,7 +55,13 @@ abstract class AbstractInvoker
         return types;
     }
     
-    protected MethodInfo getMethodByName(String methodName, Class<?> theTargetClass)// FIXME performance gap build cache info
+    public Method getMethodByName(String methodName, Class<?> targetClass)
+    {
+        MethodInfo methodInfo = getMethodByNameCached(methodName, targetClass);
+        return methodInfo.method;
+    }
+    
+    protected MethodInfo getMethodByNameCached(String methodName, Class<?> theTargetClass)
     {
         String key = theTargetClass.getCanonicalName() + "." + methodName;
         MethodInfo methodInfo = cacheMethods.get(key);
@@ -95,11 +101,11 @@ abstract class AbstractInvoker
         }
         return method;
     }
-
+    
     public boolean hasMethod(String methodName, Class<?> theTargetClass)
     {
-        MethodInfo info = getMethodByName(methodName, theTargetClass);
+        MethodInfo info = getMethodByNameCached(methodName, theTargetClass);
         return (info.count >= 1);
     }
-
+    
 }
