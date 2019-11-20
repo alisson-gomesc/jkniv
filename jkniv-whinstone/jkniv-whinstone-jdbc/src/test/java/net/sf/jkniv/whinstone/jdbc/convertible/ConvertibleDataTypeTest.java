@@ -19,22 +19,24 @@
  */
 package net.sf.jkniv.whinstone.jdbc.convertible;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import net.sf.jkniv.whinstone.jdbc.domain.acme.Author;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.BaseJdbc;
+import net.sf.jkniv.whinstone.jdbc.domain.acme.Book;
 import net.sf.jkniv.whinstone.jdbc.domain.flat.MyTypes;
 
 public class ConvertibleDataTypeTest extends BaseJdbc
@@ -43,7 +45,7 @@ public class ConvertibleDataTypeTest extends BaseJdbc
     Repository repositoryDerby;
     
     @Test
-    public void whenGetDataUsingConvertibleAnnotation() throws ParseException
+    public void whenGetDataAnnotationUsingConvertible() throws ParseException
     {
         Queryable q = QueryFactory.of("by-id", "id", 1000);
         MyTypes data = repositoryDerby.get(q);
@@ -71,4 +73,23 @@ public class ConvertibleDataTypeTest extends BaseJdbc
         assertThat(data.getTimeUnit1(), is(TimeUnit.HOURS));
         assertThat(data.getTimeUnit2(), is(TimeUnit.MINUTES));
     }
+    
+    @Test
+    public void whenGetDataAnnotationUsingConvertibleWithNested()
+    {
+        Queryable q = QueryFactory.of("listNestedBooks");
+        List<Book> list = repositoryDerby.list(q);
+        for(Book b : list)
+        {
+            System.out.println(b);
+            assertThat(b, notNullValue());
+            assertThat(b.getAuthor(), notNullValue());
+            assertThat(b.getAuthor().getId(), notNullValue());
+            assertThat(b.getAuthor().getName(), notNullValue());
+            assertThat(b.getAuthor().getPrintTypePref(), is(Author.PrintType.HARD));
+            assertThat(b.getAuthor().getBooks(), notNullValue());
+            assertThat(b.getAuthor().getBooks().size(), is(0));
+        }
+    }
+
 }

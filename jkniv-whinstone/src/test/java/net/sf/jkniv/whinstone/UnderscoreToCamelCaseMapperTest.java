@@ -39,5 +39,8 @@ public class UnderscoreToCamelCaseMapperTest
         assertThat(mapper.map("abc_aeiou"), is("abcAeiou"));
         assertThat(mapper.map("abc_aeiou_level3"), is("abcAeiouLevel3"));
         assertThat(mapper.map("abc_aeiou_level3_level4"), is("abcAeiouLevel3Level4"));
+        assertThat(mapper.map("printTypePref"), is("printtypepref"));
+        assertThat(mapper.map("author.printTypePref"), is("author.printTypePref"));
+        assertThat(mapper.map("author.print_type_pref"), is("author.printTypePref"));
     }
 }

@@ -32,13 +32,14 @@ public class UnderscoreToCamelCaseMapper implements JdbcColumnMapper
 {
     public String map(final String column)
     {
-        //if (column.indexOf("_") < 0 )
-        //    return Character.toLowerCase(column.charAt(0)) + column.substring(1, column.length());
-            
         StringBuilder sb = new StringBuilder();
         boolean toUpper = false;
-        String columnCopy = new String(column).toLowerCase();
-        for (char ch : columnCopy.toCharArray())
+        char[] columnCopy = null;
+        if(column.indexOf(".") < 0)
+            columnCopy = column.toLowerCase().toCharArray();
+        else 
+            columnCopy = column.toCharArray();
+        for (char ch : columnCopy)
         {
             char cased = ch;
             if (ch == '_' || ch == '-')

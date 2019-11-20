@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.whinstone.statement;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
 
@@ -49,7 +51,8 @@ public class ConvertibleFactory
      */
     public static <T> Convertible<Object, Object> toJdbc(PropertyAccess access, ObjectProxy<T> proxy)
     {
-        return getConverter(proxy, access.getFieldName(), access.getReadMethod());     
+        //return getConverter(proxy, access.getFieldName(), access.getReadMethodName());     
+        return getConverter(access.getField(), access.getReadMethod(), proxy);
     }
     
     /**
@@ -62,7 +65,8 @@ public class ConvertibleFactory
      */
     public static <T> Convertible<Object, Object> toAttribute(PropertyAccess access, ObjectProxy<T> proxy)
     {
-        return getConverter(proxy, access.getFieldName(), access.getWriterMethod());
+        //return getConverter(proxy, access.getFieldName(), access.getWriterMethodName());
+        return getConverter(access.getField(), access.getWriterMethod(), proxy);
     }
     
     /**
@@ -113,4 +117,43 @@ public class ConvertibleFactory
         }
         return convertible;
     }
+    
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private static <T> Convertible<Object, Object> getConverter(Field field, Method method, ObjectProxy<T> proxy)
+    {
+        // TODO cache for @Converter annotations
+        Convertible convertible = NoConverterType.getInstance();
+            
+        if (field == null ||
+            method == null ||
+            Map.class.isAssignableFrom(proxy.getTargetClass()) || 
+            Collection.class.isAssignableFrom(proxy.getTargetClass()) ||
+            proxy.getTargetClass().isArray())
+            return convertible;
+
+        Converter converter = (Converter) method.getAnnotation(Converter.class);
+        if (converter == null)
+            converter = (Converter) field.getAnnotation(Converter.class);
+        
+        if (converter != null)
+        {
+            ObjectProxy proxyConvertible = null;
+            if(converter.converter().isEnum())
+            {
+                if (converter.isEnum() == EnumType.ORDINAL)
+                    convertible = new EnumOrdinalType(converter.converter());
+                else
+                    convertible = new EnumNameType(converter.converter());
+            }
+            else
+            {
+                proxyConvertible = ObjectProxyFactory.of(converter.converter());
+                if (converter.pattern() != null)
+                    proxyConvertible.setConstructorArgs(converter.pattern());
+                convertible = (Convertible) proxyConvertible.newInstance();
+            }
+        }
+        return convertible;
+    }
+
 }

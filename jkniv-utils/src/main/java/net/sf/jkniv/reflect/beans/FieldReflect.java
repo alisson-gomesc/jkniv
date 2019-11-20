@@ -7,6 +7,12 @@ import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.ObjectNotFoundException;
 import net.sf.jkniv.reflect.ReflectionException;
 
+/**
+ * Resolve {@link Field} attribute from specific class target with supports for nested field.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 class FieldReflect
 {
     private final HandleableException handler;
@@ -26,18 +32,18 @@ class FieldReflect
     {
         Field nestedField = null;
         Class<?> nestedClass = classTarget;
-        String[] nestedMethodsNames = name.split("\\.");
+        String[] nestedFieldNames = name.split("\\.");
         
-        if (nestedMethodsNames == null || nestedMethodsNames.length == 0)
+        if (nestedFieldNames == null || nestedFieldNames.length == 0)
             throw new ObjectNotFoundException("Can not found the field ["+classTarget.getName() + "." + name +"]");
         
         //int found = 0;
-        for(int i=0; i<nestedMethodsNames.length; i++)
+        for(int i=0; i<nestedFieldNames.length; i++)
         {
             try
             {
                 //example: Field nested= c.getDeclaredField("address").getType().getDeclaredField("description");
-                nestedField = nestedClass.getDeclaredField(nestedMethodsNames[i]);
+                nestedField = nestedClass.getDeclaredField(nestedFieldNames[i]);
                 nestedClass = nestedField.getType();
                 //found++;
             }

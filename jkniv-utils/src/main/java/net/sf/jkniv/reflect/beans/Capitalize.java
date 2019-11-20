@@ -27,12 +27,11 @@ package net.sf.jkniv.reflect.beans;
  */
 public interface Capitalize
 {
-    public static final String GET = "get";
-    public static final String SET = "set";
-    public static final String IS  = "is";
+    public enum PropertyType { GET, SET, IS};
     
     String does(String name);
     
     String undo(String name);
     
+    PropertyType getPropertyType();
 }

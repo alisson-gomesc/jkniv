@@ -43,25 +43,33 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
     
     public DefaultJdbcColumn(int columnIndex, String columnName, int jdbcType)
     {
+        this(columnIndex, columnName, jdbcType, null);
+    }
+    
+    public DefaultJdbcColumn(int columnIndex, String columnName, int jdbcType, Class<?> classTarget)
+    {
         super();
         this.columnIndex = columnIndex;
         this.columnName = columnName;
         this.nestedAttribute = false;
+        this.propertyAccess = new PropertyAccess(JDBC_COLUMN_MAPPER.map(columnName), classTarget);
+        this.attributeName = propertyAccess.getFieldName();
+        //this.methodName = propertyAccess.getWriterMethodName();
+        this.jdbcType = jdbcType;
         if(columnName.indexOf(".") > 0)
         {
             this.nestedAttribute = true;
             this.methodName = columnName;
-            this.attributeName = columnName;
+            //this.attributeName = columnName;
         }
         else
         {
-            this.propertyAccess = new PropertyAccess(JDBC_COLUMN_MAPPER.map(columnName));
-            this.attributeName = propertyAccess.getFieldName();
-            this.methodName = propertyAccess.getWriterMethod();
+            //this.propertyAccess = new PropertyAccess(JDBC_COLUMN_MAPPER.map(columnName), classTarget);
+            //this.attributeName = propertyAccess.getFieldName();
+            this.methodName = propertyAccess.getWriterMethodName();
             //this.attributeName = JDBC_COLUMN_MAPPER.map(columnName);
             //this.methodName = capitalizeSetter(attributeName);
         }
-        this.jdbcType = jdbcType;
     }
     
     @Override

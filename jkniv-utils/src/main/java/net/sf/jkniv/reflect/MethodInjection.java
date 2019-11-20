@@ -43,7 +43,7 @@ import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 class MethodInjection<T> implements Injectable<T>
 {
     private final static Logger LOG = LoggerFactory.getLogger(MethodInjection.class);
-    private final static Assertable notNull = AssertsFactory.getNotNull();
+    private final static Assertable NOT_NULL = AssertsFactory.getNotNull();
     private ObjectProxy<T> proxy;
 
     public MethodInjection(T instance)
@@ -53,8 +53,7 @@ class MethodInjection<T> implements Injectable<T>
 
     public MethodInjection(ObjectProxy<T> proxy)
     {
-        //this(proxy, false);
-        notNull.verify(proxy);
+        NOT_NULL.verify(proxy);
         this.proxy = proxy;
     }
 

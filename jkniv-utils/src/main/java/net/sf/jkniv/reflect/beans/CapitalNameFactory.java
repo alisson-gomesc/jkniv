@@ -25,19 +25,25 @@ package net.sf.jkniv.reflect.beans;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public class MethodNameFactory
+public class CapitalNameFactory
 {
-    private static final Capitalize SETTER = new SetterMethod();
-    private static final Capitalize GETTER = new GetterMethod();
+    private static final Capitalize CAPITAL_SETTER = new SetterMethod();
+    private static final Capitalize CAPITAL_GETTER = new GetterMethod();
+    private static final Capitalize CAPITAL_IS = new IsMethod();
     
-    public static Capitalize getInstanceSetter()
+    public static Capitalize getInstanceOfSetter()
     {
-        return SETTER;
+        return CAPITAL_SETTER;
     }
 
-    public static Capitalize getInstanceGetter()
+    public static Capitalize getInstanceOfGetter()
     {
-        return GETTER;
+        return CAPITAL_GETTER;
+    }
+
+    public static Capitalize getInstanceOfIs()
+    {
+        return CAPITAL_IS;
     }
 
 }

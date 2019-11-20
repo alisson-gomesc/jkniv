@@ -35,8 +35,8 @@ import org.slf4j.Logger;
 
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.experimental.TimerKeeper;
+import net.sf.jkniv.reflect.beans.CapitalNameFactory;
 import net.sf.jkniv.reflect.beans.Capitalize;
-import net.sf.jkniv.reflect.beans.MethodNameFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.reflect.beans.PropertyAccess;
@@ -66,7 +66,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     private static final Logger      LOG     = LoggerFactory.getLogger();
     private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
     private static final DataMasking MASKING = LoggerFactory.getDataMasking();
-    private static final Capitalize  SETTER  = MethodNameFactory.getInstanceSetter();
+    private static final Capitalize  CAPITAL_SETTER  = CapitalNameFactory.getInstanceOfSetter();
     
     private final PreparedStatement  stmt;
     private final HandlerException   handlerException;
@@ -323,7 +323,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         else if (value instanceof java.sql.Timestamp)
             parsedValue = new Date(((java.sql.Timestamp) value).getTime());
         
-        proxy.invoke(SETTER.does(property), parsedValue);
+        proxy.invoke(CAPITAL_SETTER.does(property), parsedValue);
     }
     
     private void setValue(Object value) throws SQLException
@@ -331,7 +331,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         int i = currentIndex();
         Convertible<Object, Object> convertible = NoConverterType.getInstance();
         if(queryable.isTypeOfPojo() || queryable.isTypeOfCollectionFromPojo() || queryable.isTypeOfArrayFromPojo())
-            convertible = getConverter(new PropertyAccess(this.paramNames[i-1], value));
+            convertible = getConverter(new PropertyAccess(this.paramNames[i-1]));
         stmt.setObject(i, convertible.toJdbc(value));
     }
     
@@ -347,7 +347,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     {
         //java.sql.Timestamp timestamp = dtConverter.convert(java.sql.Timestamp.class, value);
         int i = currentIndex();
-        Convertible convertible = getConverter(new PropertyAccess(this.paramNames[i - 1], value));
+        Convertible convertible = getConverter(new PropertyAccess(this.paramNames[i - 1]));
         if (convertible instanceof NoConverterType)
         {
             Convertible<java.util.Date, java.sql.Timestamp> convert2Timestamp = new DateAsSqlTimestampType();
@@ -368,7 +368,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     private void setValue(Enum<?> value) throws SQLException
     {
         int i = currentIndex();
-        Convertible<Object, Object> convertible = getConverter(new PropertyAccess(this.paramNames[i-1], value));
+        Convertible<Object, Object> convertible = getConverter(new PropertyAccess(this.paramNames[i-1]));
         stmt.setObject(i, convertible.toJdbc(value));
     }
     
@@ -459,7 +459,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
             int columnNumber = i + 1;
             String columnName = getColumnName(metadata, columnNumber);
             int columnType = metadata.getColumnType(columnNumber);
-            columns[i] = new DefaultJdbcColumn(columnNumber, columnName, columnType);
+            columns[i] = new DefaultJdbcColumn(columnNumber, columnName, columnType, queryable.getReturnType());
         }
         return columns;
     }

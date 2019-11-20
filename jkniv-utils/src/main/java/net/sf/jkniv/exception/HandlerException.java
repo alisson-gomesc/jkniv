@@ -223,12 +223,13 @@ public class HandlerException implements HandleableException
         return defaultException;
     }
     
-    public void mute()
+    public HandleableException mute()
     {
         this.mute = true;
+        return this;
     }
     
-    public void mute(Class<? extends Exception> clazz)
+    public HandleableException mute(Class<? extends Exception> clazz)
     {
         //        if (this.exceptions.containsKey(clazz))
         //            throw new UnsupportedOperationException("Already exist an exception configured to exception ["
@@ -240,6 +241,8 @@ public class HandlerException implements HandleableException
         else
             map.mute();
         this.exceptions.put(clazz, map);
+        
+        return this;
     }
     
     public boolean isMute()

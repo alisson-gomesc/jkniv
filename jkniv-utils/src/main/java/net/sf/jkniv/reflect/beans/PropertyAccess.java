@@ -19,6 +19,14 @@
  */
 package net.sf.jkniv.reflect.beans;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Map;
+
+import net.sf.jkniv.exception.HandleableException;
+import net.sf.jkniv.exception.HandlerException;
+import net.sf.jkniv.reflect.ReflectionException;
+
 /**
  * 
  * @author Alisson Gomes
@@ -26,66 +34,112 @@ package net.sf.jkniv.reflect.beans;
  */
 public class PropertyAccess
 {
-    private static final Capitalize CAPITAL_SETTER = MethodNameFactory.getInstanceSetter();
-    private static final Capitalize CAPITAL_GETTER = MethodNameFactory.getInstanceGetter();
+    private static final Capitalize CAPITAL_SETTER = CapitalNameFactory.getInstanceOfSetter();
+    private static final Capitalize CAPITAL_GETTER = CapitalNameFactory.getInstanceOfGetter();
     
     private String                  fieldName;
-    private String                  writerMethod;
-    private String                  readMethod;
-    private PropertyAccess          inner;
-    private Class                   paramType;
+    private String                  writerMethodName;
+    private String                  readMethodName;
+    private Class<?>                targetClass;
+    private boolean                 nestedField;
+    private Field                   field;
+    private Method                  writerMethod;
+    private Method                  readMethod;
     
     public PropertyAccess(String fieldName)
     {
         this(fieldName, null);
     }
-
-    public PropertyAccess(String fieldName, Object paramValue)
+    
+    public PropertyAccess(String fieldName, Class<?> targetClass)
     {
-//      if (fieldName.indexOf(".") > 0)
-//      { 
-//          this.inner = new PropertyAccess(fieldName.ssubstring("\\\\."));
-//      }
-//      else
-//      {
-          this.fieldName = fieldName;
-          this.writerMethod = CAPITAL_SETTER.does(fieldName);
-          this.readMethod = CAPITAL_GETTER.does(fieldName);
-          this.setParamType(paramValue);
-//      }
+        this.fieldName = fieldName;
+        int index = fieldName.lastIndexOf(".");
+        if (index > 0)
+        {
+            this.nestedField = true;
+            this.writerMethodName = CAPITAL_SETTER.does(fieldName.substring(index+1));
+            this.readMethodName = CAPITAL_GETTER.does(fieldName.substring(index+1));
+        }
+        else
+        {
+            this.writerMethodName = CAPITAL_SETTER.does(fieldName);
+            this.readMethodName = CAPITAL_GETTER.does(fieldName);
+        }
+        resolve(targetClass);
     }
     
     public String getFieldName()
     {
-        if (inner == null)
-            return fieldName;
+        return this.fieldName;
+    }
+    
+    public Field getField()
+    {
+        return this.field;
+    }
+    
+    public Method getWriterMethod()
+    {
+        return this.writerMethod;
+    }
+    
+    public Method getReadMethod()
+    {
+        return this.readMethod;
+    }
+    
+    public String getWriterMethodName()
+    {
+        return writerMethodName;
+    }
+    
+    public String getReadMethodName()
+    {
+        return readMethodName;
+    }
+    
+    public Class<?> getTargetClass()
+    {
+        return this.targetClass;
+    }
+    
+    private void setTargetClass(Class<?> targetClass)
+    {
+        if (this.targetClass != null)
+            throw new ReflectionException("Cannot re-define a new target class for PropertyAccess");
         
-        return getFieldName();
+        this.targetClass = targetClass;
     }
     
-    public String getWriterMethod()
+    public boolean isNestedField()
     {
-        if (inner == null)
-            return writerMethod;
-        return getWriterMethod();
+        return nestedField;
     }
     
-    public String getReadMethod()
+    public void resolve(Class<?> targetClass)
     {
-        if (inner == null)
-            return readMethod;
-        
-        return getReadMethod();
+        setTargetClass(targetClass);
+        if (targetClass != null &&
+            !Map.class.isAssignableFrom(targetClass))
+        {
+            HandleableException handle = new HandlerException();
+            handle.mute(NoSuchMethodException.class)
+                   .mute(NoSuchFieldException.class);
+            
+            ObjectProxy<?> proxy = ObjectProxyFactory.of(this.targetClass);
+            proxy.with(handle);
+            this.field = proxy.getDeclaredField(this.fieldName);
+            this.readMethod = new MethodReflect(handle).getMethod(this.fieldName, this.targetClass);
+            this.writerMethod = new MethodReflect(handle).getMethod(this.fieldName, this.targetClass, CapitalNameFactory.getInstanceOfSetter());
+        }
     }
     
-    public Class getParamType()
+    @Override
+    public String toString()
     {
-        return paramType;
+        return "PropertyAccess [fieldName=" + fieldName + ", readMethod=" + readMethod + ", writerMethod="
+                + writerMethod + ", targetClass=" + targetClass + "]";
     }
     
-    public void setParamType(Object paramValue)
-    {
-        
-        this.paramType = (paramValue != null ? paramValue.getClass() : null);
-    }
 }

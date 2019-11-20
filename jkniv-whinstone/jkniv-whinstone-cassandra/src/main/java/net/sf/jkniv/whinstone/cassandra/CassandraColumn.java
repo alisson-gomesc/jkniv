@@ -58,7 +58,7 @@ public class CassandraColumn implements JdbcColumn<Row>
         {
             this.propertyAccess = new PropertyAccess(jdbcColumnMapper.map(columnName));
             this.attributeName = propertyAccess.getFieldName();
-            this.methodName = propertyAccess.getWriterMethod();
+            this.methodName = propertyAccess.getWriterMethodName();
 //            this.attributeName = jdbcColumnMapper.map(columnName);
 //            this.methodName = capitalizeSetter(attributeName);
         }

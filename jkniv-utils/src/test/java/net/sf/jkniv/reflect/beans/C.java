@@ -4,6 +4,7 @@ class C
 {
     private String name;
     private Boolean active;
+    private boolean cancel;
     
     public String getName()
     {
@@ -23,5 +24,15 @@ class C
     public void setActive(Boolean active)
     {
         this.active = active;
+    }
+
+    public boolean isCancel()
+    {
+        return cancel;
+    }
+
+    public void setCancel(boolean cancel)
+    {
+        this.cancel = cancel;
     }
 }
