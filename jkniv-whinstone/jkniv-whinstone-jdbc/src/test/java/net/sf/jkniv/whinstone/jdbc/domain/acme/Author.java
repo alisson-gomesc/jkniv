@@ -19,12 +19,16 @@
  */
 package net.sf.jkniv.whinstone.jdbc.domain.acme;
 
+import java.awt.MultipleGradientPaint.ColorSpaceType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.constraints.NotNull;
 
+import net.sf.jkniv.sqlegance.types.Converter;
+import net.sf.jkniv.sqlegance.types.Converter.EnumType;
 import net.sf.jkniv.sqlegance.validation.UpdateValidate;
 
 //import javax.validation.constraints.NotNull;
@@ -33,6 +37,8 @@ import net.sf.jkniv.sqlegance.validation.UpdateValidate;
 public class Author implements Serializable
 {
     private static final long serialVersionUID = 5156588764591901293L;
+    public enum PrintType {NONE, SOFT, HARD};
+    
     @NotNull(groups=UpdateValidate.class)
     private Long       id;
     //@NotNull
@@ -40,10 +46,14 @@ public class Author implements Serializable
     @NotNull(groups=UpdateValidate.class)
     private String     name;
     private List<Book> books;
+
+    @Converter(converter = PrintType.class)
+    private PrintType printTypePref;
     
     public Author()
     {
         this.books = new ArrayList<Book>();
+        this.printTypePref = PrintType.NONE;
     }
 
     public Author(List<Book> books)
@@ -84,6 +94,16 @@ public class Author implements Serializable
     public void setBook(Book book)
     {
         this.books.add(book);
+    }
+
+    public PrintType getPrintTypePref()
+    {
+        return printTypePref;
+    }
+
+    public void setPrintTypePref(PrintType printTypePref)
+    {
+        this.printTypePref = printTypePref;
     }
 
     @Override

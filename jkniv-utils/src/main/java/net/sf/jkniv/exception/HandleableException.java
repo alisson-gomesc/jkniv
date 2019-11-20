@@ -59,9 +59,9 @@ public interface HandleableException
 
     Class<? extends RuntimeException> getDefaultException();
 
-    void mute();
+    HandleableException mute();
     
-    void mute(Class<? extends Exception> ex);
+    HandleableException mute(Class<? extends Exception> ex);
     
     // TODO implements new methods muteAsWarn, muteAsInfo
     // TODO implements config exception to rethrow them (just

@@ -57,7 +57,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     private static final Assertable   NOT_NULL    = AssertsFactory.getNotNull();
     private static final Assertable   IS_NULL     = AssertsFactory.getIsNull();
     //private static final Capitalize   GETTER     = MethodNameFactory.getInstanceGetter();
-    private static final Capitalize   CAPITAL_SETTER     = MethodNameFactory.getInstanceSetter();
+    private static final Capitalize   CAPITAL_SETTER     = CapitalNameFactory.getInstanceOfSetter();
     private static final BasicType    BASIC_TYPE = BasicType.getInstance();
     /** {@code getClass} */
     private static final List<String> SKIP_NAMES = Arrays.asList("getClass");
@@ -528,6 +528,18 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         Field field = null;
         field = new FieldReflect(this.handleException).getField(fieldName, this.targetClass);
         return field == null ? null : (G) field.getAnnotation(annotation);
+    }
+    
+    @Override
+    public Field getDeclaredField(String name)
+    {
+        return new FieldReflect(this.handleException).getField(name, this.targetClass);
+    }
+    
+    @Override
+    public Method getDeclaredMethod(String name)
+    {
+        return pojoInvoke.getMethodByName(name, this.targetClass);
     }
     
     private Class<?>[] getTypes(Object[] args)

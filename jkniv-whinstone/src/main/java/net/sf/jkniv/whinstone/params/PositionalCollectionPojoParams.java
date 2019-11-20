@@ -21,8 +21,8 @@ package net.sf.jkniv.whinstone.params;
 
 import java.util.Iterator;
 
+import net.sf.jkniv.reflect.beans.CapitalNameFactory;
 import net.sf.jkniv.reflect.beans.Capitalize;
-import net.sf.jkniv.reflect.beans.MethodNameFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.whinstone.Queryable;
@@ -31,7 +31,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 class PositionalCollectionPojoParams extends AbstractParam implements AutoBindParams
 {
 	//private final static MethodName SETTER =  MethodNameFactory.getInstanceSetter();
-	private final static Capitalize GETTER =  MethodNameFactory.getInstanceGetter();
+	private final static Capitalize CAPITAL_GETTER =  CapitalNameFactory.getInstanceOfGetter();
 	private StatementAdapter<?, ?> stmtAdapter;
     private Iterator<Object>          it;
     private String                 queryName;
@@ -63,7 +63,7 @@ class PositionalCollectionPojoParams extends AbstractParam implements AutoBindPa
             ObjectProxy<?> proxy = ObjectProxyFactory.of(pojo);
             for(String paramName : paramsNames)
             {
-            	String getterName = GETTER.does(paramName);
+            	String getterName = CAPITAL_GETTER.does(paramName);
             	Object value = proxy.invoke(getterName, pojo);
                 stmtAdapter.bind(paramName, value);
             }

@@ -20,6 +20,7 @@
 package net.sf.jkniv.reflect.beans;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -135,4 +136,17 @@ public interface ObjectProxy<T>
      */
     <T extends Annotation> T getAnnotationField(Class<? extends Annotation> annotation, String fieldName);
 
+    /**
+     * get the {@link Field} declared by the class or sub-class represented by this proxy
+     * @param name
+     * @return the Field instance or {@code null} if not found
+     */
+    Field getDeclaredField(String name);
+    
+    /**
+     * get the {@link Method} declared by the class or sub-class represented by this proxy
+     * @param name
+     * @return the Method instance or {@code null} if not found
+     */
+    Method getDeclaredMethod(String name);
 }

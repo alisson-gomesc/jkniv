@@ -49,7 +49,7 @@ public class ConvertibleFactory
      */
     public static <T> Convertible<Object, Object> toJdbc(PropertyAccess access, ObjectProxy<T> proxy)
     {
-        return getConverter(proxy, access.getFieldName(), access.getReadMethod());     
+        return getConverter(proxy, access.getFieldName(), access.getReadMethodName());     
     }
     
     /**
@@ -62,7 +62,7 @@ public class ConvertibleFactory
      */
     public static <T> Convertible<Object, Object> toAttribute(PropertyAccess access, ObjectProxy<T> proxy)
     {
-        return getConverter(proxy, access.getFieldName(), access.getWriterMethod());
+        return getConverter(proxy, access.getFieldName(), access.getWriterMethodName());
     }
     
     /**

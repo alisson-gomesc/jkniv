@@ -57,7 +57,7 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
         {
             this.propertyAccess = new PropertyAccess(JDBC_COLUMN_MAPPER.map(columnName));
             this.attributeName = propertyAccess.getFieldName();
-            this.methodName = propertyAccess.getWriterMethod();
+            this.methodName = propertyAccess.getWriterMethodName();
             //this.attributeName = JDBC_COLUMN_MAPPER.map(columnName);
             //this.methodName = capitalizeSetter(attributeName);
         }

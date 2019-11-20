@@ -24,23 +24,23 @@ import java.util.Locale;
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.reflect.ReflectionException;
-import net.sf.jkniv.reflect.beans.Capitalize.PropertyType;
 
-class SetterMethod implements Capitalize
+class IsMethod implements Capitalize
 {
-    private final static Assertable NOT_NULL = AssertsFactory.getNotNull();
-    private static final String SET = "set";
+    private static final Assertable NOT_NULL = AssertsFactory.getNotNull();
+    private static final String     IS       = "is";
     
     /**
-     * Append prefix <code>set<code> to attributeColumnName and capitalize it.
-     * @param attributeColumnName attribute name to capitalize with <code>set</code> prefix
-     * @return return capitalize attribute name, sample: identityName -> setIdentityName
+     * Append prefix <code>get<code> to attributeColumnName and capitalize it.
+     * @param attributeColumnName attribute name to capitalize with <code>get</code> prefix
+     * @return return capitalize attribute name, sample: identityName -> getIdentityName
      */
+    @Override
     public String does(String attributeColumnName)
     {
         NOT_NULL.verify(attributeColumnName);
         
-        if (attributeColumnName.startsWith(SET))
+        if (attributeColumnName.startsWith(IS))
             return attributeColumnName;
         
         String capitalize = "";
@@ -49,15 +49,16 @@ class SetterMethod implements Capitalize
         capitalize = attributeColumnName.substring(0, 1).toUpperCase(Locale.ENGLISH);
         if (length > 1)
             capitalize += attributeColumnName.substring(1, length);
-        return SET + capitalize;
+        return IS + capitalize;
     }
     
+    @Override
     public String undo(String attributeColumnName)
     {
         NOT_NULL.verify(attributeColumnName);
         String name = attributeColumnName;
-        if (attributeColumnName.startsWith(SET))
-            name = attributeColumnName.substring(3);
+        if (attributeColumnName.startsWith(IS))
+            name = attributeColumnName.substring(2);
         
         int length = name.length();
         if (length == 0)
@@ -75,6 +76,6 @@ class SetterMethod implements Capitalize
     @Override
     public PropertyType getPropertyType()
     {
-        return Capitalize.PropertyType.SET;
+        return Capitalize.PropertyType.IS;
     }
 }

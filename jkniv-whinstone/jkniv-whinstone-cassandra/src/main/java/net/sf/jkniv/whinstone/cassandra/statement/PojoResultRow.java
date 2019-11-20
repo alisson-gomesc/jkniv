@@ -33,8 +33,8 @@ import com.datastax.driver.core.Row;
 
 import net.sf.jkniv.reflect.Injectable;
 import net.sf.jkniv.reflect.InjectableFactory;
+import net.sf.jkniv.reflect.beans.CapitalNameFactory;
 import net.sf.jkniv.reflect.beans.Capitalize;
-import net.sf.jkniv.reflect.beans.MethodNameFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.OneToMany;
@@ -59,8 +59,8 @@ class PojoResultRow<T> implements ResultRow<T, Row>
     private final static Logger      LOG    = LoggerFactory.getLogger(PojoResultRow.class);
     private static final Logger      SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
     private static final DataMasking MASKING = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getDataMasking();
-    private final static Capitalize  SETTER = MethodNameFactory.getInstanceSetter();
-    private final static Capitalize  GETTER = MethodNameFactory.getInstanceGetter();
+    private final static Capitalize  CAPITAL_SETTER = CapitalNameFactory.getInstanceOfSetter();
+    private final static Capitalize  CAPITAL_GETTER = CapitalNameFactory.getInstanceOfGetter();
     private final Class<T>          returnType;
     private final Set<OneToMany>    oneToManies;
     private final Transformable<T>  transformable;
@@ -99,8 +99,8 @@ class PojoResultRow<T> implements ResultRow<T, Row>
         {
             
             String attrName = entry.getKey().getProperty();
-            String getterName = GETTER.does(attrName);
-            String setterName = SETTER.does(attrName);
+            String getterName = CAPITAL_GETTER.does(attrName);
+            String setterName = CAPITAL_SETTER.does(attrName);
             Collection<Object> collection = (Collection<Object>) proxyRow.invoke(getterName);
             if (collection == null)
             {
@@ -173,7 +173,7 @@ class PojoResultRow<T> implements ResultRow<T, Row>
         else
             jdbcObject = column.getValue(rs);
         // otm.property : 'book', JdbcColumn: book.name, capitalize -> setName
-        String method = SETTER.does(column.getName().substring(otm.getProperty().length() + 1));
+        String method = CAPITAL_SETTER.does(column.getName().substring(otm.getProperty().length() + 1));
         
         if(SQLLOG.isTraceEnabled())
             SQLLOG.trace("Mapping index [{}] column [{}] type of [{}] to value [{}]", 

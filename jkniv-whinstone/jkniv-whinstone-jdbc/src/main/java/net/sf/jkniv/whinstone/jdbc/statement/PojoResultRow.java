@@ -30,22 +30,18 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.jkniv.reflect.Injectable;
-import net.sf.jkniv.reflect.InjectableFactory;
+import net.sf.jkniv.reflect.beans.CapitalNameFactory;
 import net.sf.jkniv.reflect.beans.Capitalize;
-import net.sf.jkniv.reflect.beans.MethodNameFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
-import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
-import net.sf.jkniv.sqlegance.types.Convertible;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.ObjectTransform;
 import net.sf.jkniv.whinstone.classification.Transformable;
 import net.sf.jkniv.whinstone.jdbc.DefaultJdbcColumn;
-import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
+import net.sf.jkniv.whinstone.statement.AbstractResultRow;
 
 /**
  * 
@@ -63,8 +59,8 @@ class PojoResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultS
     private final static Logger      LOG     = LoggerFactory.getLogger(PojoResultRow.class);
     private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
     private static final DataMasking MASKING = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getDataMasking();
-    private final static Capitalize  SETTER  = MethodNameFactory.getInstanceSetter();
-    private final static Capitalize  GETTER  = MethodNameFactory.getInstanceGetter();
+    private final static Capitalize  CAPITAL_SETTER  = CapitalNameFactory.getInstanceOfSetter();
+    private final static Capitalize  CAPITAL_GETTER  = CapitalNameFactory.getInstanceOfGetter();
     private final Class<T>           returnType;
     private final Set<OneToMany>     oneToManies;
     private final Transformable<T>   transformable;
@@ -100,8 +96,8 @@ class PojoResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultS
         for (Entry<OneToMany, Object> entry : otmValues.entrySet())
         {
             String attrName = entry.getKey().getProperty();
-            String getterName = GETTER.does(attrName);
-            String setterName = SETTER.does(attrName);
+            String getterName = CAPITAL_GETTER.does(attrName);
+            String setterName = CAPITAL_SETTER.does(attrName);
             Collection<Object> collection = (Collection<Object>) proxyRow.invoke(getterName);
             if (collection == null)
             {

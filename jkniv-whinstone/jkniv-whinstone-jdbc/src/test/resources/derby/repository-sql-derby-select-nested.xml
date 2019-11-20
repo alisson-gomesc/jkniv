@@ -10,7 +10,16 @@
   <select id="listNestedBooks" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.Book">
     select b.ID as id, b.ISBN as isbn, b.NAME as name
     ,a.id as "author.id"
-    ,a.name as "author.name"
+    ,a.name as "author.name", 'HARD' as "author.printTypePref"
+    from BOOK b
+    inner join AUTHOR a on a.ID = b.AUTHOR_ID
+    order by a.name 
+  </select>
+
+  <select id="listNestedBooks" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.Book">
+    select b.ID as id, b.ISBN as isbn, b.NAME as name
+    ,a.id as "author.id"
+    ,a.name as "author.name", 'HARD' as "author.printTypePref"
     from BOOK b
     inner join AUTHOR a on a.ID = b.AUTHOR_ID
     order by a.name 

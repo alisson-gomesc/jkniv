@@ -10,18 +10,20 @@ public class GetterMethodTest
     @Test
     public void whenCapitalizeSetterMethods()
     {
-        Capitalize getterCapital = new GetterMethod();
-        assertThat(getterCapital.does("identityName"), is("getIdentityName"));
-        assertThat(getterCapital.does("getIdentityName"), is("getIdentityName"));
-        assertThat(getterCapital.does("getSetIdentityName"), is("getSetIdentityName"));
+        Capitalize capitalGet = new GetterMethod();
+        assertThat(capitalGet.does("identityName"), is("getIdentityName"));
+        assertThat(capitalGet.does("getIdentityName"), is("getIdentityName"));
+        assertThat(capitalGet.does("getSetIdentityName"), is("getSetIdentityName"));
+        assertThat(capitalGet.getPropertyType(), is(Capitalize.PropertyType.GET));
     }
     
     @Test
     public void whenUnCapitalizeSetterMethods()
     {
-        Capitalize getterCapital = new GetterMethod();
-        assertThat(getterCapital.undo("IdentityName"), is("identityName"));
-        assertThat(getterCapital.undo("getIdentityName"), is("identityName"));
+        Capitalize capitalGet = new GetterMethod();
+        assertThat(capitalGet.undo("IdentityName"), is("identityName"));
+        assertThat(capitalGet.undo("getIdentityName"), is("identityName"));
+        assertThat(capitalGet.getPropertyType(), is(Capitalize.PropertyType.GET));
     }
     
 }

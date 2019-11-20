@@ -33,6 +33,7 @@ import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.MapTransform;
 import net.sf.jkniv.whinstone.classification.Transformable;
 import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
+import net.sf.jkniv.whinstone.statement.AbstractResultRow;
 
 /**
  * 
@@ -45,7 +46,7 @@ import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
  */
 class MapResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultSet>
 {
-    private static final Logger  LOG = LoggerFactory.getLogger();
+    private static final Logger      LOG = LoggerFactory.getLogger();
     private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
     private static final DataMasking MASKING = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getDataMasking();
     private final Class<T> returnType;
