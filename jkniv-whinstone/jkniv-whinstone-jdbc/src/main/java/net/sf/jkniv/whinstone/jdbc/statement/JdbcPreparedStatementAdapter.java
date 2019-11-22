@@ -48,6 +48,7 @@ import net.sf.jkniv.sqlegance.types.Convertible;
 import net.sf.jkniv.sqlegance.types.DateAsSqlTimestampType;
 import net.sf.jkniv.sqlegance.types.NoConverterType;
 import net.sf.jkniv.whinstone.JdbcColumn;
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.ResultSetParser;
@@ -75,21 +76,11 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     private Queryable                queryable;
     private AutoKey                  autoKey;
     private String[]                 paramNames;
-    //private final SqlDateConverter  dtConverter;
-    //private Class<?>                returnType;
-    //private KeyGeneratorType        keyGeneratorType;
-    //private boolean                 scalar;
-    //private Set<OneToMany>          oneToManies;
-    //private List<String>            groupingBy;
     
     public JdbcPreparedStatementAdapter(PreparedStatement stmt, Queryable queryable)
     {
         this.stmt = stmt;
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
-        //this.dtConverter = new SqlDateConverter();
-        //this.oneToManies = Collections.emptySet();
-        //this.groupingBy = Collections.emptyList();
-        //this.scalar = false;
         this.queryable = queryable;
         this.paramNames = this.queryable.getParamsNames();
         this.reset();
@@ -126,7 +117,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
             }
             else
             {
-                setValue(value);
+                setValue(new Param(value, this.index, name));
             }
         }
         catch (SQLException e)
@@ -137,9 +128,10 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     }
     
     @Override
-    public StatementAdapter<T, ResultSet> bind(Object value)
+    public StatementAdapter<T, ResultSet> bind(Param param)
     {
-        log(value);
+        Object value = param.getValue();
+        log(param);
         try
         {
             if (value instanceof java.util.Date)
@@ -156,7 +148,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
             }
             else
             {
-                setValue(value);
+                setValue(param);
             }
         }
         catch (SQLException e)
@@ -167,11 +159,11 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     }
     
     @Override
-    public StatementAdapter<T, ResultSet> bind(Object... values)
+    public StatementAdapter<T, ResultSet> bind(Param... values)
     {
         for (int j = 0; j < values.length; j++)
         {
-            Object v = values[j];
+            Param v = values[j];
             bind(v);
         }
         return this;
@@ -326,28 +318,27 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         proxy.invoke(CAPITAL_SETTER.does(property), parsedValue);
     }
     
-    private void setValue(Object value) throws SQLException
+    private void setValue(Param param) throws SQLException
     {
         int i = currentIndex();
-        Convertible<Object, Object> convertible = NoConverterType.getInstance();
-        if(queryable.isTypeOfPojo() || queryable.isTypeOfCollectionFromPojo() || queryable.isTypeOfArrayFromPojo())
-            convertible = getConverter(new PropertyAccess(this.paramNames[i-1]));
-        stmt.setObject(i, convertible.toJdbc(value));
+        Convertible<Object, Object> convertible = getConverter(param.getName());
+        stmt.setObject(i, convertible.toJdbc(param.getValue()));
     }
     
     private void setValue(Object[] paramsIN) throws SQLException
     {
         int j = 0;
-        for (; j < paramsIN.length; j++)
-            stmt.setObject(index + j, paramsIN[j]);
+        for (; j < paramsIN.length; j++) {
+            Convertible<Object, Object> convertible = getConverter(this.paramNames[index+j-1]);
+            stmt.setObject(index + j, convertible.toJdbc(paramsIN[j]));
+        }
     }
     
     @SuppressWarnings("rawtypes")
     private void setValue(Date value) throws SQLException
     {
-        //java.sql.Timestamp timestamp = dtConverter.convert(java.sql.Timestamp.class, value);
         int i = currentIndex();
-        Convertible convertible = getConverter(new PropertyAccess(this.paramNames[i - 1]));
+        Convertible<Object, Object> convertible = getConverter(this.paramNames[i-1]);
         if (convertible instanceof NoConverterType)
         {
             Convertible<java.util.Date, java.sql.Timestamp> convert2Timestamp = new DateAsSqlTimestampType();
@@ -361,29 +352,33 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     {
         int i = currentIndex();
         Convertible<java.util.Calendar, java.sql.Timestamp> convertible = new CalendarAsSqlTimestampType();
-        //java.sql.Timestamp timestamp = dtConverter.convert(java.sql.Timestamp.class, value.getTime());
         stmt.setObject(i, convertible.toJdbc(value));
     }
     
     private void setValue(Enum<?> value) throws SQLException
     {
         int i = currentIndex();
-        Convertible<Object, Object> convertible = getConverter(new PropertyAccess(this.paramNames[i-1]));
+        Convertible<Object, Object> convertible = getConverter(this.paramNames[i-1]);
         stmt.setObject(i, convertible.toJdbc(value));
     }
     
     /**
      * Retrieve a {@link Convertible} instance to customize the
-     * value of database to class field.
-     * @param column Column of row
-     * @param proxy of return type from query
+     * value of parameter to database field.
+     * @param fieldName name of field
      * @return A convertible instance if found into class proxy or {@link NoConverterType}
      * instance when the field or method is not annotated.
      */
-    private Convertible<Object, Object> getConverter(PropertyAccess access)
+    private Convertible<Object, Object> getConverter(String fieldName)
     {
-        ObjectProxy<?> proxy = ObjectProxyFactory.of(queryable.getParams());
-        return ConvertibleFactory.toJdbc(access, proxy);
+        Convertible<Object, Object> convertible = NoConverterType.getInstance();
+        if(queryable.getParams() != null &&
+           (queryable.isTypeOfPojo() || queryable.isTypeOfCollectionFromPojo() || queryable.isTypeOfArrayFromPojo()))
+        {
+            ObjectProxy<?> proxy = ObjectProxyFactory.of(queryable.getParams());
+            convertible = ConvertibleFactory.toJdbc(new PropertyAccess(fieldName, queryable.getParams().getClass()), proxy);
+        }
+        return convertible;
     }
     
     @SuppressWarnings(
@@ -436,12 +431,12 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
                     name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
-    private void log(Object value)
+    private void log(Param param)
     {
-        String name = String.valueOf(index);
+        //String name = this.paramNames[index-1];
         if (SQLLOG.isDebugEnabled())
-            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index,
-                    name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
+            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", param.getIndex(),
+                    param.getName(), MASKING.mask(param.getName(), param.getValue()), (param.getValue() == null ? "NULL" : param.getValue().getClass()));
     }
     
     /**

@@ -19,8 +19,6 @@
  */
 package net.sf.jkniv.whinstone.jpa2.dialect;
 
-import java.util.regex.Matcher;
-
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;

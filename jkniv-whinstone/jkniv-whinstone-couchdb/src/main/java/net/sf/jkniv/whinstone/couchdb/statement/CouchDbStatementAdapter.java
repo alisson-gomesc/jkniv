@@ -15,11 +15,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import net.sf.jkniv.exception.HandlerException;
-import net.sf.jkniv.sqlegance.KeyGeneratorType;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.params.ParamParser;
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 import net.sf.jkniv.whinstone.couchdb.commands.JsonMapper;
@@ -45,7 +45,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     private List<String>             groupingBy;
     private String                   body;
     private boolean                  boundParams;
-    private List<Object>             params;
+    private List<Param>              params;
     //private final SqlDateConverter   dtConverter;
     //private Class<T>                 returnType;
     //private ResultRow<T, String>     resultRow;
@@ -59,7 +59,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
         //this.httpBuilder = httpBuilder;
         this.body = body;
         //this.paramParser = paramParser;
-        this.params = new ArrayList<Object>();
+        this.params = new ArrayList<Param>();
         this.boundParams = false;
         //this.dtConverter = new SqlDateConverter();
         //this.oneToManies = Collections.emptySet();
@@ -133,8 +133,8 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     @Override
     public StatementAdapter<T, String> bind(String name, Object value)
     {
-        this.params.add(value);
-        currentIndex();//increment index
+        int index = currentIndex();//increment index
+        this.params.add(new Param(value, index, name));
         return this;
         /*
         //this.index++;
@@ -156,7 +156,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     }
     
     @Override
-    public StatementAdapter<T, String> bind(Object value)
+    public StatementAdapter<T, String> bind(Param value)
     {
         this.params.add(value);
         return this;
@@ -190,9 +190,9 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     }
     
     @Override
-    public StatementAdapter<T, String> bind(Object... values)
+    public StatementAdapter<T, String> bind(Param... values)
     {
-        for (Object v : values)
+        for (Param v : values)
         {
             this.params.add(v);
         }
@@ -260,9 +260,9 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
             while (matcherQuestion.find())
             {
                 json.append(body.substring(start, matcherQuestion.start()));
-                json.append(JsonMapper.mapper(params.get(i++)));
+                json.append(JsonMapper.mapper(params.get(i++).getValue()));
                 //System.out.printf("group[%s] [%d,%d]\n", matcherQuestion.group(), matcherQuestion.start(), matcherQuestion.end());
-                params.add(i++, body.subSequence(matcherQuestion.start(), matcherQuestion.end()).toString());
+                params.add(i++, new Param(body.subSequence(matcherQuestion.start(), matcherQuestion.end()).toString(), i-1));
                 start = matcherQuestion.end();
             }
             json.append(body.substring(start, endBody));

@@ -22,6 +22,7 @@ package net.sf.jkniv.whinstone.params;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
@@ -29,7 +30,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 class PositionalCollectionMapParams extends AbstractParam implements AutoBindParams
 {
     private StatementAdapter<?, ?> stmtAdapter;
-    private Iterator<Object>          it;
+    private Iterator<Param>        it;
     private String                 queryName;
     private String[]               paramsNames;
     
@@ -55,7 +56,7 @@ class PositionalCollectionMapParams extends AbstractParam implements AutoBindPar
         int rowsAfftected = 0;
         while(it.hasNext())
         {
-            Map<String, Object> params = (Map<String, Object>) it.next();
+            Map<String, Object> params = (Map<String, Object>) it.next().getValue();
             for(String paramName : paramsNames)
             {
                 stmtAdapter.bind(paramName, params.get(paramName));

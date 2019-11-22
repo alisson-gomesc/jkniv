@@ -26,15 +26,14 @@
   </select>
 
   <select id="getBookToOverloadType" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook">
-    select b.ID as id, b.ISBN as isbn, b.NAME
-    as name
+    select b.ID as id, b.ISBN as isbn, b.NAME as name, b.IN_STOCK
     from
     BOOK b
   </select>
 
 
   <select id="getBookByISBN" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook">
-    select b.ID as id, b.ISBN as isbn, b.NAME as name, a.name as author, a.ID as author_id
+    select b.ID as id, b.ISBN as isbn, b.NAME as name, a.name as author, a.ID as author_id, b.IN_STOCK
     from
     BOOK b
     inner join
@@ -46,7 +45,7 @@
     </where>
   </select>
   <select id="getBookByISBNWithMap" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook">
-    select b.ID as id, b.ISBN as isbn, b.NAME as name, a.name as author
+    select b.ID as id, b.ISBN as isbn, b.NAME as name, a.name as author, b.IN_STOCK
     from
     BOOK b
     inner join AUTHOR a on a.ID =
@@ -79,7 +78,7 @@
   </select>
 
   <select id="FlatBook#get" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook">
-    select b.ID as id, b.ISBN as isbn, b.NAME as name, a.name as author
+    select b.ID as id, b.ISBN as isbn, b.NAME as name, a.name as author, IN_STOCK
     from
     BOOK b
     inner join AUTHOR a on a.ID =
@@ -104,8 +103,8 @@
   </select>
 
   <insert type="NATIVE" id="FlatBook#add">
-    INSERT INTO BOOK(ID, ISBN, NAME, AUTHOR_ID) VALUES (:id, :isbn, :name,
-    :authorId)
+    INSERT INTO BOOK(ID, ISBN, NAME, AUTHOR_ID, IN_STOCK) 
+    VALUES (:id, :isbn, :name, :authorId, :inStock)
   </insert>
 
   <update type="NATIVE" id="FlatAuthor#update">

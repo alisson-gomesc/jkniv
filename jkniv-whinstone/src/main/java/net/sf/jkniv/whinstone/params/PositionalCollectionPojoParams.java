@@ -25,6 +25,7 @@ import net.sf.jkniv.reflect.beans.CapitalNameFactory;
 import net.sf.jkniv.reflect.beans.Capitalize;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
@@ -33,7 +34,7 @@ class PositionalCollectionPojoParams extends AbstractParam implements AutoBindPa
 	//private final static MethodName SETTER =  MethodNameFactory.getInstanceSetter();
 	private final static Capitalize CAPITAL_GETTER =  CapitalNameFactory.getInstanceOfGetter();
 	private StatementAdapter<?, ?> stmtAdapter;
-    private Iterator<Object>          it;
+    private Iterator<Param>        it;
     private String                 queryName;
     private String[]               paramsNames;
     
@@ -59,12 +60,12 @@ class PositionalCollectionPojoParams extends AbstractParam implements AutoBindPa
         int rowsAfftected = 0;
         while(it.hasNext())
         {
-            Object pojo = it.next();
-            ObjectProxy<?> proxy = ObjectProxyFactory.of(pojo);
+            Param pojo = it.next();
+            ObjectProxy<?> proxy = ObjectProxyFactory.of(pojo.getValue());
             for(String paramName : paramsNames)
             {
             	String getterName = CAPITAL_GETTER.does(paramName);
-            	Object value = proxy.invoke(getterName, pojo);
+            	Object value = proxy.invoke(getterName, pojo.getValue());
                 stmtAdapter.bind(paramName, value);
             }
             //Statement.SUCCESS_NO_INFO;
@@ -78,6 +79,4 @@ class PositionalCollectionPojoParams extends AbstractParam implements AutoBindPa
 	{
 	    return new PositionalCollectionPojoParams(adapter, queryable);
 	}
-	
-
 }

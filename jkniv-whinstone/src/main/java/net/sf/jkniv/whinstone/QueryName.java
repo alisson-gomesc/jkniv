@@ -22,10 +22,13 @@ package net.sf.jkniv.whinstone;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -148,24 +151,45 @@ class QueryName implements Queryable
     }
     
     @Override
-    public Object getProperty(String name)
+    public Param getProperty(String name)
     {
         if (params == null)
             return null;
         
-        Object o = null;
+        Param param = null;
         try
         {
-            o = PropertyUtils.getProperty(params, name);
+            Object o = PropertyUtils.getProperty(params, name);
+            param = new Param(o, name);
         }
         catch (Exception e)
         {
             throw new ParameterNotFoundException("Cannot find the property [" + name + "] at param object ["
                     + (params != null ? params.getClass().getName() : "null") + "] ");
         }
-        return o;
+        return param;
     }
-    
+
+    @Override
+    public Param getProperty(String name, int index)
+    {
+        if (params == null)
+            return null;
+        
+        Param param = null;
+        try
+        {
+            Object o = PropertyUtils.getProperty(params, name);
+            param = new Param(o, index, name);
+        }
+        catch (Exception e)
+        {
+            throw new ParameterNotFoundException("Cannot find the property [" + name + "] at param object ["
+                    + (params != null ? params.getClass().getName() : "null") + "] ");
+        }
+        return param;
+    }
+
     @Override
     public int getOffset()
     {
@@ -403,49 +427,67 @@ class QueryName implements Queryable
     }
     
     @Override
-    public Iterator<Object> iterator()
+    public Iterator<Param> iterator()
     {
         if (this.params == null)
             throw new NullPointerException("Cannot iterate over null reference");
         
-        Iterator<Object> it = null;
+        Iterator<Param> it = null;
         if (this.params instanceof Map)
-            it = ((Map)this.params).values().iterator();
+            it = new ArrayIterator((Map)this.params);            //it = ((Map)this.params).values().iterator();
         else if (isTypeOfArray())
-            it = new ArrayIterator(this.params, this.size);
+            it = new ArrayIterator((Object[])this.params, this.size);
         else if (isTypeOfCollection())
-            it = ((Collection) this.params).iterator();
+            it = new ArrayIterator((Collection)this.params);//((Collection) this.params).iterator();
         else
             throw new UnsupportedOperationException(
                     "Cannot iterate over another type of object, just Arrays or Collections");
         
         return it;
     }
-    
+
     @Override
-    public Object[] values(String[] paramsNames)
+    public Param[] values()
     {
-        List<Object> paramsValues = new ArrayList<Object>();
+        List<Param> paramsValues = new ArrayList<Param>();
         int i = 0;
         if (isTypeOfBasic())
         {
-            paramsValues.add(getParams());
+            paramsValues.add(new Param(getParams(), i));
         }
+//        else if(isTypeOfMap())
+//        {
+//            Set<Entry<String,Object>> entries = ((Map)this.params).entrySet();
+//            for(Entry<String, Object> entry : entries)
+//                paramsValues.add(new Param(entry.getValue(), i++, entry.getKey()));
+//        }
         else if(isTypeOfArrayFromBasicTypes())
         {
             if(!hasInClause(paramsNames) && paramsNames.length != getParamsAsArray().length)
-            {
                 throw new ParameterException("A query [" + this.name
                         + "] with positional parameters needs an array exactly have the same number of parameters from query.");
-            }
-            return (Object[]) this.params;
+
+            Object[] arrayOfParams = (Object[])this.params;
+            for(int j=0; j<arrayOfParams.length; j++)
+                paramsValues.add(new Param(arrayOfParams[j], j));
+        }
+        else if(isTypeOfCollectionFromBasicTypes())
+        {
+            if(!hasInClause(paramsNames) && paramsNames.length != getParamsAsCollection().size())
+                throw new ParameterException("A query [" + this.name
+                        + "] with positional parameters needs an collection exactly have the same number of parameters from query.");
+
+            Collection<?> colOfParams = (Collection<?>)this.params;
+            int j=0;
+            for(Object o : colOfParams)
+                paramsValues.add(new Param(o, j++));
         }
         else
         {
             //int k = 0; // index params for clause IN
             for (String name : paramsNames)
             {
-                Object paramValue = null;
+                Param paramValue = null;
                 if (paramsNames[i].toLowerCase().startsWith("in:"))
                 {
                     String paramName = paramsNames[i].substring(3, paramsNames[i].length());// :in:myValueArray -> myValueArray 
@@ -453,25 +495,36 @@ class QueryName implements Queryable
                     {
                         paramValue = getProperty(paramName);
                     }
-                    Object[] paramsIN = null;
+                    Param[] paramsIN = null;
+                    if (paramValue.isCollection() || paramValue.isArray())
+                        paramsIN = paramValue.asArray();
+                    
+                    if (paramsIN == null)
+                        throw new ParameterException(
+                                "Cannot set parameter [" + paramsNames[i] + "] from IN clause with NULL");
+
                     int j = 0;
-                    if (paramValue != null && paramValue.getClass().isArray())
-                        paramsIN = (Object[]) paramValue;
-                    else if (paramValue instanceof Collection)
-                        paramsIN = ((Collection) paramValue).toArray();
+                    for (; j < paramsIN.length; j++)
+                        paramsValues.add(paramsIN[j]);
+                    /*
+                    if (paramValue.getValue() != null && paramValue.getValue().getClass().isArray())
+                        paramsIN = (Object[]) paramValue.getValue();
+                    else if (paramValue.getValue() instanceof Collection)
+                        paramsIN = ((Collection) paramValue.getValue()).toArray();
                     
                     if (paramsIN == null)
                         throw new ParameterException(
                                 "Cannot set parameter [" + paramsNames[i] + "] from IN clause with NULL");
                     
                     for (; j < paramsIN.length; j++)
-                        paramsValues.add(paramsIN[j]);//params[j + i + 1] = paramsIN[j];
+                        paramsValues.add(new Param(paramsIN[j], i+j, name));//params[j + i + 1] = paramsIN[j];
+                        */
                 }
                 else if ("?".equals(name))
                 {
                     if(isTypeOfArrayFromBasicTypes())
                     {
-                        paramsValues.add(getParamsAsArray()[i]);
+                        paramsValues.add(new Param(getParamsAsArray()[i], i, name));
                     }
 //                    else if(isTypeOfCollectionFromBasicTypes())
 //                    {
@@ -479,11 +532,11 @@ class QueryName implements Queryable
 //                    }
                 }
                 else
-                    paramsValues.add(getProperty(name));
+                    paramsValues.add(getProperty(name, i));
                 i++;
             }
         }
-        return paramsValues.toArray(new Object[0]);
+        return paramsValues.toArray(new Param[0]);
     }
     
     @Override
@@ -732,6 +785,14 @@ class QueryName implements Queryable
         return this.bookmark;
     }
     
+    private Collection<?> getParamsAsCollection() 
+    {
+        if(this.params == null)
+            return Collections.emptyList();
+        
+        return (Collection<?>) this.params;
+    }
+
     private Object[] getParamsAsArray() 
     {
         if(this.params == null)
@@ -739,7 +800,7 @@ class QueryName implements Queryable
         
         return (Object[]) this.params;
     }
-    
+
     private boolean hasInClause(String[] paramsNames)
     {
         for (String p : paramsNames)

@@ -21,6 +21,24 @@ package net.sf.jkniv.sqlegance.types;
 
 import java.sql.Types;
 
+/**
+ * A Enumeration converter value.
+ * 
+ * <p>
+ * For save then name values of Enumeration.
+ * <pre>
+ * @Converter(converter = TimeUnit.class, isEnum = EnumType.STRING)
+ * </pre>
+ * <p>For save then ordinal value of Enumeration.
+ * <pre>
+ * @Converter(converter = TimeUnit.class, isEnum = EnumType.ORDINAL)
+ * </pre>
+ * 
+ * If any value is used for {@code isEnum} the {@code EnumType.STRING} is used per default.
+ * <pre>
+ * @Converter(converter = TimeUnit.class)
+ * </pre>
+ */
 public class EnumNameType implements Convertible<Enum<?>, String>
 {
     private final static int[] TYPES = {Types.CHAR, Types.VARCHAR, Types.NCHAR, Types.NVARCHAR};

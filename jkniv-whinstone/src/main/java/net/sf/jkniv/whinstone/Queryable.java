@@ -23,6 +23,7 @@ import java.util.Iterator;
 
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.whinstone.params.AutoBindParams;
+import net.sf.jkniv.whinstone.params.ParameterException;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
@@ -67,7 +68,9 @@ public interface Queryable
      * @return the property value
      * @throws ParameterNotFoundException when cannot find the property.
      */
-    Object getProperty(String name);
+    Param getProperty(String name);
+    
+    Param getProperty(String name, int index);
     
     /**
      * Get the number from first row from query result. If not set, rows will be
@@ -229,17 +232,17 @@ public interface Queryable
      * @throws UnsupportedOperationException when {@code params} isn't collection or array.
      * @throws NullPointerException when {@code params} is {@code null}.
      */
-    Iterator<Object> iterator();
+    Iterator<Param> iterator();
     
     /**
      * Extract the values from {@code params} matching the names array.
      * 
-     * @param names array of names to get yours values
      * @return an {@code array} of values from {@code params}, base-zero array is returned when 
      * the names doesn't match.
      * @throws ParameterException when a parameter values not correspond the type expected
      */
-    Object[] values(String[] names);
+    Param[] values();
+    
     
     /**
      * Bind Sql to {@link Queryable} instance generating the raw query.

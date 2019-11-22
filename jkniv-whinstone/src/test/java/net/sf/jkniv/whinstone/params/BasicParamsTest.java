@@ -23,10 +23,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
@@ -94,7 +92,7 @@ public class BasicParamsTest
         BasicParam auto = new BasicParam(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
-        verify(stmtAdapter).bind(queryable.getParams());
+        verify(stmtAdapter).bind(queryable.values());
     }
     
     @Test
@@ -108,7 +106,7 @@ public class BasicParamsTest
         BasicParam auto = new BasicParam(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
-        verify(stmtAdapter).bind("id", queryable.getParams());
+        verify(stmtAdapter).bind(queryable.values());
     }
 
     @Test
@@ -122,7 +120,7 @@ public class BasicParamsTest
         BasicParam auto = new BasicParam(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
-        verify(stmtAdapter).bind(queryable.getParams());
+        verify(stmtAdapter).bind(queryable.values());
     }
 
     @Test

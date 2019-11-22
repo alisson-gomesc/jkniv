@@ -23,18 +23,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
@@ -46,8 +42,8 @@ import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
-import net.sf.jkniv.sqlegance.params.ParamParserColonMark;
 import net.sf.jkniv.sqlegance.params.ParamParserQuestionMark;
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
@@ -103,8 +99,8 @@ public class PositionalArrayParamsTest
         queryable.bind(this.selectableMock);
         PositionalArrayParams auto = new PositionalArrayParams(this.stmtAdapter, queryable);
         auto.on();
-        verify(stmtAdapter, times(4)).bind(anyObject());
         verify(stmtAdapter, never()).execute();
+        verify(stmtAdapter, times(4)).bind(any(Param.class));
     }
 
     @Test
@@ -115,7 +111,7 @@ public class PositionalArrayParamsTest
         PositionalArrayParams auto = new PositionalArrayParams(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
-        verify(stmtAdapter, times(11)).bind(anyObject());
+        verify(stmtAdapter, times(11)).bind(any(Param.class));
     }
     
     @Test
@@ -128,7 +124,7 @@ public class PositionalArrayParamsTest
         PositionalArrayParams auto = new PositionalArrayParams(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
-        verify(stmtAdapter).bind(values[0]);
+        verify(stmtAdapter).bind(new Param(values[0]));
     }
 
     @Test

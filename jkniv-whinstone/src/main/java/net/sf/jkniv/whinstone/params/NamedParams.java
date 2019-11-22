@@ -19,8 +19,10 @@
  */
 package net.sf.jkniv.whinstone.params;
 
+import java.util.Arrays;
 import java.util.Collection;
 
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
@@ -49,29 +51,27 @@ class NamedParams extends AbstractParam implements AutoBindParams
 //        }
         for (String s : paramsNames)
         {
-            Object o = null;
             if (hasInClause(s))
             {
+                Param[] params = null;
                 String paramName = s.substring(3, s.length());// strip substring ":in"
-                Object paramValue = queryable.getProperty(paramName);
-                if (paramValue != null && paramValue.getClass().isArray())
-                    o = (Object[]) paramValue;
-                else if (paramValue instanceof Collection)
-                    o = ((Collection<?>) paramValue).toArray();
+                Param param = queryable.getProperty(paramName);
+                if (param.isCollection() || param.isArray())
+                    params = param.asArray();
                 
-                stmtAdapter.bind((Object[])o);
+                stmtAdapter.bind(params);
             }
             else
             {
-                o = queryable.getProperty(s);
-                stmtAdapter.bind(s, o);
+                Param p = queryable.getProperty(s);
+                stmtAdapter.bind(p);
             }
         }
     }
     
     private void checkIfAllParamenterValuesIsHere() 
     {
-        queryable.values(queryable.getParamsNames());
+        queryable.values();
     }
     
     @Override

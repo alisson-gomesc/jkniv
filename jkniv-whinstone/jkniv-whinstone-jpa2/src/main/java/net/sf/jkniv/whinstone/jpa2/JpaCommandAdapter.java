@@ -40,8 +40,8 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.commands.Command;
 import net.sf.jkniv.whinstone.commands.CommandAdapter;
-import net.sf.jkniv.whinstone.jpa2.commands.DefaultCommand;
-import net.sf.jkniv.whinstone.jpa2.commands.DefaultQuery;
+import net.sf.jkniv.whinstone.jpa2.commands.DefaultJpaCommand;
+import net.sf.jkniv.whinstone.jpa2.commands.DefaultJpaQuery;
 import net.sf.jkniv.whinstone.jpa2.commands.MergeCommand;
 import net.sf.jkniv.whinstone.jpa2.commands.PersistCommand;
 import net.sf.jkniv.whinstone.jpa2.commands.RemoveCommand;
@@ -88,7 +88,7 @@ public class JpaCommandAdapter implements CommandAdapter
     @Override
     public <T, R> Command asSelectCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
-        DefaultQuery command = null;
+        DefaultJpaQuery command = null;
         String sql = queryable.query();
         if (SQLLOG.isInfoEnabled())
             SQLLOG.info("Bind Native SQL\n{}", sql);
@@ -97,7 +97,7 @@ public class JpaCommandAdapter implements CommandAdapter
         StatementAdapter<T, R> stmt = new JpaStatementAdapter(queryJpa, queryable, this.handlerException);
         queryable.bind(stmt).on();
         stmt.with(overloadResultRow);
-        command = new DefaultQuery(stmt, queryable);
+        command = new DefaultJpaQuery(stmt, queryable);
         return command;
     }
     
@@ -166,7 +166,7 @@ public class JpaCommandAdapter implements CommandAdapter
         //        else
         //            command = new DefaultCommand((CassandraPreparedStatementAdapter) stmt, queryable);
         
-        command = new DefaultCommand(stmt, queryable);
+        command = new DefaultJpaCommand(stmt, queryable);
         stmt.with(auto);
         return command;
     }

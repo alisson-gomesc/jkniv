@@ -31,6 +31,7 @@ import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.ResultSetParser;
@@ -173,10 +174,11 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     }
     
     @Override
-    public StatementAdapter<T, Row> bind(Object value)
+    public StatementAdapter<T, Row> bind(Param param)
     {
         //this.index = position;
-        log(value);
+        Object value = param.getValue();
+        log(param);
         try
         {
             if (value instanceof java.util.Date)
@@ -204,13 +206,13 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     }
     
     @Override
-    public StatementAdapter<T, Row> bind(Object... values)
+    public StatementAdapter<T, Row> bind(Param... values)
     {
         //this.bound = stmt.bind(values);
         //this.index += values.length-1;
         for (int j=0; j<values.length; j++)
         {
-            Object v = values[j];
+            Param v = values[j];
             bind(v);
         }
         return this;

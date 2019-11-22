@@ -20,12 +20,8 @@
 package net.sf.jkniv.whinstone.couchdb.commands;
 
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;

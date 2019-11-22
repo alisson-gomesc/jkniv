@@ -23,12 +23,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -45,7 +44,7 @@ import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.params.ParamParserColonMark;
-import net.sf.jkniv.sqlegance.params.ParamParserQuestionMark;
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
@@ -95,7 +94,7 @@ public class NamedParamsTest
         NamedParams auto = new NamedParams(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
-        verify(stmtAdapter, times(11)).bind(anyString(), anyObject());        
+        verify(stmtAdapter, times(11)).bind(any(Param.class));        
     }
     
     @Test
@@ -110,7 +109,7 @@ public class NamedParamsTest
         NamedParams auto = new NamedParams(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
-        verify(stmtAdapter).bind(values.toArray());
+        verify(stmtAdapter, times(1)).bind((Param[]) anyVararg());
     }
 
     @Test
@@ -125,7 +124,7 @@ public class NamedParamsTest
         NamedParams auto = new NamedParams(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
-        verify(stmtAdapter).bind(values);
+        verify(stmtAdapter).bind((Param[]) anyVararg());
     }
 
     @Test

@@ -19,15 +19,15 @@
  */
 package net.sf.jkniv.whinstone;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -45,7 +45,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.Matchers;
 
 import net.sf.jkniv.domain.flat.AuthorFlat;
 import net.sf.jkniv.sqlegance.Selectable;
@@ -268,28 +267,28 @@ public class QueryNameTest
     @Test
     public void whenQueryIteratorOverArray()
     {
-        Iterator<Object> it = QueryFactory.ofArray("dummy", "A", "B", "C").iterator();
+        Iterator<Param> it = QueryFactory.ofArray("dummy", "A", "B", "C").iterator();
         assertThat(it.hasNext(), is(true));
-        assertThat(it.next().toString(), is("A"));
+        assertThat(it.next().getValue().toString(), is("A"));
         assertThat(it.hasNext(), is(true));
-        assertThat(it.next().toString(), is("B"));
+        assertThat(it.next().getValue().toString(), is("B"));
         assertThat(it.hasNext(), is(true));
-        assertThat(it.next().toString(), is("C"));
+        assertThat(it.next().getValue().toString(), is("C"));
         assertThat(it.hasNext(), is(false));
-    }   
+    }
 
     @Test
     public void whenQueryIteratorOverCollection()
     {
-        Iterator<Object> it = QueryFactory.of("dummy", Arrays.asList("A", "B", "C")).iterator();
+        Iterator<Param> it = QueryFactory.of("dummy", Arrays.asList("A", "B", "C")).iterator();
         assertThat(it.hasNext(), is(true));
-        assertThat(it.next().toString(), is("A"));
+        assertThat(it.next().getValue().toString(), is("A"));
         assertThat(it.hasNext(), is(true));
-        assertThat(it.next().toString(), is("B"));
+        assertThat(it.next().getValue().toString(), is("B"));
         assertThat(it.hasNext(), is(true));
-        assertThat(it.next().toString(), is("C"));
+        assertThat(it.next().getValue().toString(), is("C"));
         assertThat(it.hasNext(), is(false));
-    }   
+    }
 
     @Test
     public void whenQueryIteratorOverNull()

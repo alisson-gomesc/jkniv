@@ -19,7 +19,6 @@
  */
 package net.sf.jkniv.whinstone.commands;
 
-import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +31,7 @@ import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.builder.xml.SqlTag;
 import net.sf.jkniv.sqlegance.builder.xml.TagFactory;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 
@@ -158,9 +158,14 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
     private Queryable createQueryableForPaging()
     {
         String queryName = "#paging_"+System.currentTimeMillis()+"_for_"+queryable.getName();
-        String[] paramNames = queryable.getDynamicSql().extractNames(queryable.getParams());
-        Object[] paramValues = queryable.values(paramNames);
-        Queryable paging = QueryFactory.ofArray(queryName, paramValues);
+        //String[] paramNames = queryable.getDynamicSql().extractNames(queryable.getParams());
+        Param[] paramValues = queryable.values();//(paramNames);
+        // TODO improve get values as array
+        Object[] paramArray = new Object[paramValues.length];
+        for(int i=0; i<paramValues.length; i++)
+            paramArray[i] = paramValues[i].getValue();
+            
+        Queryable paging = QueryFactory.ofArray(queryName, paramArray);
         Selectable selectable = TagFactory.newSelect(queryName, LanguageType.NATIVE, queryable.getDynamicSql().getSqlDialect());
         if (selectable instanceof SqlTag)
         {

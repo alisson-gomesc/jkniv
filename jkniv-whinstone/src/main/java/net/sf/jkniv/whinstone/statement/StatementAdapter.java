@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.util.List;
 
 import net.sf.jkniv.sqlegance.KeyGeneratorType;
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
 
@@ -51,7 +52,7 @@ public interface StatementAdapter<T, R>
      * @param value of parameter
      * @return instance of this object
      */
-    StatementAdapter<T, R> bind(Object value);
+    StatementAdapter<T, R> bind(Param value);
     //* @param position index of parameter positions, initial is 1
     //StatementAdapter<T, R> bind(int position, Object value);
 
@@ -60,7 +61,7 @@ public interface StatementAdapter<T, R>
      * @param values of parameters as arbitrary number
      * @return instance of this object
      */
-    StatementAdapter<T, R> bind(Object... values);
+    StatementAdapter<T, R> bind(Param... values);
 
     /**
      * result row

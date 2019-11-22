@@ -26,6 +26,7 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 
 import net.sf.jkniv.exception.HandleableException;
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.commands.Command;
@@ -57,9 +58,10 @@ public class BulkJpaCommand implements Command//extends AbstractJdbcCommand
     public <T> T execute()
     {
         Integer rowsAffected = 0;
+        // TODO implements Bulk operation for JPA
         try
         {
-            Iterator<Object> it = queryable.iterator();
+            Iterator<Param> it = queryable.iterator();
             while (it.hasNext())
             {
                 Queryable queryableIt = QueryFactory.of(queryable.getName(), it.next(), queryable.getOffset(), queryable.getMax());

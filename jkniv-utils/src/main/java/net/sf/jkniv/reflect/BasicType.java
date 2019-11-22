@@ -21,6 +21,8 @@ package net.sf.jkniv.reflect;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -142,6 +144,10 @@ public class BasicType
         else if (Float.class.getCanonicalName().equals(type.getCanonicalName()) || float.class.getCanonicalName().equals(type.getCanonicalName()))
             isBasic = true;        
         else if (Boolean.class.getCanonicalName().equals(type.getCanonicalName()) || boolean.class.getCanonicalName().equals(type.getCanonicalName()))
+            isBasic = true;
+        if(Date.class.getCanonicalName().equals(type.getCanonicalName()))
+            isBasic = true;
+        if(Calendar.class.getCanonicalName().equals(type.getCanonicalName()))
             isBasic = true;
         else if (BigDecimal.class.getCanonicalName().equals(type.getCanonicalName()))
             isBasic = true;

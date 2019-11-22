@@ -38,6 +38,7 @@ import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.commands.Command;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
@@ -251,10 +252,10 @@ public abstract class AbstractCommand implements CouchCommand
     
     protected String getRevision(Queryable queryable)
     {
-        String rev = (String) getProperty(queryable, "rev");
-        if (rev == null)
-            rev = (String) getProperty(queryable, "_rev");
-        return rev;
+        Param rev = getProperty(queryable, "rev");
+        if (rev.getValue() == null)
+            rev = getProperty(queryable, "_rev");
+        return rev.getValue().toString();
     }
     
     @SuppressWarnings(
@@ -301,17 +302,15 @@ public abstract class AbstractCommand implements CouchCommand
             queryable.setBookmark(bookmark);
     }
     
-    private Object getProperty(Queryable queryable, String name)
+    private Param getProperty(Queryable queryable, String name)
     {
-        Object v = null;
+        Param v = null;
         try
         {
             v = queryable.getProperty(name);
         }
-        catch (ParameterNotFoundException ignore)
-        {
-            /* parameter not exixts */}
-        return v;
+        catch (ParameterNotFoundException ignore) {/* parameter not exixts */}
+        return (v != null ? v : new Param());
     }
     
 }

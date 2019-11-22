@@ -47,6 +47,7 @@ import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.params.ParamParserQuestionMark;
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
@@ -103,7 +104,7 @@ public class PositionalParamsTest
         PositionalParams auto = new PositionalParams(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
-        verify(stmtAdapter, times(4)).bind(anyObject());
+        verify(stmtAdapter, times(4)).bind(any(Param.class));
     }
     
     @Test
@@ -114,7 +115,7 @@ public class PositionalParamsTest
         PositionalParams auto = new PositionalParams(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
-        verify(stmtAdapter, times(11)).bind(anyObject());
+        verify(stmtAdapter, times(11)).bind(any(Param.class));
     }
     
     @Test
@@ -127,7 +128,7 @@ public class PositionalParamsTest
         PositionalParams auto = new PositionalParams(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
-        verify(stmtAdapter).bind(values[0]);
+        verify(stmtAdapter).bind(new Param(values[0]));
     }
 
     @Test

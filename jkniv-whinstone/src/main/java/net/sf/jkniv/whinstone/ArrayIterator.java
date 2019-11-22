@@ -20,16 +20,40 @@
 package net.sf.jkniv.whinstone;
 
 import java.lang.reflect.Array;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
-class ArrayIterator implements Iterator<Object>
+class ArrayIterator implements Iterator<Param>
 {
-    private final Object array;
-    private int          currentIndex = 0;
-    private int          length;
-    
-    public ArrayIterator(Object array, int length)
+    private final Object[] array;
+    private int   currentIndex = 0;
+    private int   length;
+
+    public ArrayIterator(Map<String,Object> map)
     {
+        this.currentIndex = 0;
+        this.array = new Object[map.size()];
+        Set<Entry<String,Object>> entries = map.entrySet();
+        int i=0;
+        for(Entry<String, Object> entry : entries)
+            this.array[i] = entry.getValue();
+        //this.array = map.toArray();
+        this.length = map.size();
+    }
+
+    public ArrayIterator(Collection<?> col)
+    {
+        this.currentIndex = 0;
+        this.array = col.toArray();
+        this.length = col.size();
+    }
+
+    public ArrayIterator(Object[] array, int length)
+    {
+        this.currentIndex = 0;
         this.array = array;
         this.length = length;
     }
@@ -41,9 +65,9 @@ class ArrayIterator implements Iterator<Object>
     }
     
     @Override
-    public Object next()
+    public Param next()
     {
-        return Array.get(array, currentIndex++);
+        return new Param(Array.get(array, currentIndex++), currentIndex-1);
     }
     
     @Override

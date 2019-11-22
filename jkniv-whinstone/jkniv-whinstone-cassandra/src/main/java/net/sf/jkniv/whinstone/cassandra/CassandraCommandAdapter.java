@@ -35,6 +35,7 @@ import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.LanguageType;
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.cassandra.commands.AddSequenceKeyJdbcCommand;
@@ -192,9 +193,8 @@ class CassandraCommandAdapter implements CommandAdapter
         StatementAdapter<T, R> stmt = null;
         if (queryable.isPaging())
         {
-            String[] names = queryable.getParamsNames();
-            Object[] params = queryable.values(names);
-            Statement statement = new SimpleStatement(sql, params);
+            Param[] params = queryable.values();
+            Statement statement = new SimpleStatement(sql, extracValues(params));
             stmt = new CassandraStatementAdapter(this.session, statement, queryable);
             stmt.setFetchSize(queryable.getMax());
         }
@@ -261,5 +261,13 @@ class CassandraCommandAdapter implements CommandAdapter
     public String toString()
     {
         return "CassandraCommandAdapter [session=" + session + ", cluster=" + cluster + "]";
+    }
+    private Object[] extracValues(Param[] params)
+    {
+        Object[] values = new Object[params.length];
+        for(int i=0; i<params.length; i++)
+            values[i] = params[i].getValue();
+            
+        return values;
     }
 }

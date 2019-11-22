@@ -19,52 +19,39 @@
  */
 package net.sf.jkniv.whinstone.jpa2.commands;
 
-import java.sql.ResultSet;
-
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.commands.Command;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
-import net.sf.jkniv.whinstone.jpa2.statement.JpaStatementAdapter;
+import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
-public class DefaultCommand implements Command
+@SuppressWarnings({"unchecked","rawtypes"})
+public class DefaultJpaQuery implements Command
 {
-    protected final JpaStatementAdapter<Number, ResultSet> stmt;
-    protected final Queryable queryable;
-    protected HandleableException handlerException;
+    private StatementAdapter stmt;
     
-    public DefaultCommand(JpaStatementAdapter<Number, ResultSet> stmt, Queryable queryable)
+    public DefaultJpaQuery(StatementAdapter stmt, Queryable queryable)
     {
         super();
         this.stmt = stmt;
-        this.queryable = queryable;
     }
     
     @Override
-    public Command with(HandleableException handlerException)
+    public Command with(HandleableException handleableException)
     {
-        this.handlerException = handlerException;
         return this;
     }
-    
+
     @Override
     public Command with(CommandHandler commandHandler)
     {
         return this;
     }
-    
+
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T execute()
     {
-        Integer rows = 0;
-        if(queryable.isTypeOfBulk())
-            rows = queryable.bind(stmt).onBulk();
-        else
-        {
-            queryable.bind(stmt).on();
-            rows = stmt.execute();
-        }
-        return (T) rows;
+        T list = (T) stmt.rows();
+      return list;
     }
 }

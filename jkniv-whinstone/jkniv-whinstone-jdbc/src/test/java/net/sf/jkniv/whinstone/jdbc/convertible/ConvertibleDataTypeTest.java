@@ -19,6 +19,7 @@
  */
 package net.sf.jkniv.whinstone.jdbc.convertible;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,12 +32,13 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.sf.jkniv.whinstone.jdbc.domain.acme.Author;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.BaseJdbc;
+import net.sf.jkniv.whinstone.jdbc.domain.acme.Author;
 import net.sf.jkniv.whinstone.jdbc.domain.acme.Book;
+import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook;
 import net.sf.jkniv.whinstone.jdbc.domain.flat.MyTypes;
 
 public class ConvertibleDataTypeTest extends BaseJdbc
@@ -90,6 +92,44 @@ public class ConvertibleDataTypeTest extends BaseJdbc
             assertThat(b.getAuthor().getBooks(), notNullValue());
             assertThat(b.getAuthor().getBooks().size(), is(0));
         }
+    }
+    
+
+    @Test
+    public void whenAddWithConvertibleAnnotationFlatObject()
+    {
+        Queryable q = QueryFactory.of("getBookByISBN");
+        Long ID1 = 2000L, ID2 = 2001L;
+        FlatBook book = new FlatBook();
+        book.setAuthorId(1L);
+        book.setId(ID1);
+        book.setIsbn(ID1+"-006");
+        book.setName("My "+ID1+" Book");
+        book.setInStock(false);
+        repositoryDerby.add(book);
+
+        book = new FlatBook();
+        book.setAuthorId(1L);
+        book.setId(ID2);
+        book.setIsbn(ID2+"-006");
+        book.setName("My "+ID2+"Book");
+        book.setInStock(true);
+        repositoryDerby.add(book);
+
+        FlatBook b = new FlatBook();
+        b.setId(ID1);
+        FlatBook bookSaved= repositoryDerby.get(b);
+        assertThat(bookSaved, instanceOf(FlatBook.class));
+        assertThat(bookSaved.getId(), is(ID1));
+        assertThat(bookSaved.isInStock(), is(false));
+        repositoryDerby.remove(bookSaved);
+
+        b.setId(ID2);
+        bookSaved = repositoryDerby.get(b);
+        assertThat(bookSaved, instanceOf(FlatBook.class));
+        assertThat(bookSaved.getId(), is(ID2));
+        assertThat(bookSaved.isInStock(), is(true));
+        repositoryDerby.remove(bookSaved);
     }
 
 }

@@ -19,36 +19,37 @@
  */
 package net.sf.jkniv.whinstone.params;
 
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 class BasicParam implements AutoBindParams
 {
     private StatementAdapter<?,?> stmtAdapter;
-    private Object params;
+    private Param[] params;
     private String[] paramsNames;
 
     public BasicParam(StatementAdapter<?,?> stmtAdapter, Queryable queryable)
     {
         super();
         this.stmtAdapter = stmtAdapter;
-        this.params = queryable.getParams();
+        this.params = queryable.values();
         this.paramsNames = queryable.getParamsNames();
     }
     
     @Override
     public void on() 
     {
-        if (paramsNames.length == 1)
-        {
-            if ("?".equals(paramsNames[0]))
-                stmtAdapter.bind(params);
-            else 
-            {
-                stmtAdapter.bind(paramsNames[0], params);
-            }
-        }
-        else
+//        if (params.length == 1)
+//        {
+//            if ("?".equals(paramsNames[0]))
+//                stmtAdapter.bind(params);
+//            else 
+//            {
+//                stmtAdapter.bind(paramsNames[0], params);
+//            }
+//        }
+//        else
             stmtAdapter.bind(params);
     }
 

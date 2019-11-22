@@ -32,6 +32,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.couchdb.statement.QueryParam;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
@@ -171,13 +172,13 @@ public class HttpBuilder
                 
             for (QueryParam k : KEY_PARAMS_VIEW)
             {
-                Object v = getProperty(queryable, k.name());
-                if (v != null)
+                Param param = getProperty(queryable, k.name());
+                if (param.getValue() != null)
                 {
                     if (urlParams.length() > 1)
-                        urlParams.append("&" + k.name() + "=" + k.getValue(v));
+                        urlParams.append("&" + k.name() + "=" + k.getValue(param.getValue()));
                     else
-                        urlParams.append(k.name() + "=" + k.getValue(v));
+                        urlParams.append(k.name() + "=" + k.getValue(param.getValue()));
                 }
             }
         }
@@ -197,19 +198,19 @@ public class HttpBuilder
             urlGet.append(queryable.getParams());// FIXME design docid is Date, Calendar, how to parser
         else
         {
-            Object id = (String) getProperty(queryable, "id");
-            if (id != null)
-                urlGet.append(id);
+            Param param = getProperty(queryable, "id");
+            if (param.getValue() != null)
+                urlGet.append(param.getValue());
             else
             {
-                id = (String) getProperty(queryable, "_id");
-                if (id != null)
-                    urlGet.append(id);
+                param = getProperty(queryable, "_id");
+                if (param.getValue() != null)
+                    urlGet.append(param.getValue());
                 else
                 {
-                    id = (String) getProperty(queryable, "docid");
-                    if (id != null)
-                        urlGet.append(id);
+                    param = getProperty(queryable, "docid");
+                    if (param.getValue() != null)
+                        urlGet.append(param.getValue());
                     else
                         throw new RepositoryException("Cannot lookup [ id | _id | docid ] from [" + queryable + "]");
                     
@@ -220,13 +221,13 @@ public class HttpBuilder
         {
             for (QueryParam k : KEY_PARAMS_GET)
             {
-                Object v = getProperty(queryable, k.name());
-                if (v != null)
+                Param param = getProperty(queryable, k.name());
+                if (param.getValue() != null)
                 {
                     if (urlParams.length() > 1)
-                        urlParams.append("&" + k.name() + "=" + k.getValue(v));
+                        urlParams.append("&" + k.name() + "=" + k.getValue(param.getValue()));
                     else
-                        urlParams.append(k.name() + "=" + k.getValue(v));
+                        urlParams.append(k.name() + "=" + k.getValue(param.getValue()));
                 }
             }
         }
@@ -241,19 +242,19 @@ public class HttpBuilder
     {
         checkUnsupportedQueryParams(queryable);
         StringBuilder urlSave = new StringBuilder(this.hostContext);
-        Object id = (String) getProperty(queryable, "id");
-        if (id != null)
-            urlSave.append(id);
+        Param param = getProperty(queryable, "id");
+        if (param.getValue() != null)
+            urlSave.append(param.getValue());
         else
         {
-            id = (String) getProperty(queryable, "_id");
-            if (id != null)
-                urlSave.append(id);
+            param = getProperty(queryable, "_id");
+            if (param.getValue() != null)
+                urlSave.append(param.getValue());
             else
             {
-                id = (String) getProperty(queryable, "docid");
-                if (id != null)
-                    urlSave.append(id);
+                param = getProperty(queryable, "docid");
+                if (param.getValue() != null)
+                    urlSave.append(param.getValue());
             }
         }
         return urlSave.toString();
@@ -271,13 +272,13 @@ public class HttpBuilder
             
             for (String k : KEY_PARAMS_ALLDOCS)
             {
-                Object v = getProperty(queryable, k);
-                if (v != null)
+                Param v = getProperty(queryable, k);
+                if (v.getValue() != null)
                 {
                     if (urlParams.length() > 1)
-                        urlParams.append("&" + k + "=" + v.toString());
+                        urlParams.append("&" + k + "=" + v.getValue());
                     else
-                        urlParams.append(k + "=" + v.toString());
+                        urlParams.append(k + "=" + v.getValue());
                 }
             }
         }
@@ -305,23 +306,23 @@ public class HttpBuilder
         return hostContext + "/";
     }
     
-    private Object getProperty(Queryable queryable, String name)
+    private Param getProperty(Queryable queryable, String name)
     {
-        Object v = null;
+        Param v = null;
         try
         {
             v = queryable.getProperty(name);
         }
         catch (ParameterNotFoundException ignore) { /* parameter not exixts */}
-        return v;
+        return v == null ? new Param() : v;
     }
     
     private void checkUnsupportedQueryParams(Queryable queryable)
     {
         for (String k : KEY_PARAMS_UNSUPPORTED)
         {
-            Object v = getProperty(queryable, k);
-            if (v != null)
+            Param v = getProperty(queryable, k);
+            if (v.getValue() != null)
                 throw new RepositoryException("Query Parameters [" + k + "] isn't supported yet!");
         }
     }

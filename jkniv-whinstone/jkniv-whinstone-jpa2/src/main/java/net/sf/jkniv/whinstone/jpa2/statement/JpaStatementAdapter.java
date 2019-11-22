@@ -37,19 +37,23 @@ import net.sf.jkniv.reflect.NumberFactory;
 import net.sf.jkniv.reflect.Numerical;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
-import net.sf.jkniv.sqlegance.KeyGeneratorType;
+import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.statement.ColumnParserFactory;
+import net.sf.jkniv.sqlegance.types.Convertible;
+import net.sf.jkniv.sqlegance.types.NoConverterType;
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.Groupable;
 import net.sf.jkniv.whinstone.classification.GroupingBy;
 import net.sf.jkniv.whinstone.classification.Transformable.TransformableType;
 import net.sf.jkniv.whinstone.statement.AutoKey;
+import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
@@ -62,12 +66,6 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
     private final HandleableException handlerException;
     private Queryable                 queryable;
     private boolean                   scalar;
-    //private int                       indexIN;
-    //private Class<T>                  returnType;
-    //private ResultRow<T, ResultSet>   resultRow;
-    //private Set<OneToMany>            oneToManies;
-    //private List<String>              groupingBy;
-    //private KeyGeneratorType          keyGeneratorType;
     
     public JpaStatementAdapter(Query query, Queryable queryable, HandleableException handlerException)
     {
@@ -80,28 +78,21 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
     @Override
     public StatementAdapter<T, ResultSet> bind(String name, Object value)
     {
-        log(name, value);
+        log(new Param(value, index, name));
+        //Convertible<Object,Object> convertible = getConverter(new PropertyAccess(name));
         query.setParameter(++index, value);
         return this;
     }
     
-    //    @Override
-    //    public StatementAdapterOld setParameter(int position, Object value)
-    //    {
-    //        this.index = position;
-    //        log(position, value);
-    //        query.setParameter(index+indexIN, value);
-    //        return this;
-    //    }
-    
     @Override
-    public StatementAdapter<T, ResultSet> bind(Object... values)
+    public StatementAdapter<T, ResultSet> bind(Param... values)
     {
         for (int j=0; j < values.length; j++)
         {
-            Object v = values[j];
-            log(index, v);
-            query.setParameter(++index, v);
+            Param param = values[j];
+            log(param);
+            //Convertible<Object,Object> convertible = getConverter(new PropertyAccess(name));            
+            query.setParameter(++index, param.getValue());
         }
         return this;
     }
@@ -111,24 +102,16 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
     {
         int before = index;
         index = 0;
-        //indexIN = 0;
         return before;
     }
     
     @Override
-    public StatementAdapter<T, ResultSet> bind(Object value)
+    public StatementAdapter<T, ResultSet> bind(Param value)
     {
-        log(index, value);
-        query.setParameter(++index, value);
+        log(value);
+        query.setParameter(++index, value.getValue());
         return this;
     }
-    
-//    @Override
-//    public StatementAdapter<T, ResultSet> returnType(Class<T> returnType)
-//    {
-//        this.returnType = returnType;
-//        return this;
-//    }
     
     @Override
     public StatementAdapter<T, ResultSet> with(ResultRow<T, ResultSet> resultRow)
@@ -137,44 +120,10 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
         return this;
     }
     
-//    @Override
-//    public StatementAdapter<T, ResultSet> scalar()
-//    {
-//        this.scalar = true;
-//        return this;
-//    }
-//    
-//    @Override
-//    public StatementAdapter<T, ResultSet> oneToManies(Set<OneToMany> oneToManies)
-//    {
-//        this.oneToManies = oneToManies;
-//        return this;
-//    }
-//    
-//    @Override
-//    public StatementAdapter<T, ResultSet> groupingBy(List<String> groupingBy)
-//    {
-//        this.groupingBy = groupingBy;
-//        return this;
-//    }
-//    
-//    @Override
-//    public StatementAdapter<T, ResultSet> with(KeyGeneratorType keyGeneratorType)
-//    {
-//        this.keyGeneratorType = keyGeneratorType;
-//        return this;
-//    }
-//    
-//    @Override
-//    public KeyGeneratorType getKeyGeneratorType()
-//    {
-//        return this.keyGeneratorType;
-//    }
-    
     @Override
     public void bindKey()
     {
-        // FIXME JPA has native auto-key, How is behavior with NATIVE query
+        // FIXME auto-key forJPA has, How is behavior with NATIVE query
         //        String[] properties = queryable.getDynamicSql().asInsertable().getAutoGeneratedKey().getPropertiesAsArray();
         //        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(queryable.getParams());
         //        Iterator<Object> it = autoKey.iterator();
@@ -185,7 +134,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
     @Override
     public StatementAdapter<T, ResultSet> with(AutoKey generateKey)
     {
-        // FIXME JPA has native auto-key, How is behavior with NATIVE query
+        // FIXME auto-key for JPA native , How is behavior with NATIVE query
         return this;
     }
     
@@ -370,7 +319,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
     @Override
     public void batch()
     {
-        // TODO Auto-generated method stub
+        // TODO batch adapter
         
     }
     
@@ -405,11 +354,11 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
         query.setMaxResults(rows);
     }
     
-    private void log(String name, Object value)
+    private void log(Param param)
     {
         if (SQLLOG.isDebugEnabled())
             SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index,
-                    name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
+                    param.getName(), MASKING.mask(param.getName(), param.getValue()), (param.getValue() == null ? "NULL" : param.getValue().getClass()));
     }
     
     private void log(int position, Object value)
@@ -425,4 +374,17 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
         return !queryable.getDynamicSql().asSelectable().getGroupByAsList().isEmpty();
     }
 
+    /**
+     * Retrieve a {@link Convertible} instance to customize the
+     * value of parameter to database field.
+     * @param column Column of row
+     * @param proxy of return type from query
+     * @return A convertible instance if found into class proxy or {@link NoConverterType}
+     * instance when the field or method is not annotated.
+     */
+    private Convertible<Object, Object> getConverter(PropertyAccess access)
+    {
+        ObjectProxy<?> proxy = ObjectProxyFactory.of(queryable.getParams());
+        return ConvertibleFactory.toJdbc(access, proxy);
+    }
 }

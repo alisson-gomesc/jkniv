@@ -36,11 +36,11 @@ import com.datastax.driver.core.Statement;
 
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.experimental.TimerKeeper;
-import net.sf.jkniv.sqlegance.KeyGeneratorType;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.ResultSetParser;
@@ -182,7 +182,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     }
     
     @Override
-    public StatementAdapter<T, Row> bind(Object value)
+    public StatementAdapter<T, Row> bind(Param value)
     {
         return this;
         /*
@@ -215,7 +215,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     }
     
     @Override
-    public StatementAdapter<T, Row> bind(Object... values)
+    public StatementAdapter<T, Row> bind(Param... values)
     {
         return this;
     }

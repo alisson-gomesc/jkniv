@@ -21,6 +21,7 @@ package net.sf.jkniv.whinstone.params;
 
 import java.util.Iterator;
 
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
@@ -35,7 +36,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 class PositionalCollectionArrayParams extends AbstractParam implements AutoBindParams
 {
     private StatementAdapter<?, ?> stmtAdapter;
-    private Iterator<Object>       it;
+    private Iterator<Param>        it;
     private String                 queryName;
     private String[]               paramsNames;
     
@@ -61,7 +62,7 @@ class PositionalCollectionArrayParams extends AbstractParam implements AutoBindP
         int rowsAfftected = 0;
         while (it.hasNext())
         {
-            Object[] params = (Object[]) it.next();
+            Object[] params = (Object[])it.next().getValue();
             if ((paramsNames.length > 0 && params == null) || (paramsNames.length != params.length))
                 throw new ParameterNotFoundException(
                         "Query [" + queryName + "] expect [" + paramsNames.length + "] parameter(s) but have "
@@ -69,7 +70,7 @@ class PositionalCollectionArrayParams extends AbstractParam implements AutoBindP
             
             for (int i = 0; i < paramsNames.length; i++)
             {
-                stmtAdapter.bind(params[i]);
+                stmtAdapter.bind(new Param(params[i], i, paramsNames[i]));
             }
             rowsAfftected += stmtAdapter.execute();
             stmtAdapter.reset();
