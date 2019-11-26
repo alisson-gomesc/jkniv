@@ -109,7 +109,7 @@ public class QueryableTest
         assertThat(treeMap.isTypeOfArray(), is(false));
         assertThat(treeMap.isTypeOfMap(), is(false));
         assertThat(treeMap.isTypeOfCollection(), is(true));
-        assertThat(treeMap.isTypeOfCollectionFromArray(), is(true));
+        assertThat(treeMap.isTypeOfCollectionArray(), is(true));
 
     }
 

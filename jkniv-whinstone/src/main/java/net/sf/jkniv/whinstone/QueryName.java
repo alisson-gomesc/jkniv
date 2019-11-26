@@ -53,16 +53,17 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings(
+{ "unchecked", "rawtypes" })
 class QueryName implements Queryable
 {
-    private static final Assertable NOT_NULL    = AssertsFactory.getNotNull();
+    private static final Assertable NOT_NULL   = AssertsFactory.getNotNull();
     private static final Assertable IS_NULL    = AssertsFactory.getIsNull();
     private static final BasicType  BASIC_TYPE = BasicType.getInstance();
     
     private enum TYPEOF_PARAM
     {
-        NULL, BASIC, ARRAY_BASIC, ARRAY_POJO, ARRAY_MAP, COLLECTION_BASIC, COLLECTION_POJO, COLLECTION_MAP, COLLECTION_ARRAY, MAP, POJO
+        NULL, BASIC, ARRAY_BASIC, ARRAY_POJO, ARRAY_MAP, COLLECTION_BASIC, COLLECTION_POJO, COLLECTION_MAP, COLLECTION_ARRAY, LIST_BASIC, MAP, POJO
     };
     
     private String       name;
@@ -147,7 +148,7 @@ class QueryName implements Queryable
     @Override
     public <T> T getParams()
     {
-        return (T)this.params;
+        return (T) this.params;
     }
     
     @Override
@@ -169,7 +170,7 @@ class QueryName implements Queryable
         }
         return param;
     }
-
+    
     @Override
     public Param getProperty(String name, int index)
     {
@@ -189,7 +190,7 @@ class QueryName implements Queryable
         }
         return param;
     }
-
+    
     @Override
     public int getOffset()
     {
@@ -264,7 +265,7 @@ class QueryName implements Queryable
     {
         return this.boundParams;
     }
-
+    
     @Override
     public boolean isTypeOfNull()
     {
@@ -276,7 +277,7 @@ class QueryName implements Queryable
     {
         return (this.paramType == TYPEOF_PARAM.BASIC);
     }
-
+    
     @Override
     public boolean isTypeOfPojo()
     {
@@ -284,43 +285,48 @@ class QueryName implements Queryable
     }
     
     @Override
-    public boolean isTypeOfArrayFromBasicTypes()
+    public boolean isTypeOfArrayBasicTypes()
     {
         return (this.paramType == TYPEOF_PARAM.ARRAY_BASIC);
     }
     
     @Override
-    public boolean isTypeOfArrayFromPojo()
+    public boolean isTypeOfArrayPojo()
     {
         return (this.paramType == TYPEOF_PARAM.ARRAY_POJO);
     }
     
     @Override
-    public boolean isTypeOfArrayFromMap()
+    public boolean isTypeOfArrayMap()
     {
         return (this.paramType == TYPEOF_PARAM.ARRAY_MAP);
     }
     
     @Override
-    public boolean isTypeOfCollectionFromBasicTypes()
+    public boolean isTypeOfCollectionBasicTypes()
     {
-        return (this.paramType == TYPEOF_PARAM.COLLECTION_BASIC);
+        return (this.paramType == TYPEOF_PARAM.LIST_BASIC || this.paramType == TYPEOF_PARAM.COLLECTION_BASIC);
+    }
+    
+    private boolean isTypeOfListBasicTypes()
+    {
+        return (this.paramType == TYPEOF_PARAM.LIST_BASIC);
     }
     
     @Override
-    public boolean isTypeOfCollectionFromPojo()
+    public boolean isTypeOfCollectionPojo()
     {
         return (this.paramType == TYPEOF_PARAM.COLLECTION_POJO);
     }
     
     @Override
-    public boolean isTypeOfCollectionFromMap()
+    public boolean isTypeOfCollectionMap()
     {
         return (this.paramType == TYPEOF_PARAM.COLLECTION_MAP);
     }
     
     @Override
-    public boolean isTypeOfCollectionFromArray()
+    public boolean isTypeOfCollectionArray()
     {
         return (this.paramType == TYPEOF_PARAM.COLLECTION_ARRAY);
     }
@@ -328,23 +334,30 @@ class QueryName implements Queryable
     @Override
     public boolean isTypeOfArray()
     {
-        return (this.paramType == TYPEOF_PARAM.ARRAY_BASIC || this.paramType == TYPEOF_PARAM.ARRAY_POJO
-                || this.paramType == TYPEOF_PARAM.ARRAY_MAP);
+        return (this.paramType == TYPEOF_PARAM.ARRAY_BASIC || 
+                this.paramType == TYPEOF_PARAM.ARRAY_POJO || 
+                this.paramType == TYPEOF_PARAM.ARRAY_MAP);
     }
     
     @Override
     public boolean isTypeOfCollection()
     {
-        return (this.paramType == TYPEOF_PARAM.COLLECTION_BASIC || this.paramType == TYPEOF_PARAM.COLLECTION_POJO
-                || this.paramType == TYPEOF_PARAM.COLLECTION_MAP || this.paramType == TYPEOF_PARAM.COLLECTION_ARRAY);
+        return (this.paramType == TYPEOF_PARAM.LIST_BASIC ||  
+                this.paramType == TYPEOF_PARAM.COLLECTION_BASIC || 
+                this.paramType == TYPEOF_PARAM.COLLECTION_POJO || 
+                this.paramType == TYPEOF_PARAM.COLLECTION_MAP || 
+                this.paramType == TYPEOF_PARAM.COLLECTION_ARRAY);
     }
     
     @Override
     public boolean isTypeOfBulk()
     {
-        return (this.paramType == TYPEOF_PARAM.COLLECTION_POJO || this.paramType == TYPEOF_PARAM.COLLECTION_MAP
-                || this.paramType == TYPEOF_PARAM.COLLECTION_ARRAY || this.paramType == TYPEOF_PARAM.ARRAY_MAP
-                || this.paramType == TYPEOF_PARAM.ARRAY_POJO);
+        return (this.paramType == TYPEOF_PARAM.LIST_BASIC || 
+                this.paramType == TYPEOF_PARAM.COLLECTION_POJO || 
+                this.paramType == TYPEOF_PARAM.COLLECTION_MAP || 
+                this.paramType == TYPEOF_PARAM.COLLECTION_ARRAY || 
+                this.paramType == TYPEOF_PARAM.ARRAY_MAP || 
+                this.paramType == TYPEOF_PARAM.ARRAY_POJO);
     }
     
     @Override
@@ -417,7 +430,8 @@ class QueryName implements Queryable
             if (param != null)
             {
                 if (BASIC_TYPE.isBasicType(param.getClass()))
-                    this.paramType = TYPEOF_PARAM.COLLECTION_BASIC;
+                    this.paramType = (this.params instanceof List ? TYPEOF_PARAM.LIST_BASIC
+                            : TYPEOF_PARAM.COLLECTION_BASIC);
                 else if (param instanceof Map)
                     this.paramType = TYPEOF_PARAM.COLLECTION_MAP;
                 else if (param.getClass().isArray())
@@ -434,18 +448,18 @@ class QueryName implements Queryable
         
         Iterator<Param> it = null;
         if (this.params instanceof Map)
-            it = new ArrayIterator((Map)this.params);            //it = ((Map)this.params).values().iterator();
+            it = new ArrayIterator((Map) this.params);
         else if (isTypeOfArray())
-            it = new ArrayIterator((Object[])this.params, this.size);
+            it = new ArrayIterator((Object[]) this.params, this.size);
         else if (isTypeOfCollection())
-            it = new ArrayIterator((Collection)this.params);//((Collection) this.params).iterator();
+            it = new ArrayIterator((Collection) this.params);
         else
             throw new UnsupportedOperationException(
                     "Cannot iterate over another type of object, just Arrays or Collections");
         
         return it;
     }
-
+    
     @Override
     public Param[] values()
     {
@@ -455,33 +469,33 @@ class QueryName implements Queryable
         {
             paramsValues.add(new Param(getParams(), i));
         }
-//        else if(isTypeOfMap())
-//        {
-//            Set<Entry<String,Object>> entries = ((Map)this.params).entrySet();
-//            for(Entry<String, Object> entry : entries)
-//                paramsValues.add(new Param(entry.getValue(), i++, entry.getKey()));
-//        }
-        else if(isTypeOfArrayFromBasicTypes())
-        {
-            if(!hasInClause(paramsNames) && paramsNames.length != getParamsAsArray().length)
-                throw new ParameterException("A query [" + this.name
-                        + "] with positional parameters needs an array exactly have the same number of parameters from query.");
-
-            Object[] arrayOfParams = (Object[])this.params;
-            for(int j=0; j<arrayOfParams.length; j++)
-                paramsValues.add(new Param(arrayOfParams[j], j));
-        }
-        else if(isTypeOfCollectionFromBasicTypes())
-        {
-            if(!hasInClause(paramsNames) && paramsNames.length != getParamsAsCollection().size())
-                throw new ParameterException("A query [" + this.name
-                        + "] with positional parameters needs an collection exactly have the same number of parameters from query.");
-
-            Collection<?> colOfParams = (Collection<?>)this.params;
-            int j=0;
-            for(Object o : colOfParams)
-                paramsValues.add(new Param(o, j++));
-        }
+        ////        else if(isTypeOfMap())
+        ////        {
+        ////            Set<Entry<String,Object>> entries = ((Map)this.params).entrySet();
+        ////            for(Entry<String, Object> entry : entries)
+        ////                paramsValues.add(new Param(entry.getValue(), i++, entry.getKey()));
+        ////        }
+        //        else if(isTypeOfArrayFromBasicTypes())
+        //        {
+        //            if(!hasInClause(paramsNames) && paramsNames.length != getParamsAsArray().length)
+        //                throw new ParameterException("A query [" + this.name
+        //                        + "] with positional parameters needs an array exactly have the same number of parameters from query.");
+        //
+        //            Object[] arrayOfParams = (Object[])this.params;
+        //            for(int j=0; j<arrayOfParams.length; j++)
+        //                paramsValues.add(new Param(arrayOfParams[j], j));
+        //        }
+        //        else if(isTypeOfCollectionFromBasicTypes())
+        //        {
+        //            if(!hasInClause(paramsNames) && paramsNames.length != getParamsAsCollection().size())
+        //                throw new ParameterException("A query [" + this.name
+        //                        + "] with positional parameters needs an collection exactly have the same number of parameters from query.");
+        //
+        //            Collection<?> colOfParams = (Collection<?>)this.params;
+        //            int j=0;
+        //            for(Object o : colOfParams)
+        //                paramsValues.add(new Param(o, j++));
+        //        }
         else
         {
             //int k = 0; // index params for clause IN
@@ -490,19 +504,26 @@ class QueryName implements Queryable
                 Param paramValue = null;
                 if (paramsNames[i].toLowerCase().startsWith("in:"))
                 {
-                    String paramName = paramsNames[i].substring(3, paramsNames[i].length());// :in:myValueArray -> myValueArray 
-                    if (paramValue == null)
-                    {
+                    String paramName = paramsNames[i].substring(3, paramsNames[i].length());// :in:myValueArray -> myValueArray
+                    if (this.size == this.countParams)
+                        paramValue = new Param(this.params, i, name);
+                    else if (isTypeOfArray())
+                        paramValue = new Param(((Object[]) this.params)[i]);
+                    else if (isTypeOfCollection())
+                        paramValue = new Param(((List) this.params).get(i));
+                    else
                         paramValue = getProperty(paramName);
-                    }
+                    
                     Param[] paramsIN = null;
                     if (paramValue.isCollection() || paramValue.isArray())
                         paramsIN = paramValue.asArray();
+                    else
+                        paramsIN = new Param[] { paramValue };
                     
-                    if (paramsIN == null)
+                    if (paramsIN == null || paramValue.getValue() == null)
                         throw new ParameterException(
                                 "Cannot set parameter [" + paramsNames[i] + "] from IN clause with NULL");
-
+                    
                     int j = 0;
                     for (; j < paramsIN.length; j++)
                         paramsValues.add(paramsIN[j]);
@@ -522,14 +543,19 @@ class QueryName implements Queryable
                 }
                 else if ("?".equals(name))
                 {
-                    if(isTypeOfArrayFromBasicTypes())
-                    {
-                        paramsValues.add(new Param(getParamsAsArray()[i], i, name));
-                    }
-//                    else if(isTypeOfCollectionFromBasicTypes())
+                    if (this.size != paramsNames.length && !hasInClause(paramsNames))
+                        throw new ParameterException("A query [" + this.name
+                                + "] with positional parameters needs an array exactly have the same number of parameters from query.");
+                    
+                    paramsValues.add(getParamsFromIndex(i));
+//                    if (isTypeOfArrayBasicTypes())
 //                    {
-//                        paramsValues.add(((Collection)this.params). ); CANNOT ACCESS COLLECTION BY INDEX
+//                        paramsValues.add(new Param(getParamsAsArray()[i], i, name));
 //                    }
+                    //                    else if(isTypeOfCollectionBasicTypes())
+                    //                    {
+                    //                        paramsValues.add(((Collection)this.params). ); CANNOT ACCESS COLLECTION BY INDEX
+                    //                    }
                 }
                 else
                     paramsValues.add(getProperty(name, i));
@@ -542,7 +568,8 @@ class QueryName implements Queryable
     @Override
     public void bind(Sql sql)//TODO test Queryable.bind method
     {
-        IS_NULL.verify(new IllegalStateException("Cannot re-assign new Sql to queryable ["+this.name+"] object"), this.sql);
+        IS_NULL.verify(new IllegalStateException("Cannot re-assign new Sql to queryable [" + this.name + "] object"),
+                this.sql);
         NOT_NULL.verify(sql);
         this.sql = sql;
         this.sqlText = sql.getSql(this.params);
@@ -551,7 +578,7 @@ class QueryName implements Queryable
         if (sql.isSelectable() && isPaging())
         {
             pagingSelect = true;
-            if(sqlDialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY))
+            if (sqlDialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY))
                 this.sqlTextPaginated = sqlDialect.buildQueryPaging(sqlText, this.offset, this.max, this.bookmark);
             else
                 this.sqlTextPaginated = sqlDialect.buildQueryPaging(sqlText, this.offset, this.max);
@@ -575,15 +602,15 @@ class QueryName implements Queryable
             prepareParams = PrepareParamsFactory.newNoParams(adapter);
         else if (isTypeOfBasic() || params instanceof Date || params instanceof Calendar)
             prepareParams = PrepareParamsFactory.newBasicParam(adapter, this);
-        else if (isTypeOfArrayFromBasicTypes())
+        else if (isTypeOfArrayBasicTypes())
             prepareParams = PrepareParamsFactory.newPositionalArrayParams(adapter, this);
-        else if (isTypeOfArrayFromMap() || isTypeOfCollectionFromMap())
+        else if (isTypeOfArrayMap() || isTypeOfCollectionMap())
             prepareParams = PrepareParamsFactory.newPositionalCollectionMapParams(adapter, this);
-        else if (isTypeOfArrayFromPojo() || isTypeOfCollectionFromPojo())
+        else if (isTypeOfArrayPojo() || isTypeOfCollectionPojo())
             prepareParams = PrepareParamsFactory.newPositionalCollectionPojoParams(adapter, this);
-        else if (isTypeOfCollectionFromBasicTypes())
+        else if (isTypeOfCollectionBasicTypes())
             prepareParams = PrepareParamsFactory.newPositionalCollectionParams(adapter, this);
-        else if (isTypeOfCollectionFromArray())
+        else if (isTypeOfCollectionArray())
             prepareParams = PrepareParamsFactory.newPositionalCollectionArrayParams(adapter, this);
         else if (sql.getParamParser().getType() == ParamMarkType.QUESTION)
             prepareParams = PrepareParamsFactory.newPositionalParams(adapter, this);
@@ -657,7 +684,7 @@ class QueryName implements Queryable
     {
         return this.sql;
     }
-
+    
     @Override
     public Class<?> getReturnType()
     {
@@ -676,8 +703,6 @@ class QueryName implements Queryable
         this.returnType = clazz;
     }
     
-
-    
     @Override
     public int hashCode()
     {
@@ -691,7 +716,7 @@ class QueryName implements Queryable
         result = prime * result + ((sql == null) ? 0 : sql.hashCode());
         return result;
     }
-
+    
     @Override
     public boolean equals(Object obj)
     {
@@ -741,36 +766,36 @@ class QueryName implements Queryable
             return false;
         return true;
     }
-
+    
     @Override
     public String toString()
     {
         return "QueryName [name=" + name + ", offset=" + offset + ", max=" + max + ", timeout=" + timeout + ", batch="
                 + batch + ", scalar=" + scalar + ", paramType=" + paramType + "]";
     }
-
+    
     @Override
     public void cacheIgnore()
     {
         this.cacheIgnore = true;
     }
-
+    
     @Override
     public boolean isCacheIgnore()
     {
         return this.cacheIgnore;
     }
-
+    
     @Override
     public void cached()
     {
-        this.cached = true;        
+        this.cached = true;
     }
-
+    
     @Override
     public boolean isCached()
     {
-        return this.cached;        
+        return this.cached;
     }
     
     @Override
@@ -778,29 +803,61 @@ class QueryName implements Queryable
     {
         this.bookmark = bookmark;
     }
-
+    
     @Override
     public String getBookmark()
     {
         return this.bookmark;
     }
     
-    private Collection<?> getParamsAsCollection() 
+    private Collection<?> getParamsAsCollection()
     {
-        if(this.params == null)
+        if (this.params == null)
             return Collections.emptyList();
         
         return (Collection<?>) this.params;
     }
-
-    private Object[] getParamsAsArray() 
+    
+    private Object[] getParamsAsArray()
     {
-        if(this.params == null)
+        if (this.params == null)
             return new Object[0];
         
         return (Object[]) this.params;
     }
-
+    
+    private Param getParamsFromIndex(int i)
+    {
+        Param param = new Param();
+        if (this.params == null)
+        {
+            // nothing
+        }
+        else if (isTypeOfArrayBasicTypes())
+        {
+            param = new Param(((Object[]) this.params)[i], i, "?");
+        }
+        else if (isTypeOfListBasicTypes())
+        {
+            param = new Param(((List) this.params).get(i), i, "?");
+        }
+        else if (isTypeOfCollectionBasicTypes())
+        {
+            Iterator<Object> it = ((Collection<Object>) this.params).iterator();
+            int j = 0;
+            while (it.hasNext())
+            {
+                if (j == i)
+                {
+                    param = new Param(it.next(), i, "?");
+                    break;
+                }
+                j++;
+            }
+        }
+        return param;
+    }
+    
     private boolean hasInClause(String[] paramsNames)
     {
         for (String p : paramsNames)
@@ -815,7 +872,7 @@ class QueryName implements Queryable
     {
         return (paramName.toLowerCase().startsWith("in:"));
     }
-/*
+    /*
     private void checkIfParamIsEntity() {
         ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(this.params);
         proxy.ge
@@ -824,7 +881,7 @@ class QueryName implements Queryable
             this.returnTypeManaged = returnTypeClass.isAnnotationPresent(entityAnnotation);
         
     }
-
+    
     private Class<?> forName(String typeOfClass)
     {
         try
@@ -834,5 +891,5 @@ class QueryName implements Queryable
         catch (ClassNotFoundException returnNULL) {  // TODO ClassNotFoundException NULL type, returnType undefined 
         return null;
     }
-*/
+    */
 }

@@ -61,6 +61,13 @@ public class SqlSelectGroupingByTest extends BaseJdbc
     }
     
     @Test
+    public void whenSelectRecordsUsingInClauseWithArray2()
+    {
+        Queryable q = QueryFactory.ofArray("getBooksFromAuthorUsingIN", "Albert Camus", "Franz Kafka", "Martin Fowler");
+        List<FlatAuthor> list = repositoryDerby.list(q);
+        assertThat(list.size(), is(9));
+    }
+    @Test
     public void whenSelectRecordsUsingInClauseWithCollections()
     {
         String a = "Albert Camus", b = "Franz Kafka", c = "Martin Fowler";

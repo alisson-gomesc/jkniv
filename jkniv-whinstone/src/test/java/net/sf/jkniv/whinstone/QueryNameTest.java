@@ -19,11 +19,14 @@
  */
 package net.sf.jkniv.whinstone;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.arrayContaining;
+import static org.hamcrest.Matchers.arrayWithSize;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
@@ -34,6 +37,8 @@ import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -51,6 +56,7 @@ import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
+import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.params.ParamParser;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
@@ -92,8 +98,6 @@ public class QueryNameTest
         Queryable queryWithPage = QueryFactory.of("dummy", 10, 10);
         assertThat(queryWithPage.isPaging(), is(true));
         assertThat(queryWithPage.hasRowsOffset(), is(true));
-        
-        
         //verify(dialect).buildQueryPaging(anyString(), anyInt(), anyInt());
         //when(mockedObject.play(Matchers.<Class<T>>any())).thenReturn(object);
     }
@@ -103,7 +107,6 @@ public class QueryNameTest
     {
         given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(true);
         //given(this.dialect.buildQueryPaging(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(true);
-        
         Queryable queryNoPage = QueryFactory.of("dummy");
         assertThat(queryNoPage.isPaging(), is(false));
         assertThat(queryNoPage.hasRowsOffset(), is(false));
@@ -126,7 +129,7 @@ public class QueryNameTest
         assertThat(query.isCacheIgnore(), is(true));
     }
 
-    @Test//error
+    @Test
     public void whenQueryReturnType()
     {
         Queryable query = QueryFactory.of("dummy");
@@ -232,36 +235,34 @@ public class QueryNameTest
         //assertThat(QueryFactory.of("dummy", Calendar.getInstance()).isTypeOfBasic(), is(true));
 
         assertThat(QueryFactory.ofArray("dummy", "A", "B", "C").isTypeOfArray(), is(true));
-        assertThat(QueryFactory.ofArray("dummy", "A", "B", "C").isTypeOfArrayFromBasicTypes(), is(true));
+        assertThat(QueryFactory.ofArray("dummy", "A", "B", "C").isTypeOfArrayBasicTypes(), is(true));
         
         
         Object[] paramAsArray = new Object[1];
         Map<String, Object> map = new HashMap<String, Object>();
         paramAsArray[0] = map;
-        assertThat(QueryFactory.ofArray("dummy", paramAsArray).isTypeOfArrayFromMap(), is(true));
+        assertThat(QueryFactory.ofArray("dummy", paramAsArray).isTypeOfArrayMap(), is(true));
         
         paramAsArray[0] = new AuthorFlat();
-        assertThat(QueryFactory.ofArray("dummy", paramAsArray).isTypeOfArrayFromPojo(), is(true));
-
+        assertThat(QueryFactory.ofArray("dummy", paramAsArray).isTypeOfArrayPojo(), is(true));
         
         List<Object> paramsAsList = new ArrayList<Object>();
         paramsAsList.add(new String[]{"A", "B", "C"});
         assertThat(QueryFactory.of("dummy", Arrays.asList("A", "B", "C")).isTypeOfCollection(), is(true));
-        assertThat(QueryFactory.of("dummy", Arrays.asList("A", "B", "C")).isTypeOfBulk(), is(false));
-        assertThat(QueryFactory.of("dummy", Arrays.asList("A", "B", "C")).isTypeOfCollectionFromBasicTypes(), is(true));
-        assertThat(QueryFactory.of("dummy", paramsAsList).isTypeOfCollectionFromArray(), is(true));
+        assertThat(QueryFactory.of("dummy", Arrays.asList("A", "B", "C")).isTypeOfBulk(), is(true));
+        assertThat(QueryFactory.of("dummy", Arrays.asList("A", "B", "C")).isTypeOfCollectionBasicTypes(), is(true));
+        assertThat(QueryFactory.of("dummy", paramsAsList).isTypeOfCollectionArray(), is(true));
         assertThat(QueryFactory.of("dummy", paramsAsList).isTypeOfBulk(), is(true));
         
         paramsAsList.clear(); paramsAsList.add(map);
-        assertThat(QueryFactory.of("dummy", paramsAsList).isTypeOfCollectionFromMap(), is(true));
+        assertThat(QueryFactory.of("dummy", paramsAsList).isTypeOfCollectionMap(), is(true));
         assertThat(QueryFactory.of("dummy", paramsAsList).isTypeOfBulk(), is(true));
         paramsAsList.clear(); paramsAsList.add(new AuthorFlat());
-        assertThat(QueryFactory.of("dummy", paramsAsList).isTypeOfCollectionFromPojo(), is(true));
+        assertThat(QueryFactory.of("dummy", paramsAsList).isTypeOfCollectionPojo(), is(true));
         assertThat(QueryFactory.of("dummy", paramsAsList).isTypeOfBulk(), is(true));
 
         assertThat(QueryFactory.of("dummy", "A", "B", "C").isTypeOfMap(), is(true));
         assertThat(QueryFactory.of("dummy").isTypeOfNull(), is(true));
-
     }
 
     @Test
@@ -332,13 +333,169 @@ public class QueryNameTest
     {
         Queryable q1 = QueryFactory.of("dummy1");
         Queryable q2 = QueryFactory.of("dummy2");
-        
-        
         assertThat(q1.equals(q2), is(false));
     }
 
     @Test
-    public void whenToString()
+    public void whenBindValuesWithNoParams()
+    {
+        Queryable query = QueryFactory.of("dummy");
+        given(this.sql.isSelectable()).willReturn(true);
+        given(this.sql.getSqlDialect()).willReturn(this.dialect);
+        given(this.sql.getParamParser()).willReturn(this.paramParser);
+        given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author");
+        given(this.paramParser.find(anyString())).willReturn(new String[]{});
+        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author");
+        given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);        
+        query.bind(this.sql);
+        query.bind(stmt);
+        assertThat(query.isBoundSql(), is(true));
+        assertThat(query.isBoundParams(), is(true));
+        assertThat(query.getProperty("name"), nullValue());
+        assertThat(query.getProperty("id"), nullValue());
+        assertThat(query.isTypeOfNull(), is(true));
+        assertThat(query.getParamsNames(), is(arrayWithSize(0)));
+        assertThat(query.values(), is(arrayWithSize(0)));
+        assertThat(query.query(), is("select id, name, description from author"));
+    }
+
+    @Test
+    public void whenBindValuesWithBasicParam()
+    {
+        Queryable query = QueryFactory.of("dummy", "id", 10, "name", "john");
+        given(this.sql.isSelectable()).willReturn(true);
+        given(this.sql.getSqlDialect()).willReturn(this.dialect);
+        given(this.sql.getParamParser()).willReturn(this.paramParser);
+        given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where id = :id and name = :name");
+        given(this.paramParser.find(anyString())).willReturn(new String[]{"id","name"});
+        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
+        given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
+        
+        query.bind(this.sql);
+        query.bind(stmt);
+        assertThat(query.isBoundSql(), is(true));
+        assertThat(query.isBoundParams(), is(true));
+        assertThat(query.isTypeOfMap(), is(true));
+        assertThat(query.query(), is("select id, name, description from author where id = ? and name = ?"));
+        assertThat(query.getParamsNames(), is(arrayWithSize(2)));
+        assertThat(query.getParamsNames(), arrayContaining("id","name"));
+        assertThat(query.values(), is(arrayWithSize(2)));
+        assertThat(query.values(), arrayContaining(new Param(10,0,"id"),new Param("john", 1, "name")));
+        given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
+    }
+    
+    @Test
+    public void whenBindValuesWithBasicParamDate()
+    {
+        Date d = new Date();
+        Queryable query = QueryFactory.of("dummy", d);
+        given(this.sql.isSelectable()).willReturn(true);
+        given(this.sql.getSqlDialect()).willReturn(this.dialect);
+        given(this.sql.getParamParser()).willReturn(this.paramParser);
+        given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where born = ?");
+        given(this.paramParser.find(anyString())).willReturn(new String[]{"?"});
+        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where born = ?");
+        given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
+        
+        query.bind(this.sql);
+        query.bind(stmt);
+        assertThat(query.isBoundSql(), is(true));
+        assertThat(query.isBoundParams(), is(true));
+        assertThat(query.isTypeOfBasic(), is(true));
+        assertThat(query.getParams(), instanceOf(Date.class));
+        assertThat(query.query(), is("select id, name, description from author where born = ?"));
+        assertThat(query.getParamsNames(), is(arrayWithSize(1)));
+        assertThat(query.getParamsNames(), arrayContaining("?"));
+        assertThat(query.values(), is(arrayWithSize(1)));
+        assertThat(query.values(), arrayContaining(new Param(d,0,"?")));
+        given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
+    }
+
+    @Test
+    public void whenBindValuesWithBasicParamCalendar()
+    {
+        Calendar d = Calendar.getInstance();
+        Queryable query = QueryFactory.of("dummy", d);
+        given(this.sql.isSelectable()).willReturn(true);
+        given(this.sql.getSqlDialect()).willReturn(this.dialect);
+        given(this.sql.getParamParser()).willReturn(this.paramParser);
+        given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where born = ?");
+        given(this.paramParser.find(anyString())).willReturn(new String[]{"?"});
+        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where born = ?");
+        given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
+        
+        query.bind(this.sql);
+        query.bind(stmt);
+        assertThat(query.isBoundSql(), is(true));
+        assertThat(query.isBoundParams(), is(true));
+        assertThat(query.isTypeOfBasic(), is(true));
+        assertThat(query.getParams(), instanceOf(Calendar.class));
+        assertThat(query.query(), is("select id, name, description from author where born = ?"));
+        assertThat(query.getParamsNames(), is(arrayWithSize(1)));
+        assertThat(query.getParamsNames(), arrayContaining("?"));
+        assertThat(query.values(), is(arrayWithSize(1)));
+        assertThat(query.values(), arrayContaining(new Param(d,0,"?")));
+        given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
+    }
+
+    @Test
+    public void whenBindValuesWithPositionalArrayParams()
+    {
+        Object[] params = new Object[]{10, "john"};
+        Queryable query = QueryFactory.ofArray("dummy", params);
+        given(this.sql.isSelectable()).willReturn(true);
+        given(this.sql.getSqlDialect()).willReturn(this.dialect);
+        given(this.sql.getParamParser()).willReturn(this.paramParser);
+        given(this.paramParser.getType()).willReturn(ParamMarkType.QUESTION);
+        given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
+        given(this.paramParser.find(anyString())).willReturn(new String[]{"?","?"});
+        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
+        given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
+        
+        query.bind(this.sql);
+        query.bind(stmt);
+        assertThat(query.isBoundSql(), is(true));
+        assertThat(query.isBoundParams(), is(true));
+        assertThat(query.isTypeOfArrayBasicTypes(), is(true));
+        assertThat(query.query(), is("select id, name, description from author where id = ? and name = ?"));
+        assertThat(query.getParamsNames(), is(arrayWithSize(2)));
+        assertThat(query.getParamsNames(), arrayContaining("?","?"));
+        assertThat(query.values(), is(arrayWithSize(2)));
+        assertThat(query.values(), arrayContaining(new Param(10,0,"?"),new Param("john", 1, "?")));
+        given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
+    }
+
+    @Test
+    public void whenBindValuesWithPositionalArrayParamsWithClauseIn()
+    {
+        Integer[] status = new Integer[] {1,2,3};
+        Object[] params = new Object[]{10, "john", status};
+        Queryable query = QueryFactory.ofArray("dummy", params);
+        given(this.sql.isSelectable()).willReturn(true);
+        given(this.sql.getSqlDialect()).willReturn(this.dialect);
+        given(this.sql.getParamParser()).willReturn(this.paramParser);
+        given(this.paramParser.getType()).willReturn(ParamMarkType.QUESTION);
+        given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where id = ? and name = ? and status in (:in:status)");
+        given(this.paramParser.find(anyString())).willReturn(new String[]{"?","?","in:status"});
+        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ? and status in (?,?,?)");
+        given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
+        
+        query.bind(this.sql);
+        query.bind(stmt);
+        assertThat(query.isBoundSql(), is(true));
+        assertThat(query.isBoundParams(), is(true));
+        assertThat(query.isTypeOfArrayBasicTypes(), is(true));
+        assertThat(query.query(), is("select id, name, description from author where id = ? and name = ? and status in (?,?,?)"));
+        assertThat(query.getParamsNames(), is(arrayWithSize(3)));
+        assertThat(query.getParamsNames(), arrayContaining("?","?","in:status"));
+        assertThat(query.values(), is(arrayWithSize(5)));
+        assertThat(query.values(), arrayContaining(new Param(10,0,"?"),new Param("john", 1, "?"),
+                new Param(status[0], 2, "?"),new Param(status[1], 3, "?"),new Param(status[2], 4, "?")   ));
+        given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
+    }
+    
+    @Test
+    public void whenInvokeToString()
     {
         assertThat(QueryFactory.of("dummy").toString(), notNullValue());
     }

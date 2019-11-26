@@ -43,9 +43,9 @@ class PositionalCollectionParams extends AbstractParam implements AutoBindParams
     public void on()
     {
         //Object[] objs = ((Collection<?>) params).toArray(new Object[0]);
-        if (params.length != paramsNames.length && !hasInClause(paramsNames))
-            throw new ParameterException("A query [" + queryName
-                    + "] with positional parameters needs an array exactly have the same number of parameters from query.");
+//        if (params.length != paramsNames.length && !hasInClause(paramsNames))
+//            throw new ParameterException("A query [" + queryName
+//                    + "] with positional parameters needs an array exactly have the same number of parameters from query.");
         
         for (Param o : params)
         {

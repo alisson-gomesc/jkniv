@@ -373,7 +373,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     {
         Convertible<Object, Object> convertible = NoConverterType.getInstance();
         if(queryable.getParams() != null &&
-           (queryable.isTypeOfPojo() || queryable.isTypeOfCollectionFromPojo() || queryable.isTypeOfArrayFromPojo()))
+           (queryable.isTypeOfPojo() || queryable.isTypeOfCollectionPojo() || queryable.isTypeOfArrayPojo()))
         {
             ObjectProxy<?> proxy = ObjectProxyFactory.of(queryable.getParams());
             convertible = ConvertibleFactory.toJdbc(new PropertyAccess(fieldName, queryable.getParams().getClass()), proxy);

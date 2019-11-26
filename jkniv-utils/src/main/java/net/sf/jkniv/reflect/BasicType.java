@@ -145,9 +145,9 @@ public class BasicType
             isBasic = true;        
         else if (Boolean.class.getCanonicalName().equals(type.getCanonicalName()) || boolean.class.getCanonicalName().equals(type.getCanonicalName()))
             isBasic = true;
-        if(Date.class.getCanonicalName().equals(type.getCanonicalName()))
+        else if(Date.class.isAssignableFrom(type))
             isBasic = true;
-        if(Calendar.class.getCanonicalName().equals(type.getCanonicalName()))
+        else if(Calendar.class.isAssignableFrom(type))
             isBasic = true;
         else if (BigDecimal.class.getCanonicalName().equals(type.getCanonicalName()))
             isBasic = true;

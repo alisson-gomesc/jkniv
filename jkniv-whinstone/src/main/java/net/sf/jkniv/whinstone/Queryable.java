@@ -178,19 +178,19 @@ public interface Queryable
     
     boolean isTypeOfBasic();
 
-    boolean isTypeOfArrayFromBasicTypes();
+    boolean isTypeOfArrayBasicTypes();
 
-    boolean isTypeOfCollectionFromBasicTypes();
+    boolean isTypeOfCollectionBasicTypes();
 
-    boolean isTypeOfArrayFromPojo();
+    boolean isTypeOfArrayPojo();
 
-    boolean isTypeOfArrayFromMap();
+    boolean isTypeOfArrayMap();
 
-    boolean isTypeOfCollectionFromMap();
+    boolean isTypeOfCollectionMap();
     
-    boolean isTypeOfCollectionFromPojo();
+    boolean isTypeOfCollectionPojo();
 
-    boolean isTypeOfCollectionFromArray();
+    boolean isTypeOfCollectionArray();
     
     /**
      * verify if the parameter is an array

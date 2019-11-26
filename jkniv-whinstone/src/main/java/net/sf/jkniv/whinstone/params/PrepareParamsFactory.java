@@ -42,9 +42,9 @@ public class PrepareParamsFactory
             prepareParams = new NoParams(adapter);
         else if (queryable.isTypeOfBasic() || queryable.getParams() instanceof Date || queryable.getParams() instanceof Calendar)
             prepareParams = new BasicParam(adapter, queryable);
-        else if (queryable.isTypeOfArrayFromBasicTypes())
+        else if (queryable.isTypeOfArrayBasicTypes())
             prepareParams = new PositionalArrayParams(adapter, queryable);
-        else if (queryable.isTypeOfCollectionFromBasicTypes())
+        else if (queryable.isTypeOfCollectionBasicTypes())
             prepareParams = new PositionalCollectionParams(adapter, queryable);
         else if (queryable.getDynamicSql().getParamParser().getType() == ParamMarkType.QUESTION)
             prepareParams = new PositionalParams(adapter, queryable);
