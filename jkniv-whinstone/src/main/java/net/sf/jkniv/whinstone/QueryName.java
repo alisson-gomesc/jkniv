@@ -352,8 +352,7 @@ class QueryName implements Queryable
     @Override
     public boolean isTypeOfBulk()
     {
-        return (this.paramType == TYPEOF_PARAM.LIST_BASIC || 
-                this.paramType == TYPEOF_PARAM.COLLECTION_POJO || 
+        return (this.paramType == TYPEOF_PARAM.COLLECTION_POJO || 
                 this.paramType == TYPEOF_PARAM.COLLECTION_MAP || 
                 this.paramType == TYPEOF_PARAM.COLLECTION_ARRAY || 
                 this.paramType == TYPEOF_PARAM.ARRAY_MAP || 
@@ -469,6 +468,12 @@ class QueryName implements Queryable
         {
             paramsValues.add(new Param(getParams(), i));
         }
+        else if (isTypeOfBulk()) 
+        {
+            Iterator<Param>  it = iterator();
+            while(it.hasNext())
+                paramsValues.add(it.next());
+        }
         ////        else if(isTypeOfMap())
         ////        {
         ////            Set<Entry<String,Object>> entries = ((Map)this.params).entrySet();
@@ -507,12 +512,18 @@ class QueryName implements Queryable
                     String paramName = paramsNames[i].substring(3, paramsNames[i].length());// :in:myValueArray -> myValueArray
                     if (this.size == this.countParams)
                         paramValue = new Param(this.params, i, name);
-                    else if (isTypeOfArray())
-                        paramValue = new Param(((Object[]) this.params)[i]);
-                    else if (isTypeOfCollection())
-                        paramValue = new Param(((List) this.params).get(i));
                     else
+                        paramValue = getParamsFromIndex(i);
+                    
+                    if (paramValue == null)
                         paramValue = getProperty(paramName);
+                    
+//                    else if (isTypeOfArray())
+//                        paramValue = new Param(((Object[]) this.params)[i]);
+//                    else if (isTypeOfCollection())
+//                        paramValue = new Param(((List) this.params).get(i));
+//                    else
+//                        paramValue = getProperty(paramName);
                     
                     Param[] paramsIN = null;
                     if (paramValue.isCollection() || paramValue.isArray())
@@ -520,7 +531,7 @@ class QueryName implements Queryable
                     else
                         paramsIN = new Param[] { paramValue };
                     
-                    if (paramsIN == null || paramValue.getValue() == null)
+                    if (paramValue.getValue() == null)
                         throw new ParameterException(
                                 "Cannot set parameter [" + paramsNames[i] + "] from IN clause with NULL");
                     
@@ -828,10 +839,10 @@ class QueryName implements Queryable
     
     private Param getParamsFromIndex(int i)
     {
-        Param param = new Param();
+        Param param = null;
         if (this.params == null)
         {
-            // nothing
+            param = new Param();
         }
         else if (isTypeOfArrayBasicTypes())
         {
