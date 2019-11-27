@@ -70,7 +70,7 @@ class PositionalCollectionArrayParams extends AbstractParam implements AutoBindP
             
             for (int i = 0; i < paramsNames.length; i++)
             {
-                stmtAdapter.bind(new Param(params[i], i, paramsNames[i]));
+                stmtAdapter.bind(new Param(params[i], paramsNames[i], i));
             }
             rowsAfftected += stmtAdapter.execute();
             stmtAdapter.reset();

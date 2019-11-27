@@ -43,6 +43,7 @@ import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.ObjectTransform;
 import net.sf.jkniv.whinstone.classification.Transformable;
+import net.sf.jkniv.whinstone.statement.AbstractResultRow;
 
 /**
  * 
@@ -54,7 +55,7 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-class PojoResultRow<T> implements ResultRow<T, Row>
+class PojoResultRow<T> extends AbstractResultRow implements ResultRow<T, Row>
 {
     private final static Logger      LOG    = LoggerFactory.getLogger(PojoResultRow.class);
     private static final Logger      SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
@@ -74,6 +75,7 @@ class PojoResultRow<T> implements ResultRow<T, Row>
     @SuppressWarnings("unchecked")
     public PojoResultRow(Class<T> returnType, JdbcColumn<Row>[] columns, Set<OneToMany> oneToManies)
     {
+        super(SQLLOG, MASKING);
         this.returnType = returnType;
         this.columns = columns;
         this.oneToManies = oneToManies;
@@ -118,11 +120,11 @@ class PojoResultRow<T> implements ResultRow<T, Row>
     private void setValueOf(JdbcColumn<Row> column, Row rs, ObjectProxy<T> proxy) throws SQLException
     {
         Injectable<T> reflect = InjectableFactory.of(proxy);
-        Object jdbcObject = null;
-        if (column.isBinary())
-            jdbcObject = column.getBytes(rs);
-        else
-            jdbcObject = column.getValue(rs);
+        Object jdbcObject = getValueOf(column, rs);
+//        if (column.isBinary())
+//            jdbcObject = column.getBytes(rs);
+//        else
+//            jdbcObject = column.getValue(rs);
 
         if(SQLLOG.isTraceEnabled())
             SQLLOG.trace("Mapping index [{}] column [{}] type of [{}] to value [{}]", 
@@ -167,11 +169,7 @@ class PojoResultRow<T> implements ResultRow<T, Row>
     {
         ObjectProxy<?> proxy = ObjectProxyFactory.of(otmValues.get(otm));
         Injectable<?> reflect = InjectableFactory.of(proxy);
-        Object jdbcObject = null;
-        if (column.isBinary())
-            jdbcObject = column.getBytes(rs);
-        else
-            jdbcObject = column.getValue(rs);
+        Object jdbcObject = getValueOf(column, rs);
         // otm.property : 'book', JdbcColumn: book.name, capitalize -> setName
         String method = CAPITAL_SETTER.does(column.getName().substring(otm.getProperty().length() + 1));
         
@@ -183,51 +181,7 @@ class PojoResultRow<T> implements ResultRow<T, Row>
 
         reflect.inject(method, jdbcObject);
     }
-    /*
-    private void __prepareOneToManyValue__(OneToMany otm, JdbcColumn column, Row rs) throws SQLException
-    {
-        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(otmValues.get(otm));
-        Injectable<?> reflect = InjectableFactory.newMethodInjection(proxy);
-        Object jdbcObject = null;
-        if (column.isBinary())
-            jdbcObject = column.getBytes(rs);
-        else
-            jdbcObject = column.getValue(rs);
-        
-        // otm.property : 'book', JdbcColumn: book.name, capitalize -> setName
-        String attrName = column.getName().substring(otm.getProperty().length()+1);
-        String getterName = GETTER.capitalize(attrName);
-        String setterName = SETTER.capitalize(attrName);
-        Collection<?> collection = (Collection<?>) reflect.inject(getterName, jdbcObject);
-        if (collection ==    null)
-        {
-            collection = (Collection<?>) ObjectProxyFactory.newProxy(otm.getImpl()).newInstance();
-        }
-        //String method = SETTER.capitalize(column.getName().substring(otm.getProperty().length()+1));
-        reflect.inject(method, jdbcObject);
-    }
-    */
-    /*
-     * Append prefix <code>set<code> to attributeColumnName and capitalize it.
-     * @param attributeColumnName attribute name to capitalize with <code>set</code> prefix
-     * @return return capitalize attribute name, sample: identityName -> setIdentityName
-     *
-    private String capitalizeSetter(String attributeColumnName)// TODO design config capitalize algorithm
-    {
-        String capitalize = "";
-        
-        if (attributeColumnName != null)
-        {
-            int length = attributeColumnName.length();
-            capitalize = attributeColumnName.substring(0, 1).toUpperCase(Locale.ENGLISH);
-            if (length > 1)
-                capitalize += attributeColumnName.substring(1, length);
-        }
-        //sqlLogger.log(LogLevel.RESULTSET, "Mapping column [{}] to property [{}]", attributeColumnName, "set" + capitalize);
-        return "set" + capitalize;
-    }
-    */
-    
+
     @Override
     public Transformable<T> getTransformable()
     {
@@ -239,5 +193,4 @@ class PojoResultRow<T> implements ResultRow<T, Row>
     {
         this.columns = columns;
     }
-    
 }

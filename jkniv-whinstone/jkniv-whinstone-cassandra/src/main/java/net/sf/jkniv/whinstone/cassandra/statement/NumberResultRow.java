@@ -31,6 +31,7 @@ import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.Transformable;
+import net.sf.jkniv.whinstone.statement.AbstractResultRow;
 
 /**
  * 
@@ -40,7 +41,7 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-class NumberResultRow<T> implements ResultRow<T, Row>
+class NumberResultRow<T> extends AbstractResultRow implements ResultRow<T, Row>
 {
     private static final Logger      SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
     private static final DataMasking MASKING = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getDataMasking();
@@ -54,6 +55,7 @@ class NumberResultRow<T> implements ResultRow<T, Row>
 
     public NumberResultRow(Class<T> returnType, JdbcColumn<Row>[] columns)
     {
+        super(SQLLOG, MASKING);
         this.columns = columns;
         this.numerical = NumberFactory.getInstance(returnType.getCanonicalName());
     }
@@ -61,11 +63,7 @@ class NumberResultRow<T> implements ResultRow<T, Row>
     @SuppressWarnings("unchecked")
     public T row(Row rs, int rownum) throws SQLException
     {
-        Object jdbcObject = null;
-        if (columns[0].isBinary())
-            jdbcObject = columns[0].getBytes(rs);
-        else
-            jdbcObject = columns[0].getValue(rs);
+        Object jdbcObject = getValueOf(columns[0], rs);
         
         if(SQLLOG.isTraceEnabled())
             SQLLOG.trace("Mapping index [0] column [{}] type of [{}] to value [{}]", 
@@ -73,10 +71,6 @@ class NumberResultRow<T> implements ResultRow<T, Row>
                 (numerical != null ? numerical.getClass().getCanonicalName() : "null"), 
                 MASKING.mask(columns[0].getAttributeName(), jdbcObject));
         
-//        if(SQLLOG.isTraceEnabled())
-//            SQLLOG.trace("Column index [0] named [{}] type of [{}] with value [{}]", 
-//                    columns[0].getAttributeName(), 
-//                    numerical.getClass().getCanonicalName(), jdbcObject);
         return (T) numerical.valueOf(jdbcObject);
     }
 

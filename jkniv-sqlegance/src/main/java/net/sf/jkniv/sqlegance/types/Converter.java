@@ -43,13 +43,19 @@ public @interface Converter
     
     /**
      * Specifies the converter to be used.
+     * @return {@code void.class} as default
      */
     Class converter() default void.class;
     
     /**
      * The pattern describing to be used to define or formatter a value.
+     * @return empty pattern as default
      */
     String pattern() default "";
     
+    /**
+     * the enum type {@code ORDINAL} or {@code STRING}
+     * @return {@code EnumType.NONE} as default
+     */
     EnumType isEnum() default EnumType.NONE;
 }

@@ -35,6 +35,7 @@ import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.ObjectTransform;
 import net.sf.jkniv.whinstone.classification.Transformable;
+import net.sf.jkniv.whinstone.statement.AbstractResultRow;
 
 /**
  * 
@@ -46,7 +47,7 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-class FlatObjectResultRow<T> implements ResultRow<T, Row>
+class FlatObjectResultRow<T> extends AbstractResultRow implements ResultRow<T, Row>
 {
     private final static Logger LOG = LoggerFactory.getLogger(FlatObjectResultRow.class);
     private static final Logger      SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
@@ -63,6 +64,7 @@ class FlatObjectResultRow<T> implements ResultRow<T, Row>
     @SuppressWarnings("unchecked")
     public FlatObjectResultRow(Class<T> returnType, JdbcColumn<Row>[] columns)
     {
+        super(SQLLOG, MASKING);
         this.returnType = returnType;
         this.columns = columns;
         this.transformable = (Transformable<T>) new ObjectTransform();
@@ -80,11 +82,7 @@ class FlatObjectResultRow<T> implements ResultRow<T, Row>
     private void setValueOf(JdbcColumn<Row> column, Row rs, ObjectProxy<T> proxy) throws SQLException
     {
         Injectable<T> reflect = InjectableFactory.of(proxy);
-        Object jdbcObject = null;
-        if (column.isBinary())
-            jdbcObject = column.getBytes(rs);
-        else
-            jdbcObject = column.getValue(rs);
+        Object jdbcObject = getValueOf(column, rs);
         
         if (SQLLOG.isTraceEnabled())
             SQLLOG.trace("Mapping index [{}] column [{}] type of [{}] to value [{}]", 

@@ -28,6 +28,7 @@ import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.Transformable;
+import net.sf.jkniv.whinstone.statement.AbstractResultRow;
 
 /**
  * 
@@ -38,7 +39,7 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-class ScalarResultRow<T> implements ResultRow<T, ResultSet>
+class ScalarResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultSet>
 {
     private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
     private static final DataMasking MASKING = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getDataMasking();
@@ -47,18 +48,14 @@ class ScalarResultRow<T> implements ResultRow<T, ResultSet>
     
     public ScalarResultRow(JdbcColumn<ResultSet>[] columns)
     {
+        super(SQLLOG, MASKING);
         this.columns = columns;
     }
     
     @SuppressWarnings("unchecked")
     public T row(ResultSet rs, int rownum) throws SQLException
     {
-        Object jdbcObject = null;
-        if (columns[0].isBinary())
-            jdbcObject = columns[0].getBytes(rs);
-        else
-            jdbcObject = columns[0].getValue(rs);
-        
+        Object jdbcObject = getValueOf(columns[0], rs);
         if (SQLLOG.isTraceEnabled())
             SQLLOG.trace("Mapping index [0] column [{}] type of [{}] to set scalar value [{}]",
                     columns[0].getAttributeName(), (jdbcObject != null ? jdbcObject.getClass().getName() : "null"),

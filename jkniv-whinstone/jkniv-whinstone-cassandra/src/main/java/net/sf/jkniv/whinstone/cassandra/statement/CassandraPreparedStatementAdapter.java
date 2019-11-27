@@ -44,7 +44,7 @@ import net.sf.jkniv.whinstone.classification.Transformable;
 import net.sf.jkniv.whinstone.statement.AutoKey;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
-/**
+/*
  * https://docs.datastax.com/en/developer/java-driver/3.1/manual/statements/prepared/
  * 
  * //FIXME unsupported method bound.setInet(...)
@@ -69,15 +69,10 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     private final HandlerException  handlerException;
     private final PreparedStatement stmt;
     private BoundStatement          bound;
-    //private final SqlDateConverter  dtConverter;
-    
     private int                     index, indexIN;
     private Class<T>                returnType;
     private ResultRow<T, Row>       resultRow;
     private boolean                 scalar;
-    //private Set<OneToMany>          oneToManies;
-    //private List<String>            groupingBy;
-    //private KeyGeneratorType        keyGeneratorType;
     private final Session           session;
     private final Queryable         queryable;
     private AutoKey                 autoKey;
@@ -88,9 +83,6 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         this.stmt = stmt;
         this.session = session;
         this.bound = stmt.bind();
-        //this.dtConverter = new SqlDateConverter();
-        //this.oneToManies = Collections.emptySet();
-        //this.groupingBy = Collections.emptyList();
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
         this.queryable = queryable;
         returnType = (Class<T>)queryable.getReturnType();
@@ -106,53 +98,12 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         this.bound = stmt.bind();
     }
     
-//    @Override
-//    public StatementAdapter<T, Row> returnType(Class<T> returnType)
-//    {
-//        this.returnType = returnType;
-//        return this;
-//    }
-    
     @Override
     public StatementAdapter<T, Row> with(ResultRow<T, Row> resultRow)
     {
         this.resultRow = resultRow;
         return this;
     }
-    
-//    @Override
-//    public StatementAdapter<T, Row> scalar()
-//    {
-//        this.scalar = true;
-//        return this;
-//    }
-    
-//    @Override
-//    public StatementAdapter<T, Row> oneToManies(Set<OneToMany> oneToManies)
-//    {
-//        this.oneToManies = oneToManies;
-//        return this;
-//    }
-    
-//    @Override
-//    public StatementAdapter<T, Row> groupingBy(List<String> groupingBy)
-//    {
-//        this.groupingBy = groupingBy;
-//        return this;
-//    }
-    
-//    @Override
-//    public StatementAdapter<T, Row> with(KeyGeneratorType keyGeneratorType)
-//    {
-//        this.keyGeneratorType = keyGeneratorType;
-//        return this;
-//    }
-//    
-//    @Override
-//    public KeyGeneratorType getKeyGeneratorType()
-//    {
-//        return this.keyGeneratorType;
-//    }
     
     @Override
     public StatementAdapter<T, Row> bind(String name, Object value)
@@ -217,7 +168,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         }
         return this;
     }
-    
+    /*
     @Override
     public void batch()
     {
@@ -227,8 +178,8 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         // TODO implements batch https://docs.datastax.com/en/cql/3.3/cql/cql_using/useBatchGoodExample.html
         // TODO https://www.datastax.com/dev/blog/client-side-improvements-in-cassandra-2-0
     }
-    
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    */
+    @SuppressWarnings({"unchecked" })
     public List<T> rows()
     {
         ResultSet rs = null;
@@ -472,16 +423,6 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         bound.setSet(currentIndex(), value);
     }
 
-//    private void setInternalValue(Object[] paramsIN) throws SQLException
-//    {
-//        int j = 0;
-//        for (; j < paramsIN.length; j++)
-//        {
-//            bind(paramsIN[j]);
-//            indexIN = indexIN + j;
-//        }
-//    }
-
     private int currentIndex()
     {
         return ( index++ + (indexIN));
@@ -501,29 +442,17 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         }
         
         if (scalar)
-        {
             resultRow = new ScalarResultRow(columns);
-        }
         else if (Map.class.isAssignableFrom(returnType))
-        {
             resultRow = new MapResultRow(returnType, columns);
-        }
         else if (Number.class.isAssignableFrom(returnType)) // FIXME implements for date, calendar, boolean improve design
-        {
             resultRow = new NumberResultRow(returnType, columns);
-        }
         else if (String.class.isAssignableFrom(returnType))
-        {
             resultRow = new StringResultRow(columns);
-        }
         else if (!hasOneToMany())
-        {
             resultRow = new FlatObjectResultRow(returnType, columns);
-        }
         else
-        {
             resultRow = new PojoResultRow(returnType, columns, getOneToMany());
-        }
     }
     
     private void log(String name, Object value)
@@ -553,13 +482,8 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         
         for (int i = 0; i < columns.length; i++)
         {
-            //int columnNumber = i + 1;
-            
             String columnName = metadata.getName(i);//getColumnName(metadata, columnNumber);
             int columnType = metadata.getType(i).getName().ordinal(); //metadata.getColumnType(columnNumber);
-            //boolean binaryData = false;
-            //if (columnType == Types.CLOB || columnType == Types.BLOB)
-            //    binaryData = true;
             columns[i] = new CassandraColumn(i, columnName, columnType);
         }
         return columns;

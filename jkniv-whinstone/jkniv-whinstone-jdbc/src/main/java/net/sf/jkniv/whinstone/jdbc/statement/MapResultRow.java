@@ -74,12 +74,7 @@ class MapResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultSe
 
     private void setValueOf(JdbcColumn<ResultSet> column, ResultSet rs, Map<String, Object> map) throws SQLException
     {
-        Object jdbcObject = null;
-        if (column.isBinary())
-            jdbcObject = column.getBytes(rs);
-        else
-            jdbcObject = column.getValue(rs);
-        
+        Object jdbcObject = getValueOf(column, rs);
         if (SQLLOG.isTraceEnabled())
             SQLLOG.trace("Mapping index [{}] sensitive column name [{}] type of [{}] to value [{}]", column.getIndex(),
                     column.getAttributeName(), (jdbcObject != null ? jdbcObject.getClass().getName() : "null"),

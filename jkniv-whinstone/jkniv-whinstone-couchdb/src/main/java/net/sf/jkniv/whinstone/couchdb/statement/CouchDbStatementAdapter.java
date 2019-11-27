@@ -134,7 +134,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     public StatementAdapter<T, String> bind(String name, Object value)
     {
         int index = currentIndex();//increment index
-        this.params.add(new Param(value, index, name));
+        this.params.add(new Param(value, name, index));
         return this;
         /*
         //this.index++;
@@ -202,6 +202,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
         //return this;
     }
     
+    /*
     @Override
     public void batch()
     {
@@ -210,7 +211,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
         // TODO implements batch https://docs.datastax.com/en/cql/3.3/cql/cql_using/useBatch.html
         // TODO implements batch https://docs.datastax.com/en/cql/3.3/cql/cql_using/useBatchGoodExample.html
     }
-    
+    */
     @SuppressWarnings(
     { "rawtypes", "unchecked" })
     public List<T> rows()

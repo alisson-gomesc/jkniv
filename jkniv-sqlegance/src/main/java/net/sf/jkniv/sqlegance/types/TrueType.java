@@ -25,9 +25,9 @@ import java.sql.Types;
  * A TRUE|FALSE converter value.
  * 
  * The {@code pattern} format is: true|false, where the values can be any string value.
- * <p>
+ * 
  * <pre>
- * @Converter(converter = TrueType.class,pattern = "Y|N")
+ * {@literal @}Converter(converter = TrueType.class,pattern = "Y|N")
  * </pre>
  */
 public class TrueType implements Convertible<Boolean, String>

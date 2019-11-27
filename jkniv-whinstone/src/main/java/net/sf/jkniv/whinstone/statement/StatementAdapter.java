@@ -22,14 +22,13 @@ package net.sf.jkniv.whinstone.statement;
 import java.sql.ResultSet;
 import java.util.List;
 
-import net.sf.jkniv.sqlegance.KeyGeneratorType;
 import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
 
 /**
  * Adapter for Statements {@link java.sql.Statement}, {@link java.sql.PreparedStatement}, 
- * {@link java.sql.CallableStatement} or {@link javax.persistence.Query}
+ * {@link java.sql.CallableStatement} or {@code javax.persistence.Query}
  * 
  * @param <T> type of object to return by {@link Repository}
  * @param <R> The driver result of a query like {@link ResultSet}
@@ -79,7 +78,7 @@ public interface StatementAdapter<T, R>
 
     List<T> rows();
     
-    void batch();
+    //TODO void batch();
     
     int execute();
     

@@ -117,7 +117,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
             }
             else
             {
-                setValue(new Param(value, this.index, name));
+                setValue(new Param(value, name, this.index));
             }
         }
         catch (SQLException e)
@@ -130,7 +130,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     @Override
     public StatementAdapter<T, ResultSet> bind(Param param)
     {
-        Object value = param.getValue();
+        Object value = param.getValueAs();
         log(param);
         try
         {
@@ -283,7 +283,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         }
         return ret;
     }
-    
+    /*
     @Override
     public void batch()
     {
@@ -296,7 +296,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
             handlerException.handle(e, e.getMessage());
         }
     }
-    
+    */
     @Override
     public int reset()
     {
@@ -334,7 +334,6 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         }
     }
     
-    @SuppressWarnings("rawtypes")
     private void setValue(Date value) throws SQLException
     {
         int i = currentIndex();

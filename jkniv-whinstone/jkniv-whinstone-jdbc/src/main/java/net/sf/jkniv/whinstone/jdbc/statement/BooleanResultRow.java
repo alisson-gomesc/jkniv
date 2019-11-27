@@ -24,10 +24,12 @@ import java.sql.SQLException;
 
 import org.slf4j.Logger;
 
+import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.Transformable;
 import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
+import net.sf.jkniv.whinstone.statement.AbstractResultRow;
 
 /**
  * 
@@ -38,27 +40,24 @@ import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-class BooleanResultRow<T> implements ResultRow<T, ResultSet>
+class BooleanResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultSet>
 {
-    private static final Logger  LOG = LoggerFactory.getLogger();
+    private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
+    private static final DataMasking MASKING = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getDataMasking();
     private JdbcColumn<ResultSet>[] columns;
     
     public BooleanResultRow(JdbcColumn<ResultSet>[] columns)
     {
+        super(SQLLOG, MASKING);
         this.columns = columns;
     }
     
     @SuppressWarnings("unchecked")
     public T row(ResultSet rs, int rownum) throws SQLException
     {
-        Object jdbcObject = null;
-        if (columns[0].isBinary())
-            jdbcObject = columns[0].getBytes(rs);
-        else
-            jdbcObject = columns[0].getValue(rs);
-        
-        if(LOG.isTraceEnabled())
-            LOG.trace("Column index [0] named [{}] value of [{}] as Boolean", jdbcObject, columns[0].getAttributeName());
+        Object jdbcObject = getValueOf(columns[0], rs);
+        if(SQLLOG.isTraceEnabled())
+            SQLLOG.trace("Column index [0] named [{}] value of [{}] as Boolean", jdbcObject, columns[0].getAttributeName());
         return (T)Boolean.valueOf(jdbcObject != null ? jdbcObject.toString() : "false");
     }
 

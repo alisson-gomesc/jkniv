@@ -71,7 +71,6 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  */
 public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
 {
-    private static final Logger LOG    = LoggerFactory.getLogger();
     private static final Logger SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
     private static final DataMasking MASKING = LoggerFactory.getDataMasking();
     
@@ -83,40 +82,17 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     private boolean                  scalar;
     private Session                  session;
     private Queryable                queryable;
-    //private Set<OneToMany>           oneToManies;
-    //private List<String>             groupingBy;
-    //private KeyGeneratorType         keyGeneratorType;
     
     @SuppressWarnings("unchecked")
     public CassandraStatementAdapter(Session session, Statement stmt, Queryable queryable)
     {
         this.stmt = stmt;
         this.session = session;
-        //this.bound = stmt.bind();
-        //this.oneToManies = Collections.emptySet();
-        //this.groupingBy = Collections.emptyList();
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
         this.queryable = queryable;
         this.returnType = (Class<T>) queryable.getReturnType();
         this.reset();
     }
-    
-    /*
-     * Creates a new BoundStatement object for this prepared statement. 
-     * This method do not bind any values to any of the prepared variables.
-     *
-    public void reBound()
-    {
-        this.bound = stmt.bind();
-    }
-    */
-    
-//    @Override
-//    public StatementAdapter<T, Row> returnType(Class<T> returnType)
-//    {
-//        this.returnType = returnType;
-//        return this;
-//    }
     
     @Override
     public StatementAdapter<T, Row> with(ResultRow<T, Row> resultRow)
@@ -124,40 +100,6 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         this.resultRow = resultRow;
         return this;
     }
-    
-//    @Override
-//    public StatementAdapter<T, Row> scalar()
-//    {
-//        this.scalar = true;
-//        return this;
-//    }
-//    
-//    @Override
-//    public StatementAdapter<T, Row> oneToManies(Set<OneToMany> oneToManies)
-//    {
-//        this.oneToManies = oneToManies;
-//        return this;
-//    }
-    
-//    @Override
-//    public StatementAdapter<T, Row> groupingBy(List<String> groupingBy)
-//    {
-//        this.groupingBy = groupingBy;
-//        return this;
-//    }
-    
-//    @Override
-//    public StatementAdapter<T, Row> with(KeyGeneratorType keyGeneratorType)
-//    {
-//        this.keyGeneratorType = keyGeneratorType;
-//        return this;
-//    }
-//    
-//    @Override
-//    public KeyGeneratorType getKeyGeneratorType()
-//    {
-//        return this.keyGeneratorType;
-//    }
     
     @Override
     public StatementAdapter<T, Row> bind(String name, Object value)
@@ -219,7 +161,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     {
         return this;
     }
-    
+    /*
     @Override
     public void batch()
     {
@@ -229,7 +171,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         // TODO implements batch https://docs.datastax.com/en/cql/3.3/cql/cql_using/useBatchGoodExample.html
         // TODO https://www.datastax.com/dev/blog/client-side-improvements-in-cassandra-2-0
     }
-    
+    */
     @SuppressWarnings(
     { "rawtypes", "unchecked" })
     public List<T> rows()
@@ -302,165 +244,6 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         indexIN = 0;
         return before;
     }
-/*    
-    private void setValueIN(Object[] paramsIN) throws SQLException
-    {
-        int j = 0;
-        for (; j < paramsIN.length; j++)
-            bindInternal(paramsIN[j]);
-    }
-*/
-    /*
-    @SuppressWarnings("rawtypes")
-    private StatementAdapter<T, Row> bindInternal(Object value)
-    {
-        try
-        {
-            if (value == null)
-                setToNull();
-            else if (value instanceof String)
-                setInternalValue((String) value);
-            else if (value instanceof Integer)
-                setInternalValue((Integer) value);
-            else if (value instanceof Long)
-                setInternalValue((Long) value);
-            else if (value instanceof Double)
-                setInternalValue((Double) value);
-            else if (value instanceof Float)
-                setInternalValue((Float) value);
-            else if (value instanceof Boolean)
-                setInternalValue((Boolean) value);
-            else if (value instanceof BigDecimal)
-                setInternalValue((BigDecimal) value);
-            else if (value instanceof BigInteger)
-                setInternalValue((BigInteger) value);
-            else if (value instanceof Short)
-                setInternalValue((Short) value);
-            else if (value instanceof Date)
-                setInternalValue((Date) value);
-            else if (value instanceof java.util.Calendar)
-                setInternalValue((Calendar) value);
-            else if (value instanceof com.datastax.driver.core.LocalDate)
-                setInternalValue((com.datastax.driver.core.LocalDate) value);
-            else if (Enum.class.isInstance(value))
-                setInternalValue((Enum<?>) value);
-            else if (value instanceof Byte)
-                setInternalValue((Byte) value);
-            else if (value instanceof List)
-                setInternalValue((List) value);
-            else if (value instanceof Set)
-                setInternalValue((Set) value);
-            else if (value instanceof Map)
-                setInternalValue((Map) value);
-            else
-            {
-                LOG.warn("CANNOT Set SQL Parameter from index [{}] with value of [{}] type of [{}]", (index + indexIN),
-                        value, (value == null ? "NULL" : value.getClass()));
-            }
-        }
-        catch (SQLException e)
-        {
-            this.handlerException.handle(e);
-        }
-        return this;
-    }
-  */
-    /*
-    private void setInternalValue(com.datastax.driver.core.LocalDate value)
-    {
-        bound.setDate(currentIndex(), value);
-    }
-    
-    private void setInternalValue(Calendar value)
-    {
-        bound.setTimestamp(currentIndex(), value.getTime());
-    }
-    
-    private void setInternalValue(Date value)
-    {
-        bound.setTimestamp(currentIndex(), value);
-    }
-    
-    private void setInternalValue(Integer value)
-    {
-        bound.setInt(currentIndex(), value);
-    }
-    
-    private void setInternalValue(Long value)
-    {
-        bound.setLong(currentIndex(), value);
-    }
-    
-    private void setInternalValue(Float value)
-    {
-        bound.setFloat(currentIndex(), value);
-    }
-    
-    private void setInternalValue(Double value)
-    {
-        bound.setDouble(currentIndex(), value);
-    }
-    
-    private void setInternalValue(Short value)
-    {
-        bound.setShort(currentIndex(), value);
-    }
-    
-    private void setInternalValue(Boolean value)
-    {
-        bound.setBool(currentIndex(), value);
-    }
-    
-    private void setInternalValue(Byte value)
-    {
-        bound.setByte(currentIndex(), value);
-    }
-    
-    private void setInternalValue(BigDecimal value)
-    {
-        bound.setDecimal(currentIndex(), value);
-    }
-    
-    private void setInternalValue(BigInteger value)
-    {
-        bound.setVarint(currentIndex(), value);
-    }
-    
-    private void setInternalValue(String value)
-    {
-        bound.setString(currentIndex(), value);
-    }
-    
-    private void setToNull()
-    {
-        bound.setToNull(currentIndex());
-    }
-    
-    private void setInternalValue(Enum<?> value) throws SQLException
-    {
-        // FIXME design converter to allow save ordinal value or other value from enum
-        bound.setString(currentIndex(), value.name());
-    }
-    
-    private void setInternalValue(List<?> value) throws SQLException
-    {
-        bound.setList(currentIndex(), value);
-    }
-    
-    private void setInternalValue(Map<?, ?> value) throws SQLException
-    {
-        bound.setMap(currentIndex(), value);
-    }
-    
-    private void setInternalValue(Set<?> value) throws SQLException
-    {
-        bound.setSet(currentIndex(), value);
-    }
-*/    
-    private int currentIndex()
-    {
-        return (index++ + (indexIN));
-    }
     
     /*******************************************************************************/
     
@@ -475,29 +258,17 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         }
         
         if (scalar)
-        {
             resultRow = new ScalarResultRow(columns);
-        }
         else if (Map.class.isAssignableFrom(returnType))
-        {
             resultRow = new MapResultRow(returnType, columns);
-        }
         else if (Number.class.isAssignableFrom(returnType)) // FIXME implements for date, calendar, boolean improve design
-        {
             resultRow = new NumberResultRow(returnType, columns);
-        }
         else if (String.class.isAssignableFrom(returnType))
-        {
             resultRow = new StringResultRow(columns);
-        }
         else if (!hasOneToMany())
-        {
             resultRow = new FlatObjectResultRow(returnType, columns);
-        }
         else
-        {
             resultRow = new PojoResultRow(returnType, columns, getOneToMany());
-        }
     }
     
     private void log(String name, Object value)
@@ -527,13 +298,8 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         
         for (int i = 0; i < columns.length; i++)
         {
-            //int columnNumber = i + 1;
-            
             String columnName = metadata.getName(i);//getColumnName(metadata, columnNumber);
             int columnType = metadata.getType(i).getName().ordinal(); //metadata.getColumnType(columnNumber);
-            //boolean binaryData = false;
-            //if (columnType == Types.CLOB || columnType == Types.BLOB)
-            //    binaryData = true;
             columns[i] = new CassandraColumn(i, columnName, columnType);
         }
         return columns;

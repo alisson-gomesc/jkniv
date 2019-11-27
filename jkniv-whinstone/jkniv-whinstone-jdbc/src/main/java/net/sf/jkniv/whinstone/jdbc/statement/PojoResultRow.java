@@ -104,11 +104,8 @@ class PojoResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultS
                 collection = (Collection<Object>) ObjectProxyFactory.of(entry.getKey().getImpl()).newInstance();
                 proxyRow.invoke(setterName, collection);
             }
-            //System.out.println("adding to collection: " + entry.getValue());
             collection.add(entry.getValue());
-            //proxyRow.invoke(SETTER.capitalize(entry.getKey().getProperty()), entry.getValue());
         }
-        //System.out.println(proxyRow.getInstance());
         return proxyRow.getInstance();
     }
     /*
