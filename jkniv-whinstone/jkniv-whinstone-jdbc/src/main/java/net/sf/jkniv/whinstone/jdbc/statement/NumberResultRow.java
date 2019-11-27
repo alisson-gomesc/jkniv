@@ -30,6 +30,7 @@ import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.Transformable;
+import net.sf.jkniv.whinstone.statement.AbstractResultRow;
 
 /**
  * 
@@ -40,7 +41,7 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-class NumberResultRow<T> implements ResultRow<T, ResultSet>
+class NumberResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultSet>
 {
     private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
     private static final DataMasking MASKING = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getDataMasking();
@@ -50,6 +51,7 @@ class NumberResultRow<T> implements ResultRow<T, ResultSet>
     
     public NumberResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns)
     {
+        super(SQLLOG, MASKING);
         this.columns = columns;
         this.numerical = NumberFactory.getInstance(returnType.getCanonicalName());
     }
@@ -57,11 +59,7 @@ class NumberResultRow<T> implements ResultRow<T, ResultSet>
     @SuppressWarnings("unchecked")
     public T row(ResultSet rs, int rownum) throws SQLException
     {
-        Object jdbcObject = null;
-        if (columns[0].isBinary())
-            jdbcObject = columns[0].getBytes(rs);
-        else
-            jdbcObject = columns[0].getValue(rs);
+        Object jdbcObject = getValueOf(columns[0], rs);
         if(SQLLOG.isTraceEnabled())
             SQLLOG.trace("Column index [0] named [{}] type of [{}] to value [{}]", columns[0].getAttributeName(), 
                     numerical.getClass().getCanonicalName(), MASKING.mask(columns[0].getAttributeName(), jdbcObject));

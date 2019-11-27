@@ -30,9 +30,9 @@ import java.util.Collection;
 public class Param
 {
     private Object value;
+    private Object valueAs;// converted value
     private int index;
     private String name;
-    private Class<?> ownerClass;
 
     public Param() 
     {
@@ -40,41 +40,50 @@ public class Param
 
     public Param(Object value) 
     {
-        this(value, "?");
+        this(value, value, "?", 0);
     }
 
     public Param(Object value, int index)
     {
-        this(value, index, "?");
+        this(value, value, "?", index);
     }
 
     public Param(Object value, String name)
     {
-        super();
-        this.value = value;
-        this.name = name;
+        this(value, value, name, 0);
     }
 
-    public Param(Object value, int index, String name)
+    public Param(Object value, Object valueAs, String name)
+    {
+        this(value, valueAs, name, 0);
+    }
+
+    public Param(Object value, String name, int index)
+    {
+        this(value, value, name, index);
+    }
+
+    public Param(Object value, Object valueAs, String name, int index)
     {
         super();
         this.value = value;
+        this.valueAs = valueAs;
         this.index = index;
         this.name = name;
-    }
-
-    public Param(Object value, int index, String name, Class<?> ownerClass)
-    {
-        super();
-        this.value = value;
-        this.index = index;
-        this.name = name;
-        this.ownerClass = ownerClass;
     }
 
     public Object getValue()
     {
         return value;
+    }
+    
+    /**
+     * get the value converted when there is one, otherwise the original value.
+     * @return a converted value or original value.
+     */
+    public Object getValueAs()
+    {
+        return valueAs;
     }
 
     public int getIndex()
@@ -87,11 +96,6 @@ public class Param
         return name;
     }
 
-    public Class<?> getOwnerClass()
-    {
-        return ownerClass;
-    }
-    
     public Param[] asArray()
     {
         Param[] params = null;
@@ -119,7 +123,7 @@ public class Param
         int i = 0;
         for(Object o : paramsAsCollection)
         {
-            params[i] = new Param(o, i, this.name);
+            params[i] = new Param(o, this.name, i);
             i++;
         }
         return params;
@@ -132,7 +136,7 @@ public class Param
         int i = 0;
         for(Object o : paramsAsArray)
         {
-            params[i] = new Param(o, i, this.name);
+            params[i] = new Param(o, this.name, i);
             i++;
         }
         return params;
@@ -144,7 +148,6 @@ public class Param
         final int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((ownerClass == null) ? 0 : ownerClass.getName().hashCode());
         result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result;
     }
@@ -166,13 +169,7 @@ public class Param
         }
         else if (!name.equals(other.name))
             return false;
-        if (ownerClass == null)
-        {
-            if (other.ownerClass != null)
-                return false;
-        }
-        else if (other.ownerClass != null && !ownerClass.getName().equals(other.ownerClass.getName()))
-            return false;
+        
         if (value == null)
         {
             if (other.value != null)
@@ -187,7 +184,7 @@ public class Param
     @Override
     public String toString()
     {
-        return "Param [value=" + value + ", index=" + index + ", name=" + name + ", ownerClass=" + ownerClass + "]";
+        return "Param [value=" + value + ", index=" + index + ", name=" + name + "]";
     }
     
     

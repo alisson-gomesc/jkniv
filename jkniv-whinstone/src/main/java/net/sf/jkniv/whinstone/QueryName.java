@@ -22,29 +22,32 @@ package net.sf.jkniv.whinstone;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.reflect.BasicType;
+import net.sf.jkniv.reflect.beans.ObjectProxy;
+import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.params.ParamParser;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
+import net.sf.jkniv.sqlegance.types.Convertible;
+import net.sf.jkniv.sqlegance.types.NoConverterType;
 import net.sf.jkniv.whinstone.params.AutoBindParams;
 import net.sf.jkniv.whinstone.params.ParameterException;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 import net.sf.jkniv.whinstone.params.PrepareParamsFactory;
+import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
@@ -154,19 +157,20 @@ class QueryName implements Queryable
     @Override
     public Param getProperty(String name)
     {
-        if (params == null)
-            return null;
-        
         Param param = null;
-        try
+        if (!isTypeOfNull())
         {
-            Object o = PropertyUtils.getProperty(params, name);
-            param = new Param(o, name);
-        }
-        catch (Exception e)
-        {
-            throw new ParameterNotFoundException("Cannot find the property [" + name + "] at param object ["
-                    + (params != null ? params.getClass().getName() : "null") + "] ");
+            
+            try
+            {
+                Object o = PropertyUtils.getProperty(params, name);
+                param = new Param(o, getConverter(name).toJdbc(o), name);
+            }
+            catch (Exception e)
+            {
+                throw new ParameterNotFoundException("Cannot find the property [" + name + "] at param object ["
+                        + (params != null ? params.getClass().getName() : "null") + "] ");
+            }
         }
         return param;
     }
@@ -174,19 +178,19 @@ class QueryName implements Queryable
     @Override
     public Param getProperty(String name, int index)
     {
-        if (params == null)
-            return null;
-        
         Param param = null;
-        try
+        if (!isTypeOfNull())
         {
-            Object o = PropertyUtils.getProperty(params, name);
-            param = new Param(o, index, name);
-        }
-        catch (Exception e)
-        {
-            throw new ParameterNotFoundException("Cannot find the property [" + name + "] at param object ["
-                    + (params != null ? params.getClass().getName() : "null") + "] ");
+            try
+            {
+                Object o = PropertyUtils.getProperty(params, name);
+                param = new Param(o, getConverter(name).toJdbc(o), name, index);
+            }
+            catch (Exception e)
+            {
+                throw new ParameterNotFoundException("Cannot find the property [" + name + "] at param object ["
+                        + (params != null ? params.getClass().getName() : "null") + "] ");
+            }
         }
         return param;
     }
@@ -511,7 +515,7 @@ class QueryName implements Queryable
                 {
                     String paramName = paramsNames[i].substring(3, paramsNames[i].length());// :in:myValueArray -> myValueArray
                     if (this.size == this.countParams)
-                        paramValue = new Param(this.params, i, name);
+                        paramValue = new Param(this.params, name, i);
                     else
                         paramValue = getParamsFromIndex(i);
                     
@@ -715,6 +719,107 @@ class QueryName implements Queryable
     }
     
     @Override
+    public void cacheIgnore()
+    {
+        this.cacheIgnore = true;
+    }
+    
+    @Override
+    public boolean isCacheIgnore()
+    {
+        return this.cacheIgnore;
+    }
+    
+    @Override
+    public void cached()
+    {
+        this.cached = true;
+    }
+    
+    @Override
+    public boolean isCached()
+    {
+        return this.cached;
+    }
+    
+    @Override
+    public void setBookmark(String bookmark)
+    {
+        this.bookmark = bookmark;
+    }
+    
+    @Override
+    public String getBookmark()
+    {
+        return this.bookmark;
+    }
+    
+    private Param getParamsFromIndex(int i)
+    {
+        Param param = null;
+        if (this.params == null)
+        {
+            param = new Param();
+        }
+        else if (isTypeOfArrayBasicTypes())
+        {
+            param = new Param(((Object[]) this.params)[i], "?", i);
+        }
+        else if (isTypeOfListBasicTypes())
+        {
+            param = new Param(((List) this.params).get(i), "?", i);
+        }
+        else if (isTypeOfCollectionBasicTypes())
+        {
+            Iterator<Object> it = ((Collection<Object>) this.params).iterator();
+            int j = 0;
+            while (it.hasNext())
+            {
+                if (j == i)
+                {
+                    param = new Param(it.next(), "?", i);
+                    break;
+                }
+                j++;
+            }
+        }
+        return param;
+    }
+    
+    private boolean hasInClause(String[] paramsNames)
+    {
+        for (String p : paramsNames)
+        {
+            if (hasInClause(p))
+                return true;
+        }
+        return false;
+    }
+    
+    private boolean hasInClause(String paramName)
+    {
+        return (paramName.toLowerCase().startsWith("in:"));
+    }
+    
+    /**
+     * Retrieve a {@link Convertible} instance to customize the
+     * value of parameter to database field.
+     * @param fieldName name of field
+     * @return A convertible instance if found into class proxy or {@link NoConverterType}
+     * instance when the field or method is not annotated.
+     */
+    private Convertible<Object, Object> getConverter(String fieldName)
+    {
+        Convertible<Object, Object> convertible = NoConverterType.getInstance();
+        if(isTypeOfPojo() || isTypeOfCollectionPojo() || isTypeOfArrayPojo())
+        {
+            ObjectProxy<?> proxy = ObjectProxyFactory.of(getParams());
+            convertible = ConvertibleFactory.toJdbc(new PropertyAccess(fieldName, getParams().getClass()), proxy);
+        }
+        return convertible;
+    }
+        
+    @Override
     public int hashCode()
     {
         final int prime = 31;
@@ -784,123 +889,4 @@ class QueryName implements Queryable
         return "QueryName [name=" + name + ", offset=" + offset + ", max=" + max + ", timeout=" + timeout + ", batch="
                 + batch + ", scalar=" + scalar + ", paramType=" + paramType + "]";
     }
-    
-    @Override
-    public void cacheIgnore()
-    {
-        this.cacheIgnore = true;
-    }
-    
-    @Override
-    public boolean isCacheIgnore()
-    {
-        return this.cacheIgnore;
-    }
-    
-    @Override
-    public void cached()
-    {
-        this.cached = true;
-    }
-    
-    @Override
-    public boolean isCached()
-    {
-        return this.cached;
-    }
-    
-    @Override
-    public void setBookmark(String bookmark)
-    {
-        this.bookmark = bookmark;
-    }
-    
-    @Override
-    public String getBookmark()
-    {
-        return this.bookmark;
-    }
-    
-    private Collection<?> getParamsAsCollection()
-    {
-        if (this.params == null)
-            return Collections.emptyList();
-        
-        return (Collection<?>) this.params;
-    }
-    
-    private Object[] getParamsAsArray()
-    {
-        if (this.params == null)
-            return new Object[0];
-        
-        return (Object[]) this.params;
-    }
-    
-    private Param getParamsFromIndex(int i)
-    {
-        Param param = null;
-        if (this.params == null)
-        {
-            param = new Param();
-        }
-        else if (isTypeOfArrayBasicTypes())
-        {
-            param = new Param(((Object[]) this.params)[i], i, "?");
-        }
-        else if (isTypeOfListBasicTypes())
-        {
-            param = new Param(((List) this.params).get(i), i, "?");
-        }
-        else if (isTypeOfCollectionBasicTypes())
-        {
-            Iterator<Object> it = ((Collection<Object>) this.params).iterator();
-            int j = 0;
-            while (it.hasNext())
-            {
-                if (j == i)
-                {
-                    param = new Param(it.next(), i, "?");
-                    break;
-                }
-                j++;
-            }
-        }
-        return param;
-    }
-    
-    private boolean hasInClause(String[] paramsNames)
-    {
-        for (String p : paramsNames)
-        {
-            if (hasInClause(p))
-                return true;
-        }
-        return false;
-    }
-    
-    private boolean hasInClause(String paramName)
-    {
-        return (paramName.toLowerCase().startsWith("in:"));
-    }
-    /*
-    private void checkIfParamIsEntity() {
-        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(this.params);
-        proxy.ge
-        Class<? extends Annotation> entityAnnotation = (Class<? extends Annotation>) forName("javax.persistence.Entity");
-        if (returnTypeClass != null && entityAnnotation != null)
-            this.returnTypeManaged = returnTypeClass.isAnnotationPresent(entityAnnotation);
-        
-    }
-    
-    private Class<?> forName(String typeOfClass)
-    {
-        try
-        {
-            return Class.forName(typeOfClass);
-        }
-        catch (ClassNotFoundException returnNULL) {  // TODO ClassNotFoundException NULL type, returnType undefined 
-        return null;
-    }
-    */
 }

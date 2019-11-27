@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.reflect.beans.CapitalNameFactory;
 import net.sf.jkniv.reflect.beans.Capitalize;
@@ -56,7 +55,7 @@ import net.sf.jkniv.whinstone.statement.AbstractResultRow;
  */
 class PojoResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultSet>
 {
-    private final static Logger      LOG     = LoggerFactory.getLogger(PojoResultRow.class);
+    //private final static Logger      LOG     = LoggerFactory.getLogger(PojoResultRow.class);
     private static final Logger      SQLLOG  = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getLogger();
     private static final DataMasking MASKING = net.sf.jkniv.whinstone.jdbc.LoggerFactory.getDataMasking();
     private final static Capitalize  CAPITAL_SETTER  = CapitalNameFactory.getInstanceOfSetter();
@@ -104,11 +103,8 @@ class PojoResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultS
                 collection = (Collection<Object>) ObjectProxyFactory.of(entry.getKey().getImpl()).newInstance();
                 proxyRow.invoke(setterName, collection);
             }
-            //System.out.println("adding to collection: " + entry.getValue());
             collection.add(entry.getValue());
-            //proxyRow.invoke(SETTER.capitalize(entry.getKey().getProperty()), entry.getValue());
         }
-        //System.out.println(proxyRow.getInstance());
         return proxyRow.getInstance();
     }
     /*

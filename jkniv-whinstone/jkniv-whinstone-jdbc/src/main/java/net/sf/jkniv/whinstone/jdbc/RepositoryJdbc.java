@@ -190,7 +190,7 @@ class RepositoryJdbc implements Repository
         configQueryNameStrategy();
         if (LOG.isInfoEnabled())
             LOG.info("Repository JDBC was started with context [{}] using [{}] as JDBC Adapter", this.sqlContext.getName(), this.connectionFactory.getClass().getName());
-        if (isDebugEnabled)
+        if (isDebugEnabled) //FIXME show metadata must be have property? counter effect to unit test, there are twice invocation into close connection
             showMetadata();
         
     }
@@ -392,7 +392,7 @@ class RepositoryJdbc implements Repository
             LOG.trace("Executing [{}] as update command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofUpdate(this.connectionFactory.open(sql.getIsolation()));
-        int rows = handler.with(queryable)
+        handler.with(queryable)
                 .with(sql)
                 .checkSqlType(SqlType.UPDATE)
                 .with(handlerException)

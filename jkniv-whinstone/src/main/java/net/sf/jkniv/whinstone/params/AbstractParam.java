@@ -33,7 +33,7 @@ abstract class AbstractParam
     {
         //ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(value);
         //stmt.setObject(currentIndex(), proxy.invoke("name"));
-        stmt.setObject(currentIndex(), value.name());// FIXME design converter to allow save ordinal value or other value from enum
+        stmt.setObject(currentIndex(), value.name());
     }
     
     private void setValueOfKey(ObjectProxy<?> proxy, String property, Object value)

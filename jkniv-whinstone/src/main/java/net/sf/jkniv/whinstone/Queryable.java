@@ -56,7 +56,7 @@ public interface Queryable
     /**
      * Parameters of query. Can be objects like Author, Book, etc. or a
      * java.util.Map.
-     * 
+     * @param <T> generic type to return
      * @return the parameters to use at query.
      */
     <T> T getParams();

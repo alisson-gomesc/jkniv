@@ -78,7 +78,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
     @Override
     public StatementAdapter<T, ResultSet> bind(String name, Object value)
     {
-        log(new Param(value, index, name));
+        log(new Param(value, name, index));
         //Convertible<Object,Object> convertible = getConverter(new PropertyAccess(name));
         query.setParameter(++index, value);
         return this;
@@ -91,8 +91,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
         {
             Param param = values[j];
             log(param);
-            //Convertible<Object,Object> convertible = getConverter(new PropertyAccess(name));            
-            query.setParameter(++index, param.getValue());
+            query.setParameter(++index, param.getValueAs());
         }
         return this;
     }
@@ -175,6 +174,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
     */
     
     @Override
+    @SuppressWarnings("unchecked")
     public List<T> rows()
     {
         List<T> list = Collections.emptyList();
@@ -217,6 +217,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
         return list;
     }
     
+    @SuppressWarnings("unchecked")
     private List<T> handleGroupingBy(List<T> list)
     {
         List<T> newList = Collections.emptyList();
@@ -297,7 +298,7 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
                     map.put(columns[i], tupla[i]);
                 
                 castedList.add((T)map);
-            } 
+            }
         }
         else if (returnType != null)
         {
@@ -316,13 +317,13 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
         return castedList;
     }
     
+    /*
     @Override
     public void batch()
     {
         // TODO batch adapter
-        
     }
-    
+    */
     @Override
     public int execute()
     {

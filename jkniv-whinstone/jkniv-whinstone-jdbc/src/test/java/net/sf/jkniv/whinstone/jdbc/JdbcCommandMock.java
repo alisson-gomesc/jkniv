@@ -30,6 +30,7 @@ import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.xml.NoSqlStats;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
+import net.sf.jkniv.sqlegance.params.ParamParser;
 import net.sf.jkniv.sqlegance.params.ParamParserFactory;
 import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
 import net.sf.jkniv.sqlegance.statement.ResultSetHoldability;
@@ -52,6 +53,7 @@ public class JdbcCommandMock
     private Sql               sql;
     private Repository        repository;
     private Class<?>          returnType;
+    private ParamParser       paramParser;
     
     public JdbcCommandMock(Class<?> returnType)
     {
@@ -63,6 +65,7 @@ public class JdbcCommandMock
         this.dbMetadata = mock(DatabaseMetaData.class);
         this.repositoryConfig = mock(RepositoryConfig.class);
         this.sqlContext = mock(SqlContext.class);
+        this.paramParser= mock(ParamParser.class);
         try
         {
             given(this.dataSource.getConnection()).willReturn(this.connection);
@@ -88,8 +91,8 @@ public class JdbcCommandMock
             given(this.repositoryConfig.getQueryNameStrategy())
                     .willReturn("net.sf.jkniv.sqlegance.HashQueryNameStrategy");
             
-            
             given(this.sqlContext.getRepositoryConfig()).willReturn(this.repositoryConfig);
+            
         }
         catch (SQLException e)
         {
@@ -133,7 +136,7 @@ public class JdbcCommandMock
         given(this.sql.getSqlType()).willReturn(SqlType.SELECT);
         given(this.sql.asSelectable()).willReturn((Selectable) this.sql);
         given(this.sql.getSql(any())).willReturn("select id, name from t ");
-        withSql();
+        configInternalSql();
         return this;
     }
 
@@ -143,7 +146,7 @@ public class JdbcCommandMock
         given(this.sql.getSqlType()).willReturn(SqlType.INSERT);
         given(this.sql.asInsertable()).willReturn((Insertable) this.sql);
         given(this.sql.getSql(any())).willReturn("insert into t (id,name) values(:id,:name)");
-        withSql();
+        configInternalSql();
         return this;
     }
     
@@ -153,7 +156,7 @@ public class JdbcCommandMock
         given(this.sql.getSqlType()).willReturn(SqlType.UPDATE);
         given(this.sql.asUpdateable()).willReturn((Updateable) this.sql);
         given(this.sql.getSql(any())).willReturn("update t set name=:name where name=:name");
-        withSql();
+        configInternalSql();
         return this;
     }
     
@@ -163,11 +166,12 @@ public class JdbcCommandMock
         given(this.sql.getSqlType()).willReturn(SqlType.DELETE);
         given(this.sql.asDeletable()).willReturn((Deletable) this.sql);
         given(this.sql.getSql(any())).willReturn("delete from t where id = :id");
-        withSql();
+        //given(this.sql.getParamParser()).willReturn(this.paramParser);
+        configInternalSql();
         return this;
     }
 
-    private void withSql() {
+    private void configInternalSql() {
         given(this.sql.getValidateType()).willReturn(ValidateType.NONE);
         given(this.sql.getSqlDialect()).willReturn(new AnsiDialect());
         given(this.sql.getParamParser()).willReturn(ParamParserFactory.getInstance(ParamMarkType.COLON));
@@ -176,6 +180,8 @@ public class JdbcCommandMock
         given(this.sql.getResultSetConcurrency()).willReturn(ResultSetConcurrency.DEFAULT);
         given(this.sql.getResultSetHoldability()).willReturn(ResultSetHoldability.DEFAULT);
         //given(this.sql.getCache()).willReturn(NoCache.getInstance());
+        
+        //given(this.paramParser.find(anyString())).willReturn(new String[]{"id","name"});
         
         given(sql.getReturnType()).willReturn(returnType.getName());
         doReturn(returnType).when(sql).getReturnTypeAsClass();
@@ -277,4 +283,15 @@ public class JdbcCommandMock
     {
         return connection;
     }
+    
+    public Sql withSql()
+    {
+        return this.sql;
+    }
+    
+    public ParamParser withParamParser()
+    {
+        return this.paramParser;
+    }
+
 }

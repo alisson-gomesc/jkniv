@@ -80,6 +80,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     public JdbcPreparedStatementAdapter(PreparedStatement stmt, Queryable queryable)
     {
         this.stmt = stmt;
+        // FIXME handler exception for default message with custom params
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
         this.queryable = queryable;
         this.paramNames = this.queryable.getParamsNames();
@@ -117,12 +118,12 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
             }
             else
             {
-                setValue(new Param(value, this.index, name));
+                setValue(new Param(value, name, this.index));
             }
         }
         catch (SQLException e)
         {
-            this.handlerException.handle(e);// FIXME handler default message with custom params
+            this.handlerException.handle(e);
         }
         return this;
     }
@@ -130,7 +131,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     @Override
     public StatementAdapter<T, ResultSet> bind(Param param)
     {
-        Object value = param.getValue();
+        Object value = param.getValueAs();
         log(param);
         try
         {
@@ -153,7 +154,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         }
         catch (SQLException e)
         {
-            this.handlerException.handle(e);// FIXME handler default message with custom params
+            this.handlerException.handle(e);
         }
         return this;
     }
@@ -283,7 +284,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         }
         return ret;
     }
-    
+    /*
     @Override
     public void batch()
     {
@@ -296,7 +297,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
             handlerException.handle(e, e.getMessage());
         }
     }
-    
+    */
     @Override
     public int reset()
     {
@@ -321,8 +322,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     private void setValue(Param param) throws SQLException
     {
         int i = currentIndex();
-        Convertible<Object, Object> convertible = getConverter(param.getName());
-        stmt.setObject(i, convertible.toJdbc(param.getValue()));
+        stmt.setObject(i, param.getValueAs());
     }
     
     private void setValue(Object[] paramsIN) throws SQLException
@@ -334,7 +334,6 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         }
     }
     
-    @SuppressWarnings("rawtypes")
     private void setValue(Date value) throws SQLException
     {
         int i = currentIndex();
@@ -397,7 +396,8 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         {
             resultRow = new MapResultRow(returnType, columns);
         }
-        else if (Number.class.isAssignableFrom(returnType)) // FIXME implements for date, calendar, boolean improve design
+        else if (Number.class.isAssignableFrom(returnType)) 
+            // FIXME implements for date, calendar, boolean improve design
         {
             resultRow = new NumberResultRow(returnType, columns);
         }
@@ -496,7 +496,8 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         }
         catch (SQLException e)
         {
-            this.handlerException.handle(e);// TODO design handlerException for Statement setFetchSize exception
+            // TODO handler exception for Statement setFetchSize exception
+            this.handlerException.handle(e);
         }
     }
     

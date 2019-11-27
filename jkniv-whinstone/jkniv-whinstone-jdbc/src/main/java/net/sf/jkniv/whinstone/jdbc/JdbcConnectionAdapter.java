@@ -198,7 +198,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
         return adapter;
     }
     
-    /**
+    /*
      * Creates a {@code PreparedStatement} object object capable of returning the auto-generated 
      * keys designated by the given array.
      * 
@@ -208,7 +208,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
      * @return a new PreparedStatement object, containing the pre-compiled SQL statement.
      * @throws net.sf.jkniv.sqlegance.RepositoryException wrapper SQLException
      * @see java.sql.SQLException
-     */
+     *
     private PreparedStatement prepareStatement(Connection conn, Queryable queryable, String[] columnNames)
     {
         PreparedStatement stmt = null;
@@ -235,6 +235,7 @@ public class JdbcConnectionAdapter implements ConnectionAdapter
         }
         return stmt;
     }
+    */
     
 //    @Override
 //    @SuppressWarnings({ "rawtypes", "unchecked" })

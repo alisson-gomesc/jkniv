@@ -44,7 +44,8 @@ public class ConvertibleFactory
     /**
      * Retrieve a {@link Convertible} instance to customize the
      * value of database to class field.
-     * @param column Column of row
+     * @param <T> type of object into proxy reference
+     * @param access property access
      * @param proxy of return type from query
      * @return A convertible instance if found into class proxy or {@link NoConverterType}
      * instance when the field or method is not annotated.
@@ -58,7 +59,8 @@ public class ConvertibleFactory
     /**
      * Retrieve a {@link Convertible} instance to customize the
      * value of database to class field.
-     * @param column Column of row
+     * @param <T> type of object into proxy reference
+     * @param access property access
      * @param proxy of return type from query
      * @return A convertible instance if found into class proxy or {@link NoConverterType}
      * instance when the field or method is not annotated.

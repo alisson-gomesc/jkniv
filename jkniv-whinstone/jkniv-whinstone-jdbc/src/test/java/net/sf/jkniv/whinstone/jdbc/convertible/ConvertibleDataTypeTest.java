@@ -23,28 +23,87 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.arrayContaining;
+import static org.hamcrest.Matchers.arrayWithSize;
+import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.calls;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.atMost;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.verification.VerificationMode;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import net.sf.jkniv.sqlegance.LanguageType;
+import net.sf.jkniv.sqlegance.RepositoryType;
+import net.sf.jkniv.sqlegance.Selectable;
+import net.sf.jkniv.sqlegance.Sql;
+import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
+import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
+import net.sf.jkniv.sqlegance.params.ParamParser;
+import net.sf.jkniv.sqlegance.statement.ResultSetConcurrency;
+import net.sf.jkniv.sqlegance.statement.ResultSetType;
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.BaseJdbc;
+import net.sf.jkniv.whinstone.jdbc.JdbcCommandMock;
 import net.sf.jkniv.whinstone.jdbc.domain.acme.Author;
 import net.sf.jkniv.whinstone.jdbc.domain.acme.Book;
 import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook;
 import net.sf.jkniv.whinstone.jdbc.domain.flat.MyTypes;
+import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 public class ConvertibleDataTypeTest extends BaseJdbc
 {
+    private static final String INSERT_WITH_CONVERT_VALUES = "INSERT INTO TABLE (active, languageType, repositoryType) " +
+      " VALUES (:active, :languageType, :repositoryType)";
+
+    private static final String INSERT_WITH_CONVERT_VALUES_PARSED = "INSERT INTO TABLE (active, languageType, repositoryType) " + 
+            " VALUES (?      , ?            , ?              )";
+
     @Autowired
     Repository repositoryDerby;
+    
+    @Rule
+    public ExpectedException  catcher = ExpectedException.none();
+
+    private StatementAdapter<Boo, ResultSet> stmtAdapter;
+    private Sql sql;
+    private AnsiDialect dialect;
+    private ParamParser paramParser;
+    
+    @Before
+    public void setUp()
+    {
+        this.stmtAdapter = mock(StatementAdapter.class);
+        this.sql = mock(Selectable.class);
+        this.dialect = mock(AnsiDialect.class);
+        this.paramParser= mock(ParamParser.class);
+    }
     
     @Test
     public void whenGetDataAnnotationUsingConvertible() throws ParseException
@@ -131,5 +190,150 @@ public class ConvertibleDataTypeTest extends BaseJdbc
         assertThat(bookSaved.isInStock(), is(true));
         repositoryDerby.remove(bookSaved);
     }
+/////////////////////////////////////////////////////////////////////////////////////
 
+    
+    @Test
+    public void whenBindValuesWithPojo()
+    {
+        Boo param1 = new Boo(Boolean.TRUE, LanguageType.CRITERIA, RepositoryType.CASSANDRA),
+            param2 = new Boo(Boolean.TRUE, LanguageType.HQL, RepositoryType.CASSANDRA),
+            param3 = new Boo(Boolean.TRUE, LanguageType.JPQL, RepositoryType.CASSANDRA),
+            param4 = new Boo(Boolean.FALSE, LanguageType.NATIVE, RepositoryType.CASSANDRA),
+            param5 = new Boo(Boolean.FALSE, LanguageType.STORED, RepositoryType.CASSANDRA);
+        Queryable query = QueryFactory.of("dummy", param1);
+        given(this.sql.isSelectable()).willReturn(true);
+        given(this.sql.getSqlDialect()).willReturn(this.dialect);
+        given(this.sql.getParamParser()).willReturn(this.paramParser);
+        given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where active = :active and language = :languageType");
+        given(this.paramParser.find(anyString())).willReturn(new String[]{"active","languageType"});
+        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where active = ? and language = ?");
+        given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
+        
+        query.bind(this.sql);
+        query.bind(stmtAdapter);
+        assertThat(query.isBoundSql(), is(true));
+        assertThat(query.isBoundParams(), is(true));
+        assertThat(query.isTypeOfPojo(), is(true));
+        assertThat(query.query(), is("select id, name, description from author where active = ? and language = ?"));
+        assertThat(query.getParamsNames(), is(arrayWithSize(2)));
+        assertThat(query.getParamsNames(), arrayContaining("active","languageType"));
+        assertThat(query.values(), is(arrayWithSize(2)));
+        assertThat(query.values(), arrayContaining(new Param(param1.getActive(),"T", "active",0),
+                                                   new Param(param1.getLanguageType(),
+                                                             param1.getLanguageType().ordinal(), "languageType",1)));
+        Param[] values = query.values();
+        assertThat(values[0].getValueAs().toString(), is("T"));
+        assertThat(values[1].getValueAs().toString(), is(String.valueOf(LanguageType.CRITERIA.ordinal())));
+        
+        query = QueryFactory.of("dummy", param2);
+        query.bind(this.sql);
+        query.bind(stmtAdapter);
+        values = query.values();
+        assertThat(values[0].getValueAs().toString(), is("T"));
+        assertThat(values[1].getValueAs().toString(), is(String.valueOf(LanguageType.HQL.ordinal())));
+
+        query = QueryFactory.of("dummy", param3);
+        query.bind(this.sql);
+        query.bind(stmtAdapter);
+        values = query.values();
+        assertThat(values[0].getValueAs().toString(), is("T"));
+        assertThat(values[1].getValueAs().toString(), is(String.valueOf(LanguageType.JPQL.ordinal())));
+
+        query = QueryFactory.of("dummy", param4);
+        query.bind(this.sql);
+        query.bind(stmtAdapter);
+        values = query.values();
+        assertThat(values[0].getValueAs().toString(), is("F"));
+        assertThat(values[1].getValueAs().toString(), is(String.valueOf(LanguageType.NATIVE.ordinal())));
+
+        query = QueryFactory.of("dummy", param5);
+        query.bind(this.sql);
+        query.bind(stmtAdapter);
+        values = query.values();
+        assertThat(values[0].getValueAs().toString(), is("F"));
+        assertThat(values[1].getValueAs().toString(), is(String.valueOf(LanguageType.STORED.ordinal())));
+
+    }
+
+    
+    @Test @Ignore
+    public void _duplicate_whenBulkArrayPojo() throws SQLException
+    {
+        JdbcCommandMock jdbcMock = new JdbcCommandMock(FlatBook.class);
+        Repository repository = jdbcMock.withInsertable().getRepository();
+        Object[] books = new Object[7];
+        books[0] = new FlatBook();
+        books[1] = new FlatBook();
+        books[2] = new FlatBook();
+        books[3] = new FlatBook();
+        books[4] = new FlatBook();
+        books[5] = new FlatBook();
+        books[6] = new FlatBook();
+        
+        int rows = repository.add(QueryFactory.ofArray("insert", books));
+        assertThat("7 rows was affected", rows, equalTo(7));
+        verify(jdbcMock.getStmt(), times(7)).executeUpdate();
+        verify(jdbcMock.getStmt(), times(1)).close();
+        verify(jdbcMock.getConnection(), times(2)).close();
+    }
+    
+    @Test
+    public void whenBindValuesWithConverterUsingBulkCommandOfCollectionOfPojo() throws SQLException
+    {
+        Boo param1 = new Boo(Boolean.TRUE, LanguageType.CRITERIA, RepositoryType.JDBC), 
+            param2 = new Boo(Boolean.FALSE, LanguageType.HQL, RepositoryType.CASSANDRA), 
+            param3 = new Boo(Boolean.TRUE, LanguageType.JPQL, RepositoryType.COUCHDB);
+        List<Boo> params = new ArrayList<Boo>();
+        params.add(param1); params.add(param2); params.add(param3);
+        Queryable query = QueryFactory.of("dummy", params);
+        
+        JdbcCommandMock jdbcMock = new JdbcCommandMock(Boo.class).withInsertable();
+//        given(this.sql.isSelectable()).willReturn(false);
+//        given(this.sql.getSqlDialect()).willReturn(this.dialect);
+//        given(this.sql.getParamParser()).willReturn(this.paramParser);
+        given(jdbcMock.withSql().getParamParser())
+            .willReturn(jdbcMock.withParamParser());
+        given(jdbcMock.withInsertable().withSql().getSql(anyObject()))
+            .willReturn(INSERT_WITH_CONVERT_VALUES);
+        given(jdbcMock.withParamParser().find(anyString()))
+            .willReturn(new String[]{"active","languageType", "repositoryType"});
+        given(jdbcMock.withParamParser().replaceForQuestionMark(anyString(), anyObject()))
+            .willReturn(INSERT_WITH_CONVERT_VALUES_PARSED);
+        given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
+        
+        query.bind(jdbcMock.withSql());
+        query.bind(stmtAdapter);
+        
+        //Repository repository = mock(Repository.class);
+        
+        assertThat(query.isTypeOfCollectionPojo(), is(true));
+        assertThat(query.query(), is(INSERT_WITH_CONVERT_VALUES_PARSED));
+        assertThat(query.getParamsNames(), is(arrayWithSize(3)));
+        assertThat(query.getParamsNames(), arrayContaining("active","languageType", "repositoryType"));
+
+        Repository repository = jdbcMock.getRepository();
+        repository.add(query);
+        
+        verify(jdbcMock.getStmt(), times(3)).executeUpdate();
+        
+        verify(jdbcMock.getConnection()).prepareStatement(INSERT_WITH_CONVERT_VALUES_PARSED, ResultSetType.DEFAULT.getTypeScroll(), ResultSetConcurrency.DEFAULT.getConcurrencyMode());
+        verify(jdbcMock.getStmt(), atLeast(1)).setObject(1, "T");
+        verify(jdbcMock.getStmt(), atMost(1)).setObject(2, LanguageType.CRITERIA.ordinal());
+        verify(jdbcMock.getStmt(), atMost(1)).setObject(3,  RepositoryType.JDBC.name());
+        
+        verify(jdbcMock.getStmt(), atMost(1)).setObject(1, "F");
+        verify(jdbcMock.getStmt(), atMost(1)).setObject(2, LanguageType.HQL.ordinal());
+        verify(jdbcMock.getStmt(), atMost(1)).setObject(3,  RepositoryType.CASSANDRA.name());
+        
+        verify(jdbcMock.getStmt(), atMost(2)).setObject(1, "T");
+        verify(jdbcMock.getStmt(), atMost(1)).setObject(2, LanguageType.JPQL.ordinal());
+        verify(jdbcMock.getStmt(), atMost(1)).setObject(3,  RepositoryType.COUCHDB.name());
+        
+        verify(jdbcMock.getStmt(), times(1)).close();
+        verify(jdbcMock.getConnection(), times(2)).close();
+        
+        assertThat(query.values(), is(arrayWithSize(3)));
+        assertThat(query.values(), arrayContaining(new Param(param1,0),new Param(param2, 1), new Param(param3, 2)));
+    }
 }

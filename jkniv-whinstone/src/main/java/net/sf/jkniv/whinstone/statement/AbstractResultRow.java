@@ -33,8 +33,6 @@ import net.sf.jkniv.whinstone.JdbcColumn;
 
 /**
  * 
- * @param <T> Type of objects thats must be returned.
- * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
@@ -52,7 +50,7 @@ public abstract class AbstractResultRow //implements ResultRow
     
     /**
      * 
-     * @param <T> {@code ResultSet} implementation, that contains the rows of database
+     * @param <R> {@code ResultSet} implementation, that contains the rows of database
      * @param column metadata
      * @param rs {@code ResultSet} instance
      * @return The value of column

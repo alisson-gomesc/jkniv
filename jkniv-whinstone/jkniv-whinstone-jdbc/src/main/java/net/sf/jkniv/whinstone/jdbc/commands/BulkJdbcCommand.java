@@ -43,7 +43,7 @@ public class BulkJdbcCommand extends AbstractJdbcCommand
         try
         {
             //if (queryable.getDynamicSql().isBatch() || queryable.isTypeOfBulk())
-            rowsAffected = batchExecute();
+            rowsAffected = executeBulk();
         }
         finally
         {

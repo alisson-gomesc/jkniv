@@ -28,10 +28,12 @@ import org.slf4j.Logger;
 import com.datastax.driver.core.Row;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.MapTransform;
 import net.sf.jkniv.whinstone.classification.Transformable;
+import net.sf.jkniv.whinstone.statement.AbstractResultRow;
 
 /**
  * 
@@ -41,10 +43,11 @@ import net.sf.jkniv.whinstone.classification.Transformable;
  *
  * @param <T> generic type of {@code Class} object to inject value of <code>ResultSet</code>
  */
-class MapResultRow<T> implements ResultRow<T, Row>
+class MapResultRow<T> extends AbstractResultRow implements ResultRow<T, Row>
 {
     //private final static Logger LOG = LoggerFactory.getLogger();
     private static final Logger      SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
+    private static final DataMasking MASKING = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getDataMasking();
     private final Class<T> returnType;
     private JdbcColumn<Row>[] columns;
     private final Transformable<T> transformable;
@@ -57,6 +60,7 @@ class MapResultRow<T> implements ResultRow<T, Row>
     @SuppressWarnings("unchecked")
     public MapResultRow(Class<T> returnType, JdbcColumn<Row>[] columns)
     {
+        super(SQLLOG, MASKING);
         this.returnType = returnType;
         this.columns = columns;
         this.transformable = (Transformable<T>) new MapTransform();
@@ -77,11 +81,7 @@ class MapResultRow<T> implements ResultRow<T, Row>
 
     private void setValueOf(JdbcColumn<Row> column, Row row, Map<String, Object> map, int index) throws SQLException
     {
-        Object jdbcObject = null;
-        if (column.isBinary())
-            jdbcObject = column.getBytes(row);
-        else
-            jdbcObject = column.getValue(row);
+        Object jdbcObject = getValueOf(column, row);
         if(SQLLOG.isTraceEnabled())
             SQLLOG.trace("Using sensitive key [{}] for type [{}] with value [{}]", column.getAttributeName(), (jdbcObject == null ? "null" : jdbcObject.getClass()), jdbcObject);
         map.put(column.getAttributeName(), jdbcObject);

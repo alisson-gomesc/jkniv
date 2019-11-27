@@ -94,6 +94,7 @@ public interface ObjectProxy<T>
      * When the proxy catch a Exception to handler by {@code ReflectionException}
      * a mute rule is used to not throw the exception. 
      * @param ex exception class type
+     * @return this instance
      */
     ObjectProxy<T> mute(Class<? extends Exception> ex);
     
@@ -120,6 +121,7 @@ public interface ObjectProxy<T>
 
     /**
      * check if this proxy class has {@code annotation} for a method name
+     * @param <T> generic type to return
      * @param annotation name of the annotation
      * @param methodName name of the method
      * @param paramTypes type of parameters
@@ -130,6 +132,7 @@ public interface ObjectProxy<T>
 
     /**
      * check if this proxy class has {@code annotation} for a method name
+     * @param <T> generic type to return
      * @param annotation name of the annotation
      * @param fieldName attribute name
      * @return the Annotation instance or {@code null} if not found
@@ -139,14 +142,14 @@ public interface ObjectProxy<T>
 
     /**
      * get the {@link Field} declared by the class or sub-class represented by this proxy
-     * @param name
+     * @param name field to looking for
      * @return the Field instance or {@code null} if not found
      */
     Field getDeclaredField(String name);
     
     /**
      * get the {@link Method} declared by the class or sub-class represented by this proxy
-     * @param name
+     * @param name method to looking for
      * @return the Method instance or {@code null} if not found
      */
     Method getDeclaredMethod(String name);

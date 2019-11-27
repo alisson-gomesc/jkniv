@@ -40,6 +40,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  */
 public class DefaultJdbcQuery extends AbstractJdbcCommand
 {
+    @SuppressWarnings("rawtypes")
     public DefaultJdbcQuery(StatementAdapter stmt, Queryable queryable, Connection conn)
     {
         super(stmt, queryable, conn);
@@ -48,11 +49,11 @@ public class DefaultJdbcQuery extends AbstractJdbcCommand
     @SuppressWarnings("unchecked")
     public <T> T execute()
     {
-        List rows = Collections.emptyList();
+        List<T> rows = Collections.emptyList();
         try
         {
             queryable.bind(stmt).on();
-            rows = stmt.rows();
+            rows = (List<T>) stmt.rows();
         }
         finally
         {

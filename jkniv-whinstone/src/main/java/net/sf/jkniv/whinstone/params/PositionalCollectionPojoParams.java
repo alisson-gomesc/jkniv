@@ -25,13 +25,15 @@ import net.sf.jkniv.reflect.beans.CapitalNameFactory;
 import net.sf.jkniv.reflect.beans.Capitalize;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.reflect.beans.PropertyAccess;
+import net.sf.jkniv.sqlegance.types.Convertible;
 import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 class PositionalCollectionPojoParams extends AbstractParam implements AutoBindParams
 {
-	//private final static MethodName SETTER =  MethodNameFactory.getInstanceSetter();
 	private final static Capitalize CAPITAL_GETTER =  CapitalNameFactory.getInstanceOfGetter();
 	private StatementAdapter<?, ?> stmtAdapter;
     private Iterator<Param>        it;
@@ -62,11 +64,14 @@ class PositionalCollectionPojoParams extends AbstractParam implements AutoBindPa
         {
             Param pojo = it.next();
             ObjectProxy<?> proxy = ObjectProxyFactory.of(pojo.getValue());
+            int i = 0;
             for(String paramName : paramsNames)
             {
-            	String getterName = CAPITAL_GETTER.does(paramName);
-            	Object value = proxy.invoke(getterName, pojo.getValue());
-                stmtAdapter.bind(paramName, value);
+            	//String getterName = CAPITAL_GETTER.does(paramName);
+            	PropertyAccess propertyAccess = new PropertyAccess(paramName, proxy.getTargetClass());
+            	Convertible<Object,Object> convertible = ConvertibleFactory.toJdbc(propertyAccess, proxy);
+            	Object value = proxy.invoke(propertyAccess.getReadMethod(), pojo.getValue());
+                stmtAdapter.bind(new Param(value, convertible.toJdbc(value), paramName, i++));
             }
             //Statement.SUCCESS_NO_INFO;
             rowsAfftected += stmtAdapter.execute();

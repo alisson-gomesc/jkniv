@@ -28,6 +28,7 @@ import net.sf.jkniv.whinstone.PostCallBack;
 
 public class AuthorFlat
 {
+    private Long         id;
     private String       author;
     private String       book;
     
@@ -40,8 +41,28 @@ public class AuthorFlat
     
     public AuthorFlat(String author, String book)
     {
+        this();
         this.author = author;
         this.book = book;
+    }
+    
+    public AuthorFlat(Long id, String author)
+    {
+        this();
+        this.id = id;
+        this.author = author;
+    }
+    
+    
+    
+    public Long getId()
+    {
+        return id;
+    }
+
+    public void setId(Long id)
+    {
+        this.id = id;
     }
     
     public String getAuthor()
@@ -121,5 +142,5 @@ public class AuthorFlat
     {
         this.callback.add("POST-UPDATE");
     }
-
+    
 }
