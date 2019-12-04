@@ -28,6 +28,10 @@ import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.classification.Transformable;
+<<<<<<< HEAD
+=======
+import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
+>>>>>>> branch '0.6.0.M53' of https://github.com/alisson-gomesc/jkniv.git
 import net.sf.jkniv.whinstone.statement.AbstractResultRow;
 
 /**

@@ -160,6 +160,7 @@ class QueryName implements Queryable
         Param param = null;
         if (!isTypeOfNull())
         {
+<<<<<<< HEAD
             
             try
             {
@@ -171,6 +172,15 @@ class QueryName implements Queryable
                 throw new ParameterNotFoundException("Cannot find the property [" + name + "] at param object ["
                         + (params != null ? params.getClass().getName() : "null") + "] ");
             }
+=======
+            Object o = PropertyUtils.getProperty(params, name);
+            param = new Param(o, getConverter(name).toJdbc(o), name);
+        }
+        catch (Exception e)
+        {
+            throw new ParameterNotFoundException("Cannot find the property [" + name + "] at param object ["
+                    + (params != null ? params.getClass().getName() : "null") + "] ");
+>>>>>>> branch '0.6.0.M53' of https://github.com/alisson-gomesc/jkniv.git
         }
         return param;
     }
@@ -181,6 +191,7 @@ class QueryName implements Queryable
         Param param = null;
         if (!isTypeOfNull())
         {
+<<<<<<< HEAD
             try
             {
                 Object o = PropertyUtils.getProperty(params, name);
@@ -191,6 +202,15 @@ class QueryName implements Queryable
                 throw new ParameterNotFoundException("Cannot find the property [" + name + "] at param object ["
                         + (params != null ? params.getClass().getName() : "null") + "] ");
             }
+=======
+            Object o = PropertyUtils.getProperty(params, name);
+            param = new Param(o, getConverter(name).toJdbc(o), name, index);
+        }
+        catch (Exception e)
+        {
+            throw new ParameterNotFoundException("Cannot find the property [" + name + "] at param object ["
+                    + (params != null ? params.getClass().getName() : "null") + "] ");
+>>>>>>> branch '0.6.0.M53' of https://github.com/alisson-gomesc/jkniv.git
         }
         return param;
     }
@@ -811,6 +831,7 @@ class QueryName implements Queryable
     private Convertible<Object, Object> getConverter(String fieldName)
     {
         Convertible<Object, Object> convertible = NoConverterType.getInstance();
+<<<<<<< HEAD
         if(isTypeOfPojo() || isTypeOfCollectionPojo() || isTypeOfArrayPojo())
         {
             ObjectProxy<?> proxy = ObjectProxyFactory.of(getParams());
@@ -819,6 +840,54 @@ class QueryName implements Queryable
         return convertible;
     }
         
+=======
+        if(!isTypeOfNull() &&
+           (isTypeOfPojo() || isTypeOfCollectionPojo() || isTypeOfArrayPojo()))
+        {
+            ObjectProxy<?> proxy = ObjectProxyFactory.of(getParams());
+            convertible = ConvertibleFactory.toJdbc(new PropertyAccess(fieldName, getParams().getClass()), proxy);
+        }
+        return convertible;
+    }
+    
+//  private Collection<?> getParamsAsCollection()
+//  {
+//      if (this.params == null)
+//          return Collections.emptyList();
+//      
+//      return (Collection<?>) this.params;
+//  }
+//  
+//  private Object[] getParamsAsArray()
+//  {
+//      if (this.params == null)
+//          return new Object[0];
+//      
+//      return (Object[]) this.params;
+//  }
+    
+    /*
+    private void checkIfParamIsEntity() {
+        ObjectProxy<?> proxy = ObjectProxyFactory.newProxy(this.params);
+        proxy.ge
+        Class<? extends Annotation> entityAnnotation = (Class<? extends Annotation>) forName("javax.persistence.Entity");
+        if (returnTypeClass != null && entityAnnotation != null)
+            this.returnTypeManaged = returnTypeClass.isAnnotationPresent(entityAnnotation);
+        
+    }
+    
+    private Class<?> forName(String typeOfClass)
+    {
+        try
+        {
+            return Class.forName(typeOfClass);
+        }
+        catch (ClassNotFoundException returnNULL) {  // TODO ClassNotFoundException NULL type, returnType undefined 
+        return null;
+    }
+    */
+    
+>>>>>>> branch '0.6.0.M53' of https://github.com/alisson-gomesc/jkniv.git
     @Override
     public int hashCode()
     {

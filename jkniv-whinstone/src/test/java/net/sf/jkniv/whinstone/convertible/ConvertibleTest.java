@@ -110,8 +110,12 @@ public class ConvertibleTest
         assertThat(query.getParamsNames(), arrayContaining("active","languageType"));
         assertThat(query.values(), is(arrayWithSize(2)));
         assertThat(query.values(), arrayContaining(new Param(param1.getActive(),"T", "active",0),
+<<<<<<< HEAD
                                                    new Param(param1.getLanguageType(),
                                                              param1.getLanguageType().ordinal(), "languageType",1)));
+=======
+                                                   new Param(param1.getLanguageType(),param1.getLanguageType().ordinal(), "languageType",1)));
+>>>>>>> branch '0.6.0.M53' of https://github.com/alisson-gomesc/jkniv.git
         Param[] values = query.values();
         assertThat(values[0].getValueAs().toString(), is("T"));
         assertThat(values[1].getValueAs().toString(), is(String.valueOf(LanguageType.CRITERIA.ordinal())));
