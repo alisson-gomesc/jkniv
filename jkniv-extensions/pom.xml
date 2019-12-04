@@ -3,12 +3,12 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sf.jkniv</groupId>
-  <version>0.6.0.M52</version>
+  <version>0.6.0.M53</version>
   <packaging>pom</packaging>
   <name>jkniv-extensions</name>
   <artifactId>jkniv-extensions</artifactId>
   <description>jkniv extensions for another frameworks</description>
-  <url>http://sourceforge.net/projects/jkniv/</url>
+  <url>https://github.com/alisson-gomesc/jkniv</url>
   <inceptionYear>2012</inceptionYear>
 
   <prerequisites>
@@ -284,85 +284,6 @@
           <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
       </distributionManagement>      
-    </profile>
-    <profile>
-      <id>rw-milestone</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <!-- 
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.6.3</version>
-            <extensions>true</extensions>
-            <configuration>
-              <serverId>ossrh</serverId>
-              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-              <autoReleaseAfterClose>true</autoReleaseAfterClose>
-            </configuration>
-          </plugin>
-          -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <version>2.2.1</version>
-            <executions>
-              <execution>
-                <id>attach-sources</id>
-                <goals>
-                  <goal>jar-no-fork</goal>
-                </goals>
-                <configuration>
-                  <failOnError>false</failOnError>
-                  <!--additionalparam>-Xdoclint:none</additionalparam-->
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.9.1</version>
-            <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>          
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.6</version>
-            <executions>
-              <execution>
-                <id>sign-artifacts</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>          
-        </plugins>
-      </build>
-      <distributionManagement>
-        <repository>
-          <id>rw-artifactory</id>
-          <name>rw-artifactory-releases</name>
-          <url>http://srwint001.rwit.com.br:8080/artifactory/ext-release-local</url>
-        </repository>
-        <snapshotRepository>
-          <id>rw-artifactory</id>
-          <name>rw-artifactory-snapshots</name>
-          <url>http://srwint001.rwit.com.br:8080/artifactory/ext-snapshot-local</url>
-        </snapshotRepository>
-      </distributionManagement>
     </profile>
   </profiles>
   <reporting>

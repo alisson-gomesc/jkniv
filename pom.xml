@@ -3,12 +3,12 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sf.jkniv</groupId>
-  <version>0.6.0.M52</version>
+  <version>0.6.0.M53</version>
   <packaging>pom</packaging>
   <name>jkniv</name>
   <artifactId>jkniv</artifactId>
   <description>jkniv build POM</description>
-  <url>http://sourceforge.net/projects/jkniv/</url>
+  <url>https://github.com/alisson-gomesc/jkniv</url>
   <inceptionYear>2012</inceptionYear>
 
   <prerequisites>

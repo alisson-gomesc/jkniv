@@ -5,11 +5,11 @@
   <parent>
     <groupId>net.sf.jkniv</groupId>
     <artifactId>jkniv</artifactId>
-    <version>0.6.0.M52</version>
+    <version>0.6.0.M53</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
   <artifactId>jkniv-whinstone-rest</artifactId>
-  <url>http://jkniv.sourceforge.net/hhinstone</url>
+  <url>http://jkniv.sourceforge.net/jkniv-whinstone/</url>
   <name>jkniv-whinstone-rest</name>
   
   <properties>
