@@ -21,7 +21,7 @@ package net.sf.jkniv.sqlegance.types;
 
 import java.sql.Types;
 
-public class DateAsSqlTimeType implements Convertible<java.sql.Date, java.util.Date>
+class DateAsSqlTimeType implements Convertible<java.sql.Date, java.util.Date>
 {
     private final static int[] TYPES = {Types.DATE, Types.TIME, Types.TIMESTAMP};
     
