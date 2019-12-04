@@ -30,8 +30,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Types;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -47,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * @see java.sql.Types
  * @since 0.6.0
  */
-enum SqlDataType
+enum JdbcType
 {
     /**
      * <P>
@@ -349,14 +347,10 @@ enum SqlDataType
      */
     TIMESTAMP_WITH_TIMEZONE(2014);
     
-    private final static Logger LOG = LoggerFactory.getLogger(SqlDataType.class);
+    private final static Logger LOG = LoggerFactory.getLogger(JdbcType.class);
     private int                 value;
-    private SimpleDateFormat    sdfDate;
-    private SimpleDateFormat    sdfTime;
-    private SimpleDateFormat    sdfTimestamp;
-    private DecimalFormat       dfNumber;
     
-    private SqlDataType(int v)
+    private JdbcType(int v)
     {
         this.value = v;
     }
@@ -366,29 +360,9 @@ enum SqlDataType
         return value;
     }
     
-    public void registerFormatDate(SimpleDateFormat sdfDate)
+    public static JdbcType getType(Object value)
     {
-        this.sdfDate = sdfDate;
-    }
-    
-    public void registerFormatDateTime(SimpleDateFormat sdfTime)
-    {
-        this.sdfTime = sdfTime;
-    }
-    
-    public void registerFormatTimestamp(SimpleDateFormat sdfTimestamp)
-    {
-        this.sdfTimestamp = sdfTimestamp;
-    }
-    
-    public void registerFormatNumber(DecimalFormat dfNumber)
-    {
-        this.dfNumber = dfNumber;
-    }
-    
-    public static SqlDataType getType(Object value)
-    {
-        SqlDataType type = null;
+        JdbcType type = null;
         if (value == null)
             type = NULL;
         else if (value.getClass().isArray())
@@ -441,7 +415,7 @@ enum SqlDataType
     
     public static void setValue(PreparedStatement stmt, int index, Object value)
     {
-        SqlDataType type = getType(value);
+        JdbcType type = getType(value);
         
         try
         {
