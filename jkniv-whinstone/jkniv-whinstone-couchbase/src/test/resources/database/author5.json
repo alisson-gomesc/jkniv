@@ -1,0 +1,20 @@
+{
+  "name": "Albert Camus",
+  "nationality": "DZ", 
+  "books": [
+    {
+     "isbn": "978-0679720201",
+     "name": "The Stranger",
+     "published": 1942,
+     "lastView": "2017-02-08T10:10:00.000-0300",
+     "visualization": 0
+    },
+    {
+     "isbn": "978-0679733843",
+     "name": "The Rebel: An Essay on Man in Revolt",
+     "published": 1951,
+     "lastView": "2018-02-08T11:15:00.500-0300",
+     "visualization": 0
+    }
+  ]
+}  

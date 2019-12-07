@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+  
+
+  <select id="select-literal">
+       SELECT "Hello world!" as greeting;
+  </select>
+
+  <select id="select-travel">
+   SELECT * FROM `travel-sample` LIMIT 4
+  </select>
+  
+  <select id="select-4airlines" returnType="net.sf.jkniv.whinstone.couchbase.model.Airline">
+   SELECT id,callsign,country,iata,icao,name,type FROM `travel-sample` LIMIT 4
+  </select>
+
+  
+  <select id="select-limit-offset-airlines" returnType="net.sf.jkniv.whinstone.couchbase.model.Airline">
+   SELECT id,callsign,country,iata,icao,name,type FROM `travel-sample`
+  </select>
+  
+  <select id="select-airport-from-city" returnType="net.sf.jkniv.whinstone.couchbase.model.Airport">
+   SELECT airportname,city,country,faa,geo,icao,id,type,tz FROM `travel-sample` WHERE city=$city
+  </select> 
+
+  <select id="select-airport-from-city-type" returnType="net.sf.jkniv.whinstone.couchbase.model.Airport">
+   SELECT airportname,city,country,faa,geo,icao,id,type,tz FROM `travel-sample` WHERE city=$city and type = $type
+  </select> 
+
+</statements>

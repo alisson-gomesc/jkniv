@@ -27,7 +27,7 @@ package net.sf.jkniv.sqlegance;
  */
 public enum RepositoryType
 {
-    JDBC, JPA, CASSANDRA, COUCHDB
+    JDBC, JPA, CASSANDRA, COUCHDB, COUCHBASE
     ;
     
     /**

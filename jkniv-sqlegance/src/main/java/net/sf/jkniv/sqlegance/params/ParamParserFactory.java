@@ -34,6 +34,8 @@ public class ParamParserFactory
             instance = ParamParserQuestionMark.getInstance();
         else if (type == ParamMarkType.HASH)
             instance = ParamParserHashMark.getInstance();
+        else if (type == ParamMarkType.DOLLAR)
+            instance = ParamParserDollarMark.getInstance();
            
         return instance;
     }

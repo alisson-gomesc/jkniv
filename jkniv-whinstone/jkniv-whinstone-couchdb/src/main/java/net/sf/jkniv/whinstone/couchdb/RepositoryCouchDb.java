@@ -36,8 +36,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
-import net.sf.jkniv.cache.Cacheable;
-import net.sf.jkniv.cache.MemoryCache;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
@@ -76,9 +74,6 @@ class RepositoryCouchDb implements Repository
     private CouchDbSqlContext                 sqlContext;
     private HttpCookieCommandAdapter          cmdAdapter;
     private final static Map<String, Boolean> DOC_SCHEMA_UPDATED = new HashMap<String, Boolean>();
-    private boolean                           isTraceEnabled;
-    private boolean                           isDebugEnabled;
-    private Cacheable<Queryable, Object>      cache;
     
     RepositoryCouchDb()
     {
@@ -116,15 +111,12 @@ class RepositoryCouchDb implements Repository
             sqlContext.getRepositoryConfig().add(props);
         
         this.sqlContext = new CouchDbSqlContext(sqlContext);
-        this.isDebugEnabled = LOG.isDebugEnabled();
-        this.isTraceEnabled = LOG.isTraceEnabled();
         this.sqlContext.getRepositoryConfig().add(RepositoryProperty.SQL_DIALECT.key(), CouchDbDialect2o1.class.getName());
         this.sqlContext.setSqlDialect(this.sqlContext.getRepositoryConfig().getSqlDialect());
         this.sqlContext.buildInQueries();
         this.cmdAdapter = (HttpCookieCommandAdapter) new HttpConnectionFactory(
                 sqlContext.getRepositoryConfig().getProperties(), sqlContext.getName()).open();
         configHanlerException();
-        this.cache = new MemoryCache<Queryable, Object>();
         this.init();
     }
     

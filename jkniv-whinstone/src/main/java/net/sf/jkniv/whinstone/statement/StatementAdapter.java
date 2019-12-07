@@ -78,7 +78,8 @@ public interface StatementAdapter<T, R>
 
     List<T> rows();
     
-    //TODO void batch();
+    //TODO implements batch operation
+    //void batch();
     
     int execute();
     

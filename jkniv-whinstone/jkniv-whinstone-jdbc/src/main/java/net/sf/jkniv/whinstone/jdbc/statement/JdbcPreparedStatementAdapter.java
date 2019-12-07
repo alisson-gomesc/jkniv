@@ -170,8 +170,8 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         return this;
     }
     
-    @SuppressWarnings(
-    { "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Override
     public List<T> rows()
     {
         ResultSet rs = null;
@@ -284,20 +284,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         }
         return ret;
     }
-    /*
-    @Override
-    public void batch()
-    {
-        try
-        {
-            stmt.addBatch();
-        }
-        catch (SQLException e)
-        {
-            handlerException.handle(e, e.getMessage());
-        }
-    }
-    */
+    
     @Override
     public int reset()
     {

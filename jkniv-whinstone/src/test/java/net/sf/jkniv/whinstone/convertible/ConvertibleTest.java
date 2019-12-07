@@ -97,7 +97,7 @@ public class ConvertibleTest
         given(this.sql.getParamParser()).willReturn(this.paramParser);
         given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where active = :active and language = :languageType");
         given(this.paramParser.find(anyString())).willReturn(new String[]{"active","languageType"});
-        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where active = ? and language = ?");
+        given(this.paramParser.replaceForPlaceholder(anyString(), anyObject())).willReturn("select id, name, description from author where active = ? and language = ?");
         given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
         
         query.bind(this.sql);

@@ -237,7 +237,6 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         proxy.invoke(CAPITAL_SETTER.does(property), parsedValue);
     }
 
-    
     @Override
     public StatementAdapter<T, Row> with(AutoKey generateKey)
     {
@@ -245,6 +244,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         return this;
     }
     
+    @Override
     public int execute()
     {
         session.execute(bound);

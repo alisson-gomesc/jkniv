@@ -598,7 +598,7 @@ class QueryName implements Queryable
             else
                 this.sqlTextPaginated = sqlDialect.buildQueryPaging(sqlText, this.offset, this.max);
         }
-        replaceForQuestionMark();
+        replaceForPlaceholder();
         if (pagingSelect && sqlDialect.supportsFeature(SqlFeatureSupport.PAGING_ROUNDTRIP))
         {
             this.sqlTextToCount = sqlDialect.buildQueryCount(sqlText);
@@ -660,14 +660,14 @@ class QueryName implements Queryable
         return this.paramsNames;
     }
     
-    private void replaceForQuestionMark()
+    private void replaceForPlaceholder()
     {
         ParamParser paramParser = sql.getParamParser();
         this.paramsNames = paramParser.find(sqlText);
         if (this.sqlTextPaginated != null)
-            this.sqlTextPaginated = paramParser.replaceForQuestionMark(this.sqlTextPaginated, params);
+            this.sqlTextPaginated = paramParser.replaceForPlaceholder(this.sqlTextPaginated, params);
         
-        this.sqlText = paramParser.replaceForQuestionMark(this.sqlText, params);
+        this.sqlText = paramParser.replaceForPlaceholder(this.sqlText, params);
         this.countParams = countOccurrencesOf(this.sqlText, "?");
     }
     

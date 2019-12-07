@@ -115,7 +115,7 @@ public interface CommandHandler
     <T> T run();
     
     /**
-     * If the command isn't the sql type expected an illegal argument exception is throw.
+     * If the command isn't the SQL type expected an illegal argument exception is throw.
      * @param expected type of SQL expected
      * @return a reference to this object.
      * @throws IllegalArgumentException if {@link Sql} isn't the expected {@code SqlType}

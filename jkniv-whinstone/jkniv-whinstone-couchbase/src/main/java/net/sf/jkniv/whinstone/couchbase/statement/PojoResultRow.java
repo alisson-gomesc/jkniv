@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.couchdb.statement;
+package net.sf.jkniv.whinstone.couchbase.statement;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -56,8 +56,8 @@ import net.sf.jkniv.whinstone.classification.Transformable;
 class PojoResultRow<T> implements ResultRow<T, ResultSet>
 {
     private final static Logger      LOG     = LoggerFactory.getLogger(PojoResultRow.class);
-    private final static Logger      SQLLOG  = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
-    private final static DataMasking MASKING = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getDataMasking();
+    private final static Logger      SQLLOG  = net.sf.jkniv.whinstone.couchbase.LoggerFactory.getLogger();
+    private final static DataMasking MASKING = net.sf.jkniv.whinstone.couchbase.LoggerFactory.getDataMasking();
     private final static Capitalize  CAPITAL_SETTER  = CapitalNameFactory.getInstanceOfSetter();
     private final static Capitalize  CAPITAL_GETTER  = CapitalNameFactory.getInstanceOfGetter();
     private final Class<T>           returnType;

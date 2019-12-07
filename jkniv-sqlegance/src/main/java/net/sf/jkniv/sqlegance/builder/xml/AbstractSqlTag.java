@@ -67,11 +67,15 @@ public abstract class AbstractSqlTag implements SqlTag
     private static final String       REGEX_COLON_MARK                = ":[\\w\\.?]+";
     // find the pattern ?
     private static final String       REGEX_QUESTION_MARK             = "[\\?]+";
+    // find the pattern :id
+    private static final String       REGEX_DOLLAR_MARK                = "\\$[\\w\\.?]+";
     private static final Pattern      PATTERN_HASH                    = Pattern.compile(REGEX_HASH_MARK,
             Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private static final Pattern      PATTERN_COLON                   = Pattern.compile(REGEX_COLON_MARK,
             Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private static final Pattern      PATTERN_QUESTION                = Pattern.compile(REGEX_QUESTION_MARK,
+            Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern      PATTERN_DOLLAR                   = Pattern.compile(REGEX_DOLLAR_MARK,
             Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     
     public static final String        ATTRIBUTE_NAME                  = "id";
@@ -668,9 +672,11 @@ public abstract class AbstractSqlTag implements SqlTag
             if (PATTERN_COLON.matcher(text).find())
                 this.paramParser = ParamParserFactory.getInstance(ParamMarkType.COLON);
             else if (PATTERN_HASH.matcher(text).find())
-                this.paramParser = ParamParserFactory.getInstance(ParamMarkType.HASH);//new ParamParserHashMark();
+                this.paramParser = ParamParserFactory.getInstance(ParamMarkType.HASH);
             else if (PATTERN_QUESTION.matcher(text).find())
-                this.paramParser = ParamParserFactory.getInstance(ParamMarkType.QUESTION);//new ParamParserQuestionMark();
+                this.paramParser = ParamParserFactory.getInstance(ParamMarkType.QUESTION);
+            else if (PATTERN_DOLLAR.matcher(text).find())
+                this.paramParser = ParamParserFactory.getInstance(ParamMarkType.DOLLAR);
         }
     }
     

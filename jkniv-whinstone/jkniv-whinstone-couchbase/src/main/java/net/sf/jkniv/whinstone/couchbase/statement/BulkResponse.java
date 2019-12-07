@@ -17,32 +17,35 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.couchdb;
+package net.sf.jkniv.whinstone.couchbase.statement;
 
-import net.sf.jkniv.whinstone.commands.Command;
-import net.sf.jkniv.whinstone.commands.CommandAdapter;
-import net.sf.jkniv.whinstone.commands.DefaultCommandHandler;
+import java.util.List;
 
-/**
- * Couchdb Command to handler the {@code Remove} life-cycle.
- * 
- * @author Alisson Gomes
- * @since 0.6.0
- */
-class RemoveHandler extends DefaultCommandHandler
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+public class BulkResponse
 {
-    public RemoveHandler(CommandAdapter cmdAdapter)
+    private List<BulkCommandResponse> response;
+    private int totalOk;
+    public List<BulkCommandResponse> getResponse()
     {
-        super(cmdAdapter);
-        //with(this);
+        return response;
     }
+    public void setResponse(List<BulkCommandResponse> response)
+    {
+        this.response = response;
+    }
+    public int getTotalOk()
+    {
+        return totalOk;
+    }
+    public void setTotalOk(int totalOk)
+    {
+        this.totalOk = totalOk;
+    }
+
     
-    @Override
-    public Command asCommand()
-    {
-        Command c = getCommandAdapter().asRemoveCommand(queryable);
-        c.with(this);
-        c.with(this.handleableException);
-        return c;
-    }
 }

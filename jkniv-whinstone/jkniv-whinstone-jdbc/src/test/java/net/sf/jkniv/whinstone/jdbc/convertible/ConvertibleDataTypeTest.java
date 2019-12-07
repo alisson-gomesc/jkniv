@@ -153,7 +153,6 @@ public class ConvertibleDataTypeTest extends BaseJdbc
         }
     }
     
-
     @Test
     public void whenAddWithConvertibleAnnotationFlatObject()
     {
@@ -207,7 +206,7 @@ public class ConvertibleDataTypeTest extends BaseJdbc
         given(this.sql.getParamParser()).willReturn(this.paramParser);
         given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where active = :active and language = :languageType");
         given(this.paramParser.find(anyString())).willReturn(new String[]{"active","languageType"});
-        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where active = ? and language = ?");
+        given(this.paramParser.replaceForPlaceholder(anyString(), anyObject())).willReturn("select id, name, description from author where active = ? and language = ?");
         given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
         
         query.bind(this.sql);
@@ -298,7 +297,7 @@ public class ConvertibleDataTypeTest extends BaseJdbc
             .willReturn(INSERT_WITH_CONVERT_VALUES);
         given(jdbcMock.withParamParser().find(anyString()))
             .willReturn(new String[]{"active","languageType", "repositoryType"});
-        given(jdbcMock.withParamParser().replaceForQuestionMark(anyString(), anyObject()))
+        given(jdbcMock.withParamParser().replaceForPlaceholder(anyString(), anyObject()))
             .willReturn(INSERT_WITH_CONVERT_VALUES_PARSED);
         given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
         

@@ -44,16 +44,22 @@ public interface ParamParser
      * @param params parameters used at query, its necessary when the query use IN clause 
      * @return the new SQL sentence with question marks.
      */
-    String replaceForQuestionMark(final String query, final Object params);
-
-    String replaceForQuestionMarkWithNumber(final String query, Object params);
+    String replaceForPlaceholder(final String query, final Object params);
 
     /**
      * Replace the parameters names for question marks
      * @param query the SQL sentence
      * @return the new SQL sentence with question marks.
      */
-    String replaceForQuestionMark(final String query);
+    String replaceForPlaceholder(final String query);
 
+    String replaceForPlaceholderWithNumber(final String query, Object params);
+    
     ParamMarkType getType();
+    
+    /**
+     * Specifies a character that will be replaced to in SQL query. Default is {@code ?}
+     * @return the place holder from parser
+     */
+    String getPlaceholder();
 }

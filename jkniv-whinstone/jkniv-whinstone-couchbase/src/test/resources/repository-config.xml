@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<repository-config 
+  xmlns="http://jkniv.sf.net/schema/sqlegance/config" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/config http://jkniv.sf.net/schema/sqlegance/sqlegance-config.xsd">
+
+  <repository name="couchbase-authors-nonjndi">
+    <description>Jndi for properties file</description>
+    <properties>
+      <property name="schema" value="travel-sample" />
+    </properties>
+  </repository>
+
+  <repository name="travel-sample">
+    <description>Jndi for properties file</description>
+    <properties>
+      <property name="jkniv.repository.jdbc.dialect" value="net.sf.jkniv.whinstone.couchbase.dialect.CouchbaseDialect6o5" />
+      <property name="schema" value="travel-sample" />
+      <property name="user" value="admin" />
+      <property name="password" value="123456" />
+    </properties>
+  </repository>
+
+</repository-config>

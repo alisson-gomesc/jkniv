@@ -49,10 +49,10 @@ public class ParamParserQuestionMarkInClaseTest
         assertThat(names.length, is(1));
         assertThat(names[0], is("in:names"));
         
-        String newSql = parser.replaceForQuestionMark(sql);
+        String newSql = parser.replaceForPlaceholder(sql);
         assertThat(newSql, is(sql));
         
-        newSql = parser.replaceForQuestionMark(sql, params);
+        newSql = parser.replaceForPlaceholder(sql, params);
         assertThat(newSql, is(sqlExpected));
     }
 
@@ -69,7 +69,7 @@ public class ParamParserQuestionMarkInClaseTest
         assertThat(names[0], is("in:names"));
         assertThat(names[1], is("in:names"));
         
-        String newSql = parser.replaceForQuestionMark(sql, params);
+        String newSql = parser.replaceForPlaceholder(sql, params);
         assertThat(newSql, is(sqlExpected));
     }
 
@@ -86,7 +86,7 @@ public class ParamParserQuestionMarkInClaseTest
         assertThat(names[0], is("in:names"));
         assertThat(names[1], is("?"));
         
-        String newSql = parser.replaceForQuestionMark(sql, params);
+        String newSql = parser.replaceForPlaceholder(sql, params);
         assertThat(newSql, is(sqlExpected));
     }
 

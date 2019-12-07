@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements xmlns="http://jkniv.sf.net/schema/sqlegance/statements" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+  <package name="_design/docs">
+   <select id="map#natio">
+    function(doc) { 
+       emit( doc.nationality, {
+        name: doc.name,
+        nationality: doc.nationality,
+        books: doc.books
+       })
+     }
+   </select>
+   <select id="map#natio2">
+     function(doc) { 
+      emit(doc.nationality, doc)
+     }
+   </select>
+  </package>
+  
+<!--
+  <package name="_design/docs2">
+   <select id="map#foo2">
+function(doc) {
+  if (doc.type === "DrinkRecipe") {
+    doc.ingredients.forEach(function(i) {
+      emit([i.name.toLowerCase(), doc.name.toLowerCase(), doc._id], null);
+    });
+  }
+}
+   </select>
+   
+   <select id="map#foo">
+function(doc){ emit(doc._id, doc._rev)}
+   </select>
+   <select id="reduce#foo">
+function(key, values){ return sum(values);}
+   </select>   
+  </package>
+
+   -->
+
+
+</statements>

@@ -49,19 +49,19 @@ public class ParamParserNoMark implements ParamParser
     }
 
     @Override
-    public String replaceForQuestionMark(String query, Object params)
+    public String replaceForPlaceholder(String query, Object params)
     {
         return query;
     }
     
     @Override
-    public String replaceForQuestionMarkWithNumber(String query, Object params)
+    public String replaceForPlaceholderWithNumber(String query, Object params)
     {
         return query;
     }
 
     @Override
-    public String replaceForQuestionMark(String query)
+    public String replaceForPlaceholder(String query)
     {
         return query;
     }
@@ -72,5 +72,10 @@ public class ParamParserNoMark implements ParamParser
         return ParamMarkType.NO_MARK;
     }
 
+    @Override
+    public String getPlaceholder()
+    {
+        return "?";
+    }
 
 }

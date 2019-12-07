@@ -173,7 +173,7 @@ public class QueryNameTest
         given(this.sql.getParamParser()).willReturn(this.paramParser);
         given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where id = :id and name = :name");
         given(this.paramParser.find(anyString())).willReturn(new String[]{"id","name"});
-        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
+        given(this.paramParser.replaceForPlaceholder(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
         given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
         
         query.bind(this.sql);
@@ -345,7 +345,7 @@ public class QueryNameTest
         given(this.sql.getParamParser()).willReturn(this.paramParser);
         given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author");
         given(this.paramParser.find(anyString())).willReturn(new String[]{});
-        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author");
+        given(this.paramParser.replaceForPlaceholder(anyString(), anyObject())).willReturn("select id, name, description from author");
         given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);        
         query.bind(this.sql);
         query.bind(stmt);
@@ -368,7 +368,7 @@ public class QueryNameTest
         given(this.sql.getParamParser()).willReturn(this.paramParser);
         given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where id = :id and name = :name");
         given(this.paramParser.find(anyString())).willReturn(new String[]{"id","name"});
-        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
+        given(this.paramParser.replaceForPlaceholder(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
         given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
         
         query.bind(this.sql);
@@ -393,7 +393,7 @@ public class QueryNameTest
         given(this.sql.getParamParser()).willReturn(this.paramParser);
         given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where born = ?");
         given(this.paramParser.find(anyString())).willReturn(new String[]{"?"});
-        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where born = ?");
+        given(this.paramParser.replaceForPlaceholder(anyString(), anyObject())).willReturn("select id, name, description from author where born = ?");
         given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
         
         query.bind(this.sql);
@@ -419,7 +419,7 @@ public class QueryNameTest
         given(this.sql.getParamParser()).willReturn(this.paramParser);
         given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where born = ?");
         given(this.paramParser.find(anyString())).willReturn(new String[]{"?"});
-        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where born = ?");
+        given(this.paramParser.replaceForPlaceholder(anyString(), anyObject())).willReturn("select id, name, description from author where born = ?");
         given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
         
         query.bind(this.sql);
@@ -446,7 +446,7 @@ public class QueryNameTest
         given(this.paramParser.getType()).willReturn(ParamMarkType.QUESTION);
         given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
         given(this.paramParser.find(anyString())).willReturn(new String[]{"?","?"});
-        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
+        given(this.paramParser.replaceForPlaceholder(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
         given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
         
         query.bind(this.sql);
@@ -473,7 +473,7 @@ public class QueryNameTest
         given(this.paramParser.getType()).willReturn(ParamMarkType.QUESTION);
         given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where id = ? and name = ? and status in (:in:status)");
         given(this.paramParser.find(anyString())).willReturn(new String[]{"?","?","in:status"});
-        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ? and status in (?,?,?)");
+        given(this.paramParser.replaceForPlaceholder(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ? and status in (?,?,?)");
         given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
         
         query.bind(this.sql);
@@ -505,7 +505,7 @@ public class QueryNameTest
         given(this.sql.getParamParser()).willReturn(this.paramParser);
         given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where id = :id and name = :name");
         given(this.paramParser.find(anyString())).willReturn(new String[]{"id","name"});
-        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
+        given(this.paramParser.replaceForPlaceholder(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
         given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
         
         query.bind(this.sql);
@@ -537,7 +537,7 @@ public class QueryNameTest
         given(this.sql.getParamParser()).willReturn(this.paramParser);
         given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where id = :id and name = :name");
         given(this.paramParser.find(anyString())).willReturn(new String[]{"id","name"});
-        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
+        given(this.paramParser.replaceForPlaceholder(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
         given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
         
         query.bind(this.sql);
@@ -565,7 +565,7 @@ public class QueryNameTest
         given(this.sql.getParamParser()).willReturn(this.paramParser);
         given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where id = :id and name = :name");
         given(this.paramParser.find(anyString())).willReturn(new String[]{"id","name"});
-        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
+        given(this.paramParser.replaceForPlaceholder(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
         given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
         
         query.bind(this.sql);
@@ -594,7 +594,7 @@ public class QueryNameTest
         given(this.sql.getParamParser()).willReturn(this.paramParser);
         given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where id = :id and name = :name");
         given(this.paramParser.find(anyString())).willReturn(new String[]{"id","name"});
-        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
+        given(this.paramParser.replaceForPlaceholder(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
         given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
         
         query.bind(this.sql);
@@ -623,7 +623,7 @@ public class QueryNameTest
         given(this.sql.getParamParser()).willReturn(this.paramParser);
         given(this.sql.getSql(anyObject())).willReturn("select id, name, description from author where id = :id and name = :name");
         given(this.paramParser.find(anyString())).willReturn(new String[]{"id","name"});
-        given(this.paramParser.replaceForQuestionMark(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
+        given(this.paramParser.replaceForPlaceholder(anyString(), anyObject())).willReturn("select id, name, description from author where id = ? and name = ?");
         given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
         
         query.bind(this.sql);

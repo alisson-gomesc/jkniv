@@ -21,5 +21,5 @@ package net.sf.jkniv.sqlegance.params;
 
 public enum ParamMarkType
 {
-    NO_MARK, COLON, HASH, QUESTION;
+    NO_MARK, COLON, HASH, QUESTION, DOLLAR;
 }

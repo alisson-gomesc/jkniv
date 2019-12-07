@@ -107,33 +107,7 @@ class PojoResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultS
         }
         return proxyRow.getInstance();
     }
-    /*
-    private void setValueOf(JdbcColumn<ResultSet> column, ResultSet rs, ObjectProxy<T> proxy) throws SQLException
-    {
-        Injectable<T> reflect = InjectableFactory.of(proxy);
-        Object jdbcObject = null;
-        if (column.isBinary())
-            jdbcObject = column.getBytes(rs);
-        else
-            jdbcObject = column.getValue(rs);
-    
-        if(SQLLOG.isTraceEnabled())
-            SQLLOG.trace("Mapping index [{}] column [{}] type of [{}] to value [{}]", column.getIndex(), column.getAttributeName(), 
-                (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), MASKING.mask(column.getAttributeName(), jdbcObject));
 
-        if (column.isNestedAttribute())
-            reflect.inject(column.getAttributeName(), jdbcObject);
-        else
-        {
-            String method = column.getMethodName();
-            if (proxy.hasMethod(method))
-                reflect.inject(method, jdbcObject);
-            else
-                LOG.warn("Method [{}] doesn't exists for [{}] to set value [{}]", method,
-                        proxy.getTargetClass().getName(), jdbcObject);
-        }
-    }
-    */
     private OneToMany getOneToMany(JdbcColumn<ResultSet> jdbcColumn, final Map<OneToMany, Object> otmValues)
     {
         OneToMany otm = null;
@@ -157,21 +131,9 @@ class PojoResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultS
             final Map<OneToMany, Object> otmValues) throws SQLException
     {
         ObjectProxy<?> proxy = ObjectProxyFactory.of(otmValues.get(otm));
-        //Injectable<?> reflect = InjectableFactory.of(proxy);
-        //Object jdbcObject = getValueOf(column, rs);
-        // otm.property : 'books', JdbcColumn: books.name, capitalize -> setName
         String fieldName = column.getName().substring(otm.getProperty().length() + 1);
-        
         JdbcColumn<ResultSet> otmColumn = new DefaultJdbcColumn(column.getIndex(),  fieldName, column.getJdbcType());
         setValueOf(proxy, otmColumn, rs);
-        //setValueOf(otmColumn, jdbcObject, proxy);
-//        if(SQLLOG.isTraceEnabled())
-//            SQLLOG.trace("Mapping index [{}] column [{}] type of [{}] to value [{}]", 
-//                    column.getIndex(), column.getAttributeName(), 
-//                    (jdbcObject != null ? jdbcObject.getClass().getName() : "null"), 
-//                    MASKING.mask(column.getAttributeName(), jdbcObject));
-//        
-        //reflect.inject(method, jdbcObject);
     }
     
     @Override

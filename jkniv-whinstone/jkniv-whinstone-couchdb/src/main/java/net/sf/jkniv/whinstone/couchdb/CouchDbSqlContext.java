@@ -38,9 +38,10 @@ import net.sf.jkniv.sqlegance.validation.ValidateType;
 public class CouchDbSqlContext implements SqlContext
 {
     private SqlContext sqlContext;
-    private static final String ALL_DOCS_QUERY = "_all_docs";
-    private static final String GET_QUERY = "get", PUT_QUERY = "add", UPDATE_QUERY = "update", DELETE_QUERY = "remove"; 
     private static final Map<String, Sql> BUILTIN = new HashMap<String, Sql>(); 
+    private static final String ALL_DOCS_QUERY = "_all_docs";
+    private static final String GET_QUERY = "get", PUT_QUERY = "add", 
+                                UPDATE_QUERY = "update", DELETE_QUERY = "remove"; 
             
     public CouchDbSqlContext(SqlContext sqlContext)
     {

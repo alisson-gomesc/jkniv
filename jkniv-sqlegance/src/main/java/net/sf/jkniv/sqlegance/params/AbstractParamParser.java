@@ -53,6 +53,10 @@ public abstract class AbstractParamParser implements ParamParser
     // find the pattern :id
     protected static final String  REGEX_COLON_MARK    = "(" + ":[\\w\\.?]+" + //FIXED bug :a.property.value -> :a
                                                              "|" + REGEX_IN + REGEX_SINGLE_QUOTE;
+
+    // find the pattern $id
+    protected static final String  REGEX_DOLLAR_MARK    = "(" + "\\$[\\w\\.?]+" + //FIXED bug $a.property.value -> $a
+            "|" + REGEX_IN + REGEX_SINGLE_QUOTE;
     
     //":[\\w]+";// (:[\w]+|'[^']*')+  FIXED nao pode estar dentro de aspas 'YYYY-MM-DD HH24:MI:SS'
     // find the pattern ?
@@ -73,13 +77,13 @@ public abstract class AbstractParamParser implements ParamParser
 //    }
     
     @Override
-    public String replaceForQuestionMark(String query)
+    public String replaceForPlaceholder(String query)
     {
-        return replaceForQuestionMark(query, Collections.emptyList());
+        return replaceForPlaceholder(query, Collections.emptyList());
     }
 
     @Override
-    public String replaceForQuestionMarkWithNumber(String query, Object params)
+    public String replaceForPlaceholderWithNumber(String query, Object params)
     {
         StringBuffer sb = new StringBuffer(query);
         Matcher matcherTwoDots = getPatternParams().matcher(query);
@@ -101,7 +105,7 @@ public abstract class AbstractParamParser implements ParamParser
                     StringBuilder tmp = new StringBuilder();
                     for(int i=0; i<paramsAsArray.length; i++)
                         tmp.append( i>0? "," : "")
-                           .append("?"+index++);
+                           .append(getPlaceholder()+index++);
                     
                     mapForINClauseParams.put(match, tmp.toString());
                 }
@@ -125,7 +129,7 @@ public abstract class AbstractParamParser implements ParamParser
     }    
 
     @Override
-    public String replaceForQuestionMark(String query, Object params)
+    public String replaceForPlaceholder(String query, Object params)
     {
         StringBuffer sb = new StringBuffer(query);
         Matcher matcherTwoDots = getPatternParams().matcher(query);
@@ -146,7 +150,7 @@ public abstract class AbstractParamParser implements ParamParser
                     StringBuilder tmp = new StringBuilder();
                     for(int i=0; i<paramsAsArray.length; i++)
                         tmp.append( i>0? "," : "")
-                           .append("?");
+                           .append(getPlaceholder());
                     
                     mapForINClauseParams.put(match, tmp.toString());
                 }
@@ -169,10 +173,15 @@ public abstract class AbstractParamParser implements ParamParser
         return sb.toString();
     }    
 
+    @Override
+    public String getPlaceholder()
+    {
+        return "?";
+    }
     
     protected String padspace(int size, int index)
     {
-        StringBuffer s = new StringBuffer("?" +(index < 0 ? "" : index));
+        StringBuffer s = new StringBuffer(getPlaceholder() +(index < 0 ? "" : index));
         int newSize = (index < 0 ? size : size - String.valueOf(index).length());// discount the length string from index
         for (int i = 1; i < newSize; i++)
             s.append(" ");
