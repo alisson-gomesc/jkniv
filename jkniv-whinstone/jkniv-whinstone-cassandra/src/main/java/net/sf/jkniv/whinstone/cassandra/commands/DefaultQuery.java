@@ -30,10 +30,16 @@ public class DefaultQuery implements Command
 {
     private StatementAdapter stmt;
     
-    public DefaultQuery(StatementAdapter stmt, Queryable queryable)
+    public DefaultQuery(Queryable queryable)
     {
         super();
-        this.stmt = stmt;
+    }
+    
+    @Override
+    public <T> Command with(T stmt)
+    {
+        this.stmt = (StatementAdapter) stmt;
+        return this;
     }
     
     @Override

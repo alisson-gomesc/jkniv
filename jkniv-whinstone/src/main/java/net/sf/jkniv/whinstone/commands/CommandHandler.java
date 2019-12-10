@@ -50,13 +50,6 @@ public interface CommandHandler
     CommandHandler with(Sql sql);
     
     /**
-     * Configure the life-cycle with a properties configuration of the repository
-     * @param repositoryConfig configuration from repository
-     * @return a reference to this object.
-     */
-    CommandHandler with(RepositoryConfig repositoryConfig);
-
-    /**
      * Configure the life-cycle with a custom result parser rows of query.
      * @param customResultRow customized result row to parser
      * @return a reference to this object.

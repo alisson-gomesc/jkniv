@@ -44,22 +44,20 @@ import net.sf.jkniv.whinstone.couchdb.statement.CouchDbStatementAdapter;
 
 public class ViewCommand extends AbstractCommand implements CouchCommand
 {
-    private static final Logger LOG = LoggerFactory.getLogger(ViewCommand.class);
+    private static final Logger LOG    = LoggerFactory.getLogger(ViewCommand.class);
     private static final Logger LOGSQL = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
-    private String              body;
-    private Queryable queryable;
-    private HttpBuilder         httpBuilder;
+    private final Queryable           queryable;
+    private final HttpBuilder         httpBuilder;
     
-    public ViewCommand(CouchDbStatementAdapter<?, String> stmt, HttpBuilder httpBuilder, Queryable queryable)
+    public ViewCommand(HttpBuilder httpBuilder, Queryable queryable)
     {
         super();
         this.httpBuilder = httpBuilder;
         this.queryable = queryable;
-        stmt.rows();
-        this.body = stmt.getBody();
     }
     
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings(
+    { "unchecked", "rawtypes" })
     @Override
     public <T> T execute()
     {
@@ -73,7 +71,7 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
             CloseableHttpClient httpclient = HttpClients.createDefault();
             String url = httpBuilder.getUrlForView(queryable);
             LOGSQL.debug(url);
-            HttpGet http = (HttpGet)asGet().newHttp(url); 
+            HttpGet http = (HttpGet) asGet().newHttp(url);
             httpBuilder.setHeader(http);
             response = httpclient.execute(http);
             json = EntityUtils.toString(response.getEntity());
@@ -86,16 +84,16 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
                 {
                     list = new ArrayList();
                     // FIXME overload performance, writer better deserialization using jackson
-                    for(Map map : answer.getRows())
+                    for (Map map : answer.getRows())
                     {
-                        Map content = (Map) map.get("value"); 
+                        Map content = (Map) map.get("value");
                         //list.add(proxy.from(r));
                         Object o = JsonMapper.mapper(content, returnType);
                         list.add(o);
                         if (o instanceof Map)
                         {
-                            ((Map)o).put("id", map.get("id"));
-                            ((Map)o).put("key", map.get("key"));                            
+                            ((Map) o).put("id", map.get("id"));
+                            ((Map) o).put("key", map.get("key"));
                         }
                         else
                         {
@@ -110,7 +108,7 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
                 else
                     list = answer.getRows();
                 
-                if(queryable.isPaging())
+                if (queryable.isPaging())
                     queryable.setTotal(answer.getTotalRows());
                 else
                     queryable.setTotal(list.size());

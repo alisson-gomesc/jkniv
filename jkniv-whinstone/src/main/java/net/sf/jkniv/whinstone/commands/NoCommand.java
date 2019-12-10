@@ -53,4 +53,10 @@ public class NoCommand implements Command
     {
         return null;
     }
+
+    @Override
+    public <T> Command with(T stmt)
+    {
+        return this;
+    }
 }

@@ -35,6 +35,7 @@ import java.util.TreeMap;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
@@ -50,7 +51,7 @@ public class CouchDbRepositoryAddTest extends BaseJdbc
         Author author = new Author();
         author.setName("Alisson Gomes");
         author.setNationality("BR");
-        Queryable q = getQuery("add", author);
+        Queryable q = QueryFactory.of("add", author);
         int rows = repositoryDb.add(q);
         
         assertThat(rows, is(1));
@@ -71,7 +72,7 @@ public class CouchDbRepositoryAddTest extends BaseJdbc
         author.setId("001");
         author.setName("Alisson Gomes");
         author.setNationality("BR");
-        Queryable q = getQuery("add", author);
+        Queryable q = QueryFactory.of("add", author);
         int rows = repositoryDb.add(q);
         
         assertThat(rows, is(1));

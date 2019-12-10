@@ -64,6 +64,11 @@ public interface ObjectProxy<T>
     
     boolean isInstanceof(Class<?> clazz);
     
+    /**
+     * check if class has a {@code methodName} to be invoked.
+     * @param methodName complete method name like {@code isDeleted}, {@code setName}...
+     * @return {@code true} when the class has the name, {@code false} otherwise
+     */
     boolean hasMethod(String methodName);
     
     T getInstance();

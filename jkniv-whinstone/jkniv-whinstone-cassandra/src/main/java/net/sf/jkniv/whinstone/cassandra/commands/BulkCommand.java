@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.whinstone.cassandra.commands;
 
+import com.datastax.driver.core.Row;
+
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.cassandra.statement.CassandraPreparedStatementAdapter;
@@ -27,14 +29,20 @@ import net.sf.jkniv.whinstone.commands.CommandHandler;
 
 public class BulkCommand implements Command
 {
-    private CassandraPreparedStatementAdapter<?, String> stmt;
-    private Queryable                            queryable;
+    private final Queryable                            queryable;
+    private CassandraPreparedStatementAdapter<?, Row> stmt;
     
-    public BulkCommand(CassandraPreparedStatementAdapter<?, String> stmt, Queryable queryable)
+    public BulkCommand(Queryable queryable)
     {
         super();
-        this.stmt = stmt;
         this.queryable = queryable;
+    }
+    
+    @Override
+    public <T> Command with(T stmt)
+    {
+        this.stmt = (CassandraPreparedStatementAdapter) stmt;
+        return this;
     }
     
     @Override

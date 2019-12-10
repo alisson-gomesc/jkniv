@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import java.util.Map;
 import java.util.Properties;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -38,6 +39,7 @@ import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.RepositoryService;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 
+@Ignore("delete me test from couchdb")
 public class CouchDbRepositoryJndiTest extends BaseJdbc
 {
     @Rule

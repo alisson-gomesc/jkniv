@@ -47,7 +47,7 @@ public class CouchDbRepositoryAllDocsTest extends BaseJdbc
     public void whenListAllDocs()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = getQuery("_all_docs");
+        Queryable q = QueryFactory.of("_all_docs");
         
         List<Map> list = repositoryDb.list(q);
         assertThat((long)list.size(), greaterThanOrEqualTo(getTotalDocs()));
@@ -79,7 +79,7 @@ public class CouchDbRepositoryAllDocsTest extends BaseJdbc
         Map<String, Object> params= new HashMap<String, Object>();
         params.put("descending", true);
         
-        Queryable q = getQuery("_all_docs", params, 1, 3);
+        Queryable q = QueryFactory.of("_all_docs", params, 1, 3);
         
         List<Map> list = repositoryDb.list(q);
         assertThat(list.size(), is(3));

@@ -17,30 +17,39 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jpa2.commands;
+package net.sf.jkniv.whinstone.couchbase.commands;
+
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.document.Document;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.commands.Command;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
-import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
-@SuppressWarnings({"unchecked","rawtypes"})
-public class DefaultJpaQuery implements Command
+/**
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
+public class ReplaceCommand implements Command
 {
-    private StatementAdapter stmt;
+    private Bucket bucket;
+    private final Queryable queryable;
     
-    public DefaultJpaQuery(Queryable queryable)
+    public ReplaceCommand(Queryable queryable)
     {
         super();
+        this.queryable = queryable;
     }
-
+    
     @Override
     public <T> Command with(T stmt)
     {
-        this.stmt = (StatementAdapter) stmt;
+        this.bucket = (Bucket) stmt;
         return this;
     }
+    
     @Override
     public Command with(HandleableException handleableException)
     {
@@ -56,7 +65,9 @@ public class DefaultJpaQuery implements Command
     @Override
     public <T> T execute()
     {
-        T list = (T) stmt.rows();
-      return list;
+        CouchbaseDocument baseDocument = new CouchbaseDocument(this.queryable.getParams());
+        Document<?> document = bucket.replace(baseDocument.getJsonDocument());
+        baseDocument.merge(document);
+        return (T) Integer.valueOf("1");
     }
 }

@@ -68,11 +68,11 @@ public class NoCommandHandler implements CommandHandler
         return this;
     }
     
-    @Override
-    public CommandHandler with(RepositoryConfig repositoryConfig)
-    {
-        return this;
-    }
+//    @Override
+//    public CommandHandler with(RepositoryConfig repositoryConfig)
+//    {
+//        return this;
+//    }
     
     @Override
     public CommandHandler with(HandleableException handlerException)

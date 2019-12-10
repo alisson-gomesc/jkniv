@@ -67,7 +67,7 @@ public class NoCommandHandlerTest
         //command.with(newCommandHandler());
         command.with(new HandlerException());
         command.with(QueryFactory.of("dummy"));
-        command.with(new RepositoryConfig());
+        //command.with(new RepositoryConfig());
         command.with(newResultRow());
         command.with(TagFactory.newSelect("dummy", LanguageType.NATIVE));
         

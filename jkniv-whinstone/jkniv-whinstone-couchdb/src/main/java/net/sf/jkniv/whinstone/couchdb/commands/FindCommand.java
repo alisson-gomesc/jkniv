@@ -34,26 +34,22 @@ import org.slf4j.LoggerFactory;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
-import net.sf.jkniv.whinstone.couchdb.statement.CouchDbStatementAdapter;
 import net.sf.jkniv.whinstone.couchdb.statement.FindAnswer;
 
 public class FindCommand extends AbstractCommand implements CouchCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger(FindCommand.class);
     private static final Logger LOGSQL = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
-    private String body;
-    //private CouchDbStatementAdapter<?, String> stmt;
     private HttpBuilder httpBuilder;
     private Queryable queryable;
     
-    public FindCommand(CouchDbStatementAdapter<?, String> stmt, HttpBuilder httpBuilder, Queryable queryable)
+    public FindCommand(HttpBuilder httpBuilder, Queryable queryable)
     {
         super();
         this.queryable = queryable;
         this.httpBuilder = httpBuilder;
-        //this.stmt = stmt;
-        stmt.rows();
-        this.body = stmt.getBody();
+        //stmt.rows();
+        //this.body = stmt.getBody();
     }
     
     @SuppressWarnings("unchecked")

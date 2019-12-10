@@ -56,7 +56,7 @@ public abstract class DefaultCommandHandler implements CommandHandler
     ObjectProxy<?>                                   proxyParams;
     protected Queryable                              queryable;
     protected Sql                                    sql;
-    protected RepositoryConfig                       config;
+    //protected RepositoryConfig                       config;
     protected ResultRow<?, ?>                        overloadResultRow;
     protected HandleableException                    handleableException;
     
@@ -97,12 +97,12 @@ public abstract class DefaultCommandHandler implements CommandHandler
         return this;
     }
     
-    @Override
-    public CommandHandler with(RepositoryConfig repositoryConfig)
-    {
-        this.config = repositoryConfig;
-        return this;
-    }
+//    @Override
+//    public CommandHandler with(RepositoryConfig repositoryConfig)
+//    {
+//        this.config = repositoryConfig;
+//        return this;
+//    }
     
     public CommandHandler with(HandleableException handlerException)
     {

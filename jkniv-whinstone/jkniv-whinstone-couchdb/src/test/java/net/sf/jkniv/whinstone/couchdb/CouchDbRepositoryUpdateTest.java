@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
@@ -48,7 +49,7 @@ public class CouchDbRepositoryUpdateTest extends BaseJdbc
         Author author = new Author();
         author.setName("Alisson Gomes");
         author.setNationality("BR");
-        Queryable q = getQuery("update", author);
+        Queryable q = QueryFactory.of("update", author);
         repositoryDb.update(q);
         
         Author authorCallbackCheck = repositoryDb.get(Author.class, author);
@@ -66,7 +67,7 @@ public class CouchDbRepositoryUpdateTest extends BaseJdbc
         author.setId("1");
         author.setName("Alisson Gomes");
         author.setNationality("BR");
-        Queryable q = getQuery("update", author);
+        Queryable q = QueryFactory.of("update", author);
         repositoryDb.update(q);
      
         Author authorCallbackCheck = repositoryDb.get(Author.class, author);
@@ -85,7 +86,7 @@ public class CouchDbRepositoryUpdateTest extends BaseJdbc
         
         author.setName("Alisson Gomes");
         author.setNationality("BR");
-        Queryable q = getQuery("update", author);
+        Queryable q = QueryFactory.of("update", author);
         int rows = repositoryDb.update(q);
         
         assertThat(rows, is(1));

@@ -29,6 +29,7 @@ import java.util.Map;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 
@@ -39,7 +40,7 @@ public class CouchDbRepositoryFindClauseINTest extends BaseJdbc
     public void whenCouchDbListWithFixedFind()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = getQuery("authorsBR");
+        Queryable q = QueryFactory.of("authorsBR");
         
         List<Map> list = repositoryDb.list(q);
         assertThat(list.size(), greaterThan(0));

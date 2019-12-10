@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 
@@ -27,7 +28,7 @@ extends BaseJdbc
         catcher.expect(RepositoryException.class);
         catcher.expectMessage("Query Parameters [attachments] isn't supported yet!");
         Repository repositoryDb = getRepository();
-        Queryable q = getQuery("docs/_view/natio", asParams("attachments","true"));
+        Queryable q = QueryFactory.of("docs/_view/natio", asParams("attachments","true"));
         repositoryDb.list(q);
     }
     

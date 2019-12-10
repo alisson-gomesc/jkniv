@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import net.sf.jkniv.whinstone.couchbase.RequestParams;
 
+@Ignore("delete me test from couchdb")
 public class ApacheHttpClientTest
 {
     

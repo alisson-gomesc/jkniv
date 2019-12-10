@@ -28,15 +28,21 @@ import net.sf.jkniv.whinstone.commands.CommandHandler;
 
 public class RemoveCommand implements Command
 {
-    protected final EntityManager em;
+    protected EntityManager em;
     protected final Queryable queryable;
     protected HandleableException handlerException;
     
-    public RemoveCommand(EntityManager em, Queryable queryable)
+    public RemoveCommand(Queryable queryable)
     {
         super();
-        this.em = em;
         this.queryable = queryable;
+    }
+    
+    @Override
+    public <T> Command with(T stmt)
+    {
+        this.em = (EntityManager) stmt;
+        return this;
     }
     
     @Override

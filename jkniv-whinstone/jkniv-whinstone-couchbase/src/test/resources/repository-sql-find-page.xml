@@ -8,17 +8,11 @@
   
 
   <select id="authors-page">
-    {
-     "selector": {"nationality": {"$in": :nations}}
-    }
+    SELECT * FROM `travel-sample`
   </select>
 
   <select id="authors-page-override">
-    {
-     "selector": {"nationality": {"$in": :nations}},
-     "limit": 3,
-     "skip": 1
-    }
+   SELECT * FROM `travel-sample` LIMIT 3 OFFSET 1
   </select>
 
 </statements>

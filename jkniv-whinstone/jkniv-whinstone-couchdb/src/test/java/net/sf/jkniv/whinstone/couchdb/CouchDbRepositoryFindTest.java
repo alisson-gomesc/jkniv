@@ -50,7 +50,7 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
     public void whenCouchDbListWithFixedFind()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = getQuery("authorsBR");
+        Queryable q = QueryFactory.of("authorsBR");
         
         List<Map<String, ?>> list = repositoryDb.list(q);
         assertThat(list.size(), greaterThan(0));
@@ -92,7 +92,7 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
         Repository repositoryDb = getRepository();
         Map<String, String> params = new HashMap<String, String>();
         params.put("nat", "DE");
-        Queryable q = getQuery("authorsNat", params);
+        Queryable q = QueryFactory.of("authorsNat", params);
         
         List<Map> list = repositoryDb.list(q);
         assertThat(list.size(), greaterThan(0));
@@ -127,7 +127,7 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
     public void whenCouchDbGetWithDefaultCouchAnswer()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = getQuery("authorsBR");
+        Queryable q = QueryFactory.of("authorsBR");
         FindAnswer answer = repositoryDb.get(q, FindAnswer.class);
         assertThat(answer,  notNullValue());
         assertThat(q.getTotal(), greaterThan(0L));
@@ -140,7 +140,7 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
     public void whenCouchDbListWithDefaultCouchAnswer()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = getQuery("authorsDE");
+        Queryable q = QueryFactory.of("authorsDE");
         FindAnswer answer = repositoryDb.get(q, FindAnswer.class);
         assertThat(answer,  notNullValue());
         assertThat(q.getTotal(), greaterThan(0L));

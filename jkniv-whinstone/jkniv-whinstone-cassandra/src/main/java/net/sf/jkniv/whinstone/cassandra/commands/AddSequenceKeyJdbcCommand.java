@@ -19,10 +19,7 @@
  */
 package net.sf.jkniv.whinstone.cassandra.commands;
 
-import com.datastax.driver.core.Row;
-
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.cassandra.statement.CassandraPreparedStatementAdapter;
 
 /**
  * 
@@ -31,9 +28,9 @@ import net.sf.jkniv.whinstone.cassandra.statement.CassandraPreparedStatementAdap
  */
 public class AddSequenceKeyJdbcCommand extends DefaultCommand
 {
-    public AddSequenceKeyJdbcCommand(CassandraPreparedStatementAdapter<Number, Row> stmt, Queryable queryable)
+    public AddSequenceKeyJdbcCommand(Queryable queryable)
     {
-        super(stmt, queryable);
+        super(queryable);
     }
 
     @Override

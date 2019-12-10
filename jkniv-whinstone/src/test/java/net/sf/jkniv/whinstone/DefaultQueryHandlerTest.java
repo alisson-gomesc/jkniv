@@ -166,7 +166,7 @@ public class DefaultQueryHandlerTest
         queryable.bind(sql);
         commandHandler.with(new HandlerException());
         commandHandler.with(queryable);
-        commandHandler.with(new RepositoryConfig());
+        //commandHandler.with(new RepositoryConfig());
         commandHandler.with(newResultRow());
         commandHandler.with(sql);
         
@@ -183,7 +183,7 @@ public class DefaultQueryHandlerTest
         queryable.bind(sql);
         commandHandler.with(new HandlerException());
         commandHandler.with(queryable);
-        commandHandler.with(new RepositoryConfig());
+        //commandHandler.with(new RepositoryConfig());
         commandHandler.with(newResultRow());
         commandHandler.with(sql);
         
@@ -349,7 +349,7 @@ public class DefaultQueryHandlerTest
         Queryable queryable = QueryFactory.of("dummy");
         commandHandler.with(new HandlerException());
         commandHandler.with(queryable);
-        commandHandler.with(new RepositoryConfig());
+        //commandHandler.with(new RepositoryConfig());
         commandHandler.with(newResultRow());
         commandHandler.with(sql);
         try
@@ -370,7 +370,7 @@ public class DefaultQueryHandlerTest
         queryable.bind(sql);
         commandHandler.with(new HandlerException());
         commandHandler.with(queryable);
-        commandHandler.with(new RepositoryConfig());
+        //commandHandler.with(new RepositoryConfig());
         commandHandler.with(newResultRow());
         commandHandler.with(sql);
         
@@ -415,6 +415,12 @@ public class DefaultQueryHandlerTest
                     }
                     
                     @Override
+                    public <T> Command with(T stmt)
+                    {
+                        return this;
+                    }
+                    
+                    @Override
                     public Command with(HandleableException handlerException)
                     {
                         return this;
@@ -446,6 +452,12 @@ public class DefaultQueryHandlerTest
                     public Command with(CommandHandler commandHandler)
                     {
                         this.commandHandler = commandHandler;
+                        return this;
+                    }
+                    
+                    @Override
+                    public <T> Command with(T stmt)
+                    {
                         return this;
                     }
                     
@@ -540,6 +552,12 @@ public class DefaultQueryHandlerTest
             
             @Override
             public Command with(CommandHandler commandHandler)
+            {
+                return this;
+            }
+            
+            @Override
+            public <T> Command with(T stmt)
             {
                 return this;
             }

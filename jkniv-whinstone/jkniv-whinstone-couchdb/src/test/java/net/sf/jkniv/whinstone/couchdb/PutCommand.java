@@ -17,10 +17,9 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.couchdb.commands;
+package net.sf.jkniv.whinstone.couchdb;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import org.apache.http.Consts;
 import org.apache.http.client.ClientProtocolException;
@@ -35,8 +34,14 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
 
-public class PutCommand implements DbCommand
+public class PutCommand //implements DbCommand
 {
+    static final int HTTP_OK = 200;
+    static final int HTTP_CREATED = 201;
+    static final int HTTP_NO_CONTENT = 204;
+    static final int HTTP_RESET_CONTENT = 205;
+    static final int HTTP_NOT_MODIFIED = 304;
+    
     private static final Logger LOG = LoggerFactory.getLogger(PutCommand.class);
     private static final Logger LOGSQL = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
     private HttpPut            put;
@@ -55,13 +60,11 @@ public class PutCommand implements DbCommand
         this.put.setEntity(ebody);
     }
     
-    @Override
     public String getBody()
     {
         return this.body;
     }
     
-    @Override
     public <T> T execute()
     {
         String json = null;

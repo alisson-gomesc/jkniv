@@ -43,6 +43,7 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.commands.Command;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.commands.NoCommandHandler;
+import net.sf.jkniv.whinstone.couchdb.statement.CouchDbStatementAdapter;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 
 /**
@@ -62,6 +63,7 @@ public abstract class AbstractCommand implements CouchCommand
     protected String              url;
     protected String              body;
     protected HttpMethod          method;
+    CouchDbStatementAdapter<?, String> stmt;
     
     public AbstractCommand()
     {
@@ -83,6 +85,14 @@ public abstract class AbstractCommand implements CouchCommand
         this.commandHandler = NoCommandHandler.getInstance();
     }
     
+     @Override
+    public <T> Command with(T stmt)
+    {
+        this.stmt = (CouchDbStatementAdapter) stmt;
+        this.stmt.rows();
+        this.body = this.stmt.getBody();
+        return this;
+    }
     @Override
     public Command with(HandleableException handlerException)
     {

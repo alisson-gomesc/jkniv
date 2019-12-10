@@ -43,6 +43,7 @@ import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Session;
 import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
 
+@Ignore("delete me test from couchdb")
 public class FindStressTest extends BaseJdbc
 {
     final int LOOP = 100;

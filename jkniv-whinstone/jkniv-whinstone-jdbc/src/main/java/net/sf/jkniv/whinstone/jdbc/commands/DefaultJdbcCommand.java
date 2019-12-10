@@ -22,7 +22,6 @@ package net.sf.jkniv.whinstone.jdbc.commands;
 import java.sql.Connection;
 
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
  * Default Command execute simple {@code INSERT}, {@code UPDATE} and {@code DELETE} SQL instructions.
@@ -36,12 +35,12 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * @since 0.6.0
  *
  */
-@SuppressWarnings({"rawtypes","unchecked"})
+@SuppressWarnings({"unchecked"})
 public class DefaultJdbcCommand extends AbstractJdbcCommand
 {
-    public DefaultJdbcCommand(StatementAdapter stmt, Queryable queryable, Connection conn)
+    public DefaultJdbcCommand(Queryable queryable, Connection conn)
     {
-        super(stmt, queryable, conn);
+        super(queryable, conn);
     }
     
     public <T> T execute()

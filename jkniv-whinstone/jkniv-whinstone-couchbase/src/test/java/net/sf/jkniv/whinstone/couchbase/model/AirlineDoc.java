@@ -1,11 +1,9 @@
 package net.sf.jkniv.whinstone.couchbase.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.couchbase.client.java.document.AbstractDocument;
 
-import net.sf.jkniv.whinstone.CallbackScope;
-import net.sf.jkniv.whinstone.PreCallBack;
-
-public class Airline
+public class AirlineDoc extends AbstractDocument<AirlineDoc>
 {
     @JsonProperty("callsign")
     private String              callsign;
@@ -21,12 +19,6 @@ public class Airline
     private String              name;
     @JsonProperty("type")
     private String              type;
-    
-    @PreCallBack(scope = CallbackScope.ADD)
-    public void generateId()
-    {
-        this.id = String.valueOf("WHIN-"+System.currentTimeMillis());
-    }
     
     @JsonProperty("callsign")
     public String getCallsign()

@@ -32,6 +32,7 @@ import org.junit.Test;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 
+@Ignore("delete me test from couchdb")
 public class CouchDbRepositoryFindClauseINTest extends BaseJdbc
 {
     

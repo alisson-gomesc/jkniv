@@ -38,20 +38,24 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public class BulkJpaCommand implements Command//extends AbstractJdbcCommand
+public class BulkJpaCommand implements Command
 {
-        private final static Logger LOG = org.slf4j.LoggerFactory.getLogger(BulkJpaCommand.class);
-        protected HandleableException             handlerException;
-        protected CommandHandler                  commandHandler;
-        protected final StatementAdapter<?, ResultSet> stmt;
-        protected final Queryable                 queryable;
-        //protected final PreparedStatementStrategy stmtStrategy;
-        //protected final Connection                conn;
-
-    public BulkJpaCommand(StatementAdapter stmt, Queryable queryable, Connection conn)
+    private final static Logger              LOG = org.slf4j.LoggerFactory.getLogger(BulkJpaCommand.class);
+    protected HandleableException            handlerException;
+    protected CommandHandler                 commandHandler;
+    protected final Queryable                queryable;
+    protected StatementAdapter<?, ResultSet> stmt;
+    
+    public BulkJpaCommand(Queryable queryable, Connection conn)
     {
-        this.stmt = stmt;
         this.queryable = queryable;
+    }
+    
+    @Override
+    public <T> Command with(T stmt)
+    {
+        this.stmt = (StatementAdapter) stmt;
+        return this;
     }
     
     @SuppressWarnings("unchecked")
@@ -64,11 +68,12 @@ public class BulkJpaCommand implements Command//extends AbstractJdbcCommand
             Iterator<Param> it = queryable.iterator();
             while (it.hasNext())
             {
-                Queryable queryableIt = QueryFactory.of(queryable.getName(), it.next(), queryable.getOffset(), queryable.getMax());
+                Queryable queryableIt = QueryFactory.of(queryable.getName(), it.next(), queryable.getOffset(),
+                        queryable.getMax());
                 //QueryableJpaAdapter queryableJpaAdapter = QueryJpaFactory.build(em, sqlContext, queryableIt, null);
                 //rowsAffected += queryableJpaAdapter.executeUpdate();
             }
-
+            
             //if (queryable.getDynamicSql().isBatch() || queryable.isTypeOfBulk())
             //rowsAffected = this.queryable.bind(stmt).onBulk();
         }
@@ -78,14 +83,14 @@ public class BulkJpaCommand implements Command//extends AbstractJdbcCommand
         }
         return (T) rowsAffected;
     }
-
+    
     @Override
     public Command with(HandleableException handlerException)
     {
         this.handlerException = handlerException;
         return this;
     }
-
+    
     @Override
     public Command with(CommandHandler commandHandler)
     {

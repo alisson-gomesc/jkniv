@@ -20,7 +20,6 @@
 package net.sf.jkniv.whinstone.couchdb.commands;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,7 +36,6 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 import net.sf.jkniv.whinstone.couchdb.statement.AllDocsAnswer;
-import net.sf.jkniv.whinstone.couchdb.statement.CouchDbStatementAdapter;
 
 public class AllDocsCommand extends AbstractCommand implements CouchCommand 
 {
@@ -45,12 +43,12 @@ public class AllDocsCommand extends AbstractCommand implements CouchCommand
     private HttpBuilder httpBuilder;
     private Queryable queryable;
 
-    public AllDocsCommand(CouchDbStatementAdapter<?, String> stmt, HttpBuilder httpBuilder, Queryable queryable)
+    public AllDocsCommand(HttpBuilder httpBuilder, Queryable queryable)
     {
         super();
-        stmt.rows();
+        //stmt.rows();
         this.httpBuilder = httpBuilder;
-        this.body = stmt.getBody();
+        //this.body = stmt.getBody();
         this.queryable = queryable;
         this.method = HttpMethod.GET;
         this.url = httpBuilder.getUrlForAllDocs(queryable);

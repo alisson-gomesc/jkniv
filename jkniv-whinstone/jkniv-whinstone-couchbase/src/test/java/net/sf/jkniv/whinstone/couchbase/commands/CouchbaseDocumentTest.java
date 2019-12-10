@@ -19,39 +19,20 @@
  */
 package net.sf.jkniv.whinstone.couchbase.commands;
 
-import net.sf.jkniv.exception.HandleableException;
-import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.commands.Command;
-import net.sf.jkniv.whinstone.commands.CommandHandler;
-import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 
-//@SuppressWarnings({"unchecked","rawtypes"})
-public class DefaultQuery implements Command
+public class CouchbaseDocumentTest
 {
-    private StatementAdapter stmt;
-    
-    public DefaultQuery(StatementAdapter stmt, Queryable queryable)
+    @Test
+    public void whenChekDefaultValuesOfBaseDocument()
     {
-        super();
-        this.stmt = stmt;
-    }
-    
-    @Override
-    public Command with(HandleableException handleableException)
-    {
-        return this;
-    }
-
-    @Override
-    public Command with(CommandHandler commandHandler)
-    {
-        return this;
-    }
-
-    @Override
-    public <T> T execute()
-    {
-        T list = (T) stmt.rows();
-      return list;
+        CouchbaseDocument doc = new CouchbaseDocument();
+        assertThat(doc.getCas(), is(-1L));
+        assertThat(doc.getExpire(), is(0));
+        assertThat(doc.hasCas(), is(false));
+        assertThat(doc.hasExpire(), is(false));
     }
 }

@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import net.sf.jkniv.whinstone.QueryFactory;
@@ -35,6 +36,7 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 
+@Ignore("delete me test from couchdb")
 public class CouchDbRepositoryBulkAddTest extends BaseJdbc
 {
     @Test

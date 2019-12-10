@@ -33,6 +33,7 @@ import org.junit.rules.ExpectedException;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.RepositoryType;
 import net.sf.jkniv.sqlegance.SqlContext;
+import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.RepositoryService;
@@ -51,7 +52,7 @@ public class CouchDbRepositoryJndiTest extends BaseJdbc
         
         Repository repository = RepositoryService.getInstance().lookup(RepositoryType.COUCHDB).newInstance("/repository-sql-security-nopass.xml");
         
-        Queryable q = getQuery("get", "1");
+        Queryable q = QueryFactory.of("get", "1");
         
         Author ret = repository.get(q,Author.class);
         assertThat(ret, notNullValue());
@@ -64,7 +65,7 @@ public class CouchDbRepositoryJndiTest extends BaseJdbc
     {
         Repository repository = RepositoryService.getInstance().lookup(RepositoryType.COUCHDB).newInstance("repository-sql-security-jndi.xml");
         
-        Queryable q = getQuery("get", "1");
+        Queryable q = QueryFactory.of("get", "1");
         
         Author ret = repository.get(q, Author.class);
         assertThat(ret, notNullValue());
@@ -78,7 +79,7 @@ public class CouchDbRepositoryJndiTest extends BaseJdbc
     {
         Repository repository = RepositoryService.getInstance().lookup(RepositoryType.COUCHDB).newInstance("repository-sql.xml");
         
-        Queryable q = getQuery("get", "1");
+        Queryable q = QueryFactory.of("get", "1");
         
         Author ret = repository.get(q, Author.class);
         assertThat(ret, notNullValue());

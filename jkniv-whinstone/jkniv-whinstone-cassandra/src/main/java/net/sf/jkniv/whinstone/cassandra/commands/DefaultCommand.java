@@ -29,15 +29,20 @@ import net.sf.jkniv.whinstone.commands.CommandHandler;
 
 public class DefaultCommand implements Command
 {
-    protected final CassandraPreparedStatementAdapter<Number, Row> stmt;
     protected final Queryable queryable;
+    protected CassandraPreparedStatementAdapter<Number, Row> stmt;
     protected HandleableException handlerException;
     
-    public DefaultCommand(CassandraPreparedStatementAdapter<Number, Row> stmt, Queryable queryable)
+    public DefaultCommand(Queryable queryable)
     {
         super();
-        this.stmt = stmt;
         this.queryable = queryable;
+    }
+    @Override
+    public <T> Command with(T stmt)
+    {
+        this.stmt = (CassandraPreparedStatementAdapter<Number, Row>)stmt;
+        return this;
     }
     
     @Override

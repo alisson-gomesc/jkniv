@@ -43,6 +43,7 @@ import net.sf.jkniv.whinstone.couchbase.statement.FindAnswer;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
 
+@Ignore("delete me test from couchdb")
 public class CouchDbRepositoryFindTest extends BaseJdbc
 {
     

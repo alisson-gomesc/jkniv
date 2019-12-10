@@ -33,7 +33,6 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import net.sf.jkniv.reflect.beans.ObjectProxy;
@@ -169,7 +168,6 @@ public class BulkCommand extends AbstractCommand implements CouchCommand
             {
                 LOGSQL.info("\nHTTP POST {}\n{}", url, body);
             }
-            
             response = httpclient.execute(http);
             json = EntityUtils.toString(response.getEntity());
             int statusCode = response.getStatusLine().getStatusCode();

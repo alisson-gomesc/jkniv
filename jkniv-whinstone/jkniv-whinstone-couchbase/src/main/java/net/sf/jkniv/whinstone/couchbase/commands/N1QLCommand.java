@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.jpa2.commands;
+package net.sf.jkniv.whinstone.couchbase.commands;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.whinstone.Queryable;
@@ -25,12 +25,16 @@ import net.sf.jkniv.whinstone.commands.Command;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
-@SuppressWarnings({"unchecked","rawtypes"})
-public class DefaultJpaQuery implements Command
+/**
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
+public class N1QLCommand implements Command
 {
     private StatementAdapter stmt;
     
-    public DefaultJpaQuery(Queryable queryable)
+    public N1QLCommand(Queryable queryable)
     {
         super();
     }
@@ -38,7 +42,7 @@ public class DefaultJpaQuery implements Command
     @Override
     public <T> Command with(T stmt)
     {
-        this.stmt = (StatementAdapter) stmt;
+        this.stmt = (StatementAdapter)stmt;
         return this;
     }
     @Override

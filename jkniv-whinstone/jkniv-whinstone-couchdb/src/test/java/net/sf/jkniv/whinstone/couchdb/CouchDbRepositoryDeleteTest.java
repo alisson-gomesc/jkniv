@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
@@ -66,7 +67,7 @@ public class CouchDbRepositoryDeleteTest extends BaseJdbc
         assertThat(revision, notNullValue());
         assertThat(author.getName(), is("Paulo Coelho"));
         
-        Queryable q = getQuery("remove", author);
+        Queryable q = QueryFactory.of("remove", author);
         int rows = repository.remove(q);
         
         assertThat(rows, is(1));

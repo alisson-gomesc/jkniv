@@ -18,6 +18,7 @@ import com.couchbase.client.java.query.N1qlQuery;
 import com.couchbase.client.java.query.N1qlQueryResult;
 import com.couchbase.client.java.query.N1qlQueryRow;
 import com.couchbase.client.java.query.ParameterizedN1qlQuery;
+import com.couchbase.client.java.query.Statement;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -41,7 +42,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public class CouchbaseStatementAdapter<T, R> implements StatementAdapter<T, N1qlQueryResult>
+public class CouchbaseStatementAdapter<T, R> implements StatementAdapter<T, N1qlQueryRow>
 {
     private static final Logger        LOG     = LoggerFactory.getLogger(CouchbaseStatementAdapter.class);
     private static final Logger        SQLLOG  = net.sf.jkniv.whinstone.couchbase.LoggerFactory.getLogger();
@@ -70,16 +71,16 @@ public class CouchbaseStatementAdapter<T, R> implements StatementAdapter<T, N1ql
         handlerException.config(JsonMappingException.class, "Error to deserialization content [%s]");
         handlerException.config(IOException.class, "Error from I/O json content [%s]");
     }
-    
+
     @Override
-    public StatementAdapter<T, N1qlQueryResult> with(ResultRow<T, N1qlQueryResult> resultRow)
+    public StatementAdapter<T, N1qlQueryRow> with(ResultRow<T, N1qlQueryRow> resultRow)
     {
         //this.resultRow = resultRow;
         return this;
     }
     
     @Override
-    public StatementAdapter<T, N1qlQueryResult> bind(String name, Object value)
+    public StatementAdapter<T, N1qlQueryRow> bind(String name, Object value)
     {
         int index = currentIndex();
         this.params.add(new Param(value, name, index));
@@ -87,7 +88,7 @@ public class CouchbaseStatementAdapter<T, R> implements StatementAdapter<T, N1ql
     }
     
     @Override
-    public StatementAdapter<T, N1qlQueryResult> bind(Param param)
+    public StatementAdapter<T, N1qlQueryRow> bind(Param param)
     {
         this.currentIndex();
         this.params.add(param);
@@ -95,7 +96,7 @@ public class CouchbaseStatementAdapter<T, R> implements StatementAdapter<T, N1ql
     }
     
     @Override
-    public StatementAdapter<T, N1qlQueryResult> bind(Param... values)
+    public StatementAdapter<T, N1qlQueryRow> bind(Param... values)
     {
         for (Param v : values)
         {
@@ -119,7 +120,6 @@ public class CouchbaseStatementAdapter<T, R> implements StatementAdapter<T, N1ql
         {
             TimerKeeper.start();
             ParameterizedN1qlQuery query = N1qlQuery.parameterized(queryable.query(), jsonArray);
-            
             rs = bucket.query(query); 
             // # If this line is removed, the latest 'random' field might not be present
             // query.consistency = CONSISTENCY_REQUEST
@@ -166,7 +166,7 @@ public class CouchbaseStatementAdapter<T, R> implements StatementAdapter<T, N1ql
     }
     
     @Override
-    public StatementAdapter<T, N1qlQueryResult> with(AutoKey generateKey)
+    public StatementAdapter<T, N1qlQueryRow> with(AutoKey generateKey)
     {
         return this;
     }

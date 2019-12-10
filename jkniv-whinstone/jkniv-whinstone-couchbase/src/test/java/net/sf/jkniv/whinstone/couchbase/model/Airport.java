@@ -23,7 +23,7 @@ public class Airport
     @JsonProperty("icao")
     private String  icao;
     @JsonProperty("id")
-    private Integer id;
+    private String id;
     @JsonProperty("type")
     private String  type;
     @JsonProperty("tz")
@@ -102,13 +102,13 @@ public class Airport
     }
     
     @JsonProperty("id")
-    public Integer getId()
+    public String getId()
     {
         return id;
     }
     
     @JsonProperty("id")
-    public void setId(Integer id)
+    public void setId(String id)
     {
         this.id = id;
     }

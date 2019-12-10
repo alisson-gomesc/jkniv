@@ -22,7 +22,6 @@ package net.sf.jkniv.whinstone.jdbc.commands;
 import java.sql.Connection;
 
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
  * 
@@ -31,9 +30,9 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  */
 public class BulkJdbcCommand extends AbstractJdbcCommand
 {
-    public BulkJdbcCommand(StatementAdapter stmt, Queryable queryable, Connection conn)
+    public BulkJdbcCommand(Queryable queryable, Connection conn)
     {
-        super(stmt, queryable, conn);
+        super(queryable, conn);
     }
     
     @SuppressWarnings("unchecked")

@@ -31,7 +31,10 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.commands.Command;
 import net.sf.jkniv.whinstone.commands.CommandAdapter;
-import net.sf.jkniv.whinstone.couchbase.commands.DefaultQuery;
+import net.sf.jkniv.whinstone.couchbase.commands.GetCommand;
+import net.sf.jkniv.whinstone.couchbase.commands.InsertCommand;
+import net.sf.jkniv.whinstone.couchbase.commands.N1QLCommand;
+import net.sf.jkniv.whinstone.couchbase.commands.ReplaceCommand;
 import net.sf.jkniv.whinstone.couchbase.statement.CouchbaseStatementAdapter;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
@@ -47,7 +50,6 @@ class CouchbaseCommandAdapter implements CommandAdapter
     private static final Assertable NOT_NULL = AssertsFactory.getNotNull();
     private Cluster cluster;
     private Bucket bucket;
-    //private StatementCache stmtCache;
     private final String contextName;
     private final HandleableException handlerException;
     
@@ -56,7 +58,6 @@ class CouchbaseCommandAdapter implements CommandAdapter
         NOT_NULL.verify(cluster, contextName);
         this.cluster = cluster;
         this.bucket = bucket;
-        //this.stmtCache = new StatementCache(session);
         this.contextName = contextName;
         this.handlerException = handlerException;
     }
@@ -66,7 +67,6 @@ class CouchbaseCommandAdapter implements CommandAdapter
     {
         return this.contextName;
     }
-
     
     @Override
     public void close() //throws SQLException
@@ -96,7 +96,7 @@ class CouchbaseCommandAdapter implements CommandAdapter
     @Override
     public <T, R> Command asSelectCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
-        DefaultQuery command = null;
+        Command command = null;
         String sql = queryable.query();
         if(SQLLOG.isInfoEnabled())
             SQLLOG.info("Bind Native SQL\n{}", sql);
@@ -108,14 +108,20 @@ class CouchbaseCommandAdapter implements CommandAdapter
 
         queryable.bind(stmt).on();
         stmt.with(overloadResultRow);
-        command = new DefaultQuery(stmt, queryable);
+        
+        if (CouchbaseSqlContext.isGet(queryable.getName()))
+            command = new GetCommand(queryable).with(this.bucket);
+        else {
+            command = new N1QLCommand(queryable).with(stmt);
+        }
         return command;
     }
     
     @Override
     public <T, R> Command asUpdateCommand(Queryable queryable)
     {
-        return buildCommand(queryable);
+        Command command = new ReplaceCommand(queryable).with(this.bucket);
+        return command;
     }
     
     @Override
@@ -127,7 +133,8 @@ class CouchbaseCommandAdapter implements CommandAdapter
     @Override
     public <T, R> Command asAddCommand(Queryable queryable)//, ResultRow<T, R> overloadResultRow)
     {
-        return buildCommand(queryable);
+        Command command = new InsertCommand(queryable).with(this.bucket);
+        return command;
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })

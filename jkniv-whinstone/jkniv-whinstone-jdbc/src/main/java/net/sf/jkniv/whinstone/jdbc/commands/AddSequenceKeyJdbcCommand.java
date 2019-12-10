@@ -23,7 +23,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
  * 
@@ -33,9 +32,9 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
 public class AddSequenceKeyJdbcCommand extends AbstractJdbcCommand
 {
     @SuppressWarnings("rawtypes")
-    public AddSequenceKeyJdbcCommand(StatementAdapter stmt, Queryable queryable, Connection conn)
+    public AddSequenceKeyJdbcCommand(Queryable queryable, Connection conn)
     {
-        super(stmt, queryable, conn);
+        super(queryable, conn);
     }
 
     @Override

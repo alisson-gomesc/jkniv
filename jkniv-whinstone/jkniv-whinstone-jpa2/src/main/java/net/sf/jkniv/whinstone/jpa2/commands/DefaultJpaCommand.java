@@ -29,15 +29,21 @@ import net.sf.jkniv.whinstone.jpa2.statement.JpaStatementAdapter;
 
 public class DefaultJpaCommand implements Command
 {
-    protected final JpaStatementAdapter<Number, ResultSet> stmt;
     protected final Queryable queryable;
+    protected JpaStatementAdapter<Number, ResultSet> stmt;
     protected HandleableException handlerException;
     
-    public DefaultJpaCommand(JpaStatementAdapter<Number, ResultSet> stmt, Queryable queryable)
+    public DefaultJpaCommand(Queryable queryable)
     {
         super();
-        this.stmt = stmt;
         this.queryable = queryable;
+    }
+    
+    @Override
+    public <T> Command with(T stmt)
+    {
+        this.stmt = (JpaStatementAdapter<Number, ResultSet>) stmt;
+        return this;
     }
     
     @Override

@@ -26,6 +26,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.util.Collections;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -56,7 +57,7 @@ public class CouchbaseDialect6o5Test
         sqlContext = SqlContextFactory.newInstance("/repository-sql-find-page.xml");
     }
     
-    @Test
+    @Test @Ignore("whats happen when query is paginated and the raw SQL has LIMIT and OFFSET")
     public void whenCreateQueryAlrightHasLimit()
     {
         catcher.expect(ParameterException.class);
@@ -73,9 +74,9 @@ public class CouchbaseDialect6o5Test
         Sql sql = sqlContext.getQuery("authors-page");
         String sqlText = sql.getSql();
         CouchbaseDialect6o5 dialect = new CouchbaseDialect6o5();
-        String sqlPage = dialect.buildQueryPaging(sqlText, 0, 10);
+        String sqlPage = dialect.buildQueryPaging(sqlText, 5, 10);
         
-        assertThat(sqlPage, is("{\n     \"selector\": {\"nationality\": {\"$in\": :nations}}\n    \n,\"limit\": 10, \"skip\": 0 }") );
+        assertThat(sqlPage, is("SELECT * FROM `travel-sample` LIMIT 10 OFFSET 5") );
     }
 
     @Test
@@ -86,7 +87,7 @@ public class CouchbaseDialect6o5Test
         CouchbaseDialect6o5 dialect = new CouchbaseDialect6o5();
         String sqlPage = dialect.buildQueryPaging(sqlText, 0, 10, "AzDgfhIKlo");
         
-        assertThat(sqlPage, is("{\n     \"selector\": {\"nationality\": {\"$in\": :nations}}\n    \n,\"limit\": 10, \"skip\": 0, \"bookmark\": \"AzDgfhIKlo\" }") );
+        assertThat(sqlPage, is("SELECT * FROM `travel-sample` LIMIT 10 OFFSET 0"));
     }
     
     @Test
@@ -97,7 +98,6 @@ public class CouchbaseDialect6o5Test
         String sqlResult = q.queryCount();
         assertThat(sqlResult, nullValue());
     }
-
     
     private Queryable newQueryable(Queryable q, Sql s)
     {

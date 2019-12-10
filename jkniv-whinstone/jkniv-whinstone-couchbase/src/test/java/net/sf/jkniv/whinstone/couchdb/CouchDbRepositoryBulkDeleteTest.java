@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -40,6 +41,7 @@ import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 import net.sf.jkniv.whinstone.couchdb.model.orm.AuthorForDelete;
 
+@Ignore("delete me test from couchdb")
 public class CouchDbRepositoryBulkDeleteTest extends BaseJdbc
 {
     @Rule

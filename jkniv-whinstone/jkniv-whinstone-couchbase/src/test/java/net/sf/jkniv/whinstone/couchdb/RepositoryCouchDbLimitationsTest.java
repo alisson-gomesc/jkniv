@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -15,6 +16,7 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 
+@Ignore("delete me test from couchdb")
 public class RepositoryCouchDbLimitationsTest
 extends BaseJdbc
 {

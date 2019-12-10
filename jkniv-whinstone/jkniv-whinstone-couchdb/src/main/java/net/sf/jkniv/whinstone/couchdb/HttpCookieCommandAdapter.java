@@ -77,36 +77,27 @@ class HttpCookieCommandAdapter implements CommandAdapter
         LOG.debug("CouchDb repository doesn't implement close() method!");
     }
     
-//    @Override
-//    public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
-//    {
-//        throw new UnsupportedOperationException("CouchDb repository  doesn't implement this method yet!");
-//    }
-    
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public <T, R> Command asSelectCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
-        Class returnType = Map.class;
-        CouchCommand command = null;
-        Sql dynamicSql = queryable.getDynamicSql();
+        Command command = null;
         String sql = queryable.query();
         StatementAdapter<T, R> stmt = new CouchDbStatementAdapter(this.httpBuilder, sql, queryable.getDynamicSql().getParamParser());
 
         queryable.bind(stmt).on();
-        returnType = queryable.getReturnType();
         stmt.with(overloadResultRow);
             
         if (CouchDbSqlContext.isGet(queryable.getName()))
             command = new GetCommand(this.httpBuilder, queryable);
         else if (CouchDbSqlContext.isAllDocs(queryable.getName()))
-            command = new AllDocsCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
+            command = new AllDocsCommand(this.httpBuilder, queryable).with(stmt);
         else if (queryable.getDynamicSql().getLanguageType() == LanguageType.STORED)
-            command = new ViewCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
+            command = new ViewCommand(this.httpBuilder, queryable).with(stmt);
         else if (queryable.getReturnType() != null && FindAnswer.class.getName().equals(queryable.getReturnType().getName()))
-            command = new FullResponseFindCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
+            command = new FullResponseFindCommand(this.httpBuilder, queryable).with(stmt);
         else
-            command = new FindCommand((CouchDbStatementAdapter) stmt, this.httpBuilder, queryable);
+            command = new FindCommand(this.httpBuilder, queryable).with(stmt);
         return command;
     }
 

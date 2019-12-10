@@ -44,7 +44,7 @@ public class CouchDbRepositoryGetTest extends BaseJdbc
     public void whenGetWithBasicType()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = getQuery("get", "1");
+        Queryable q = QueryFactory.of("get", "1");
         
         Map ret = repositoryDb.get(q);
         assertThat(ret, notNullValue());
@@ -57,7 +57,7 @@ public class CouchDbRepositoryGetTest extends BaseJdbc
     public void whenGetWithIdName()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = getQuery("get", asParams("id","1"));
+        Queryable q = QueryFactory.of("get", asParams("id","1"));
         
         Map ret = repositoryDb.get(q);
         assertThat(ret, notNullValue());
@@ -69,7 +69,7 @@ public class CouchDbRepositoryGetTest extends BaseJdbc
     public void whenGetWith_IdName()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = getQuery("get", asParams("_id","1"));
+        Queryable q = QueryFactory.of("get", asParams("_id","1"));
         
         Map ret = repositoryDb.get(q);
         assertThat(ret, notNullValue());
@@ -82,7 +82,7 @@ public class CouchDbRepositoryGetTest extends BaseJdbc
     public void whenGetWithDocidName()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = getQuery("get", asParams("docid","1"));
+        Queryable q = QueryFactory.of("get", asParams("docid","1"));
         
         Map ret = repositoryDb.get(q);
         assertThat(ret, notNullValue());
@@ -98,7 +98,7 @@ public class CouchDbRepositoryGetTest extends BaseJdbc
         catcher.expectMessage("Cannot lookup [ id | _id | docid ] from [QueryName [name=get, offset=0, max=2147483647, timeout=-1, batch=false, scalar=false, paramType=MAP]]");
 
         Repository repositoryDb = getRepository();
-        Queryable q = getQuery("get", asParams("anotherId","1"));
+        Queryable q = QueryFactory.of("get", asParams("anotherId","1"));
         repositoryDb.get(q);
     }
 
@@ -107,7 +107,7 @@ public class CouchDbRepositoryGetTest extends BaseJdbc
     public void whenGetWithReturnType()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = getQuery("get", asParams("id","1"));
+        Queryable q = QueryFactory.of("get", asParams("id","1"));
         
         Author ret = repositoryDb.get(q, Author.class);
         assertThat(ret, notNullValue());

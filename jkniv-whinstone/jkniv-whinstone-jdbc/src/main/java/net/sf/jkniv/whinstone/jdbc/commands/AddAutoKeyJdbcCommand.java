@@ -22,19 +22,18 @@ package net.sf.jkniv.whinstone.jdbc.commands;
 import java.sql.Connection;
 
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
  * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({"unchecked"})
 public class AddAutoKeyJdbcCommand extends AbstractJdbcCommand
 {
-    public AddAutoKeyJdbcCommand(StatementAdapter stmt, Queryable queryable, Connection conn)
+    public AddAutoKeyJdbcCommand(Queryable queryable, Connection conn)
     {
-        super(stmt, queryable, conn);
+        super(queryable, conn);
     }
     
     @Override

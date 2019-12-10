@@ -38,16 +38,22 @@ public abstract class AbstractJdbcCommand implements Command
     private final static Logger                    LOG = LoggerFactory.getLogger(AbstractJdbcCommand.class);
     protected HandleableException                  handlerException;
     protected CommandHandler                       commandHandler;
-    protected final StatementAdapter<?, ResultSet> stmt;
+    protected StatementAdapter<?, ResultSet> stmt;
     protected final Connection                     conn;
     protected final Queryable                      queryable;
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected AbstractJdbcCommand(StatementAdapter stmt, Queryable queryable, Connection conn)
+    protected AbstractJdbcCommand(Queryable queryable, Connection conn)
     {
-        this.stmt = stmt;
         this.queryable = queryable;
         this.conn = conn;
+    }
+    
+    @Override
+    public <T> Command with(T stmt)
+    {
+        this.stmt = (StatementAdapter)stmt;
+        return this;
     }
     
     @Override

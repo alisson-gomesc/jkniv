@@ -20,7 +20,6 @@
 package net.sf.jkniv.whinstone.couchdb.commands;
 
 import java.io.IOException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,24 +35,22 @@ import org.slf4j.LoggerFactory;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
-import net.sf.jkniv.whinstone.couchdb.statement.CouchDbStatementAdapter;
 import net.sf.jkniv.whinstone.couchdb.statement.FindAnswer;
 
 public class FullResponseFindCommand extends AbstractCommand implements CouchCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger(FullResponseFindCommand.class);
     private static final Logger LOGSQL = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
-    private String body;
     private HttpBuilder httpBuilder;
     private Queryable queryable;
     
-    public FullResponseFindCommand(CouchDbStatementAdapter<?, String> stmt, HttpBuilder httpBuilder, Queryable queryable)
+    public FullResponseFindCommand(HttpBuilder httpBuilder, Queryable queryable)
     {
         super();
         this.queryable = queryable;
         this.httpBuilder = httpBuilder;
-        stmt.rows();
-        this.body = stmt.getBody();
+        //stmt.rows();
+        //this.body = stmt.getBody();
     }
     
     @Override

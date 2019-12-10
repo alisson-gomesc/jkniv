@@ -37,9 +37,8 @@ import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchbase.model.Airline;
 import net.sf.jkniv.whinstone.couchbase.model.Airport;
 
-public class CouchbaseRepositorySelectTest extends BaseCouchbase
+public class CouchbaseN1QLCommandTest extends BaseCouchbase
 {
-
     @Test
     public void whenCouchbaseSelectLiteralValue()
     {
@@ -79,7 +78,7 @@ public class CouchbaseRepositorySelectTest extends BaseCouchbase
         assertThat(airport.getGeo().getLat(), is(37.700967D));
         assertThat(airport.getGeo().getLon(), is(-113.098847D));
         assertThat(airport.getIcao(), is("KCDC"));
-        assertThat(airport.getId(), is(3824));
+        assertThat(airport.getId(), is("3824"));
         assertThat(airport.getType(), is("airport"));
         assertThat(airport.getTz(), is("America/Denver"));
     }
@@ -99,7 +98,7 @@ public class CouchbaseRepositorySelectTest extends BaseCouchbase
         assertThat(airport.getGeo().getLat(), is(37.700967D));
         assertThat(airport.getGeo().getLon(), is(-113.098847D));
         assertThat(airport.getIcao(), is("KCDC"));
-        assertThat(airport.getId(), is(3824));
+        assertThat(airport.getId(), is("3824"));
         assertThat(airport.getType(), is("airport"));
         assertThat(airport.getTz(), is("America/Denver"));
     }
@@ -118,7 +117,7 @@ public class CouchbaseRepositorySelectTest extends BaseCouchbase
         assertThat(list.get(0).getCountry(), is("United States"));
         assertThat(list.get(0).getIata(), is("Q5"));
         assertThat(list.get(0).getIcao(), is("MLA"));
-        assertThat(list.get(0).getId(), is(10));
+        assertThat(list.get(0).getId(), is("10"));
         assertThat(list.get(0).getName(), is("40-Mile Air"));
         assertThat(list.get(0).getType(), is("airline"));
 
@@ -126,7 +125,7 @@ public class CouchbaseRepositorySelectTest extends BaseCouchbase
         assertThat(list.get(3).getCountry(), is("United Kingdom"));
         assertThat(list.get(3).getIata(), nullValue());
         assertThat(list.get(3).getIcao(), is("JRB"));
-        assertThat(list.get(3).getId(), is(10642));
+        assertThat(list.get(3).getId(), is("10642"));
         assertThat(list.get(3).getName(), is("Jc royal.britannica"));
         assertThat(list.get(3).getType(), is("airline"));
     }
@@ -145,7 +144,7 @@ public class CouchbaseRepositorySelectTest extends BaseCouchbase
         assertThat(list.get(0).getCountry(), is("United States"));
         assertThat(list.get(0).getIata(), is("Q5"));
         assertThat(list.get(0).getIcao(), is("MLA"));
-        assertThat(list.get(0).getId(), is(10));
+        assertThat(list.get(0).getId(), is("10"));
         assertThat(list.get(0).getName(), is("40-Mile Air"));
         assertThat(list.get(0).getType(), is("airline"));
 
@@ -154,7 +153,7 @@ public class CouchbaseRepositorySelectTest extends BaseCouchbase
         assertThat(list.get(3).getCountry(), is("United Kingdom"));
         assertThat(list.get(3).getIata(), nullValue());
         assertThat(list.get(3).getIcao(), is("JRB"));
-        assertThat(list.get(3).getId(), is(10642));
+        assertThat(list.get(3).getId(), is("10642"));
         assertThat(list.get(3).getName(), is("Jc royal.britannica"));
         assertThat(list.get(3).getType(), is("airline"));
         
@@ -169,7 +168,7 @@ public class CouchbaseRepositorySelectTest extends BaseCouchbase
         assertThat(list.get(0).getCountry(), is("United Kingdom"));
         assertThat(list.get(0).getIata(), nullValue());
         assertThat(list.get(0).getIcao(), is("JRB"));
-        assertThat(list.get(0).getId(), is(10642));
+        assertThat(list.get(0).getId(), is("10642"));
         assertThat(list.get(0).getName(), is("Jc royal.britannica"));
         assertThat(list.get(0).getType(), is("airline"));
         
@@ -178,7 +177,7 @@ public class CouchbaseRepositorySelectTest extends BaseCouchbase
         assertThat(list.get(3).getCountry(), is("United States"));
         assertThat(list.get(3).getIata(), is("KO"));
         assertThat(list.get(3).getIcao(), is("AER"));
-        assertThat(list.get(3).getId(), is(109));
+        assertThat(list.get(3).getId(), is("109"));
         assertThat(list.get(3).getName(), is("Alaska Central Express"));
         assertThat(list.get(3).getType(), is("airline"));
     }

@@ -25,7 +25,6 @@ import static org.hamcrest.Matchers.equalTo;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

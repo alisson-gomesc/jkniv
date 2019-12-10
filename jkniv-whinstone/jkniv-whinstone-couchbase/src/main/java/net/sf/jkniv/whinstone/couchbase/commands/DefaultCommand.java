@@ -25,17 +25,28 @@ import net.sf.jkniv.whinstone.commands.Command;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.couchbase.statement.CouchbaseStatementAdapter;
 
+/**
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public class DefaultCommand implements Command
 {
-    protected final CouchbaseStatementAdapter<?, ?> stmt;
     protected final Queryable queryable;
+    protected CouchbaseStatementAdapter<?, ?> stmt;
     protected HandleableException handlerException;
     
-    public DefaultCommand(CouchbaseStatementAdapter<?, ?> stmt, Queryable queryable)
+    public DefaultCommand(Queryable queryable)
     {
         super();
-        this.stmt = stmt;
         this.queryable = queryable;
+    }
+    
+    @Override
+    public <T> Command with(T stmt)
+    {
+        this.stmt = (CouchbaseStatementAdapter<?, ?>) stmt;
+        return this;
     }
     
     @Override

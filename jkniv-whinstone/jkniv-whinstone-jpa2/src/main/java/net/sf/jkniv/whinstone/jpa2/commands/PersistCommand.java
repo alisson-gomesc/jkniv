@@ -28,17 +28,22 @@ import net.sf.jkniv.whinstone.commands.CommandHandler;
 
 public class PersistCommand implements Command
 {
-    protected final EntityManager em;
     protected final Queryable queryable;
+    protected EntityManager em;
     protected HandleableException handlerException;
     
-    public PersistCommand(EntityManager em, Queryable queryable)
+    public PersistCommand(Queryable queryable)
     {
         super();
-        this.em = em;
         this.queryable = queryable;
     }
-    
+
+    @Override
+    public <T> Command with(T stmt)
+    {
+        this.em = (EntityManager) stmt;
+        return this;
+    }
     @Override
     public Command with(HandleableException handlerException)
     {

@@ -35,7 +35,7 @@ import net.sf.jkniv.sqlegance.builder.xml.TagFactory;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
 
-public class CouchDbSqlContext implements SqlContext
+class CouchDbSqlContext implements SqlContext
 {
     private SqlContext sqlContext;
     private static final Map<String, Sql> BUILTIN = new HashMap<String, Sql>(); 

@@ -19,13 +19,11 @@
  */
 package net.sf.jkniv.whinstone.commands;
 
-import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
-import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
- * Adapter to abstract the Jdbc Connection {@link java.sql.Connection} 
+ * Adapter to abstract the JDBC Connection {@link java.sql.Connection} 
  * representing a connection/session to a specific database (RDBMS or NoSQL).
  * 
  * @author Alisson Gomes
@@ -43,14 +41,5 @@ public interface CommandAdapter
 
     <T, R> Command asAddCommand(Queryable queryable);
 
-    void close(); //throws SQLException;
-
-    /*
-     * To create an adapter for a Prepared Statement
-     * @param sql statement
-     * @param <T> TODO documents T param
-     * @param <R> TODO documents R param
-     * @return Adapter for Prepared Statement
-     */
-    //<T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType);    
+    void close();
 }

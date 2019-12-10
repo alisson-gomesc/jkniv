@@ -29,6 +29,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import net.sf.jkniv.whinstone.QueryFactory;
@@ -36,6 +37,7 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.model.orm.AuthorView;
 
+@Ignore("delete me test from couchdb")
 public class CouchDbRepositoryViewTest extends BaseJdbc
 {
     @Test

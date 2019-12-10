@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
+import com.couchbase.client.java.document.json.JsonObject;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -58,6 +59,22 @@ public class JsonMapper
         return MAPPER;
     }
     
+
+
+    public static <T> T mapper(JsonObject content, Class<T> valueType)
+    {
+        try
+        {
+            return MAPPER.readValue(content.toString(), valueType);
+        }
+        catch (Exception e)
+        {
+            // JsonParseException | JsonMappingException | IOException
+            handlerException.handle(e);
+        }
+        return null;
+    }
+
     public static <T> T mapper(String content, Class<T> valueType)
     {
         try

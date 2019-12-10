@@ -46,6 +46,16 @@ public interface Command
     Command with(CommandHandler commandHandler);
     
     /**
+     * The statement to run this command
+     * @param <T> Type responsible to execute the statement into database. 
+     *        For example: {@code Statement} for JDBC or Cassandra, {@code EntityManager} for JPA, 
+     *        {@code bucket} for Couchbase etc 
+     * @param stmt a statement implementation to run the command.
+     * @return a reference to this object.
+     */
+    <T> Command with(T stmt);
+
+    /**
      * Execute the database statement could be a {@code Command} or a {@code Query}
      * @param <T> Generic type of return, example: rows affected by a command or list of objects.
      * @return the result of the statement execution

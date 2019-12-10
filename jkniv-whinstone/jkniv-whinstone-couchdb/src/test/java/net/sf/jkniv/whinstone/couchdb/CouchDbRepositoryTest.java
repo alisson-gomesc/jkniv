@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 
@@ -39,7 +40,7 @@ public class CouchDbRepositoryTest extends BaseJdbc
     public void whenCouchDbListWithFixedFind()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = getQuery("adminRoles");
+        Queryable q = QueryFactory.of("adminRoles");
         
         List<Map> list = repositoryDb.list(q);
         assertThat(list.size(), greaterThan(0));
@@ -53,7 +54,7 @@ public class CouchDbRepositoryTest extends BaseJdbc
         Repository repositoryDb = getRepository();
         Map<String, String> params = new HashMap<String, String>();
         params.put("nat", "DE");
-        Queryable q = getQuery("role", params);
+        Queryable q = QueryFactory.of("role", params);
         
         List<Map> list = repositoryDb.list(q);
         assertThat(list.size(), greaterThan(0));

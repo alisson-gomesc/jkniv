@@ -81,7 +81,7 @@ public class CouchDbRepositoryViewTest extends BaseJdbc
     public void whenUseViewWithParams()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = getQuery("docs/_view/natio", asParams("startkey","DE","endkey","DE"));
+        Queryable q = QueryFactory.of("docs/_view/natio", asParams("startkey","DE","endkey","DE"));
         List<AuthorView> list = repositoryDb.list(q);
         assertThat(q.getTotal(), is((long)list.size()));
         assertThat(list.size(), greaterThanOrEqualTo(3));

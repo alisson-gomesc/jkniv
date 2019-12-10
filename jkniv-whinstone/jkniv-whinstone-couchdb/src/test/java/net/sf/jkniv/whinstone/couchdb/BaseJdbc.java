@@ -47,7 +47,6 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.RepositoryService;
-import net.sf.jkniv.whinstone.couchdb.commands.PutCommand;
 import net.sf.jkniv.whinstone.couchdb.jndi.JndiCreator;
 
 public class BaseJdbc extends BaseSpringJUnit4
@@ -150,23 +149,23 @@ public class BaseJdbc extends BaseSpringJUnit4
                 SqlContextFactory.newInstance("/repository-sql-db3t.xml"));
     }
     
-    protected Queryable getQuery(String name)
-    {
-        Queryable q = QueryFactory.of(name);
-        return q;
-    }
-    
-    protected Queryable getQuery(String name, Object params)
-    {
-        Queryable q = QueryFactory.of(name, params);
-        return q;
-    }
-    
-    protected Queryable getQuery(String name, Object params, int offset, int max)
-    {
-        Queryable q = QueryFactory.of(name, params, offset, max);
-        return q;
-    }
+//    protected Queryable getQuery(String name)
+//    {
+//        Queryable q = QueryFactory.of(name);
+//        return q;
+//    }
+//    
+//    protected Queryable getQuery(String name, Object params)
+//    {
+//        Queryable q = QueryFactory.of(name, params);
+//        return q;
+//    }
+//    
+//    protected Queryable getQuery(String name, Object params, int offset, int max)
+//    {
+//        Queryable q = QueryFactory.of(name, params, offset, max);
+//        return q;
+//    }
     
     private static String streamToString(InputStream is)
     {

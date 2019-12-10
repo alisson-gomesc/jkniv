@@ -88,7 +88,7 @@ public class JpaCommandAdapter implements CommandAdapter
     @Override
     public <T, R> Command asSelectCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
-        DefaultJpaQuery command = null;
+        Command command = null;
         String sql = queryable.query();
         if (SQLLOG.isInfoEnabled())
             SQLLOG.info("Bind Native SQL\n{}", sql);
@@ -97,7 +97,7 @@ public class JpaCommandAdapter implements CommandAdapter
         StatementAdapter<T, R> stmt = new JpaStatementAdapter(queryJpa, queryable, this.handlerException);
         queryable.bind(stmt).on();
         stmt.with(overloadResultRow);
-        command = new DefaultJpaQuery(stmt, queryable);
+        command = new DefaultJpaQuery(queryable).with(stmt);
         return command;
     }
     
@@ -118,7 +118,7 @@ public class JpaCommandAdapter implements CommandAdapter
     {
         Command command = null;
         if (isEntity(queryable))
-            command = new RemoveCommand(getEntityManager(), queryable);
+            command = new RemoveCommand(queryable).with(getEntityManager());
         else
             command = buildCommand(queryable);
         
@@ -126,11 +126,11 @@ public class JpaCommandAdapter implements CommandAdapter
     }
     
     @Override
-    public <T, R> Command asAddCommand(Queryable queryable)//, ResultRow<T, R> overloadResultRow)
+    public <T, R> Command asAddCommand(Queryable queryable)
     {
         Command command = null;
         if (isEntity(queryable))
-            command = new PersistCommand(getEntityManager(), queryable);
+            command = new PersistCommand(queryable).with(getEntityManager());
         else
             command = buildCommand(queryable);
         
@@ -166,7 +166,7 @@ public class JpaCommandAdapter implements CommandAdapter
         //        else
         //            command = new DefaultCommand((CassandraPreparedStatementAdapter) stmt, queryable);
         
-        command = new DefaultJpaCommand(stmt, queryable);
+        command = new DefaultJpaCommand(queryable).with(stmt);
         stmt.with(auto);
         return command;
     }

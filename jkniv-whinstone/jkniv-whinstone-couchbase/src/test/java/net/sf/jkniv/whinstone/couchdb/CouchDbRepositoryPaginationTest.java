@@ -50,6 +50,7 @@ import net.sf.jkniv.whinstone.couchdb.model.orm.AuthorView;
 import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
 import net.sf.jkniv.whinstone.params.ParameterException;
 
+@Ignore("delete me test from couchdb")
 public class CouchDbRepositoryPaginationTest extends BaseJdbc
 {
     @Rule

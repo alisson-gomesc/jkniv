@@ -27,14 +27,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 
+@Ignore("delete me test from couchdb")
 public class CouchDbRepositoryTest extends BaseJdbc
 {
-    
     @Test
     public void whenCouchDbListWithFixedFind()
     {
