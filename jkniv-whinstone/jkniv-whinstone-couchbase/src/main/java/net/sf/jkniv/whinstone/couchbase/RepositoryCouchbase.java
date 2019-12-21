@@ -22,15 +22,14 @@ package net.sf.jkniv.whinstone.couchbase;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.http.client.ClientProtocolException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.search.SearchQuery;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -51,10 +50,10 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.UnsupportedDslOperationException;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.couchbase.commands.CouchbaseCommand;
-import net.sf.jkniv.whinstone.couchbase.commands.CouchbaseDocument;
 import net.sf.jkniv.whinstone.couchbase.dialect.CouchbaseDialect6o5;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 import net.sf.jkniv.whinstone.transaction.Transactional;
@@ -129,7 +128,7 @@ class RepositoryCouchbase implements Repository
  TemporaryFailureException: The server is currently not able to process the request, retrying may help: TemporaryFailureException
  CouchbaseOutOfMemoryException: The server is out of memory: CouchbaseOutOfMemoryException
  CouchbaseException: Unexpected errors are caught and contained in a generic CouchbaseException.
-
+ RepositoryMappingException: com.couchbase.client.java.repository.mapping.RepositoryMappingException: Could not instantiate entity.
 
 # INSERT method throws under the following conditions:
  TimeoutException: The operation takes longer than the specified timeout: TimeoutException wrapped in a RuntimeException
@@ -156,7 +155,9 @@ CASMismatchException
  TemporaryFailureException: The server is currently not able to process the request, retrying may help: TemporaryFailureException
  CouchbaseOutOfMemoryException: The server is out of memory: CouchbaseOutOfMemoryException
  CouchbaseException: Unexpected errors are caught and contained in a generic CouchbaseException.
-
+ 
+# REMOVE
+DocumentDoesNotExistException: The original replace failed because the document does not exist: DocumentDoesNotExistException
            */
         this.handlerException = new HandlerException(RepositoryException.class, "Couchbase error at [%s]");
         // ClientProtocolException | JsonParseException | JsonMappingException | IOException
@@ -315,18 +316,18 @@ CASMismatchException
     }
     
     @Override
-    public <T> T add(T entity)
+    public <T> int add(T entity)
     {
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("add", entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
-        handler.with(queryable)
+        int rows = handler.with(queryable)
                .with(sql)
                .checkSqlType(SqlType.INSERT)
                .with(handlerException)
                .run();
-        return entity;
+        return rows;
     }
     
     @Override
@@ -418,6 +419,16 @@ CASMismatchException
         //        }
         sqlContext.close();
     }
+    
+    @Override
+    public <T> T dsl()
+    {
+//        SearchQuery sq = null;
+//        Bucket b = null;
+//        b.core().ctx().
+        throw new UnsupportedDslOperationException("Couchbase Repository does not support DSL operation");
+    }
+
     
     private Properties lookup(String remaining)
     {

@@ -37,7 +37,7 @@ import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchbase.model.Airline;
 import net.sf.jkniv.whinstone.couchbase.model.Airport;
 
-public class CouchbaseN1QLCommandTest extends BaseCouchbase
+public class CouchbaseN1qlCommandTest extends BaseCouchbase
 {
     @Test
     public void whenCouchbaseSelectLiteralValue()
@@ -86,9 +86,9 @@ public class CouchbaseN1QLCommandTest extends BaseCouchbase
     @Test
     public void whenCouchbaseSelectWithTwoParamName()
     {
-        Repository repositoryDb = getRepository();
-        Queryable q = QueryFactory.of("select-airport-from-city", "city", "Cedar City", "type", "airport");
-        Airport airport = repositoryDb.get(q);
+        Repository repository = getRepository();
+        Queryable q = QueryFactory.of("select-airport-from-city-type", "city", "Cedar City", "type", "airport");
+        Airport airport = repository.get(q);
         assertThat(airport, instanceOf(Airport.class));
         assertThat(airport.getAirportname(), is("Cedar City Rgnl"));
         assertThat(airport.getCity(), is("Cedar City"));
@@ -117,7 +117,7 @@ public class CouchbaseN1QLCommandTest extends BaseCouchbase
         assertThat(list.get(0).getCountry(), is("United States"));
         assertThat(list.get(0).getIata(), is("Q5"));
         assertThat(list.get(0).getIcao(), is("MLA"));
-        assertThat(list.get(0).getId(), is("10"));
+        assertThat(list.get(0).getId(), is(10));
         assertThat(list.get(0).getName(), is("40-Mile Air"));
         assertThat(list.get(0).getType(), is("airline"));
 
@@ -125,7 +125,7 @@ public class CouchbaseN1QLCommandTest extends BaseCouchbase
         assertThat(list.get(3).getCountry(), is("United Kingdom"));
         assertThat(list.get(3).getIata(), nullValue());
         assertThat(list.get(3).getIcao(), is("JRB"));
-        assertThat(list.get(3).getId(), is("10642"));
+        assertThat(list.get(3).getId(), is(10642));
         assertThat(list.get(3).getName(), is("Jc royal.britannica"));
         assertThat(list.get(3).getType(), is("airline"));
     }
@@ -144,7 +144,7 @@ public class CouchbaseN1QLCommandTest extends BaseCouchbase
         assertThat(list.get(0).getCountry(), is("United States"));
         assertThat(list.get(0).getIata(), is("Q5"));
         assertThat(list.get(0).getIcao(), is("MLA"));
-        assertThat(list.get(0).getId(), is("10"));
+        assertThat(list.get(0).getId(), is(10));
         assertThat(list.get(0).getName(), is("40-Mile Air"));
         assertThat(list.get(0).getType(), is("airline"));
 
@@ -153,7 +153,7 @@ public class CouchbaseN1QLCommandTest extends BaseCouchbase
         assertThat(list.get(3).getCountry(), is("United Kingdom"));
         assertThat(list.get(3).getIata(), nullValue());
         assertThat(list.get(3).getIcao(), is("JRB"));
-        assertThat(list.get(3).getId(), is("10642"));
+        assertThat(list.get(3).getId(), is(10642));
         assertThat(list.get(3).getName(), is("Jc royal.britannica"));
         assertThat(list.get(3).getType(), is("airline"));
         
@@ -168,7 +168,7 @@ public class CouchbaseN1QLCommandTest extends BaseCouchbase
         assertThat(list.get(0).getCountry(), is("United Kingdom"));
         assertThat(list.get(0).getIata(), nullValue());
         assertThat(list.get(0).getIcao(), is("JRB"));
-        assertThat(list.get(0).getId(), is("10642"));
+        assertThat(list.get(0).getId(), is(10642));
         assertThat(list.get(0).getName(), is("Jc royal.britannica"));
         assertThat(list.get(0).getType(), is("airline"));
         
@@ -177,7 +177,7 @@ public class CouchbaseN1QLCommandTest extends BaseCouchbase
         assertThat(list.get(3).getCountry(), is("United States"));
         assertThat(list.get(3).getIata(), is("KO"));
         assertThat(list.get(3).getIcao(), is("AER"));
-        assertThat(list.get(3).getId(), is("109"));
+        assertThat(list.get(3).getId(), is(109));
         assertThat(list.get(3).getName(), is("Alaska Central Express"));
         assertThat(list.get(3).getType(), is("airline"));
     }

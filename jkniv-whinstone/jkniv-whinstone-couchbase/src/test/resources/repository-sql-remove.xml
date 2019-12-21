@@ -6,8 +6,9 @@
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
        http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
-  
- <include href="/repository-sql-list.xml" />
- <include href="/repository-sql-remove.xml" />
+
+<delete id="delete-airline-by-id">
+ DELETE FROM `travel-sample` WHERE type="airline" and id = $1
+</delete>  
  
 </statements>

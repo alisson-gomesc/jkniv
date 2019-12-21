@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.instanceOf;
 
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -65,7 +66,7 @@ public class CouchDbRepositoryGetTest extends BaseJdbc
         assertThat(ret.get("name").toString(), is("Friedrich Nietzsche"));
     }
 
-    @Test
+    @Test @Ignore("id field is configurable for all repository into SqlDialect")
     public void whenGetWith_IdName()
     {
         Repository repositoryDb = getRepository();
@@ -78,7 +79,7 @@ public class CouchDbRepositoryGetTest extends BaseJdbc
     }
 
     
-    @Test
+    @Test @Ignore("id field is configurable for all repository into SqlDialect")
     public void whenGetWithDocidName()
     {
         Repository repositoryDb = getRepository();
@@ -95,7 +96,7 @@ public class CouchDbRepositoryGetTest extends BaseJdbc
     public void whenGetWithAnotherIdName()
     {
         catcher.expect(RepositoryException.class);
-        catcher.expectMessage("Cannot lookup [ id | _id | docid ] from [QueryName [name=get, offset=0, max=2147483647, timeout=-1, batch=false, scalar=false, paramType=MAP]]");
+        catcher.expectMessage("Cannot lookup id using Property Access [PropertyAccess [fieldName=id, readMethod=null, writerMethod=null, targetClass=null]] from [QueryName [name=get, offset=0, max=2147483647, timeout=-1, batch=false, scalar=false, paramType=MAP]]");
 
         Repository repositoryDb = getRepository();
         Queryable q = QueryFactory.of("get", asParams("anotherId","1"));

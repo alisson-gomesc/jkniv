@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.sqlegance.dialect;
 
+import net.sf.jkniv.reflect.beans.PropertyAccess;
+
 /**
  * Represents a SQL syntax from a specific database.
  * 
@@ -106,4 +108,16 @@ public interface SqlDialect
      * @return query that count the total of records from {@code sqlText}
      */
     String buildQueryCount(final String sqlText);
+ 
+    /**
+     * The access name for {@code id} field, the identifier from an entity
+     * @return the property access, default access values are: {@code id}, {@code getId}, {@code setId}
+     */
+    PropertyAccess getAccessId();
+
+    /**
+     * The access name for {@code revision} field, a revision number from an entity
+     * @return the property access, default access values are: {@code rev}, {@code getRev}, {@code setRev}
+     */
+    PropertyAccess getAccessRevision();
 }

@@ -19,31 +19,26 @@
  */
 package net.sf.jkniv.whinstone.couchbase.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.Document;
-import com.couchbase.client.java.document.JsonDocument;
-import com.couchbase.client.java.document.json.JsonObject;
+import com.couchbase.client.java.error.DocumentDoesNotExistException;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.commands.Command;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
-import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
  * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public class InsertCommand implements Command
+public class RemoveCommand implements Command
 {
     private Bucket bucket;
     private final Queryable queryable;
     
-    public InsertCommand(Queryable queryable)
+    public RemoveCommand(Queryable queryable)
     {
         super();
         this.queryable = queryable;
@@ -72,8 +67,14 @@ public class InsertCommand implements Command
     public <T> T execute()
     {
         CouchbaseDocument baseDocument = new CouchbaseDocument(this.queryable);
-        Document<?> document = bucket.insert(baseDocument.getJsonDocument());
-        baseDocument.merge(document);
-        return (T) Integer.valueOf("1");
+        Integer rowsAffected = 0;
+        try
+        {
+            Document<?> document = bucket.remove(baseDocument.getJsonDocument());
+            baseDocument.merge(document);
+            rowsAffected = 1;
+        }
+        catch (DocumentDoesNotExistException ignore) { }
+        return (T) rowsAffected;
     }
 }

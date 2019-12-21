@@ -32,16 +32,16 @@ import net.sf.jkniv.whinstone.Repository;
  */
 public interface RepositoryJpaExtend extends Repository
 {
-    /**
+    /*
      * Return an instance of <code>CriteriaBuilder</code> for the creation of
      * <code>CriteriaQuery</code> objects.
      * @return CriteriaBuilder instance
      * @throws IllegalStateException if the entity manager has
      *         been closed
      * @since Java Persistence 2.0
-     */
+     *
     public CriteriaBuilder getCriteriaBuilder();
-    
+    */
     /**
      * Create an instance of <code>TypedQuery</code> for executing a
      * criteria query.

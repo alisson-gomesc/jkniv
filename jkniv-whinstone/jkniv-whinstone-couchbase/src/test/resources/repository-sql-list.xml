@@ -12,16 +12,22 @@
   </select>
 
   <select id="select-travel">
-   SELECT * FROM `travel-sample` LIMIT 4
+   <![CDATA[
+     SELECT * FROM `travel-sample` where id < 11000 LIMIT 4
+   ]]>
   </select>
   
   <select id="select-4airlines" returnType="net.sf.jkniv.whinstone.couchbase.model.Airline">
-   SELECT id,callsign,country,iata,icao,name,type FROM `travel-sample` LIMIT 4
+   <![CDATA[
+     SELECT id,callsign,country,iata,icao,name,type FROM `travel-sample` where id < 11000 LIMIT 4
+   ]]>
   </select>
 
   
   <select id="select-limit-offset-airlines" returnType="net.sf.jkniv.whinstone.couchbase.model.Airline">
-   SELECT id,callsign,country,iata,icao,name,type FROM `travel-sample`
+   <![CDATA[
+     SELECT id,callsign,country,iata,icao,name,type FROM `travel-sample` where type = "airline" and id < 11000
+   ]]>
   </select>
   
   <select id="select-airport-from-city" returnType="net.sf.jkniv.whinstone.couchbase.model.Airport">

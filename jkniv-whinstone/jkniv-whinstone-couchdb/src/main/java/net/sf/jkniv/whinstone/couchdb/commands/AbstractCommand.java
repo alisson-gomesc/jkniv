@@ -36,6 +36,7 @@ import org.apache.http.util.EntityUtils;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
+import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.whinstone.Param;
@@ -56,8 +57,8 @@ import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
  */
 public abstract class AbstractCommand implements CouchCommand
 {
-    protected final static String COUCHDB_ID  = "id";
-    protected final static String COUCHDB_REV = "rev";
+    //protected final static String COUCHDB_ID  = "id";
+    //protected final static String COUCHDB_REV = "rev";
     protected HandleableException handlerException;
     protected CommandHandler      commandHandler;
     protected String              url;
@@ -262,47 +263,46 @@ public abstract class AbstractCommand implements CouchCommand
     
     protected String getRevision(Queryable queryable)
     {
-        Param rev = getProperty(queryable, "rev");
-        if (rev.getValue() == null)
-            rev = getProperty(queryable, "_rev");
+        PropertyAccess accessRev = queryable.getDynamicSql().getSqlDialect().getAccessRevision();
+        Param rev = getProperty(queryable, accessRev.getFieldName());
         return rev.getValue().toString();
     }
     
     @SuppressWarnings(
     { "rawtypes", "unchecked" })
-    protected void injectIdentity(ObjectProxy<?> proxy, Object param, String id, String rev)
+    protected void injectIdentity(ObjectProxy<?> proxy, Object param, String id, String rev, PropertyAccess accessId, PropertyAccess accessRev)
     {
         if (param instanceof Map)
         {
             Map map = (Map) param;
-            if (!map.containsKey(COUCHDB_ID))
-                map.put(COUCHDB_ID, id);
-            map.put(COUCHDB_REV, rev);
+            if (!map.containsKey(accessId.getFieldName()))
+                map.put(accessId.getFieldName(), id);
+            map.put(accessRev.getFieldName(), rev);
         }
         else
         {
-            if (proxy.hasMethod("setId"))
-                proxy.invoke("setId", id);
-            if (proxy.hasMethod("setRev"))
-                proxy.invoke("setRev", rev);
+            if (proxy.hasMethod(accessId.getWriterMethodName()))
+                proxy.invoke(accessId.getWriterMethodName(), id);
+            if (proxy.hasMethod(accessRev.getWriterMethodName()))
+                proxy.invoke(accessRev.getWriterMethodName(), rev);
         }
     }
     
     @SuppressWarnings(
     { "rawtypes", "unchecked" })
-    protected void injectAutoIdentity(ObjectProxy<?> proxy, Object param, String id, String rev, String properName)
+    protected void injectAutoIdentity(ObjectProxy<?> proxy, Object param, String id, String rev, String properName, PropertyAccess accessId, PropertyAccess accessRev)
     {
         if (param instanceof Map)
         {
             Map map = (Map) param;
             if (!map.containsKey(properName))
                 map.put(properName, id);
-            map.put(COUCHDB_REV, rev);
+            map.put(accessRev.getFieldName(), rev);
         }
         else
         {
-            if (proxy.hasMethod("setId"))
-                proxy.invoke("setId", id);
+            if (proxy.hasMethod(accessId.getWriterMethodName()))
+                proxy.invoke(accessId.getWriterMethodName(), id);
         }
     }
     

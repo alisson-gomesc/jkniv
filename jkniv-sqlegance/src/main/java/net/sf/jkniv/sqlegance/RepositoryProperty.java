@@ -167,14 +167,18 @@ public enum RepositoryProperty
         public String defaultValue() { return "V4"; }
     },
 
-
+    /** property: <code>jkniv.repository.accessId</code> */
+    ACCESS_ID {
+        public String key() { return PREFIX+".accessId"; }
+        
+        public String defaultValue() { return "id,getId,setId"; }
+    },
     
     
 //    /** <code>jkniv.repository.ttl_sql</code> */
 //    TTL_SQL {
 //        public String key() { return "jkniv.repository.ttl_sql"; }
 //    }
-
     ;
 
     public abstract String key();

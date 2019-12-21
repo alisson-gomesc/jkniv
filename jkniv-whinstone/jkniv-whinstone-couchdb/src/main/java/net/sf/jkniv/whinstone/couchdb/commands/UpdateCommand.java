@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.Updateable;
@@ -198,22 +199,23 @@ public class UpdateCommand extends AbstractCommand implements CouchCommand
     private void processResponse(Queryable queryable, String json)
     {
         Map<String, Object> response = JsonMapper.mapper(json, Map.class);
-        //Updateable sql = queryable.getDynamicSql().asUpdateable();
         Object params = queryable.getParams();
         ObjectProxy<?> proxy = ObjectProxyFactory.of(params);
-        String id = (String) response.get(COUCHDB_ID);
-        String rev = (String) response.get(COUCHDB_REV);
+        PropertyAccess accessId = queryable.getDynamicSql().getSqlDialect().getAccessId();
+        PropertyAccess accessRev = queryable.getDynamicSql().getSqlDialect().getAccessRevision();
+        String id = (String) response.get(accessId.getFieldName());
+        String rev = (String) response.get(accessRev.getFieldName());
         if (params instanceof Map)
         {
-            if (!((Map) params).containsKey(COUCHDB_ID))
-                ((Map) params).put(COUCHDB_ID, id);
+            if (!((Map) params).containsKey(accessId.getFieldName()))
+                ((Map) params).put(accessId.getFieldName(), id);
 
-            ((Map) params).put(COUCHDB_REV, rev);
+            ((Map) params).put(accessRev.getFieldName(), rev);
         }
         else
         {
-            proxy.invoke("setId", id);
-            proxy.invoke("setRev", rev);
+            proxy.invoke(accessId.getWriterMethodName(), id);
+            proxy.invoke(accessRev.getWriterMethodName(), rev);
         }
     }
 

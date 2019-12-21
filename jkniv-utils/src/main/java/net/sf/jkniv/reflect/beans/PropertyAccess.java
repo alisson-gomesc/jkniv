@@ -50,6 +50,13 @@ public class PropertyAccess
     {
         this(fieldName, null);
     }
+
+    public PropertyAccess(String fieldName, String readMethodName, String writerMethodName)
+    {
+        this.fieldName = fieldName;
+        this.readMethodName = readMethodName;
+        this.writerMethodName = writerMethodName;
+    }
     
     public PropertyAccess(String fieldName, Class<?> targetClass)
     {

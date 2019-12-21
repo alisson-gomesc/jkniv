@@ -65,8 +65,8 @@ public class SqlAddMockitoTest
         JdbcCommandMock jdbcMock = new JdbcCommandMock(FlatBook.class);
         Repository repository = jdbcMock.withInsertable().getRepository();
         FlatBook book = new FlatBook();
-        FlatBook result = repository.add(book);
-        assertThat(result == book, is(true));
+        int rows = repository.add(book);
+        assertThat(rows, is(1));
         verifyMethods(jdbcMock, repository.getTransaction().getStatus(), 1, 1, 2);
     }
     

@@ -35,8 +35,8 @@
     <module>jkniv-whinstone/jkniv-whinstone-jpa2</module>
     <module>jkniv-whinstone/jkniv-whinstone-cassandra</module>
     <module>jkniv-whinstone/jkniv-whinstone-couchdb</module>
-    <module>jkniv-whinstone/jkniv-whinstone-couchbase</module>
     <!-- 
+    <module>jkniv-whinstone/jkniv-whinstone-couchbase</module>
     <module>jkniv-test-jdk8</module>
     <module>jkniv-whinstone/jkniv-whinstone-rest</module>    
     <module>jkniv-whinstone/jkniv-whinstone-fluent</module>

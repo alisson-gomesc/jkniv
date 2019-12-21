@@ -75,7 +75,7 @@ public class CouchbaseStatementAdapter<T, R> implements StatementAdapter<T, N1ql
     @Override
     public StatementAdapter<T, N1qlQueryRow> with(ResultRow<T, N1qlQueryRow> resultRow)
     {
-        //this.resultRow = resultRow;
+        //this.resultRow = resultRow; TODO implements resultrow for couchbase 
         return this;
     }
     
@@ -143,6 +143,13 @@ public class CouchbaseStatementAdapter<T, R> implements StatementAdapter<T, N1ql
             }
             else
             {
+                /*
+  {
+    "code": 5000,
+    "msg": " Indexer In Warmup State. Please retry the request later. from [127.0.0.1:9101] - cause:  Indexer In Warmup State. Please retry the request later. from [127.0.0.1:9101]",
+    "query_from_user": "SELECT * FROM `travel-sample` WHERE type = \"airline\";"
+  }
+                 */
                 LOG.error("Error executing the query [{}] status was: {} -> {}", queryable.getName(), rs.status(), rs.errors().get(0));
             }
         }

@@ -42,10 +42,10 @@ public class AllDocsAnswer
     private Long                totalRows;
     
     @JsonProperty("rows")
-    private List<Map>           rows                 = null;
+    private List<Map>           rows = null;
     
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+//    @JsonIgnore
+//    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
     
     @JsonProperty("offset")
     public Long getOffset()
@@ -83,16 +83,16 @@ public class AllDocsAnswer
         this.totalRows = totalRows;
     }
     
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties()
-    {
-        return this.additionalProperties;
-    }
-    
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value)
-    {
-        this.additionalProperties.put(name, value);
-    }
-    
+//    @JsonAnyGetter
+//    public Map<String, Object> getAdditionalProperties()
+//    {
+//        return this.additionalProperties;
+//    }
+//    
+//    @JsonAnySetter
+//    public void setAdditionalProperty(String name, Object value)
+//    {
+//        this.additionalProperties.put(name, value);
+//    }
+//    
 }

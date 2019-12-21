@@ -62,6 +62,6 @@ public class PersistCommand implements Command
     public <T> T execute()
     {
         em.persist(queryable.getParams());
-        return (T) queryable.getParams();
+        return (T)Integer.valueOf("1");
     }
 }

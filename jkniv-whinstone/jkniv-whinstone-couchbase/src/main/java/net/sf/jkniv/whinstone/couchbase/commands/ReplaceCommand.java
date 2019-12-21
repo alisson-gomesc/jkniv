@@ -21,6 +21,7 @@ package net.sf.jkniv.whinstone.couchbase.commands;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.Document;
+import com.couchbase.client.java.error.DocumentDoesNotExistException;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.whinstone.Queryable;
@@ -62,12 +63,19 @@ public class ReplaceCommand implements Command
         return this;
     }
 
-    @Override
+    @Override @SuppressWarnings("unchecked")
     public <T> T execute()
     {
-        CouchbaseDocument baseDocument = new CouchbaseDocument(this.queryable.getParams());
-        Document<?> document = bucket.replace(baseDocument.getJsonDocument());
-        baseDocument.merge(document);
-        return (T) Integer.valueOf("1");
+        CouchbaseDocument baseDocument = new CouchbaseDocument(this.queryable);
+        Integer rows = Integer.valueOf("0");
+        try
+        {
+            Document<?> document = bucket.replace(baseDocument.getJsonDocument());
+            baseDocument.merge(document);
+            rows = Integer.valueOf("1");
+        }
+        catch(DocumentDoesNotExistException ignore) {}
+        
+        return (T) rows;
     }
 }

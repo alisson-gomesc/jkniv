@@ -188,11 +188,10 @@ public interface Repository
      * Add a new object to repository.
      * @param entity object to be added to repository
      * @param <T> type of object returned
-     * @return Return the object {@code entity} that matches with query. A null reference is
-     *         returned if the query no match anyone object.
+     * @return Return the number of objects inserted.
      * @throws IllegalArgumentException when entity is null
      */
-    <T> T add(T entity);// FIXME return void must be available
+    <T> int add(T entity);
     
     /**
      * Update many objects in repository.
@@ -248,4 +247,13 @@ public interface Repository
     void close();
     
     boolean containsQuery(String name);
+    
+    /**
+     * A domain-specific languages (DSL) from native API: JPA, Couchbase, Cassandra etc.
+     * @param <T> a generic type from DSL API
+     * @return the DSL API to build dynamic queries
+     * @throws UnsupportedDslOperationException when the repository does not supports DSL
+     */
+    <T> T dsl();
+        
 }

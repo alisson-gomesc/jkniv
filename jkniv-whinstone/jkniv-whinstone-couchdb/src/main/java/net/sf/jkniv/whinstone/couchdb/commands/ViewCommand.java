@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
@@ -66,6 +67,7 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
         Class returnType = null;
         AllDocsAnswer answer = null;
         List list = Collections.emptyList();
+        PropertyAccess accessId = queryable.getDynamicSql().getSqlDialect().getAccessId();
         try
         {
             CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -98,8 +100,8 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
                         else
                         {
                             ObjectProxy<?> proxy = ObjectProxyFactory.of(o);
-                            if (proxy.hasMethod("setId"))
-                                proxy.invoke("setId", map.get("id"));
+                            if (proxy.hasMethod(accessId.getWriterMethodName()))
+                                proxy.invoke(accessId.getWriterMethodName(), map.get("id"));
                             if (proxy.hasMethod("setKey"))
                                 proxy.invoke("setKey", map.get("key"));
                         }

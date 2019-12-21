@@ -68,7 +68,7 @@ public class CouchDbStatementAdapter<T, R> implements StatementAdapter<T, String
     @Override
     public StatementAdapter<T, String> with(ResultRow<T, String> resultRow)
     {
-        //this.resultRow = resultRow;
+        //this.resultRow = resultRow; TODO implements resultrow for couchbase
         return this;
     }
     

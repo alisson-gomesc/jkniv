@@ -37,6 +37,7 @@
     <menu name="whinstone CouchDb" inherit="top">
       <item name="Introduction" href="index.html" />
       <item name="Transaction" href="transaction.html" />
+      <item name="Modeling Entities" href="entity-model.html" />
       <item name="Bulk Command" href="bulk-command.html" />
       <item name="Logging" href="logging.html" />
       <item name="Javadoc" href="api-docs/index.html" />

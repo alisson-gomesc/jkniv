@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
+import net.sf.jkniv.reflect.beans.PropertyAccess;
 
 /**
  * Represents the support from SQL ANSI that are queries cross-platform.
@@ -72,12 +73,8 @@ public class AnsiDialect implements SqlDialect
     protected String                                     name;
     private final HashMap<SqlFeatureSupport, SqlFeature> sqlFeatures;
     private int                                          maxOfParameters;
-    //protected Queryable          queryable;
-    //protected String             sql;
-    //protected String             sqlWithLimit;
-    //protected String             sqlToCount;
-    //protected String[]           paramsNames;             
-    //protected int countParams;
+    private PropertyAccess                               propertyAccessId;
+    private PropertyAccess                               propertyAccessRevision;
     
     public AnsiDialect()
     {
@@ -100,6 +97,8 @@ public class AnsiDialect implements SqlDialect
         this.sqlFeatures.put(SqlFeatureSupport.SEQUENCE,
                              SqlFeatureFactory.newInstance(SqlFeatureSupport.SEQUENCE));
         this.maxOfParameters = Integer.MAX_VALUE;
+        this.propertyAccessId = new PropertyAccess("id", "getId", "setId");
+        this.propertyAccessRevision = new PropertyAccess("rev", "getRev", "setRev");
         //this.countParams = 0;
     }
     
@@ -112,7 +111,6 @@ public class AnsiDialect implements SqlDialect
     public boolean supportsFeature(SqlFeatureSupport feature)
     {
         boolean answer = false;
-        
         SqlFeature sqlFeature = sqlFeatures.get(feature);
         if (sqlFeature != null)
             answer = sqlFeature.supports();
@@ -191,6 +189,18 @@ public class AnsiDialect implements SqlDialect
     public String buildQueryPaging(final String sqlText, int offset, int max, String bookmark)
     {
         return buildQueryPaging(sqlText, offset, max);
+    }
+    
+    @Override
+    public PropertyAccess getAccessId()
+    {
+        return this.propertyAccessId;
+    }
+    
+    @Override
+    public PropertyAccess getAccessRevision()
+    {
+        return this.propertyAccessRevision;
     }
     
     /*

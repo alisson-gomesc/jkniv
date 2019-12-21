@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
@@ -197,21 +198,23 @@ public class DeleteCommand extends AbstractCommand implements CouchCommand
         //Updateable sql = queryable.getDynamicSql().asUpdateable();
         Object params = queryable.getParams();
         ObjectProxy<?> proxy = ObjectProxyFactory.of(params);
-        String id = (String) response.get(COUCHDB_ID);
-        String rev = (String) response.get(COUCHDB_REV);
+        PropertyAccess accessId = queryable.getDynamicSql().getSqlDialect().getAccessId();
+        PropertyAccess accessRev= queryable.getDynamicSql().getSqlDialect().getAccessRevision();
+        String id = (String) response.get(accessId.getFieldName());
+        String rev = (String) response.get(accessRev.getFieldName());
         if (params instanceof Map)
         {
-            if (!((Map) params).containsKey(COUCHDB_ID))
-                ((Map) params).put(COUCHDB_ID, id);
+            if (!((Map) params).containsKey(accessId.getFieldName()))
+                ((Map) params).put(accessId.getFieldName(), id);
 
-            ((Map) params).put(COUCHDB_REV, rev);
+            ((Map) params).put(accessRev.getFieldName(), rev);
         }
         else
         {
-            if(proxy.hasMethod("setId"))
-                proxy.invoke("setId", id);
-            if(proxy.hasMethod("setRev"))
-                proxy.invoke("setRev", rev);
+            if(proxy.hasMethod(accessId.getWriterMethodName()))
+                proxy.invoke(accessId.getWriterMethodName(), id);
+            if(proxy.hasMethod(accessRev.getWriterMethodName()))
+                proxy.invoke(accessRev.getWriterMethodName(), rev);
         }
     }
 

@@ -30,11 +30,11 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public class N1QLCommand implements Command
+public class N1qlCommand implements Command
 {
     private StatementAdapter stmt;
     
-    public N1QLCommand(Queryable queryable)
+    public N1qlCommand(Queryable queryable)
     {
         super();
     }

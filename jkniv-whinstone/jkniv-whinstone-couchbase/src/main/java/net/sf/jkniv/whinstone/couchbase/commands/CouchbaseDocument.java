@@ -25,6 +25,8 @@ import com.couchbase.client.java.document.json.JsonObject;
 
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.reflect.beans.PropertyAccess;
+import net.sf.jkniv.whinstone.Queryable;
 
 /**
  * Implements the parse value between POJO objects and JsonDocument for Couchbase.
@@ -53,16 +55,23 @@ public class CouchbaseDocument
         this.json = false;
     }
     
-    public CouchbaseDocument(Object value)
+    public CouchbaseDocument(Queryable queryable)
     {
         this();
+        PropertyAccess accessId = queryable.getDynamicSql().getSqlDialect().getAccessId();
+        Object value = queryable.getParams();
         this.proxy = ObjectProxyFactory.of(value);
-        if (value instanceof JsonDocument)
+        if (value instanceof JsonDocument)// TODO implements supports for RawJsonDocument, EntityDocument, LegacyDocument
         {
             this.json = true;
             this.supportsExpire = true;
             this.supportsCas = true;
             this.jsonObject = ((JsonDocument)value).content();
+            this.id = this.jsonObject.getString("id");
+        }
+        else if(queryable.isTypeOfBasic())
+        {
+            this.id = queryable.getParams().toString();
         }
         else
         {
@@ -76,7 +85,7 @@ public class CouchbaseDocument
                 this.supportsCas = true;
                 this.cas = (long) proxy.invoke("getCas");
             }
-            this.id = (String)proxy.invoke("getId");
+            this.id = String.valueOf(proxy.invoke(accessId.getReadMethodName()));
             this.jsonObject = JsonObject.fromJson(JsonMapper.mapper(value));
         }
     }
@@ -97,7 +106,7 @@ public class CouchbaseDocument
         else if (hasExpire())
             jsonDocument = JsonDocument.create(id, expire, jsonObject);
         else
-            jsonDocument = JsonDocument.create(id, expire, jsonObject);
+            jsonDocument = JsonDocument.create(id, jsonObject);
         
         return jsonDocument;
     }
@@ -106,8 +115,6 @@ public class CouchbaseDocument
     {
         if (hasCas())
             this.proxy.invoke("setCas", document.cas());
-        
-        //this.proxy.invoke("setId", document.id());
     }
     
     public boolean hasCas()
@@ -133,6 +140,19 @@ public class CouchbaseDocument
     public JsonObject getJsonObject()
     {
         return this.jsonObject;
+    }
+    
+    public String getId()
+    {
+        return id;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return "CouchbaseDocument [id=" + id + ", cas=" + cas + ", expire=" + expire + ", jsonObject=" + jsonObject
+                + ", supportsExpire=" + supportsExpire + ", supportsCas=" + supportsCas + ", proxy=" + proxy + ", json="
+                + json + "]";
     }
     
 }

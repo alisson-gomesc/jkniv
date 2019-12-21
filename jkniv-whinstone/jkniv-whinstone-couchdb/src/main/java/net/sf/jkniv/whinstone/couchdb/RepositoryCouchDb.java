@@ -52,6 +52,7 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.UnsupportedDslOperationException;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.couchdb.commands.CouchDbSynchViewDesign;
@@ -295,18 +296,18 @@ class RepositoryCouchDb implements Repository
     }
     
     @Override
-    public <T> T add(T entity)
+    public <T> int add(T entity)
     {
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("add", entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
-        handler.with(queryable)
+        int rows = handler.with(queryable)
         .with(sql)
         .checkSqlType(SqlType.INSERT)
         .with(handlerException)
         .run();
-        return entity;
+        return rows;
     }
     
     @Override
@@ -399,6 +400,12 @@ class RepositoryCouchDb implements Repository
         sqlContext.close();
     }
     
+    @Override
+    public <T> T dsl()
+    {
+        throw new UnsupportedDslOperationException("CouchDB Repository does not support DSL operation");
+    }
+
     private Properties lookup(String remaining)
     {
         Properties prop = null;

@@ -34,7 +34,6 @@ import javax.persistence.PessimisticLockException;
 import javax.persistence.QueryTimeoutException;
 import javax.persistence.TransactionRequiredException;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
 import org.slf4j.Logger;
@@ -73,7 +72,7 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
  * META-INF/persistence.xml file.
  * 
  * @author Alisson Gomes
- *
+ * @since 0.6.0
  */
 class RepositoryJpa implements RepositoryJpaExtend
 {
@@ -226,7 +225,7 @@ class RepositoryJpa implements RepositoryJpaExtend
      * @param entity Entity object to persist
      */
     @Override
-    public <T> T add(T entity)
+    public <T> int add(T entity)
     {
         NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toAddName(entity);
@@ -236,11 +235,11 @@ class RepositoryJpa implements RepositoryJpaExtend
         Queryable queryable = QueryFactory.of(queryName, entity);
         Sql sql = TagFactory.newInsert("dummy", LanguageType.JPQL, this.sqlContext.getSqlDialect());
         CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
-        handler.with(queryable)
+        int rows = handler.with(queryable)
             .with(sql)
             .with(handlerException)
             .run();
-        return entity;
+        return rows;
     }
     
     @Override
@@ -345,7 +344,8 @@ class RepositoryJpa implements RepositoryJpaExtend
     /**
      * Up date the object value at repository.
      * 
-     * @param entity Entity object to update
+     * @param entity object to be updated
+     * @return managed instance of {@code entity}
      */
     @Override
     public <T> T update(T entity)
@@ -550,10 +550,10 @@ class RepositoryJpa implements RepositoryJpaExtend
         return sqlContext.containsQuery(name);
     }
     
-    @Override
-    public CriteriaBuilder getCriteriaBuilder()
+    @Override @SuppressWarnings("unchecked")
+    public <T> T dsl()
     {
-        return getEntityManager().getCriteriaBuilder();
+        return (T) getEntityManager().getCriteriaBuilder();
     }
     
     @Override

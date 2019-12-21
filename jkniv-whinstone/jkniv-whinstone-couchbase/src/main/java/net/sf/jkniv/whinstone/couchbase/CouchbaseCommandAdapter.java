@@ -33,7 +33,8 @@ import net.sf.jkniv.whinstone.commands.Command;
 import net.sf.jkniv.whinstone.commands.CommandAdapter;
 import net.sf.jkniv.whinstone.couchbase.commands.GetCommand;
 import net.sf.jkniv.whinstone.couchbase.commands.InsertCommand;
-import net.sf.jkniv.whinstone.couchbase.commands.N1QLCommand;
+import net.sf.jkniv.whinstone.couchbase.commands.N1qlCommand;
+import net.sf.jkniv.whinstone.couchbase.commands.RemoveCommand;
 import net.sf.jkniv.whinstone.couchbase.commands.ReplaceCommand;
 import net.sf.jkniv.whinstone.couchbase.statement.CouchbaseStatementAdapter;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
@@ -112,7 +113,7 @@ class CouchbaseCommandAdapter implements CommandAdapter
         if (CouchbaseSqlContext.isGet(queryable.getName()))
             command = new GetCommand(queryable).with(this.bucket);
         else {
-            command = new N1QLCommand(queryable).with(stmt);
+            command = new N1qlCommand(queryable).with(stmt);
         }
         return command;
     }
@@ -127,7 +128,9 @@ class CouchbaseCommandAdapter implements CommandAdapter
     @Override
     public <T, R> Command asRemoveCommand(Queryable queryable)//, ResultRow<T, R> overloadResultRow)
     {
-        return buildCommand(queryable);
+        Command command = new RemoveCommand(queryable).with(this.bucket);
+        return command;
+
     }
     
     @Override

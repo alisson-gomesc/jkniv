@@ -70,8 +70,57 @@ public class ConvertibleFactory
         //return getConverter(proxy, access.getFieldName(), access.getWriterMethodName());
         return getConverter(access.getField(), access.getWriterMethod(), proxy);
     }
-    
+     
     /**
+     * Retrieve a {@link Convertible} instance to customize the
+     * value of database to class field.
+     * @param <T> type of proxy instance
+     * @param field attribute name from class
+     * @param method getter or setter method
+     * @param proxy of return type from query
+     * @return A convertible instance if found into class proxy or {@link NoConverterType}
+     * instance when the field or method is not annotated.
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private static <T> Convertible<Object, Object> getConverter(Field field, Method method, ObjectProxy<T> proxy)
+    {
+        // TODO cache for @Converter annotations
+        Convertible convertible = NoConverterType.getInstance();
+            
+        if (field == null ||
+            method == null ||
+            Map.class.isAssignableFrom(proxy.getTargetClass()) || 
+            Collection.class.isAssignableFrom(proxy.getTargetClass()) ||
+            proxy.getTargetClass().isArray())
+            return convertible;
+
+        Converter converter = (Converter) method.getAnnotation(Converter.class);
+        if (converter == null)
+            converter = (Converter) field.getAnnotation(Converter.class);
+        
+        if (converter != null)
+        {
+            ObjectProxy proxyConvertible = null;
+            if(converter.converter().isEnum())
+            {
+                if (converter.isEnum() == EnumType.ORDINAL)
+                    convertible = new EnumOrdinalType(converter.converter());
+                else
+                    convertible = new EnumNameType(converter.converter());
+            }
+            else
+            {
+                proxyConvertible = ObjectProxyFactory.of(converter.converter());
+                if (converter.pattern() != null)
+                    proxyConvertible.setConstructorArgs(converter.pattern());
+                convertible = (Convertible) proxyConvertible.newInstance();
+            }
+        }
+        return convertible;
+    }
+
+
+    /*
      * Retrieve a {@link Convertible} instance to customize the
      * value of database to class field.
      * @param proxy of return type from query
@@ -79,7 +128,7 @@ public class ConvertibleFactory
      * @param methodName getter or setter method
      * @return A convertible instance if found into class proxy or {@link NoConverterType}
      * instance when the field or method is not annotated.
-     */
+     *
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private static <T> Convertible<Object, Object> getConverter(
             ObjectProxy<T> proxy, String fieldName, String methodName)
@@ -119,43 +168,5 @@ public class ConvertibleFactory
         }
         return convertible;
     }
-    
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static <T> Convertible<Object, Object> getConverter(Field field, Method method, ObjectProxy<T> proxy)
-    {
-        // TODO cache for @Converter annotations
-        Convertible convertible = NoConverterType.getInstance();
-            
-        if (field == null ||
-            method == null ||
-            Map.class.isAssignableFrom(proxy.getTargetClass()) || 
-            Collection.class.isAssignableFrom(proxy.getTargetClass()) ||
-            proxy.getTargetClass().isArray())
-            return convertible;
-
-        Converter converter = (Converter) method.getAnnotation(Converter.class);
-        if (converter == null)
-            converter = (Converter) field.getAnnotation(Converter.class);
-        
-        if (converter != null)
-        {
-            ObjectProxy proxyConvertible = null;
-            if(converter.converter().isEnum())
-            {
-                if (converter.isEnum() == EnumType.ORDINAL)
-                    convertible = new EnumOrdinalType(converter.converter());
-                else
-                    convertible = new EnumNameType(converter.converter());
-            }
-            else
-            {
-                proxyConvertible = ObjectProxyFactory.of(converter.converter());
-                if (converter.pattern() != null)
-                    proxyConvertible.setConstructorArgs(converter.pattern());
-                convertible = (Convertible) proxyConvertible.newInstance();
-            }
-        }
-        return convertible;
-    }
-
+*/
 }

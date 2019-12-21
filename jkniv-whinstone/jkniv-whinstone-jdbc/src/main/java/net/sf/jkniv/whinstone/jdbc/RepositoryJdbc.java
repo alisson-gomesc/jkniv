@@ -51,6 +51,7 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.UnsupportedDslOperationException;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.transaction.Transactional;
@@ -333,7 +334,7 @@ class RepositoryJdbc implements Repository
     }
     
     @Override
-    public <T> T add(T entity)// FIXME design update must return a number
+    public <T> int add(T entity)// FIXME design update must return a number
     {
         NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toAddName(entity);
@@ -343,12 +344,12 @@ class RepositoryJdbc implements Repository
         Queryable queryable = QueryFactory.of(queryName, entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofAdd(this.connectionFactory.open(sql.getIsolation()));
-        handler.with(queryable)
+        int rows = handler.with(queryable)
             .with(sql)
             .checkSqlType(SqlType.INSERT)
             .with(handlerException)
             .run();
-        return entity;
+        return rows;
     }
 
     @Override
@@ -460,6 +461,13 @@ class RepositoryJdbc implements Repository
         // FIXME release resources transaction/connection factory
         sqlContext.close();
     }
+    
+    @Override
+    public <T> T dsl()
+    {
+        throw new UnsupportedDslOperationException("JDBC Repository does not support DSL operation");
+    }
+
     
     private void configQueryNameStrategy()
     {

@@ -38,7 +38,7 @@ import net.sf.jkniv.sqlegance.validation.ValidateType;
 class CouchbaseSqlContext implements SqlContext
 {
     private SqlContext sqlContext;
-    private static final String GET_QUERY = "get", PUT_QUERY = "add";//, UPDATE_QUERY = "update", DELETE_QUERY = "remove"; 
+    private static final String GET_QUERY = "get", PUT_QUERY = "add", UPDATE_QUERY = "replace";//, DELETE_QUERY = "remove"; 
     private static final Map<String, Sql> BUILTIN = new HashMap<String, Sql>(); 
             
     public CouchbaseSqlContext(SqlContext sqlContext)
@@ -52,17 +52,15 @@ class CouchbaseSqlContext implements SqlContext
         // initialize built in Sql
         Insertable insertable = TagFactory.newInsert(PUT_QUERY, LanguageType.STORED, getSqlDialect());
         insertable.setValidateType(ValidateType.ADD);
-        
-        BUILTIN.put(GET_QUERY, TagFactory.newSelect(GET_QUERY, LanguageType.NATIVE, getSqlDialect()));
-        BUILTIN.put(PUT_QUERY, insertable);
-        /*
-        
         Updateable  updateable = TagFactory.newUpdate(UPDATE_QUERY, LanguageType.STORED, getSqlDialect());
         updateable.setValidateType(ValidateType.UPDATE);
         
+        BUILTIN.put(GET_QUERY, TagFactory.newSelect(GET_QUERY, LanguageType.NATIVE, getSqlDialect()));
+        BUILTIN.put(PUT_QUERY, insertable);
+        BUILTIN.put(UPDATE_QUERY, updateable);
+        /*
         Deletable deletable = TagFactory.newDelete(DELETE_QUERY, LanguageType.STORED, getSqlDialect());
         deletable.setValidateType(ValidateType.REMOVE);
-        BUILTIN.put(UPDATE_QUERY, updateable);
         BUILTIN.put(DELETE_QUERY, deletable);
          */
     }

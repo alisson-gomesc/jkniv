@@ -46,6 +46,7 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.ResultRow;
+import net.sf.jkniv.whinstone.UnsupportedDslOperationException;
 import net.sf.jkniv.whinstone.cassandra.dialect.CassandraDialect;
 import net.sf.jkniv.whinstone.commands.CommandAdapter;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
@@ -271,7 +272,7 @@ class RepositoryCassandra implements Repository
     }
     
     @Override
-    public <T> T add(T entity)// FIXME design update must return a number
+    public <T> int add(T entity)
     {
         NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toAddName(entity);
@@ -281,12 +282,13 @@ class RepositoryCassandra implements Repository
         Queryable queryable = QueryFactory.of(queryName, entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
-        handler
+        int rows = handler
             .with(queryable)
             .with(sql)
             .checkSqlType(SqlType.INSERT)
-            .with(handlerException).run();
-        return entity;
+            .with(handlerException)
+            .run();
+        return rows;
     }
     
     @Override
@@ -368,6 +370,12 @@ class RepositoryCassandra implements Repository
         sqlContext.close();
     }
     
+    @Override
+    public <T> T dsl()
+    {
+        throw new UnsupportedDslOperationException("Cassandra Repository does not support DSL operation");
+    }
+
     private Properties lookup(String remaining)
     {
         Properties prop = null;

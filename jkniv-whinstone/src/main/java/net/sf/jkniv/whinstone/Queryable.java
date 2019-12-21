@@ -290,7 +290,7 @@ public interface Queryable
      * Overload the return type from XML query.
      * @return the class to return by repository using this query
      */
-    Class<?> getReturnType();
+    <T> Class<T> getReturnType();
     
     /**
      * Specifies intentionally to no retrieve the data from cache, the query must be hit the database

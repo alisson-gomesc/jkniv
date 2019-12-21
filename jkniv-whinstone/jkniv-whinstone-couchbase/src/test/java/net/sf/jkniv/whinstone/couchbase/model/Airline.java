@@ -16,16 +16,21 @@ public class Airline
     @JsonProperty("icao")
     private String              icao;
     @JsonProperty("id")
-    private String             id;
+    private Integer             id;
     @JsonProperty("name")
     private String              name;
     @JsonProperty("type")
     private String              type;
     
+    public Airline()
+    {
+        this.type = "airline";
+    }
+    
     @PreCallBack(scope = CallbackScope.ADD)
     public void generateId()
     {
-        this.id = String.valueOf("WHIN-"+System.currentTimeMillis());
+        this.id = (int)System.currentTimeMillis();
     }
     
     @JsonProperty("callsign")
@@ -77,13 +82,13 @@ public class Airline
     }
     
     @JsonProperty("id")
-    public String getId()
+    public Integer getId()
     {
         return id;
     }
     
     @JsonProperty("id")
-    public void setId(String id)
+    public void setId(Integer id)
     {
         this.id = id;
     }
@@ -110,5 +115,12 @@ public class Airline
     public void setType(String type)
     {
         this.type = type;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Airline [callsign=" + callsign + ", country=" + country + ", iata=" + iata + ", icao=" + icao + ", id="
+                + id + ", name=" + name + ", type=" + type + "]";
     }
 }

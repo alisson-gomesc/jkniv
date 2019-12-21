@@ -31,6 +31,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 
+import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
@@ -194,29 +195,18 @@ public class HttpBuilder
         checkUnsupportedQueryParams(queryable);
         StringBuilder urlParams = new StringBuilder("?");
         StringBuilder urlGet = new StringBuilder(this.hostContext);
+        PropertyAccess accessId = queryable.getDynamicSql().getSqlDialect().getAccessId();
         if (queryable.isTypeOfBasic())
             urlGet.append(queryable.getParams());// FIXME design docid is Date, Calendar, how to parser
         else
         {
-            Param param = getProperty(queryable, "id");
+            Param param = getProperty(queryable, accessId.getFieldName());
             if (param.getValue() != null)
                 urlGet.append(param.getValue());
             else
-            {
-                param = getProperty(queryable, "_id");
-                if (param.getValue() != null)
-                    urlGet.append(param.getValue());
-                else
-                {
-                    param = getProperty(queryable, "docid");
-                    if (param.getValue() != null)
-                        urlGet.append(param.getValue());
-                    else
-                        throw new RepositoryException("Cannot lookup [ id | _id | docid ] from [" + queryable + "]");
-                    
-                }
-            }
+                throw new RepositoryException("Cannot lookup id using Property Access ["+accessId+"] from [" + queryable + "]");
         }
+        
         try
         {
             for (QueryParam k : KEY_PARAMS_GET)
@@ -242,21 +232,11 @@ public class HttpBuilder
     {
         checkUnsupportedQueryParams(queryable);
         StringBuilder urlSave = new StringBuilder(this.hostContext);
-        Param param = getProperty(queryable, "id");
+        PropertyAccess accessId = queryable.getDynamicSql().getSqlDialect().getAccessId();
+        Param param = getProperty(queryable, accessId.getFieldName());
         if (param.getValue() != null)
             urlSave.append(param.getValue());
-        else
-        {
-            param = getProperty(queryable, "_id");
-            if (param.getValue() != null)
-                urlSave.append(param.getValue());
-            else
-            {
-                param = getProperty(queryable, "docid");
-                if (param.getValue() != null)
-                    urlSave.append(param.getValue());
-            }
-        }
+           
         return urlSave.toString();
     }
 

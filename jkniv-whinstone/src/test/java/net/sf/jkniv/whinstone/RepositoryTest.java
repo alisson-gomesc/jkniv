@@ -25,7 +25,7 @@ public class RepositoryTest
         this.repository = mock(Repository.class);
         
         given(repository.add(queryable)).willReturn(1);
-        given(repository.add(entity)).willReturn(entity);
+        given(repository.add(entity)).willReturn(1);
 
         given(repository.update(queryable)).willReturn(1);
         given(repository.update(entity)).willReturn(entity);
@@ -39,12 +39,11 @@ public class RepositoryTest
     @Test
     public void whenContractMethodsFromRepositoryWorks() 
     {
-        int rows = 0;
         
-        rows = repository.add(queryable);
-        Car entityAdded = repository.add(entity);
+        int rows = repository.add(queryable);
+        int rows2 = repository.add(entity);
         assertThat(rows, is(1));
-        assertThat(entityAdded.getName(), is(entity.getName()));
+        assertThat(rows2, is(1));
         
         rows = repository.update(queryable);
         Car entityUpdated = repository.update(entity);

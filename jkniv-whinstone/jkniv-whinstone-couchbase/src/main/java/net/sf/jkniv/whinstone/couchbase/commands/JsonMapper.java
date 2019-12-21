@@ -74,6 +74,20 @@ public class JsonMapper
         }
         return null;
     }
+    
+    public static <T> T mapper(Object content, Class<T> valueType)
+    {
+        try
+        {
+            return MAPPER.readValue(content.toString(), valueType);
+        }
+        catch (Exception e)
+        {
+            // JsonParseException | JsonMappingException | IOException
+            handlerException.handle(e);
+        }
+        return null;
+    }
 
     public static <T> T mapper(String content, Class<T> valueType)
     {

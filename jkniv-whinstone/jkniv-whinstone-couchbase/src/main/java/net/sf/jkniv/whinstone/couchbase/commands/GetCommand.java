@@ -21,10 +21,12 @@ package net.sf.jkniv.whinstone.couchbase.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.Document;
-import com.couchbase.client.java.document.json.JsonObject;
+import com.couchbase.client.java.document.EntityDocument;
+import com.couchbase.client.java.document.JsonDocument;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.whinstone.Queryable;
@@ -65,25 +67,92 @@ public class GetCommand implements Command
         return this;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T execute()
     {
+        // Document, AbstractDocument, EntityDocument, RawJsonDocument, JsonDocument
         List list = new ArrayList<>();//(T) stmt.rows();
         Document document = null;
-        // FIXME bucket.get(String, Document) throw NullPointerException
-        //if (Document.class.isAssignableFrom(queryable.getReturnType()))
-        //    document = bucket.get((String)queryable.getParams(), Airline2Doc.class);
-        //else
-            document = bucket.get((String)queryable.getParams());
+        boolean returnTypeIsDoc = Document.class.isAssignableFrom(queryable.getReturnType());
+        boolean paramTypeIsDoc = (queryable.getParams() instanceof Document);
+        CouchbaseDocument couchbaseDocument = new CouchbaseDocument(queryable);
+
+        if (Map.class.isAssignableFrom(queryable.getReturnType()))
+        {
+            JsonDocument ret = bucket.get(couchbaseDocument.getId());
+            list.add(JsonMapper.mapper(ret.content(), queryable.getReturnType()));
+        }
+        else if (returnTypeIsDoc)
+        {
+            //Class<? extends Document> entity = queryable.getReturnType();
+            //document = bucket.get(couchbaseDocument.getId(), entity);
+            document = bucket.get(couchbaseDocument.getId());
+            list.add(document);
+        }
+        else
+        {
+            EntityDocument<?> ret = bucket.repository().get(couchbaseDocument.getId(), queryable.getReturnType());
+            list.add(ret.content());
+        }
+        /*
+        if (paramTypeIsDoc)
+        {
+            document = bucket.get((Document)queryable.getParams());
+        }
+        else if (returnTypeIsDoc)
+        {
+            Class<? extends Document> entity = queryable.getReturnType();
+            document = bucket.get((String)queryable.getParams(), entity);
+            //list.add(document);
+        }
+//        else if (Map.class.isAssignableFrom(queryable.getReturnType()))
+//        {
+//            JsonDocument ret = bucket.get((String)queryable.getParams());
+//            list.add(JsonMapper.mapper(ret.content(), queryable.getReturnType()));
+//        }
+        else if (queryable.isTypeOfPojo())
+        {            
+            CouchbaseDocument mydocument = new CouchbaseDocument(queryable);
+            EntityDocument<?> ret = bucket.repository().get(mydocument.getId(), queryable.getReturnType());
+            list.add(ret.content());
+        }
+        else
+        {
+            // com.couchbase.client.java.repository.mapping.RepositoryMappingException: Could not instantiate entity.
+            EntityDocument<?> ret = bucket.repository().get((String)queryable.getParams(), queryable.getReturnType());
+            list.add(ret.content());
+        }
+        */
+        // handling return type
+        /*
+        if (returnTypeIsDoc)
+        {
+            list.add(document);            
+        }
+        else if (Map.class.isAssignableFrom(queryable.getReturnType()))
+        {
+            list.add(JsonMapper.mapper(document, queryable.getReturnType()));            
+        }
+        */
+        /*
         if (document != null)
         {
-            if(!document.getClass().isAssignableFrom(queryable.getReturnType()))
-            {
-                list.add(JsonMapper.mapper((JsonObject)document.content(), queryable.getReturnType()));
-            }
-            else
+            if (returnTypeIsDoc)
                 list.add(document);
+            else
+            {
+                if(document.getClass().isAssignableFrom(queryable.getReturnType()))
+                {
+                    list.add(document);
+                }
+                else
+                {
+                    list.add(JsonMapper.mapper(document.content(), queryable.getReturnType()));
+                }
+            }
         }
+        */
         return (T)list;
     }
 }
