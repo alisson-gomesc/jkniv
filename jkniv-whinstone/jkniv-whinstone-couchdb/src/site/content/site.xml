@@ -39,6 +39,7 @@
       <item name="Transaction" href="transaction.html" />
       <item name="Modeling Entities" href="entity-model.html" />
       <item name="Bulk Command" href="bulk-command.html" />
+      <item name="CouchDB Properties" href="properties.html" />
       <item name="Logging" href="logging.html" />
       <item name="Javadoc" href="api-docs/index.html" />
       <item name="Donwload" href="https://sourceforge.net/projects/jkniv/files/jkniv-whinstone/couchdb/" />

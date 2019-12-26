@@ -22,6 +22,7 @@ package net.sf.jkniv.whinstone.couchdb;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
@@ -48,6 +50,7 @@ import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlContext;
 import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
+import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
@@ -56,6 +59,7 @@ import net.sf.jkniv.whinstone.UnsupportedDslOperationException;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.couchdb.commands.CouchDbSynchViewDesign;
+import net.sf.jkniv.whinstone.couchdb.commands.JsonMapper;
 import net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect2o1;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 import net.sf.jkniv.whinstone.transaction.Transactional;
@@ -112,25 +116,32 @@ class RepositoryCouchDb implements Repository
             sqlContext.getRepositoryConfig().add(props);
         
         this.sqlContext = new CouchDbSqlContext(sqlContext);
-        this.sqlContext.getRepositoryConfig().add(RepositoryProperty.SQL_DIALECT.key(), CouchDbDialect2o1.class.getName());
+        
+        if (this.sqlContext.getRepositoryConfig().getSqlDialect() instanceof AnsiDialect)
+            this.sqlContext.getRepositoryConfig().add(RepositoryProperty.SQL_DIALECT.key(), CouchDbDialect2o1.class.getName());
+
         this.sqlContext.setSqlDialect(this.sqlContext.getRepositoryConfig().getSqlDialect());
         this.sqlContext.buildInQueries();
         this.cmdAdapter = (HttpCookieCommandAdapter) new HttpConnectionFactory(
                 sqlContext.getRepositoryConfig().getProperties(), sqlContext.getName()).open();
-        configHanlerException();
-        this.init();
+        this.configHanlerException();
+        this.configJacksonObjectMapper();
+        this.updateCouchDbViews();
     }
     
-    private void init()
+    private void updateCouchDbViews()
     {
+        String updateViews = this.sqlContext.getRepositoryConfig().getProperty("jkniv.repository.couchdb.update_views");
         String hostContext = cmdAdapter.getHttpBuilder().getHostContext();
         if (!DOC_SCHEMA_UPDATED.containsKey(hostContext))
         {
-            // TODO property to config behavior like auto ddl from hibernate
-            CouchDbSynchViewDesign _design = new CouchDbSynchViewDesign(this.cmdAdapter.getHttpBuilder(),
-                    sqlContext);
-            _design.update();
-            DOC_SCHEMA_UPDATED.put(hostContext, Boolean.TRUE);
+            if (Boolean.valueOf(updateViews))
+            {
+                CouchDbSynchViewDesign _design = new CouchDbSynchViewDesign(this.cmdAdapter.getHttpBuilder(),
+                        sqlContext);
+                _design.update();
+                DOC_SCHEMA_UPDATED.put(hostContext, Boolean.TRUE);
+            }
         }
     }
     
@@ -145,6 +156,22 @@ class RepositoryCouchDb implements Repository
         this.handlerException.config(UnsupportedEncodingException.class, "Error at json content encoding unsupported [%s]");
         this.handlerException.config(IOException.class, "Error from I/O json content [%s]");
         this.handlerException.mute(ParameterNotFoundException.class);
+    }
+    
+    private void configJacksonObjectMapper()
+    {
+        Properties props = this.sqlContext.getRepositoryConfig().getProperties();
+        Enumeration<Object> keys =  props.keys();
+        while(keys.hasMoreElements())
+        {
+            String k = keys.nextElement().toString();
+            if (k.startsWith("jackson."))
+            {
+                // jackson. length -> (8)
+                SerializationFeature feature = SerializationFeature.valueOf(k.substring(8).toUpperCase());
+                JsonMapper.config(feature, Boolean.valueOf(props.getProperty(k)));
+            }
+        }
     }
 
     

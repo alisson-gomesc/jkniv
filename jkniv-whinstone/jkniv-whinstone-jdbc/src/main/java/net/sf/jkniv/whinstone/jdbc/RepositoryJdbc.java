@@ -437,7 +437,7 @@ class RepositoryJdbc implements Repository
     public void flush()
     {
         // TODO flush implementation
-        throw new UnsupportedOperationException("Not Implemented yet");
+        throw new UnsupportedOperationException("JDBC Repository does not implements flush operation yet");
     }
     
     @Override
