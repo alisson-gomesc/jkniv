@@ -99,24 +99,26 @@ A `repository-config.xml` is like a `persistence.xml` for JPA that define one or
  To work correctly with a database a SQL dialect must be set.
   
   
-|Database     | Dialect           |
-| ----------- | ----------------- |
-| CouchDB     | net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect2o1 |
-| Cassandra   | net.sf.jkniv.whinstone.cassandra.dialect.CassandraDialect |
-| DB2         | net.sf.jkniv.whinstone.jdbc.dialect.DB2Dialect |
+|Database      | Dialect           |
+| ------------ | ----------------- |
+| CouchDB 2.0  | net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect2o0 |
+| CouchDB 2.1  | net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect2o1 |
+| Couchbase 6.5| net.sf.jkniv.whinstone.couchbase.dialect.CouchbaseDialect6o5 |
+| Cassandra    | net.sf.jkniv.whinstone.cassandra.dialect.CassandraDialect |
+| DB2          | net.sf.jkniv.whinstone.jdbc.dialect.DB2Dialect |
 | DB2 compatibility MySQL | net.sf.jkniv.whinstone.jdbc.dialect.DB2EnableMYSDialect | 
 | DB2 compatibility Oracle | net.sf.jkniv.whinstone.jdbc.dialect.DB2EnableORADialect |
-| Derby 10.4  | net.sf.jkniv.whinstone.jdbc.dialect.Derby10o4Dialect |
-| Derby 10.7  | net.sf.jkniv.whinstone.jdbc.dialect.Derby10o7Dialect |
-| HSQL        | net.sf.jkniv.whinstone.jdbc.dialect.HsqldbDialect |
-| Informix    | net.sf.jkniv.whinstone.jdbc.dialect.InformixDialect |
-| Ingres      | net.sf.jkniv.whinstone.jdbc.dialect.IngresDialect |
-| MySQL       | net.sf.jkniv.whinstone.jdbc.dialect.MySqlDialect |
-| Oracle      | net.sf.jkniv.whinstone.jdbc.dialect.OracleDialect |
-| Oracle 12   | net.sf.jkniv.whinstone.jdbc.dialect.Oracle12cDialect |
-| PostgreSQL  | net.sf.jkniv.whinstone.jdbc.dialect.PostgreSqlDialect |
-| SQLite      | net.sf.jkniv.whinstone.jdbc.dialect.SQLiteDialect |
-| SQLServer   | net.sf.jkniv.whinstone.jdbc.dialect.SqlServerDialect |
+| Derby 10.4   | net.sf.jkniv.whinstone.jdbc.dialect.Derby10o4Dialect |
+| Derby 10.7   | net.sf.jkniv.whinstone.jdbc.dialect.Derby10o7Dialect |
+| HSQL         | net.sf.jkniv.whinstone.jdbc.dialect.HsqldbDialect |
+| Informix     | net.sf.jkniv.whinstone.jdbc.dialect.InformixDialect |
+| Ingres       | net.sf.jkniv.whinstone.jdbc.dialect.IngresDialect |
+| MySQL        | net.sf.jkniv.whinstone.jdbc.dialect.MySqlDialect |
+| Oracle       | net.sf.jkniv.whinstone.jdbc.dialect.OracleDialect |
+| Oracle 12    | net.sf.jkniv.whinstone.jdbc.dialect.Oracle12cDialect |
+| PostgreSQL   | net.sf.jkniv.whinstone.jdbc.dialect.PostgreSqlDialect |
+| SQLite       | net.sf.jkniv.whinstone.jdbc.dialect.SQLiteDialect |
+| SQLServer    | net.sf.jkniv.whinstone.jdbc.dialect.SqlServerDialect |
 
 
 ### Override dialect properties
