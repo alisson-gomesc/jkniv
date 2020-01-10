@@ -132,7 +132,8 @@ public class PropertyAccess
         {
             HandleableException handle = new HandlerException();
             handle.mute(NoSuchMethodException.class)
-                   .mute(NoSuchFieldException.class);
+                  .mute(NoSuchFieldException.class)
+                  .logInfoOff();
             
             ObjectProxy<?> proxy = ObjectProxyFactory.of(this.targetClass);
             proxy.with(handle);

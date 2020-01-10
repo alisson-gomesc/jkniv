@@ -30,10 +30,9 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 
 /**
- * TODO document me
- * TODO LOG me
+ * 
  * @author Alisson Gomes
- *
+ * @since 0.6.0
  */
 public class HandlerException implements HandleableException
 {
@@ -43,6 +42,7 @@ public class HandlerException implements HandleableException
     private Class<? extends RuntimeException> defaultException;
     private String                            defaultMessage;
     private boolean                           mute;
+    private boolean                           enableLogInfo;
     
     public HandlerException()
     {
@@ -82,9 +82,11 @@ public class HandlerException implements HandleableException
         this.defaultException = defaultException;
         this.defaultMessage = message;
         this.mute = mute;
+        this.enableLogInfo = false;
         //config(defaultException, defaultException, message);
     }
     
+    @Override
     public HandleableException config(Class<? extends Exception> caught, Class<? extends RuntimeException> translateTo,
             String message)
     {
@@ -97,6 +99,7 @@ public class HandlerException implements HandleableException
         return this;
     }
     
+    @Override
     public HandleableException config(Class<? extends Exception> caught, String message)
     {
         if (this.exceptions.containsKey(caught))
@@ -108,33 +111,7 @@ public class HandlerException implements HandleableException
         return this;
     }
     
-    /*
-    public void handleUnchecked(Exception caught)
-    {
-        RuntimeException theException = (RuntimeException) prepareToThrowException("", caught);
-        if (theException  != null )throw theException;
-    }
-    
-    public void handleUnchecked(Exception cause, String customMessage)
-    {
-        RuntimeException theException = (RuntimeException) prepareToThrowException(customMessage, cause);
-        if (theException  != null )throw theException;
-    }
-    */
-    
-    /*
-    public void handle(RuntimeException caught)
-    {
-        RuntimeException theException = (RuntimeException) prepareToThrowException(null, caught);
-        if (theException != null) throw theException;
-    }
-    
-    public void handle(RuntimeException caught, String customMessage)
-    {
-        RuntimeException theException = (RuntimeException) prepareToThrowException(customMessage, caught);
-        if (theException != null) throw theException;
-    }
-    */
+    @Override
     public void handle(Exception caught)
     {
         if (this.defaultException.isAssignableFrom(caught.getClass()))
@@ -145,6 +122,7 @@ public class HandlerException implements HandleableException
             throw theException;
     }
     
+    @Override
     public void handle(Exception caught, String customMessage)
     {
         if (this.defaultException.isAssignableFrom(caught.getClass()))
@@ -155,6 +133,7 @@ public class HandlerException implements HandleableException
             throw theException;
     }
     
+    @Override
     public void throwMessage(String message, Object... args)
     {
         String msg = String.format(message, args);
@@ -187,9 +166,10 @@ public class HandlerException implements HandleableException
                     theException.setStackTrace(caught.getStackTrace());
             }
         }
-        else
-            LOG.info("Be careful the Handler exception is mute for configured exceptions [{}]",
-                    caught.getClass().getName());
+        else if (enableLogInfo){
+            LOG.info("Be careful the Handler exception is mute for configured exceptions [{}], message: {}",
+                    caught.getClass().getName(), caught.getMessage());
+        }
         return theException;
     }
     
@@ -218,17 +198,20 @@ public class HandlerException implements HandleableException
         return theMappedException;
     }
     
+    @Override
     public Class<? extends RuntimeException> getDefaultException()
     {
         return defaultException;
     }
     
+    @Override
     public HandleableException mute()
     {
         this.mute = true;
         return this;
     }
     
+    @Override
     public HandleableException mute(Class<? extends Exception> clazz)
     {
         //        if (this.exceptions.containsKey(clazz))
@@ -245,12 +228,13 @@ public class HandlerException implements HandleableException
         return this;
     }
     
+    @Override
     public boolean isMute()
     {
         return this.mute;
     }
     
-    public boolean isMute(Exception ex)
+    private boolean isMute(Exception ex)
     {
         boolean answer = false;
         if (ex == null)
@@ -262,6 +246,7 @@ public class HandlerException implements HandleableException
         return answer;
     }
     
+    @Override
     public boolean isMute(Class<? extends Exception> clazz)
     {
         boolean answer = false;
@@ -271,6 +256,20 @@ public class HandlerException implements HandleableException
         return answer;
     }
     
+    @Override
+    public HandleableException logInfoOn()
+    {
+        this.enableLogInfo = true;
+        return this;
+    }
+
+    @Override
+    public HandleableException logInfoOff()
+    {
+        this.enableLogInfo = false;
+        return this;
+    }
+
     /**
      * 
      * @param message

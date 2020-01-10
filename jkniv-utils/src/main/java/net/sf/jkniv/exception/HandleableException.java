@@ -69,4 +69,8 @@ public interface HandleableException
     boolean isMute();
     
     boolean isMute(Class<? extends Exception> ex);
+    
+    HandleableException logInfoOn();
+
+    HandleableException logInfoOff();
 }

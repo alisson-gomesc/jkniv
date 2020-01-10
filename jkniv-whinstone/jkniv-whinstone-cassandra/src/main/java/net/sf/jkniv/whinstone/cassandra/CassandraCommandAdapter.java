@@ -226,7 +226,7 @@ class CassandraCommandAdapter implements CommandAdapter
         return buildCommand(queryable);
     }
     
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ "rawtypes" })
     private <T,R> Command buildCommand(Queryable queryable)
     {
         Command command = null;
