@@ -59,7 +59,7 @@ public class JsonMapper
         JACKSON_MODULES.put("ParameterNamesModule", "com.fasterxml.jackson.module.paramnames.ParameterNamesModule");
         JACKSON_MODULES.put("JavaTimeModule",       "com.fasterxml.jackson.datatype.jsr310.JavaTimeModule"); 
         JACKSON_MODULES.put("Jdk8Module",           "com.fasterxml.jackson.datatype.jdk8.Jdk8Module"); 
-        JACKSON_MODULES.put("JSR310TimeModule",     "com.fasterxml.jackson.datatyspe.jsr310.JSR310TimeModule"); 
+        JACKSON_MODULES.put("JSR310TimeModule",     "com.fasterxml.jackson.datatype.jsr310.JSR310TimeModule"); 
         JACKSON_MODULES.put("ThreeTenModule",       "com.fasterxml.jackson.datatype.threetenbp.ThreeTenModule"); 
     }
     
