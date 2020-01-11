@@ -19,7 +19,30 @@ Sample of `src/main/resources/repository-config.xml` file:
   
 All properties started with `jackson.*` will be configured to work with singleton instance of `ObjectMapper`. 
 
+### Jackson register module
 
+Sometimes jackson needs register a module to work properly. All property named start with `jackson.module` have intentions to do that. 
+
+The modules supported are: 
+
+ - ParameterNamesModule
+ - JavaTimeModule
+ - ParameterNamesModule
+ - JSR310TimeModule
+ - ThreeTenModule
+
+To register:
+
+    <repository name="users">
+      ...
+      <properties>
+        <property name="jackson.module.ParameterNamesModule" value="true"/>
+        <property name="jackson.module.Jdk8Module" value="true"/>
+        <property name="jackson.module.JavaTimeModule" value="true"/>
+      </properties>
+    </repository>
+    
+    
 Design Documents
 ---------
 
@@ -62,5 +85,5 @@ Properties for CouchDB
 | --------------------------------------|--------------------- | ----------------- |
 |jkniv.repository.accessId              | `id`, `getId`, `setId` | Change default access for `id` property |
 |jkniv.repository.couchdb.update_views  | `false`               | Enable auto update view definitions from XML code |
-|jackson.*                              |                      | Change the state of an on/off serialization feature for object mapper |
+|jackson.*                              |                      | Change the state of an on/off SerializationFeature for object mapper. |
 

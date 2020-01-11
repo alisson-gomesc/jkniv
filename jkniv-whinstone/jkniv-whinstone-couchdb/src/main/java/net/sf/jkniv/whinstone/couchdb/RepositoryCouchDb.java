@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -165,11 +166,34 @@ class RepositoryCouchDb implements Repository
         while(keys.hasMoreElements())
         {
             String k = keys.nextElement().toString();
-            if (k.startsWith("jackson."))
+            boolean enable = Boolean.valueOf(props.getProperty(k));
+            if (k.startsWith("jackson.module."))
+            {
+                String moduleName = k.substring(15);
+                JsonMapper.register(moduleName, enable);
+            }
+            else if (k.startsWith("jackson."))
             {
                 // jackson. length -> (8)
-                SerializationFeature feature = SerializationFeature.valueOf(k.substring(8).toUpperCase());
-                JsonMapper.config(feature, Boolean.valueOf(props.getProperty(k)));
+                String featureName = k.substring(8).toUpperCase();
+                SerializationFeature feature = SerializationFeature.valueOf(featureName);
+                DeserializationFeature desfeature = null;
+                if (feature != null)
+                {
+                    JsonMapper.config(feature, enable);
+                    LOG.info("Jackson serialization feature {} was {}", featureName, (enable ? "ENABLED" : "DISABLED"));
+                }
+                else
+                {
+                    desfeature = DeserializationFeature.valueOf(k.substring(8).toUpperCase());
+                    if (desfeature != null) {
+                        JsonMapper.config(desfeature, enable);
+                        LOG.info("Jackson deserialization feature {} was {}", featureName, (enable ? "ENABLED" : "DISABLED"));
+                    }
+                }
+                if (feature == null && desfeature == null)
+                    LOG.error("Cannot {} Jackson feature {}", (enable ? "ENABLE" : "DISABLE"), featureName);
+                
             }
         }
     }
