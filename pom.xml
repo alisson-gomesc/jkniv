@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sf.jkniv</groupId>
@@ -17,7 +19,7 @@
 
   <properties>
     <maven.compiler.source>1.6</maven.compiler.source>
-    <maven.compiler.target>1.6</maven.compiler.target>  
+    <maven.compiler.target>1.6</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
@@ -35,91 +37,85 @@
     <module>jkniv-whinstone/jkniv-whinstone-jpa2</module>
     <module>jkniv-whinstone/jkniv-whinstone-cassandra</module>
     <module>jkniv-whinstone/jkniv-whinstone-couchdb</module>
-    <!-- 
-    <module>jkniv-whinstone/jkniv-whinstone-couchbase</module>
-    <module>jkniv-test-jdk8</module>
-    <module>jkniv-whinstone/jkniv-whinstone-rest</module>    
-    <module>jkniv-whinstone/jkniv-whinstone-fluent</module>
-    <module>jkniv-camel/jkniv-camel-sap-jco3</module>
-    <module>jkniv-jaas/jkniv-jaas-glassfish</module>
-     -->
+    <!-- <module>jkniv-whinstone/jkniv-whinstone-couchbase</module> <module>jkniv-test-jdk8</module> <module>jkniv-whinstone/jkniv-whinstone-rest</module> 
+      <module>jkniv-whinstone/jkniv-whinstone-fluent</module> <module>jkniv-camel/jkniv-camel-sap-jco3</module> <module>jkniv-jaas/jkniv-jaas-glassfish</module> -->
   </modules>
   <dependencyManagement>
     <dependencies>
-    <dependency>
-      <groupId>net.sf.jkniv</groupId>
-      <artifactId>jkniv-utils</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.jkniv</groupId>
-      <artifactId>jkniv-sqlegance</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.jkniv</groupId>
-      <artifactId>jkniv-whinstone</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.jkniv</groupId>
-      <artifactId>jkniv-whinstone-cassandra</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.jkniv</groupId>
-      <artifactId>jkniv-whinstone-couchdb</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.jkniv</groupId>
-      <artifactId>jkniv-whinstone-jdbc</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.jkniv</groupId>
-      <artifactId>jkniv-whinstone-jpa2</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>ognl</groupId>
-      <artifactId>ognl</artifactId>
-      <version>3.0.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>javassist</artifactId>
-          <groupId>javassist</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-      <version>1.9.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.javassist</groupId>
-      <artifactId>javassist</artifactId>
-      <version>3.15.0-GA</version>
-    </dependency>
-     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-jdbc</artifactId>
-      <version>${spring.version}</version>
-      <scope>provided</scope>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
-      <version>1.0.0.GA</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>4.3.2.Final</version>
-      <scope>test</scope>
-     </dependency>
+      <dependency>
+        <groupId>net.sf.jkniv</groupId>
+        <artifactId>jkniv-utils</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.jkniv</groupId>
+        <artifactId>jkniv-sqlegance</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.jkniv</groupId>
+        <artifactId>jkniv-whinstone</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.jkniv</groupId>
+        <artifactId>jkniv-whinstone-cassandra</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.jkniv</groupId>
+        <artifactId>jkniv-whinstone-couchdb</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.jkniv</groupId>
+        <artifactId>jkniv-whinstone-jdbc</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.jkniv</groupId>
+        <artifactId>jkniv-whinstone-jpa2</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ognl</groupId>
+        <artifactId>ognl</artifactId>
+        <version>3.0.3</version>
+        <exclusions>
+          <exclusion>
+            <artifactId>javassist</artifactId>
+            <groupId>javassist</groupId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>1.9.3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>3.15.0-GA</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jdbc</artifactId>
+        <version>${spring.version}</version>
+        <scope>provided</scope>
+        <optional>true</optional>
+      </dependency>
+      <dependency>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+        <version>1.0.0.GA</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>4.3.2.Final</version>
+        <scope>test</scope>
+      </dependency>
       <dependency>
         <groupId>com.microsoft.sqlserver</groupId>
         <artifactId>mssql-jdbc</artifactId>
@@ -132,118 +128,123 @@
         <version>4.0</version>
         <scope>test</scope>
       </dependency>
-    <!-- whinstone dependencies -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <version>${spring.version}</version>
-      <type>jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <version>${spring.version}</version>
-      <type>jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-tx</artifactId>
-      <version>${spring.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <version>${spring.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-orm</artifactId>
-      <version>${spring.version}</version>
-      <type>jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-      <version>${spring.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-dbcp</groupId>
-      <artifactId>commons-dbcp</artifactId>
-      <version>1.2.2</version>
-      <type>jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-dbcp2</artifactId>
-      <version>2.6.0</version>
-      <scope>test</scope>
-    </dependency>    
-    <dependency>
-      <groupId>com.oracle</groupId>
-      <artifactId>ojdbc6</artifactId>
-      <version>11.2.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>8.4-702.jdbc4</version>
-      <scope>test</scope>
-    </dependency>    
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>9.4-1200-jdbc41</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>aspectj</groupId>
-      <artifactId>aspectjweaver</artifactId>
-      <version>1.5.4</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <version>10.12.1.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-    <groupId>org.apache.derby</groupId>
-    <artifactId>derbyclient</artifactId>
-      <version>10.12.1.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-     <groupId>org.hibernate</groupId>
-     <artifactId>hibernate-entitymanager</artifactId>
-     <version>4.3.11.Final</version>
-     <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>cglib</groupId>
-      <artifactId>cglib</artifactId>
-      <version>2.2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.datastax.cassandra</groupId>
-      <artifactId>cassandra-driver-core</artifactId>
-      <version>3.0.8</version>
-    </dependency>
-    <dependency>
-      <groupId>com.datastax.cassandra</groupId>
-      <artifactId>cassandra-driver-mapping</artifactId>
-      <version>3.0.8</version>
-    </dependency>        
-    </dependencies>     
+      <!-- whinstone dependencies -->
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-test</artifactId>
+        <version>${spring.version}</version>
+        <type>jar</type>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>${spring.version}</version>
+        <type>jar</type>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-tx</artifactId>
+        <version>${spring.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-orm</artifactId>
+        <version>${spring.version}</version>
+        <type>jar</type>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${spring.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-dbcp</groupId>
+        <artifactId>commons-dbcp</artifactId>
+        <version>1.2.2</version>
+        <type>jar</type>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-dbcp2</artifactId>
+        <version>2.6.0</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.oracle</groupId>
+        <artifactId>ojdbc6</artifactId>
+        <version>11.2.0</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>8.4-702.jdbc4</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>9.4-1200-jdbc41</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>aspectj</groupId>
+        <artifactId>aspectjweaver</artifactId>
+        <version>1.5.4</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derby</artifactId>
+        <version>10.12.1.1</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derbyclient</artifactId>
+        <version>10.12.1.1</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-entitymanager</artifactId>
+        <version>4.3.11.Final</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>cglib</groupId>
+        <artifactId>cglib</artifactId>
+        <version>2.2</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.datastax.cassandra</groupId>
+        <artifactId>cassandra-driver-core</artifactId>
+        <version>3.8.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.datastax.cassandra</groupId>
+        <artifactId>cassandra-driver-mapping</artifactId>
+        <version>3.8.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.datastax.cassandra</groupId>
+        <artifactId>cassandra-driver-extras</artifactId>
+        <version>3.8.0</version>
+      </dependency>
+    </dependencies>
   </dependencyManagement>
 
   <dependencies>
@@ -294,7 +295,7 @@
       <version>1.9.5</version>
       <scope>test</scope>
     </dependency>
-      
+
   </dependencies>
   <build>
     <pluginManagement>
@@ -338,7 +339,7 @@
               <goal>attach-descriptor</goal>
             </goals>
           </execution>
-        </executions>   
+        </executions>
         <configuration>
           <siteDirectory>src/site/content</siteDirectory>
           <outputDirectory>target/generated-site/</outputDirectory>
@@ -354,25 +355,25 @@
             <artifactId>wagon-ssh</artifactId>
             <version>2.2</version>
           </dependency>
-        <dependency>
-          <groupId>lt.velykis.maven.skins</groupId>
-          <artifactId>reflow-velocity-tools</artifactId>
-          <version>1.1.1</version>
-        </dependency>
-        <!-- Reflow skin requires Velocity >= 1.7  -->
-        <dependency>
-          <groupId>org.apache.velocity</groupId>
-          <artifactId>velocity</artifactId>
-          <version>1.7</version>
-        </dependency>
+          <dependency>
+            <groupId>lt.velykis.maven.skins</groupId>
+            <artifactId>reflow-velocity-tools</artifactId>
+            <version>1.1.1</version>
+          </dependency>
+          <!-- Reflow skin requires Velocity >= 1.7 -->
+          <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.7</version>
+          </dependency>
         </dependencies>
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <!--<version>2.20.1</version>-->
+        <!--<version>2.20.1</version> -->
         <configuration>
-           <reuseForks>false</reuseForks>
-           <forkCount>1</forkCount>
+          <reuseForks>false</reuseForks>
+          <forkCount>1</forkCount>
           <systemPropertyVariables>
             <skipStartingCamelContext>false</skipStartingCamelContext>
           </systemPropertyVariables>
@@ -397,31 +398,12 @@
           </execution>
         </executions>
       </plugin>
-      <!-- 
-      <plugin>
-          <groupId>org.apache.maven.plugins</groupId> 
-          <artifactId>maven-changes-plugin</artifactId> 
-          <version>2.12.1</version> 
-          <reportSets>
-              <reportSet>
-                  <reports>
-                      <report>changes-report</report>
-                      <report>jira-report</report>
-                  </reports>
-              </reportSet>
-          </reportSets>
-          <configuration>
-              <issueManagementSystems>
-                  <issueManagementSystem>changes.xml</issueManagementSystem>
-                  <issueManagementSystem>JIRA</issueManagementSystem>
-                  </issueManagementSystems>
-                  <useJql>true</useJql>
-                  <columnNames>Key,Fix Version,Summary,Status,Resolution</columnNames>
-                  <sortColumnNames>Fix Version DESC,Key DESC</sortColumnNames>
-          </configuration>
-      </plugin>
-      
-      -->
+      <!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-changes-plugin</artifactId> <version>2.12.1</version> 
+        <reportSets> <reportSet> <reports> <report>changes-report</report> <report>jira-report</report> </reports> </reportSet> 
+        </reportSets> <configuration> <issueManagementSystems> <issueManagementSystem>changes.xml</issueManagementSystem> 
+        <issueManagementSystem>JIRA</issueManagementSystem> </issueManagementSystems> <useJql>true</useJql> <columnNames>Key,Fix 
+        Version,Summary,Status,Resolution</columnNames> <sortColumnNames>Fix Version DESC,Key DESC</sortColumnNames> </configuration> 
+        </plugin> -->
     </plugins>
     <extensions>
       <extension>
@@ -473,7 +455,7 @@
                 </goals>
                 <configuration>
                   <failOnError>false</failOnError>
-                  <!--additionalparam>-Xdoclint:none</additionalparam-->
+                  <!--additionalparam>-Xdoclint:none</additionalparam -->
                 </configuration>
               </execution>
             </executions>
@@ -493,7 +475,7 @@
                 </goals>
               </execution>
             </executions>
-          </plugin>          
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
@@ -507,7 +489,7 @@
                 </goals>
               </execution>
             </executions>
-          </plugin>          
+          </plugin>
         </plugins>
       </build>
       <distributionManagement>
@@ -524,30 +506,11 @@
           <id>ossrh</id>
           <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
-      </distributionManagement>      
+      </distributionManagement>
     </profile>
-    <!-- 
-    <profile>
-      <id>deploy-site</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-site-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>site-deploy</id>
-                <phase>site</phase>
-                <goals>
-                  <goal>deploy</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>    
-     -->
+    <!-- <profile> <id>deploy-site</id> <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
+      <artifactId>maven-site-plugin</artifactId> <executions> <execution> <id>site-deploy</id> <phase>site</phase> <goals> 
+      <goal>deploy</goal> </goals> </execution> </executions> </plugin> </plugins> </build> </profile> -->
   </profiles>
   <reporting>
     <plugins>
@@ -562,23 +525,12 @@
           <detectLinks>false</detectLinks>
           <detectJavaApiLink>false</detectJavaApiLink>
           <destDir>api-docs</destDir>
-          <!--additionalparam>-Xdoclint:none</additionalparam-->
+          <!--additionalparam>-Xdoclint:none</additionalparam -->
           <linksource>true</linksource>
         </configuration>
       </plugin>
-      <!--
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>report</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-      -->
+      <!-- <plugin> <groupId>org.jacoco</groupId> <artifactId>jacoco-maven-plugin</artifactId> <reportSets> <reportSet> 
+        <reports> <report>report</report> </reports> </reportSet> </reportSets> </plugin> -->
     </plugins>
   </reporting>
   <organization>

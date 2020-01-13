@@ -39,6 +39,7 @@
       <item name="Transaction" href="transaction.html" />
       <item name="Auto Generated keys" href="auto-generate-keys.html" />
       <item name="Paging" href="paging.html" />
+      <item name="Cassandra Properties" href="properties.html" />
       <item name="Logging" href="logging.html" />
       <item name="Javadoc" href="api-docs/index.html" />
       <item name="Donwload" href="https://sourceforge.net/projects/jkniv/files/jkniv-whinstone/cassandra/" />

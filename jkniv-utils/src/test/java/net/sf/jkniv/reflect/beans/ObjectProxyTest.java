@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -40,7 +41,6 @@ import org.junit.rules.ExpectedException;
 import net.sf.jkniv.acme.domain.Book;
 import net.sf.jkniv.domain.orm.Animal;
 import net.sf.jkniv.domain.orm.Cat;
-import net.sf.jkniv.reflect.ObjectNotFoundException;
 import net.sf.jkniv.reflect.ReflectionException;
 
 public class ObjectProxyTest
@@ -261,6 +261,15 @@ public class ObjectProxyTest
         catcher.expectMessage("[NoSuchFieldException] -> Cannot get the field init");
         ObjectProxy<Item> proxy = ObjectProxyFactory.of(Item.class);
         proxy.getAnnotationField(PostConstruct.class, "init");
+    }
+
+    @Test
+    public void whenGetStaticFieldByReflection() throws IllegalArgumentException, IllegalAccessException
+    {
+        ObjectProxy<A> proxy = ObjectProxyFactory.of("net.sf.jkniv.reflect.beans.A");
+        Field field = proxy.getDeclaredField("instance");
+        A instance = (A)field.get(null);
+        assertThat(instance, instanceOf(A.class));
     }
 
 }

@@ -8,6 +8,7 @@ From CouchDB Documentation:
 >>The bulk document API allows you to create and update multiple documents at the same time within a single request. The basic operation is similar to creating or updating a single document, except that you batch the document structure and information. 
        
 `whinstone-couchdb` supports bulk API when the parameters from `Queryable` is a collection: 
+
  - Collection of POJO
  - Collection of Map
  - Collection of array

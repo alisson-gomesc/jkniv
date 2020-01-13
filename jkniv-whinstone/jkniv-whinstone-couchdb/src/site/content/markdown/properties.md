@@ -31,7 +31,7 @@ The modules supported are:
  - JSR310TimeModule
  - ThreeTenModule
 
-To register:
+Example how to register a Jackson module:
 
     <repository name="users">
       ...

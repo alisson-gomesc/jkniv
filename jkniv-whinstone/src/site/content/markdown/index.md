@@ -95,26 +95,26 @@ The library is 100% protected against [SQL injection](https://www.owasp.org/inde
 |`0.6.0 version`| JSR Bean Validation | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     | in development      |
 |`0.6.0 version`| Transaction         | ![close][chk]  | ![close][chk]  | ![open][clo]        | ![open][clo]      | in development      |
 |`0.6.0 version`| Paginate Query      | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     | in development      |
-|`0.6.0 version`| Retrieving auto-generated keys| ![close][chk]| ![close][chk]| ![open][clo]  | ![close][chk]     | in development      |
+|`0.6.0 version`| Retrieving auto-generated keys| ![close][chk]| ![close][chk]| ![close][chk]  | ![close][chk]     | in development      |
 |`0.6.0 version`| Bulk Commands       | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     | in development      |
 |`0.6.0 version`| Callback Methods    | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     | in development      |
 |`0.6.0 version`| Query Cache         | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     | in development      |
 |`0.6.0 version`| Query Statistics    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      | ![open][clo]        |
 |`0.6.0 version`| Converter Annotation| ![open][clo]   | ![close][chk]  | ![open][clo]        | ![open][clo]      | ![open][clo]        |
+|`0.6.0 version`| Jdk8 Timers         | ![open][clo]   | ![open][clo]   | ![close][chk]       | ![close][chk]     | ![open][clo]        | 
 |`0.7.0 version`| Batch Commands      | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      | ![open][clo]        |
 |`0.7.0 version`| Triggers Events     | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      | ![open][clo]        |
 |`0.7.0 version`| Stored Procedure    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      | ![open][clo]        |
-|`0.7.0 version`| Jdk8 Timers         | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      | ![open][clo]        | 
 
 
 ### Transaction supports
 
-| Transaction API    | whinstone-jpa2 | whinstone-jdbc | whinstone-cassandra | whinstone-couchdb |
-| ------------------ | -------------- | -------------- |---------------------|-------------------|
-| JTA                |   yes (0.6.0)  | no             | no                  | no                |
-| JPA                |   yes (0.6.0)  | no             | no                  | no                |
-| JDBC               |   yes (0.6.0)  | yes  (0.6.0)   | no                  | no                |
-| Spring transaction |   yes (0.6.0)  | yes  (0.6.0)   | no                  | no                |
+| Transaction API    | whinstone-jpa2 | whinstone-jdbc | whinstone-cassandra | whinstone-couchdb |whinstone-couchbase |
+| ------------------ | -------------- | -------------- |---------------------|-------------------|--------------------|
+| JTA                |   yes (0.6.0)  | no             | no                  | no                | no                 |
+| JPA                |   yes (0.6.0)  | no             | no                  | no                | no                 |
+| JDBC               |   yes (0.6.0)  | yes  (0.6.0)   | no                  | no                | no                 |
+| Spring transaction |   yes (0.6.0)  | yes  (0.6.0)   | no                  | no                | no                 |
 
 
 [chk]: images/check.png "Supported"

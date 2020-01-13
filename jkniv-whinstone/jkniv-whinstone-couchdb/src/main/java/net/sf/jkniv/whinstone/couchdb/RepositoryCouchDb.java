@@ -159,7 +159,7 @@ class RepositoryCouchDb implements Repository
         this.handlerException.mute(ParameterNotFoundException.class);
     }
     
-    private void configJacksonObjectMapper()
+    private void configJacksonObjectMapper()// TODO test case for jdk8 time
     {
         Properties props = this.sqlContext.getRepositoryConfig().getProperties();
         Enumeration<Object> keys =  props.keys();

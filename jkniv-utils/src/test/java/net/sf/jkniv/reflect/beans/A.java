@@ -4,6 +4,7 @@ class A
 {
     private B      b;
     private String name;
+    public static final A instance = new A();
     
     public String getName()
     {
@@ -24,5 +25,4 @@ class A
     {
         this.b = b;
     }
-    
 }

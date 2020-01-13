@@ -2,6 +2,7 @@ package net.sf.jkniv.whinstone.cassandra.statement;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
@@ -36,6 +37,7 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.ResultSetParser;
 import net.sf.jkniv.whinstone.cassandra.CassandraColumn;
+import net.sf.jkniv.whinstone.cassandra.CassandraSessionFactory;
 import net.sf.jkniv.whinstone.cassandra.LoggerFactory;
 import net.sf.jkniv.whinstone.classification.Groupable;
 import net.sf.jkniv.whinstone.classification.GroupingBy;
@@ -276,14 +278,18 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     }
     
     /*******************************************************************************/
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private StatementAdapter<T, Row> bindInternal(Object value)
     {
+        if (value == null)
+        {       
+            setToNull();
+            return this;
+        }
         try
         {
-            if (value == null)
-                setToNull();
-            else if (value instanceof String)
+            String classNameValue = value.getClass().getName();
+            if (value instanceof String)
                 setInternalValue((String) value);
             else if (value instanceof Integer)
                 setInternalValue((Integer) value);
@@ -297,26 +303,42 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
                 setInternalValue((Boolean) value);
             else if (value instanceof BigDecimal)
                 setInternalValue((BigDecimal) value);
-            else if (value instanceof BigInteger)
-                setInternalValue((BigInteger) value);
-            else if (value instanceof Short)
-                setInternalValue((Short) value);
             else if (value instanceof Date)
                 setInternalValue((Date) value);
             else if (value instanceof java.util.Calendar)
                 setInternalValue((Calendar) value);
-            else if (value instanceof com.datastax.driver.core.LocalDate)
-                setInternalValue((com.datastax.driver.core.LocalDate) value);
             else if (Enum.class.isInstance(value))
                 setInternalValue((Enum<?>) value);
-            else if (value instanceof Byte)
-                setInternalValue((Byte) value);
             else if (value instanceof List)
                 setInternalValue((List) value);
             else if (value instanceof Set)
-                setInternalValue((Set) value);            
+                setInternalValue((Set) value);
             else if (value instanceof Map)
-                setInternalValue((Map) value);            
+                setInternalValue((Map) value);
+            else if (classNameValue.equals("java.time.Instant"))
+                bound.set(currentIndex(), value, CassandraSessionFactory.CODECS.get("InstantCodec").instance);
+            else if (classNameValue.equals("java.time.LocalDate"))
+                bound.set(currentIndex(), value, CassandraSessionFactory.CODECS.get("LocalDateCodec").instance);
+            else if (classNameValue.equals("java.time.LocalDateTime"))
+                bound.set(currentIndex(), value, CassandraSessionFactory.CODECS.get("LocalDateTimeCodec").instance);
+            else if (classNameValue.equals("java.time.LocalTime"))
+                bound.set(currentIndex(), value, CassandraSessionFactory.CODECS.get("LocalTimeCodec").instance);
+            else if (classNameValue.equals("java.time.ZonedDateTime"))
+                bound.set(currentIndex(), value, CassandraSessionFactory.CODECS.get("jkd8.ZonedDateTimeCodec").instance);
+            else if (classNameValue.equals("java.util.Optional"))
+                bound.set(currentIndex(), value, CassandraSessionFactory.CODECS.get("jkd8.OptionalCodec").instance);
+            else if (classNameValue.equals("java.time.ZoneId"))
+                bound.set(currentIndex(), value, CassandraSessionFactory.CODECS.get("jkd8.ZoneIdCodec").instance);
+            else if (value instanceof BigInteger)
+                setInternalValue((BigInteger) value);
+            else if (value instanceof Short)
+                setInternalValue((Short) value);
+            else if (value instanceof com.datastax.driver.core.LocalDate)
+                setInternalValue((com.datastax.driver.core.LocalDate) value);
+            else if (value instanceof Byte)
+                setInternalValue((Byte) value);
+            else if (value instanceof ByteBuffer)
+                setInternalValue((ByteBuffer) value);
             else
             {
                 LOG.warn("CANNOT Set SQL Parameter from index [{}] with value of [{}] type of [{}]", (index+indexIN), 
@@ -380,6 +402,11 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     private void setInternalValue(Byte value)
     {
         bound.setByte(currentIndex(), value);
+    }
+
+    private void setInternalValue(ByteBuffer value)
+    {
+        bound.setBytes(currentIndex(), value);
     }
     
     private void setInternalValue(BigDecimal value)
