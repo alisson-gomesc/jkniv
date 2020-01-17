@@ -19,8 +19,6 @@
  */
 package net.sf.jkniv.sqlegance.types;
 
-import java.sql.Types;
-
 /**
  * A Enumeration converter value.
  * 
@@ -41,7 +39,6 @@ import java.sql.Types;
  */
 public class EnumNameType implements Convertible<Enum<?>, String>
 {
-    private final static int[] TYPES = {Types.CHAR, Types.VARCHAR, Types.NCHAR, Types.NVARCHAR};
     private Class<?> enumType;
     
     public EnumNameType(Class<?> enumType)
@@ -64,19 +61,25 @@ public class EnumNameType implements Convertible<Enum<?>, String>
         if (jdbc == null)
             return null;
         
-        return Enum.valueOf(getClassType(), jdbc);
-    }
-
-    @Override
-    public int[] getTypes()
-    {
-        return TYPES;
+        return Enum.valueOf(getType(), jdbc);
     }
 
     @Override @SuppressWarnings({ "rawtypes", "unchecked" })
-    public Class getClassType()
+    public Class getType()
     {
         return this.enumType;
     }
     
+    @Override
+    public ColumnType getColumnType() 
+    {
+        return JdbcType.VARCHAR;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "EnumNameType [enumType=" + enumType + ", type="
+                + getType() + ", columnType=" + getColumnType() + "]";
+    }
 }

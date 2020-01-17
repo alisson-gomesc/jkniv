@@ -23,19 +23,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @deprecated Needs change Argument Converter
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-class EnumConverter extends AbstractConverter
+class EnumTranslateType  implements TranslateType //extends AbstractConverter
 {
-    private static final Logger LOG = LoggerFactory.getLogger(EnumConverter.class);
-    private boolean allowNull;
+    private static final Logger LOG = LoggerFactory.getLogger(EnumTranslateType.class);
     
-    public EnumConverter()
+    public EnumTranslateType()
     {
-        super(false);
+        super();
     }
-        
+    
     public <T> T convert(Class<T> type, Object value)
     {
         T result = null;
@@ -46,10 +47,7 @@ class EnumConverter extends AbstractConverter
             result = match(type, (String) value);
         else if (value instanceof Integer)
             result = match(type, (Integer) value);
-        if (result == null && !allowNull)
-            throw new IllegalArgumentException("Enum with value [" + value + "] not match with "
-                    + type.getCanonicalName());
-        
+
         return result;
     }
     
@@ -81,10 +79,5 @@ class EnumConverter extends AbstractConverter
             }
         }
         return result;
-    }
-    
-    public void withPattern(String pattern)
-    {
-        throw new UnsupportedOperationException("EnumConvert does not use pattern format!");
     }
 }

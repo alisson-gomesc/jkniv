@@ -24,6 +24,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
+import java.util.Currency;
 
 import org.junit.Test;
 
@@ -73,13 +75,41 @@ public class BasicTypeTest
         assertThat(types.isNumberType(byte.class), is(true));
         assertThat(types.isNumberType(BigDecimal.class), is(true));
         assertThat(types.isNumberType(BigInteger.class), is(true));
-
         assertThat(types.isNumberType(Boolean.class), is(false));
         assertThat(types.isNumberType(boolean.class), is(false));
         assertThat(types.isNumberType(Character.class), is(false));
         assertThat(types.isNumberType(char.class), is(false));
-    }
+        
 
+    }
+    
+    @Test
+    public void whenCheckBasicTypes()
+    {
+        BasicType types = new BasicType();
+        assertThat(types.isBasicType(Double.class), is(true));
+        assertThat(types.isBasicType(double.class), is(true));
+        assertThat(types.isBasicType(Float.class), is(true));
+        assertThat(types.isBasicType(float.class), is(true));
+        assertThat(types.isBasicType(Long.class), is(true));
+        assertThat(types.isBasicType(long.class), is(true));
+        assertThat(types.isBasicType(Integer.class), is(true));
+        assertThat(types.isBasicType(int.class), is(true));
+        assertThat(types.isBasicType(Short.class), is(true));
+        assertThat(types.isBasicType(short.class), is(true));
+        assertThat(types.isBasicType(Byte.class), is(true));
+        assertThat(types.isBasicType(byte.class), is(true));
+        assertThat(types.isBasicType(BigDecimal.class), is(true));
+        assertThat(types.isBasicType(BigInteger.class), is(true));
+        assertThat(types.isBasicType(Boolean.class), is(true));
+        assertThat(types.isBasicType(boolean.class), is(true));
+        assertThat(types.isBasicType(Character.class), is(true));
+        assertThat(types.isBasicType(char.class), is(true));
+        assertThat(types.isBasicType(URL.class), is(true));
+        assertThat(types.isBasicType(Currency.class), is(true));
+        
+    }
+/*
     @Test
     public void whenCheckNumberTypesWrapped()
     {
@@ -104,5 +134,5 @@ public class BasicTypeTest
         assertThat(types.isNumberTypeWrapped(Character.class), is(false));
         assertThat(types.isNumberTypeWrapped(char.class), is(false));
     }
-
+*/
 }

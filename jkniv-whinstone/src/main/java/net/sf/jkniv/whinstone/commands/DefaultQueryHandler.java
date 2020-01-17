@@ -81,7 +81,6 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
                 }
                 catch(Exception e)
                 {
-                    e.printStackTrace();
                     queryable.setTotal(Statement.EXECUTE_FAILED);
                     postException();
                     handleableException.handle(e);                    

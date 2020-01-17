@@ -120,15 +120,22 @@ public class JdbcQueryMock
      * @return this builder instance
      * @throws SQLException 
      */
-    public JdbcQueryMock columns(String[] columns)
+    public JdbcQueryMock columns(String[] columns, int[] columnsType)
     {
         try
         {
+            /*
+            metaData.getColumnLabel(columnIndex);
+            String columnName = getColumnName(metadata, columnNumber);
+            int columnType = metadata.getColumnType(columnNumber);
+            columns[i] = new DefaultJdbcColumn(columnNumber, columnName, columnType, queryable.getReturnType());
+             */
             given(rsMetadata.getColumnCount()).willReturn(columns.length);
             for (int i = 1; i <= columns.length; i++)
             {
                 given(rsMetadata.getColumnLabel(i)).willReturn(columns[i - 1]);
                 given(rsMetadata.getColumnName(i)).willReturn(columns[i - 1]);
+                given(rsMetadata.getColumnType(i)).willReturn(columnsType[i - 1]);
             }
         }
         catch (SQLException e)
@@ -165,7 +172,7 @@ public class JdbcQueryMock
             given(rs.getObject(4)).willReturn("Friedrich Nietzsche", "Martin Fowler", "Martin Fowler", "Martin Fowler",
                     "Martin Fowler", "Martin Fowler", "Carlos Drummond", "Carlos Drummond", "Carlos Drummond",
                     "Carlos Drummond", "Carlos Drummond", "Franz Kafka", "Franz Kafka", "Albert Camus", "Albert Camus");
-            given(rs.getObject(5)).willReturn(1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 5, 5);
+            given(rs.getObject(5)).willReturn(1L, 2L, 2L, 2L, 2L, 2L, 3L, 3L, 3L, 3L, 3L, 4L, 4L, 5L, 5L);
         }
         catch (SQLException e)
         {
@@ -185,7 +192,7 @@ public class JdbcQueryMock
             given(rs.getObject(2)).willReturn("978-1503250888");
             given(rs.getObject(3)).willReturn("Beyond Good and Evil");
             given(rs.getObject(4)).willReturn("Friedrich Nietzsche");
-            given(rs.getObject(5)).willReturn(1);
+            given(rs.getObject(5)).willReturn(1L);
         }
         catch (SQLException e)
         {

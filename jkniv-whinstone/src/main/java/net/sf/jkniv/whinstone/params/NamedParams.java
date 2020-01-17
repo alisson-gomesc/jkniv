@@ -19,9 +19,6 @@
  */
 package net.sf.jkniv.whinstone.params;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;

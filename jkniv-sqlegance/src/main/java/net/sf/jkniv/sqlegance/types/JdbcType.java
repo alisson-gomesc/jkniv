@@ -19,19 +19,7 @@
  */
 package net.sf.jkniv.sqlegance.types;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Array;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Time;
 import java.sql.Types;
-import java.util.Calendar;
-import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @see java.sql.Types
  * @since 0.6.0
  */
-enum JdbcType
+public enum JdbcType implements ColumnType
 {
     /**
      * <P>
@@ -355,11 +343,62 @@ enum JdbcType
         this.value = v;
     }
     
-    public int getValue()
+    public int value()
     {
         return value;
     }
     
+    @Override
+    public boolean isBinary()
+    {
+        return (this.value == Types.CLOB || this.value == Types.BLOB);
+    }
+    
+    @Override
+    public boolean isBlob()
+    {
+        // FIXME implements write BLOB to database
+        return (this.value == Types.BLOB);
+    }
+
+    @Override
+    public boolean isClob()
+    {
+        return (this.value == Types.CLOB);
+    }
+    
+    @Override
+    public boolean isDate()
+    {
+        return (this.value == Types.DATE);
+    }
+    
+    @Override
+    public boolean isTimestamp()
+    {
+        return (this.value == Types.TIMESTAMP);
+    }
+    
+    @Override
+    public boolean isTime()
+    {
+        return (this.value == Types.TIME);
+    }
+
+    public static ColumnType valueOf(int jdbcTypeValue)
+    {
+        JdbcType answer = null;
+        for(JdbcType jdbcType : JdbcType.values())
+        {
+            if (jdbcType.value() == jdbcTypeValue)
+            {
+                answer = jdbcType;
+                break;
+            }
+        }
+        return answer;
+    }
+    /*
     public static JdbcType getType(Object value)
     {
         JdbcType type = null;
@@ -402,14 +441,14 @@ enum JdbcType
         else
             LOG.warn("Cannot SQL type for " + value.getClass().getName());
         
-        /*
-         * Types.BINARY Types.DATALINK Types.DECIMAL Types.DISTINCT
-         * Types.JAVA_OBJECT Types.LONGNVARCHAR Types.LONGVARBINARY
-         * Types.LONGVARCHAR Types.NUMERIC Types.OTHER Types.REF
-         * Types.REF_CURSOR Types.ROWID Types.SQLXML Types.STRUCT Types.TIME
-         * Types.TIME_WITH_TIMEZONE Types.TIMESTAMP
-         * Types.TIMESTAMP_WITH_TIMEZONE
-         */
+        
+        //Types.BINARY Types.DATALINK Types.DECIMAL Types.DISTINCT
+        //Types.JAVA_OBJECT Types.LONGNVARCHAR Types.LONGVARBINARY
+        //Types.LONGVARCHAR Types.NUMERIC Types.OTHER Types.REF
+        //Types.REF_CURSOR Types.ROWID Types.SQLXML Types.STRUCT Types.TIME
+        //Types.TIME_WITH_TIMEZONE Types.TIMESTAMP
+        //Types.TIMESTAMP_WITH_TIMEZONE
+         
         return type;
     }
     
@@ -463,26 +502,26 @@ enum JdbcType
         {
             LOG.error("cannot set SQL value", sqle);// FIXME BUG sql data type
         }
-        /*
-         * Types.BINARY 
-         * Types.DATALINK 
-         * Types.DECIMAL 
-         * Types.DISTINCT
-         * Types.JAVA_OBJECT 
-         * Types.LONGNVARCHAR 
-         * Types.LONGVARBINARY
-         * Types.LONGVARCHAR 
-         * Types.NUMERIC 
-         * Types.OTHER Types.REF
-         * Types.REF_CURSOR 
-         * Types.ROWID 
-         * Types.SQLXML 
-         * Types.STRUCT 
-         * Types.TIME
-         * Types.TIME_WITH_TIMEZONE 
-         * Types.TIMESTAMP
-         * Types.TIMESTAMP_WITH_TIMEZONE
-         */
+        
+         //Types.BINARY 
+         //Types.DATALINK 
+         //Types.DECIMAL 
+         //Types.DISTINCT
+         //Types.JAVA_OBJECT 
+         //Types.LONGNVARCHAR 
+         //Types.LONGVARBINARY
+         //Types.LONGVARCHAR 
+         //Types.NUMERIC 
+         //Types.OTHER Types.REF
+         //Types.REF_CURSOR 
+         //Types.ROWID 
+         //Types.SQLXML 
+         //Types.STRUCT 
+         //Types.TIME
+         //Types.TIME_WITH_TIMEZONE 
+         //Types.TIMESTAMP
+         //Types.TIMESTAMP_WITH_TIMEZONE
+         //
         //return type;
-    }
+    }*/
 }

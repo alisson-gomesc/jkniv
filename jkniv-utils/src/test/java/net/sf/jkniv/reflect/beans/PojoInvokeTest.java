@@ -50,6 +50,7 @@ public class PojoInvokeTest
     public void whenReflectionBuildPojo()
     {
         Invokable call = new PojoInvoker(new HandlerException());
+        call.register(new NumberTranslateType(), Integer.class);
         Book book = new Book();
         call.invoke("setId", book, 101);
         call.invoke("setName", book, "Ernest Miller Hemingway");

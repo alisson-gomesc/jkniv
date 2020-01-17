@@ -299,8 +299,8 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         for (int i = 0; i < columns.length; i++)
         {
             String columnName = metadata.getName(i);//getColumnName(metadata, columnNumber);
-            int columnType = metadata.getType(i).getName().ordinal(); //metadata.getColumnType(columnNumber);
-            columns[i] = new CassandraColumn(i, columnName, columnType);
+            //int columnType = metadata.getType(i).getName().ordinal(); //metadata.getColumnType(columnNumber);
+            columns[i] = new CassandraColumn(i, columnName, metadata.getType(i).getName());
         }
         return columns;
     }

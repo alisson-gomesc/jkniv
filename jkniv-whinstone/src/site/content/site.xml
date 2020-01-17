@@ -35,6 +35,7 @@
       <item name="Architecture" href="arch.html" />
       <item name="Connection" href="connection.html" />
       <item name="Querying" href="querying.html" />
+      <item name="Bean Validation" href="bean-validation.html" />
       <item name="Converter" href="converter.html" />
       <item name="Callback Methods" href="callback-methods.html" />
       <item name="Cache" href="cache.html" />

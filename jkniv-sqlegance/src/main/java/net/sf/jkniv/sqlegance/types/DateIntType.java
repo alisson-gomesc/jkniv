@@ -19,37 +19,50 @@
  */
 package net.sf.jkniv.sqlegance.types;
 
-public class EnumOrdinalType implements Convertible<Enum<?>, Integer>
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class DateIntType implements Convertible<Date, Integer>
 {
-    private Class<?> enumType;
+    private String pattern;
     
-    public EnumOrdinalType(Class<?> enumType)
+    public DateIntType(String pattern)
     {
-        this.enumType = enumType;
+        this.pattern = pattern;
     }
     
     @Override
-    public Integer toJdbc(Enum<?> attribute)
+    public Integer toJdbc(Date attribute)
     {
         if (attribute == null)
             return null;
         
-        return attribute.ordinal();
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        return Integer.valueOf(sdf.format(attribute));
     }
 
-    @Override 
-    public Enum<?> toAttribute(Integer jdbc)
+    @Override
+    public Date toAttribute(Integer jdbc)
     {
         if (jdbc == null)
             return null;
         
-        return (Enum<?>) this.enumType.getEnumConstants()[jdbc.intValue()];
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        try
+        {
+            return sdf.parse(String.valueOf(jdbc));
+        }
+        catch (ParseException e)
+        {
+            throw new ConverterException(e);
+        }
     }
 
-    @Override @SuppressWarnings({ "rawtypes", "unchecked" })
-    public Class getType()
+    @Override
+    public Class<Date> getType()
     {
-        return enumType;
+        return Date.class;
     }
     
     @Override
@@ -61,7 +74,7 @@ public class EnumOrdinalType implements Convertible<Enum<?>, Integer>
     @Override
     public String toString()
     {
-        return "EnumOrdinalType [enumType=" + enumType +  ", type="
+        return "DateIntType [pattern=" + pattern + ", type="
                 + getType() + ", columnType=" + getColumnType() + "]";
     }
 }

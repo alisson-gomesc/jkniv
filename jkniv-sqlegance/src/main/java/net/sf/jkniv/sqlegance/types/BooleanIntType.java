@@ -19,37 +19,31 @@
  */
 package net.sf.jkniv.sqlegance.types;
 
-import java.sql.Types;
-
 /**
  * A TRUE|FALSE converter value.
  * 
  * The {@code pattern} format is: true|false, where the values can be any string value.
  * 
  * <pre>
- * {@literal @}Converter(converter = TrueType.class,pattern = "Y|N")
+ * {@literal @}Converter(converter = BooleanIntType.class,pattern = "1|0")
  * </pre>
  */
-public class TrueType implements Convertible<Boolean, String>
+public class BooleanIntType implements Convertible<Boolean, Integer>
 {
-    private final static int[] TYPES = {Types.CHAR, Types.VARCHAR, Types.NCHAR, Types.NVARCHAR};
-    //private final static String FALSE = "FALSE", TRUE = "TRUE";
-    //private final static TrueType INSTANCE = new TrueType();
-    //private final static ThreadLocal<String> PATTERN = new ThreadLocal<String>();
-    private String truePattern;
-    private String falsePattern;
+    private int truePattern;
+    private int falsePattern;
 
-    public TrueType(String pattern)
+    public BooleanIntType(String pattern)
     {
         String[] patterns = pattern.split("\\|");
         if (patterns.length != 2)
-            throw new ConverterException("TrueType expect a separator \"|\" to handle true and false values, for example \"1|0\". The value was: "+pattern);
-        this.truePattern = patterns[0];
-        this.falsePattern = patterns[1];
+            throw new ConverterException("BooleanStringType expect a separator \"|\" to handle true and false values, for example \"1|0\". The value was: "+pattern);
+        this.truePattern = Integer.valueOf(patterns[0]);
+        this.falsePattern = Integer.valueOf(patterns[1]);
     }
     
     @Override
-    public String toJdbc(Boolean attribute)
+    public Integer toJdbc(Boolean attribute)
     {
         if (attribute == null)
             return null;
@@ -58,7 +52,7 @@ public class TrueType implements Convertible<Boolean, String>
     }
 
     @Override
-    public Boolean toAttribute(String jdbc)
+    public Boolean toAttribute(Integer jdbc)
     {
         if (jdbc == null)
             return null;
@@ -67,15 +61,23 @@ public class TrueType implements Convertible<Boolean, String>
     }
 
     @Override
-    public int[] getTypes()
-    {
-        return TYPES;
-    }
-
-    @Override
-    public Class<Boolean> getClassType()
+    public Class<Boolean> getType()
     {
         return Boolean.class;
     }
     
+    @Override
+    public ColumnType getColumnType() 
+    {
+        return JdbcType.INTEGER;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "BooleanIntType [truePattern=" + truePattern + ", falsePattern=" + falsePattern + ", type="
+                + getType() + ", columnType=" + getColumnType() + "]";
+    }
+
+
 }

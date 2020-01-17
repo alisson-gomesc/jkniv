@@ -27,15 +27,17 @@ package net.sf.jkniv.reflect;
  */
 class FactoryLong implements Numerical
 {
+    public static final Numerical instance = new FactoryLong();
+    
     @Override
     public Number valueOf(Object n)
     {
         if (n == null)
             return null;
         else if (n instanceof Number)
-            return valueOf((Number)n);
+            return ((Number)n).longValue();
         else
-            return valueOf(n.toString());
+            return Long.valueOf(n.toString());
     }
 
     @Override
@@ -51,7 +53,7 @@ class FactoryLong implements Numerical
     {
         if (n == null)
             return null;
-        return Long.valueOf(n.longValue());
+        return n.longValue();
     }
     
     @Override

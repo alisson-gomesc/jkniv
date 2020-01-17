@@ -24,6 +24,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -56,12 +58,10 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     private static final Logger       LOG        = LoggerFactory.getLogger(DefaultObjectProxy.class);
     private static final Assertable   NOT_NULL    = AssertsFactory.getNotNull();
     private static final Assertable   IS_NULL     = AssertsFactory.getIsNull();
-    //private static final Capitalize   GETTER     = MethodNameFactory.getInstanceGetter();
     private static final Capitalize   CAPITAL_SETTER     = CapitalNameFactory.getInstanceOfSetter();
     private static final BasicType    BASIC_TYPE = BasicType.getInstance();
     /** {@code getClass} */
     private static final List<String> SKIP_NAMES = Arrays.asList("getClass");
-    //private final Map<String, MethodInfo> cacheMethods;
     private T                         instance;
     private Class<T>                  targetClass;
     private Object[]                  constructorArgs;
@@ -69,11 +69,28 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     private Constructor<T>[]          constructors;
     private boolean                   isWrapperType;
     private HandleableException       handleException;
-    private Invokable                 basicInvoke;
-    private Invokable                 pojoInvoke;
-    private Invokable                 nestedInvoke;
-    private Invokable                 mapInvoke;
-    private Invokable                 collectionInvoke;
+    private static Invokable          basicInvoke;
+    private static Invokable          pojoInvoke;
+    private static Invokable          nestedInvoke;
+    private static Invokable          mapInvoke;
+    private static Invokable          collectionInvoke;
+    
+    static {
+        HandleableException h = new HandlerException(ReflectionException.class, "");// TODO exception handler design
+        configHandlerException(h);
+        DefaultObjectProxy.basicInvoke = new BasicInvoker(h);
+        DefaultObjectProxy.pojoInvoke = new PojoInvoker((BasicInvoker) basicInvoke, h);
+        DefaultObjectProxy.nestedInvoke = new NestedInvoker((PojoInvoker) pojoInvoke, h);
+        DefaultObjectProxy.collectionInvoke = new CollectionInvoker(h);
+        DefaultObjectProxy.mapInvoke = new MapInvoker(h);
+//        DefaultObjectProxy.pojoInvoke.register(new NumberTranslateType(), BigInteger.class);
+//        DefaultObjectProxy.pojoInvoke.register(new NumberTranslateType(), BigDecimal.class);
+//        DefaultObjectProxy.pojoInvoke.register(new NumberTranslateType(), Integer.class);
+//        DefaultObjectProxy.pojoInvoke.register(new NumberTranslateType(), String.class);
+//        DefaultObjectProxy.pojoInvoke.register(new NumberTranslateType(), Float.class);
+//        DefaultObjectProxy.pojoInvoke.register(new NumberTranslateType(), Double.class);
+//        DefaultObjectProxy.pojoInvoke.register(new NumberTranslateType(), Long.class);
+    }
     
     public DefaultObjectProxy(String className)
     {
@@ -93,7 +110,6 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
     private DefaultObjectProxy(T target, Class<T> targetClazz, String className)
     {
         this.handleException = new HandlerException(ReflectionException.class, "");// TODO exception handler design
-        //this.cacheMethods = new HashMap<String, MethodInfo>(3);
         if (target != null)
         {
             this.instance = target;
@@ -113,11 +129,12 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
                     target, targetClazz, className);
         isWrapperType = BASIC_TYPE.isBasicType(targetClass);
         init();
-        this.basicInvoke = new BasicInvoker(this.handleException);
-        this.pojoInvoke = new PojoInvoker((BasicInvoker) basicInvoke, this.handleException);
-        this.nestedInvoke = new NestedInvoker((PojoInvoker) pojoInvoke, this.handleException);
-        this.collectionInvoke = new CollectionInvoker(this.handleException);
-        this.mapInvoke = new MapInvoker(this.handleException);
+    }
+
+    @Override
+    public void register(TranslateType cast, Class type)
+    {
+        DefaultObjectProxy.pojoInvoke.register(cast, type);   
     }
     
     @Override
@@ -132,19 +149,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         this.constructors = (Constructor<T>[]) this.targetClass.getConstructors();
         this.constructorArgs = new Object[0];
         this.constructorTypes = new Class<?>[0];
-        
-        this.handleException
-                .config(IllegalAccessException.class,
-                        "[IllegalAccessException] -> Cannot create, get or invoke class method %s")
-                .config(IllegalArgumentException.class, "[IllegalArgumentException] -> cannot invoke %s")
-                .config(InvocationTargetException.class, "[InvocationTargetException] -> Cannot invoke %s")
-                .config(ClassNotFoundException.class,
-                        "[ClassNotFoundException] -> no definition for the class with the specified name could be found %s")
-                .config(InstantiationException.class,
-                        "[InstantiationException] -> Cannot create new instance of class %s")
-                .config(NoSuchMethodException.class, "[NoSuchMethodException] -> Cannot invoke or get the method %s")
-                .config(NoSuchFieldException.class, "[NoSuchFieldException] -> Cannot get the field %s")
-                .config(SecurityException.class, "[SecurityException] -> Cannot invoke or get method %s");
+        configHandlerException(handleException);
         
         /* newInstance
           # IllegalAccessException - if the class or its nullary constructor is not accessible.
@@ -152,6 +157,21 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
           # ExceptionInInitializerError - if the initialization provoked by this method fails.
           # SecurityException - If a security manager, s, is present and any of the following conditions is met: • invocation of s.checkMemberAccess(this, Member.PUBLIC) denies creation of new instances of this class 
          */
+    }
+    
+    private static void configHandlerException(HandleableException h) {
+        h.config(IllegalAccessException.class,
+                "[IllegalAccessException] -> Cannot create, get or invoke class method %s")
+        .config(IllegalArgumentException.class, "[IllegalArgumentException] -> cannot invoke %s")
+        .config(InvocationTargetException.class, "[InvocationTargetException] -> Cannot invoke %s")
+        .config(ClassNotFoundException.class,
+                "[ClassNotFoundException] -> no definition for the class with the specified name could be found %s")
+        .config(InstantiationException.class,
+                "[InstantiationException] -> Cannot create new instance of class %s")
+        .config(NoSuchMethodException.class, "[NoSuchMethodException] -> Cannot invoke or get the method %s")
+        .config(NoSuchFieldException.class, "[NoSuchFieldException] -> Cannot get the field %s")
+        .config(SecurityException.class, "[SecurityException] -> Cannot invoke or get method %s");
+        
     }
     
     /* (non-Javadoc)
@@ -362,7 +382,7 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
         Object ret = null;
         if (isWrapperType)
         {
-            this.instance = (T) basicInvoke.invoke(targetClass, args);
+            this.instance = (T) DefaultObjectProxy.basicInvoke.invoke(targetClass, args);
         }
         else
         {
@@ -370,13 +390,13 @@ class DefaultObjectProxy<T> implements ObjectProxy<T>
                 newInstance();
             
             if (this.instance instanceof Map)
-                ret = mapInvoke.invoke(methodName, instance, args);
+                ret = DefaultObjectProxy.mapInvoke.invoke(methodName, instance, args);
             else if (this.instance instanceof Collection)
-                ret = collectionInvoke.invoke(methodName, instance, args);
+                ret = DefaultObjectProxy.collectionInvoke.invoke(methodName, instance, args);
             else if (isNestedMethod(methodName))
-                ret = nestedInvoke.invoke(methodName, instance, args);
+                ret = DefaultObjectProxy.nestedInvoke.invoke(methodName, instance, args);
             else
-                ret = pojoInvoke.invoke(methodName, instance, args);
+                ret = DefaultObjectProxy.pojoInvoke.invoke(methodName, instance, args);
         }
         return ret;
     }

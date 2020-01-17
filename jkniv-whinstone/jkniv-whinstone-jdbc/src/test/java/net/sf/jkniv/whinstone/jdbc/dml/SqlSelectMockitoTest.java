@@ -36,6 +36,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import net.sf.jkniv.sqlegance.types.JdbcType;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
@@ -55,8 +56,11 @@ public class SqlSelectMockitoTest
     public void whenSelectAllRecords()
     {
         JdbcQueryMock jdbcMock = new JdbcQueryMock(FlatBook.class);
-        Repository repository = jdbcMock.columns(new String[]
-        { "id", "isbn", "name", "author", "author_id" }).buildFifteenFlatBook();
+        Repository repository = jdbcMock.columns(
+                new String[] { "id", "isbn", "name", "author", "author_id" }, 
+                new int[] {JdbcType.BIGINT.value(), JdbcType.VARCHAR.value(),
+                           JdbcType.VARCHAR.value(), JdbcType.VARCHAR.value(), JdbcType.BIGINT.value()})
+                .buildFifteenFlatBook();
         Queryable q = QueryFactory.of("15 FlatBook");
         List<FlatBook> books = repository.list(q);
         assertThat("There are 15 rows", books.size(), equalTo(15));
@@ -76,8 +80,10 @@ public class SqlSelectMockitoTest
     public void whenUsingMockitto()
     {
         JdbcQueryMock jdbcMock = new JdbcQueryMock(FlatAuthor.class);
-        Repository repository = jdbcMock.columns(new String[]
-        { "id", "name", "book" }).buildThreeFlatAuthor();
+        Repository repository = jdbcMock.columns(
+                new String[] { "id", "name", "book" },
+                new int[] {JdbcType.BIGINT.value(), JdbcType.VARCHAR.value(), JdbcType.VARCHAR.value()})
+                .buildThreeFlatAuthor();
         
         Queryable q = QueryFactory.of("2 FlatAuthor");
         List<FlatAuthor> books = repository.list(q);
@@ -98,8 +104,10 @@ public class SqlSelectMockitoTest
     public void whenSelectNonRows()
     {
         JdbcQueryMock jdbcMock = new JdbcQueryMock(FlatAuthor.class);
-        Repository repository = jdbcMock.columns(new String[]
-        { "id", "name", "book" }).getRepository();
+        Repository repository = jdbcMock.columns(
+                new String[] { "id", "name", "book" },
+                new int[] {JdbcType.BIGINT.value(), JdbcType.VARCHAR.value(), JdbcType.VARCHAR.value()})
+                .getRepository();
         
         Queryable q = QueryFactory.of("0 records");
         List<FlatAuthor> books = repository.list(q);
@@ -112,8 +120,10 @@ public class SqlSelectMockitoTest
     {
         catcher.expect(ClassCastException.class);
         JdbcQueryMock jdbcMock = new JdbcQueryMock(FlatBook.class);
-        Repository repository = jdbcMock.columns(new String[]
-        { "id", "name", "book" }).buildOneFlatBook();
+        Repository repository = jdbcMock.columns(
+                new String[] { "id", "name", "book" },
+                new int[] {JdbcType.BIGINT.value(), JdbcType.VARCHAR.value(), JdbcType.VARCHAR.value()})
+                .buildOneFlatBook();
         
         Queryable q = QueryFactory.of("select");
         FlatAuthor o = repository.get(q);
@@ -125,8 +135,11 @@ public class SqlSelectMockitoTest
     public void whenSelectOverloadReturnType()
     {
         JdbcQueryMock jdbcMock = new JdbcQueryMock(FlatBook.class);
-        Repository repository = jdbcMock.columns(new String[]
-                { "id", "isbn", "name"}).buildFifteenFlatBook();
+        Repository repository = jdbcMock.columns(
+                new String[] { "id", "isbn", "name"},
+                new int[] {JdbcType.BIGINT.value(), JdbcType.VARCHAR.value(), JdbcType.VARCHAR.value()})
+                .buildFifteenFlatBook();
+
         Queryable q = QueryFactory.of("select");
         
         List<Book> list = repository.list(q, Book.class);
@@ -145,8 +158,11 @@ public class SqlSelectMockitoTest
     public void whenSelectDoesntDefinedReturnType()
     {
         JdbcQueryMock jdbcMock = new JdbcQueryMock(Map.class);
-        Repository repository = jdbcMock.columns(new String[]
-                { "id", "isbn", "name"}).buildFifteenFlatBook();
+        Repository repository = jdbcMock.columns(
+                new String[] { "id", "isbn", "name"},
+                new int[] {JdbcType.BIGINT.value(), JdbcType.VARCHAR.value(), JdbcType.VARCHAR.value()})
+                .buildFifteenFlatBook();
+
 
         Queryable q = QueryFactory.of("listBooksNoSpecificType");
         List<Map> list = repository.list(q);
@@ -159,8 +175,11 @@ public class SqlSelectMockitoTest
     public void whenSelectWithoutTypeAndCustomResultSetParser()
     {
         JdbcQueryMock jdbcMock = new JdbcQueryMock(Map.class);
-        Repository repository = jdbcMock.columns(new String[]
-                { "id", "isbn", "name"}).buildFifteenFlatBook();
+        Repository repository = jdbcMock.columns(
+                new String[] { "id", "isbn", "name"},
+                new int[] {JdbcType.BIGINT.value(), JdbcType.VARCHAR.value(), JdbcType.VARCHAR.value()})
+                .buildFifteenFlatBook();
+
         CustomResultRow resultRow = new CustomResultRow();
         Queryable q = QueryFactory.of("listBooksNoSpecificType");
         List<HashMap<String, Object>> list = repository.list(q, resultRow);
@@ -175,8 +194,10 @@ public class SqlSelectMockitoTest
     public void whenSelectDoesntDefinedReturnTypeButForceOne()
     {
         JdbcQueryMock jdbcMock = new JdbcQueryMock(FlatAuthor.class);
-        Repository repository = jdbcMock.columns(new String[]
-        { "id", "name", "book" }).buildThreeFlatAuthor();
+        Repository repository = jdbcMock.columns(
+                new String[] { "id", "name", "book" },
+                new int[] {JdbcType.BIGINT.value(), JdbcType.VARCHAR.value(), JdbcType.VARCHAR.value()})
+                .buildThreeFlatAuthor();
 
         Queryable q = QueryFactory.of("listBooksNoSpecificType");
         List<Book> list = repository.list(q, Book.class);
@@ -190,7 +211,9 @@ public class SqlSelectMockitoTest
     {
         JdbcQueryMock jdbcMock = new JdbcQueryMock(FlatBook.class);
         Repository repository = jdbcMock.columns(new String[]
-        { "id", "isbn", "name", "author" }).buildOneFlatBook();
+                { "id", "isbn", "name", "author" }, 
+                new int[] {JdbcType.BIGINT.value(), JdbcType.VARCHAR.value(), JdbcType.VARCHAR.value(),JdbcType.VARCHAR.value()})
+                .buildOneFlatBook();
 
         Map<String, String> map = new HashMap<String, String>();
         map.put("isbn", "978-1503250888");
@@ -209,7 +232,9 @@ public class SqlSelectMockitoTest
     {
         JdbcQueryMock jdbcMock = new JdbcQueryMock(FlatBook.class);
         Repository repository = jdbcMock.columns(new String[]
-        { "id", "isbn", "name", "author" }).buildOneFlatBook();
+                { "id", "isbn", "name", "author" },
+                new int[] {JdbcType.BIGINT.value(), JdbcType.VARCHAR.value(), JdbcType.VARCHAR.value(),JdbcType.VARCHAR.value()})
+                .buildOneFlatBook();
 
         FlatBook b = new FlatBook();
         b.setIsbn("978-0321826626");

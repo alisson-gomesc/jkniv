@@ -43,7 +43,7 @@ class PojoInvoker extends AbstractInvoker implements Invokable
     public Object invoke(Method method, Object theInstance, Object... values)
     {
         Object ret = null;
-        Object[] assignableArgs = ArgumentsConvert.makeAssignableTo(method.getParameterTypes(), values);
+        Object[] assignableArgs = makeAssignableTo(method.getParameterTypes(), values);
         ret = invokeDirect(method, theInstance, assignableArgs);
         return ret;
     }

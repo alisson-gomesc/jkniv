@@ -32,7 +32,7 @@ public class DateAsIntTypeTest
     @Test
     public void whenDateIsInt()  
     {
-        DateAsIntType type = new DateAsIntType("yyyyMMdd");
+        DateIntType type = new DateIntType("yyyyMMdd");
         Date d1 = new Date(2019-1900, 0, 1);
         Date d2 = new Date(2019-1900, 1, 10);
         

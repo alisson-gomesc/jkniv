@@ -19,51 +19,51 @@
  */
 package net.sf.jkniv.sqlegance.types;
 
-import java.sql.Types;
-import java.util.Calendar;
-
-public class CalendarAsSqlTimestampType implements Convertible<java.util.Calendar, java.sql.Timestamp>
+public class DateType implements Convertible<java.util.Date,java.sql.Date>
 {
-    private final static int[] TYPES = {Types.DATE, Types.TIME, Types.TIMESTAMP};
-    
-    public CalendarAsSqlTimestampType()
+    public DateType()
     {
     }
     
-    public CalendarAsSqlTimestampType(String pattern)
+    public DateType(String pattern)
     {
     }
     
     @Override
-    public java.sql.Timestamp toJdbc(java.util.Calendar attribute)
+    public java.sql.Date toJdbc(java.util.Date attribute)
     {
         if (attribute == null)
             return null;
         
-        return new java.sql.Timestamp(attribute.getTime().getTime());
+        return new java.sql.Date(attribute.getTime());
     }
 
     @Override
-    public java.util.Calendar  toAttribute(java.sql.Timestamp jdbc)
+    public java.util.Date toAttribute(java.sql.Date jdbc)
     {
         if (jdbc == null)
             return null;
 
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(jdbc);
-        return cal;
+        return new java.util.Date(jdbc.getTime());
     }
 
     @Override
-    public int[] getTypes()
+    public Class<java.util.Date> getType()
     {
-        return TYPES;
-    }
-
-    @Override
-    public Class<java.util.Calendar> getClassType()
-    {
-        return java.util.Calendar.class;
+        return java.util.Date.class;
     }
     
+    @Override
+    public ColumnType getColumnType() 
+    {
+        return JdbcType.DATE;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "DateType [type="
+                + getType() + ", columnType=" + getColumnType() + "]";
+    }
+
 }

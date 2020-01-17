@@ -19,48 +19,52 @@
  */
 package net.sf.jkniv.sqlegance.types;
 
-import java.sql.Types;
+import java.math.BigDecimal;
 
-public class DateAsSqlTimestampType implements Convertible<java.util.Date, java.sql.Timestamp>
+public class DoubleBigDecimalType implements Convertible<Double, BigDecimal>
 {
-    private final static int[] TYPES = {Types.DATE, Types.TIME, Types.TIMESTAMP};
-    
-    public DateAsSqlTimestampType()
+    public DoubleBigDecimalType()
     {
     }
     
-    public DateAsSqlTimestampType(String pattern)
+    public DoubleBigDecimalType(String pattern)
     {
     }
     
     @Override
-    public java.sql.Timestamp toJdbc(java.util.Date attribute)
+    public BigDecimal toJdbc(Double attribute)
     {
         if (attribute == null)
             return null;
         
-        return new java.sql.Timestamp(attribute.getTime());
+        return new BigDecimal(attribute);
     }
 
     @Override
-    public java.util.Date toAttribute(java.sql.Timestamp jdbc)
+    public Double toAttribute(BigDecimal jdbc)
     {
         if (jdbc == null)
             return null;
-
-        return new java.util.Date(jdbc.getTime());
+        
+        return jdbc.doubleValue();
     }
 
     @Override
-    public int[] getTypes()
+    public Class<Double> getType()
     {
-        return TYPES;
-    }
-
-    @Override
-    public Class<java.util.Date> getClassType()
-    {
-        return java.util.Date.class;
+        return Double.class;
     }
     
+    @Override
+    public ColumnType getColumnType() 
+    {
+        return JdbcType.DECIMAL;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "DoubleBigDecimalType [type="
+                + getType() + ", columnType=" + getColumnType() + "]";
+    }
 }

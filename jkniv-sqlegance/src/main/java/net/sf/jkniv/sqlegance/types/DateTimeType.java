@@ -19,60 +19,50 @@
  */
 package net.sf.jkniv.sqlegance.types;
 
-import java.sql.Types;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
-public class CalendarAsIntType implements Convertible<Calendar, Integer>
+public class DateTimeType implements Convertible<java.util.Date, java.sql.Time>
 {
-    private final static int[] TYPES = {Types.DATE, Types.TIME, Types.TIMESTAMP};
-    private String pattern;
-    
-    public CalendarAsIntType(String pattern)
+    public DateTimeType()
     {
-        this.pattern = pattern;
+    }
+    
+    public DateTimeType(String pattern)
+    {
     }
     
     @Override
-    public Integer toJdbc(Calendar attribute)
+    public java.sql.Time toJdbc(java.util.Date attribute)
     {
         if (attribute == null)
             return null;
         
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-        return Integer.valueOf(sdf.format(attribute.getTime()));
+        return new java.sql.Time(attribute.getTime());
     }
 
     @Override
-    public Calendar toAttribute(Integer jdbc)
+    public java.util.Date toAttribute(java.sql.Time jdbc)
     {
         if (jdbc == null)
             return null;
-        
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-        try
-        {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(sdf.parse(String.valueOf(jdbc)));
-            return calendar;
-        }
-        catch (ParseException e)
-        {
-            throw new ConverterException(e);
-        }
+
+        return new java.util.Date(jdbc.getTime());
     }
 
     @Override
-    public int[] getTypes()
+    public Class<java.util.Date> getType()
     {
-        return TYPES;
-    }
-
-    @Override
-    public Class<Calendar> getClassType()
-    {
-        return Calendar.class;
-    }
+        return java.util.Date.class;
+    }    
     
+    @Override
+    public ColumnType getColumnType() 
+    {
+        return JdbcType.TIME;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "DateTimeType [type="
+                + getType() + ", columnType=" + getColumnType() + "]";
+    }
 }

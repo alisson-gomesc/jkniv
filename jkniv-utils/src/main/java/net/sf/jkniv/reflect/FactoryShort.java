@@ -27,15 +27,17 @@ package net.sf.jkniv.reflect;
  */
 class FactoryShort implements Numerical
 {
+    public static final Numerical instance = new FactoryShort();
+    
     @Override
     public Number valueOf(Object n)
     {
         if (n == null)
             return null;
         else if (n instanceof Number)
-            return valueOf((Number)n);
+            return ((Number)n).shortValue();
         else
-            return valueOf(n.toString());
+            return Short.valueOf(n.toString());
     }
 
     @Override
@@ -51,7 +53,7 @@ class FactoryShort implements Numerical
     {
         if (n == null)
             return null;
-        return Short.valueOf(n.shortValue());
+        return n.shortValue();
     }
 
     @Override

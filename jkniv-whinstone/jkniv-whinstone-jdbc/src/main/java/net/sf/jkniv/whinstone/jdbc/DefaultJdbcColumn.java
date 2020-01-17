@@ -21,10 +21,11 @@ package net.sf.jkniv.whinstone.jdbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.Date;
 
 import net.sf.jkniv.reflect.beans.PropertyAccess;
+import net.sf.jkniv.sqlegance.types.ColumnType;
+import net.sf.jkniv.sqlegance.types.JdbcType;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.JdbcColumnMapper;
 import net.sf.jkniv.whinstone.UnderscoreToCamelCaseMapper;
@@ -33,11 +34,13 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
 {
     private final int                     columnIndex;
     private final String                  columnName;
-    private final String                  attributeName;
+    private final ColumnType              columnType;
     private final String                  methodName;
-    private final int                     jdbcType;
+    //private final String                  attributeName;
+    //private final int                     jdbcType;
     private boolean nestedAttribute;
     private PropertyAccess propertyAccess;
+    
     // TODO design property to config UnderscoreToCamelCaseMapper
     private final static JdbcColumnMapper JDBC_COLUMN_MAPPER = new UnderscoreToCamelCaseMapper();
     
@@ -46,29 +49,23 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
         this(columnIndex, columnName, jdbcType, null);
     }
     
-    public DefaultJdbcColumn(int columnIndex, String columnName, int jdbcType, Class<?> classTarget)
+    public DefaultJdbcColumn(int columnIndex, String columnName, int jdbcTypeValue, Class<?> classTarget)
     {
         super();
         this.columnIndex = columnIndex;
         this.columnName = columnName;
         this.nestedAttribute = false;
         this.propertyAccess = new PropertyAccess(JDBC_COLUMN_MAPPER.map(columnName), classTarget);
-        this.attributeName = propertyAccess.getFieldName();
-        //this.methodName = propertyAccess.getWriterMethodName();
-        this.jdbcType = jdbcType;
+        //this.attributeName = propertyAccess.getFieldName();
+        this.columnType = JdbcType.valueOf(jdbcTypeValue);
         if(columnName.indexOf(".") > 0)
         {
             this.nestedAttribute = true;
             this.methodName = columnName;
-            //this.attributeName = columnName;
         }
         else
         {
-            //this.propertyAccess = new PropertyAccess(JDBC_COLUMN_MAPPER.map(columnName), classTarget);
-            //this.attributeName = propertyAccess.getFieldName();
             this.methodName = propertyAccess.getWriterMethodName();
-            //this.attributeName = JDBC_COLUMN_MAPPER.map(columnName);
-            //this.methodName = capitalizeSetter(attributeName);
         }
     }
     
@@ -81,7 +78,7 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
     @Override
     public String getAttributeName()
     {
-        return this.attributeName;
+        return propertyAccess.getFieldName();
     }
     
     @Override
@@ -105,7 +102,7 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
     @Override
     public boolean isBinary()
     {
-        return (this.jdbcType == Types.CLOB || jdbcType == Types.BLOB);
+        return this.columnType.isBinary();
     }
     
     @Override
@@ -113,32 +110,32 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
     {
         // FIXME implements read CLOB as string, 
         // FIXME implements write CLOB to database
-        return (this.jdbcType == Types.CLOB);
+        return this.columnType.isClob();
     }
     
     @Override
     public boolean isBlob()
     {
         // FIXME implements write BLOB to database
-        return (this.jdbcType == Types.BLOB);
+        return this.columnType.isBlob();
     }
     
     @Override
     public boolean isDate()
     {
-        return (this.jdbcType == Types.DATE);
+        return this.columnType.isDate();
     }
     
     @Override
     public boolean isTimestamp()
     {
-        return (this.jdbcType == Types.TIMESTAMP);
+        return this.columnType.isTimestamp();
     }
     
     @Override
     public boolean isTime()
     {
-        return (this.jdbcType == Types.TIME);
+        return this.columnType.isTime();
     }
     
     @Override
@@ -170,9 +167,9 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
     }
     
     @Override
-    public int getJdbcType()
+    public ColumnType getType()
     {
-        return this.jdbcType;
+        return this.columnType;
     }
 
     /*
@@ -198,7 +195,7 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
     @Override
     public String toString()
     {
-        return "DefaultJdbcColumn [index=" + columnIndex + ", columnName=" + columnName + ", jdbcType=" + jdbcType
+        return "DefaultJdbcColumn [index=" + columnIndex + ", columnName=" + columnName + ", jdbcType=" + columnType
                 + "]";
     }
 }

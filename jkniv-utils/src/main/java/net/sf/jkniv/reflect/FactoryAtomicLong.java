@@ -29,6 +29,8 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 class FactoryAtomicLong implements Numerical
 {
+    public static final Numerical instance = new FactoryAtomicLong();
+    
     @Override
     public Number valueOf(Object n)
     {

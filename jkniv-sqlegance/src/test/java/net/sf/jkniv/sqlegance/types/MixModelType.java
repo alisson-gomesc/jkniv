@@ -7,7 +7,7 @@ public class MixModelType
     @Converter(pattern = "yyyyMMddHHmmss.MMM")
     private String timestamp;
     
-    @Converter(pattern = "1", converter = TrueType.class)
+    @Converter(pattern = "1", converter = BooleanStringType.class)
     public boolean getActive()
     {
         return this.active;

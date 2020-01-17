@@ -19,33 +19,31 @@
  */
 package net.sf.jkniv.sqlegance.types;
 
-import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 
-public class DateAsIntType implements Convertible<Date, Integer>
+public class CalendarIntType implements Convertible<Calendar, Integer>
 {
-    private final static int[] TYPES = {Types.DATE, Types.TIME, Types.TIMESTAMP};
     private String pattern;
     
-    public DateAsIntType(String pattern)
+    public CalendarIntType(String pattern)
     {
         this.pattern = pattern;
     }
     
     @Override
-    public Integer toJdbc(Date attribute)
+    public Integer toJdbc(Calendar attribute)
     {
         if (attribute == null)
             return null;
         
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-        return Integer.valueOf(sdf.format(attribute));
+        return Integer.valueOf(sdf.format(attribute.getTime()));
     }
 
     @Override
-    public Date toAttribute(Integer jdbc)
+    public Calendar toAttribute(Integer jdbc)
     {
         if (jdbc == null)
             return null;
@@ -53,7 +51,9 @@ public class DateAsIntType implements Convertible<Date, Integer>
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         try
         {
-            return sdf.parse(String.valueOf(jdbc));
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(sdf.parse(String.valueOf(jdbc)));
+            return calendar;
         }
         catch (ParseException e)
         {
@@ -62,15 +62,21 @@ public class DateAsIntType implements Convertible<Date, Integer>
     }
 
     @Override
-    public int[] getTypes()
+    public Class<Calendar> getType()
     {
-        return TYPES;
+        return Calendar.class;
+    }
+    
+    @Override
+    public ColumnType getColumnType() 
+    {
+        return JdbcType.INTEGER;
     }
 
     @Override
-    public Class<Date> getClassType()
+    public String toString()
     {
-        return Date.class;
+        return "CalendarIntType [pattern=" + pattern + ", type="
+                + getType() + ", columnType=" + getColumnType() + "]";
     }
-    
 }

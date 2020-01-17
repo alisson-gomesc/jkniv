@@ -26,8 +26,8 @@ public class OracleAutoKeyTest extends BaseJdbc
         Foo foo1 = new Foo(),foo2 = new Foo();
         foo1.setName("Foo fights");
         foo2.setName("New Foo fights");
-        Queryable queryable = QueryFactory.of("test-autokey-oracle-case-sequence", foo1);
-        int affected = repositoryOra.add(queryable);
+        Queryable queryable1 = QueryFactory.of("test-autokey-oracle-case-sequence", foo1);
+        int affected = repositoryOra.add(queryable1);
         assertThat(affected, is(1));
         assertThat(foo1.getId(), notNullValue());
         assertThat(foo1.getId().longValue(), greaterThan(0L));

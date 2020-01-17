@@ -67,43 +67,11 @@ class FlatObjectResultRow<T> extends AbstractResultRow implements ResultRow<T, R
         ObjectProxy<T> proxy = ObjectProxyFactory.of(returnType);
         for (JdbcColumn<ResultSet> column : columns)
         {
-          setValueOf(proxy, column, rs);
+            setValueOf(proxy, column, rs);
         }
         return proxy.getInstance();
     }
-    /*
-    private void setValueOf(JdbcColumn<ResultSet> column, ResultSet rs, ObjectProxy<T> proxy) throws SQLException
-    {
-        Injectable<T> reflect = InjectableFactory.of(proxy);
-        Object jdbcObject = null;
-        if (column.isBinary())
-            jdbcObject = column.getBytes(rs);
-        else
-            jdbcObject = column.getValue(rs);
-        
-        if (SQLLOG.isTraceEnabled())
-            SQLLOG.trace("Mapping index [{}] column [{}] type of [{}] to value [{}]", column.getIndex(),
-                    column.getAttributeName(), (jdbcObject != null ? jdbcObject.getClass().getName() : "null"),
-                    MASKING.mask(column.getAttributeName(), jdbcObject));
-        
-        if (column.isNestedAttribute())
-        {
-            reflect.inject(column.getAttributeName(), jdbcObject);
-        }
-        else
-        {
-            String method = column.getMethodName();
-            if (proxy.hasMethod(method))
-            {
-                Convertible<Object, Object> convertible = getConverter(column, proxy);
-                reflect.inject(method, convertible.toAttribute(jdbcObject));
-            }
-            else
-                LOG.warn("Method [{}] doesn't exists for [{}] to set value [{}]", method,
-                        proxy.getTargetClass().getName(), jdbcObject);
-        }
-    }
-    */
+
     @Override
     public Transformable<T> getTransformable()
     {
@@ -115,5 +83,4 @@ class FlatObjectResultRow<T> extends AbstractResultRow implements ResultRow<T, R
     {
         this.columns = columns;
     }
-    
 }

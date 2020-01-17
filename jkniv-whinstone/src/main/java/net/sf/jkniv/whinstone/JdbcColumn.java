@@ -22,15 +22,15 @@ package net.sf.jkniv.whinstone;
 import java.sql.SQLException;
 
 import net.sf.jkniv.reflect.beans.PropertyAccess;
+import net.sf.jkniv.sqlegance.types.ColumnType;
 
 /**
- * 
- * TODO docme
+ * Represents a column of database.
  * 
  * @param <R> The result of a query (ResultSet).
  * 
  * @author Alisson Gomes
- *
+ * @since 0.6.0
  */
 public interface JdbcColumn<R>
 {
@@ -44,7 +44,7 @@ public interface JdbcColumn<R>
 
     int getIndex();
     
-    int getJdbcType();
+    ColumnType getType();
     
     boolean isBinary();
 
@@ -63,5 +63,4 @@ public interface JdbcColumn<R>
     Object getValue(R resultSet) throws SQLException;
     
     Object getBytes(R resultSet) throws SQLException;
-    
 }

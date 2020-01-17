@@ -27,15 +27,17 @@ package net.sf.jkniv.reflect;
  */
 class FactoryFloat implements Numerical
 {
+    public static final Numerical instance = new FactoryFloat();
+    
     @Override
     public Number valueOf(Object n)
     {
         if (n == null)
             return null;
         else if (n instanceof Number)
-            return valueOf((Number)n);
+            return ((Number)n).floatValue();
         else
-            return valueOf(n.toString());
+            return Float.valueOf(n.toString());
     }
 
     @Override
@@ -51,7 +53,7 @@ class FactoryFloat implements Numerical
     {
         if (n == null)
             return null;
-        return Float.valueOf(n.floatValue());
+        return n.floatValue();
     }
     
     @Override

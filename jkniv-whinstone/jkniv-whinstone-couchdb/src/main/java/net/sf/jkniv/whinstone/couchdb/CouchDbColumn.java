@@ -23,17 +23,19 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import net.sf.jkniv.reflect.beans.PropertyAccess;
+import net.sf.jkniv.sqlegance.types.ColumnType;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.JdbcColumnMapper;
 import net.sf.jkniv.whinstone.UnderscoreToCamelCaseMapper;
 
-public class CouchDbColumn implements JdbcColumn<String>
+class CouchDbColumn implements JdbcColumn<String>
 {
     private final int                     columnIndex;
     private final String                  columnName;
     private final String                  attributeName;
     private final String                  methodName;
-    private final int                     jdbcType;
+    //private final int                     jdbcType;
+    private final ColumnType              columnType;
     private boolean nestedAttribute;
     private PropertyAccess propertyAccess;
     private final static JdbcColumnMapper jdbcColumnMapper = new UnderscoreToCamelCaseMapper();// TODO design property to config;
@@ -58,7 +60,8 @@ public class CouchDbColumn implements JdbcColumn<String>
 //            this.attributeName = jdbcColumnMapper.map(columnName);
 //            this.methodName = capitalizeSetter(attributeName);
         }
-        this.jdbcType = jdbcType;
+        this.columnType = null;
+        //this.columnType = jdbcType;
         //this.jdbcColumnMapper = new UnderscoreToCamelCaseMapper();// TODO design property to config
     }
     
@@ -84,7 +87,7 @@ public class CouchDbColumn implements JdbcColumn<String>
     
     public boolean isBinary()
     {
-        return (this.jdbcType == Types.CLOB || jdbcType == Types.BLOB);
+        return this.columnType.isBinary();
     }
     
     public boolean isClob()
@@ -126,9 +129,9 @@ public class CouchDbColumn implements JdbcColumn<String>
     }
     
     @Override
-    public int getJdbcType()
+    public ColumnType getType()
     {
-        return this.jdbcType;
+        return this.columnType;
     }
 
     
@@ -186,7 +189,7 @@ public class CouchDbColumn implements JdbcColumn<String>
     @Override
     public String toString()
     {
-        return "DefaultJdbcColumn [index=" + columnIndex + ", columnName=" + columnName + ", jdbcType=" + jdbcType
+        return "DefaultJdbcColumn [index=" + columnIndex + ", columnName=" + columnName + ", jdbcType=" + columnType
                 + "]";
     }
 }
