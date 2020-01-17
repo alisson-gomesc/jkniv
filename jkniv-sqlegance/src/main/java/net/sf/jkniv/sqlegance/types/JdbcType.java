@@ -35,6 +35,25 @@ import org.slf4j.LoggerFactory;
  */
 public enum JdbcType implements ColumnType
 {
+    //Types.BINARY 
+    //Types.DATALINK 
+    //Types.DECIMAL 
+    //Types.DISTINCT
+    //Types.JAVA_OBJECT 
+    //Types.LONGNVARCHAR 
+    //Types.LONGVARBINARY
+    //Types.LONGVARCHAR 
+    //Types.NUMERIC 
+    //Types.OTHER 
+    //Types.REF
+    //Types.REF_CURSOR 
+    //Types.ROWID 
+    //Types.SQLXML 
+    //Types.STRUCT 
+    //Types.TIME
+    //Types.TIME_WITH_TIMEZONE 
+    //Types.TIMESTAMP
+    //Types.TIMESTAMP_WITH_TIMEZONE    
     /**
      * <P>
      * The constant in the Java programming language, sometimes referred to as a
@@ -398,130 +417,4 @@ public enum JdbcType implements ColumnType
         }
         return answer;
     }
-    /*
-    public static JdbcType getType(Object value)
-    {
-        JdbcType type = null;
-        if (value == null)
-            type = NULL;
-        else if (value.getClass().isArray())
-            type = ARRAY;
-        else if (value instanceof BigInteger)
-            type = BIGINT;
-        else if (value instanceof Long || "long".equals(value.getClass().getName()))
-            type = BIGINT;
-        else if (value instanceof Integer || "int".equals(value.getClass().getName()))
-            type = INTEGER;
-        else if (value instanceof Short || "short".equals(value.getClass().getName()))
-            type = SMALLINT;
-        else if (value instanceof Byte || "byte".equals(value.getClass().getName()))
-            type = TINYINT;
-        else if (value instanceof Boolean || "boolean".equals(value.getClass().getName()))
-            type = BOOLEAN;// BIT;
-        else if (value instanceof Float || "float".equals(value.getClass().getName()))
-            type = FLOAT;// REAL;
-        else if (value instanceof Double || "double".equals(value.getClass().getName()))
-            type = DOUBLE;
-        else if (value instanceof Date)
-        {
-            Date d = (Date) value;
-            if (d.getHours() != 0 || d.getMinutes() != 0 || d.getSeconds() != 0)
-                type = TIME;
-            else
-                type = DATE;
-        }
-        else if (value instanceof Calendar)
-            type = TIMESTAMP;
-        else if (value instanceof String)
-            type = VARCHAR;// CHAR, NCHAR, NVARCHAR
-        else if (value instanceof byte[] || value instanceof ByteArrayInputStream)
-            type = BLOB;// CLOB,NCLOB
-        else if (value instanceof StringReader)
-            type = CLOB;
-        else
-            LOG.warn("Cannot SQL type for " + value.getClass().getName());
-        
-        
-        //Types.BINARY Types.DATALINK Types.DECIMAL Types.DISTINCT
-        //Types.JAVA_OBJECT Types.LONGNVARCHAR Types.LONGVARBINARY
-        //Types.LONGVARCHAR Types.NUMERIC Types.OTHER Types.REF
-        //Types.REF_CURSOR Types.ROWID Types.SQLXML Types.STRUCT Types.TIME
-        //Types.TIME_WITH_TIMEZONE Types.TIMESTAMP
-        //Types.TIMESTAMP_WITH_TIMEZONE
-         
-        return type;
-    }
-    
-    public static void setValue(PreparedStatement stmt, int index, Object value)
-    {
-        JdbcType type = getType(value);
-        
-        try
-        {
-            if (value == null)
-                stmt.setNull(index, type.getValue());
-            else if (value instanceof String)
-                stmt.setString(index, (String) value);//type = VARCHAR;// CHAR, NCHAR, NVARCHAR
-            else if (value.getClass().isArray())
-                stmt.setArray(index, (Array) value);
-            else if (value instanceof BigInteger)
-                stmt.setBigDecimal(index, (BigDecimal) value);
-            else if (value instanceof BigDecimal)
-                stmt.setBigDecimal(index, (BigDecimal) value);
-            else if (value instanceof Long || "long".equals(value.getClass().getName()))
-                stmt.setLong(index, (Long)value);
-            else if (value instanceof Integer || "int".equals(value.getClass().getName()))
-                stmt.setInt(index, (Integer)value);
-            else if (value instanceof Short || "short".equals(value.getClass().getName()))
-                stmt.setShort(index, (Short)value);//type = SMALLINT;
-            else if (value instanceof Byte || "byte".equals(value.getClass().getName()))
-                stmt.setByte(index, (Byte)value);//type = TINYINT;
-            else if (value instanceof Boolean || "boolean".equals(value.getClass().getName()))
-                stmt.setBoolean(index, (Boolean)value);//type = BOOLEAN;// BIT;
-            else if (value instanceof Float || "float".equals(value.getClass().getName()))
-                stmt.setFloat(index, (Float)value);//type = FLOAT;// REAL;
-            else if (value instanceof Double || "double".equals(value.getClass().getName()))
-                stmt.setDouble(index, (Double)value);//type = DOUBLE;
-            else if (value instanceof Time)
-                stmt.setTime(index, (Time)value);//type = TIME;
-            else if (value instanceof Date)
-                stmt.setDate(index, new java.sql.Date(((Date)value).getTime()));//type = DATE;
-            else if (value instanceof Calendar)
-                stmt.setTimestamp(index, new java.sql.Timestamp(((Date)value).getTime()));//type = DATE;
-            else if (value.getClass().isArray())
-                stmt.setArray(index, (Array) value);//
-            else if (value instanceof InputStream)
-                stmt.setBlob(index, (InputStream)value);//
-            else if (value instanceof Reader)
-                stmt.setClob(index, (Reader)value);//type = CLOB;
-            else
-                LOG.warn("Cannot SQL type for " + value.getClass().getName());
-            
-        }
-        catch(SQLException sqle)
-        {
-            LOG.error("cannot set SQL value", sqle);// FIXME BUG sql data type
-        }
-        
-         //Types.BINARY 
-         //Types.DATALINK 
-         //Types.DECIMAL 
-         //Types.DISTINCT
-         //Types.JAVA_OBJECT 
-         //Types.LONGNVARCHAR 
-         //Types.LONGVARBINARY
-         //Types.LONGVARCHAR 
-         //Types.NUMERIC 
-         //Types.OTHER Types.REF
-         //Types.REF_CURSOR 
-         //Types.ROWID 
-         //Types.SQLXML 
-         //Types.STRUCT 
-         //Types.TIME
-         //Types.TIME_WITH_TIMEZONE 
-         //Types.TIMESTAMP
-         //Types.TIMESTAMP_WITH_TIMEZONE
-         //
-        //return type;
-    }*/
 }

@@ -28,9 +28,11 @@ import net.sf.jkniv.reflect.beans.CapitalNameFactory;
 import net.sf.jkniv.reflect.beans.Capitalize;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
+import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
+import net.sf.jkniv.sqlegance.types.Convertible;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
@@ -44,6 +46,7 @@ import net.sf.jkniv.whinstone.classification.GroupingBy;
 import net.sf.jkniv.whinstone.classification.NoGroupingBy;
 import net.sf.jkniv.whinstone.classification.Transformable;
 import net.sf.jkniv.whinstone.statement.AutoKey;
+import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /*
@@ -228,14 +231,10 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     
     private void setValueOfKey(ObjectProxy<?> proxy, String property, Object value)
     {
+        Convertible<Object, Object> converter = ConvertibleFactory.toJdbc(new PropertyAccess(property, proxy.getTargetClass()), proxy);
         Object parsedValue = value;
-        if(value instanceof java.sql.Time)
-            parsedValue = new Date(((java.sql.Time)value).getTime());
-        else if (value instanceof java.sql.Date)
-            parsedValue = new Date(((java.sql.Date)value).getTime());
-        else if (value instanceof java.sql.Timestamp)
-            parsedValue = new Date(((java.sql.Timestamp)value).getTime());
-        
+        if (!converter.getType().isInstance(value))
+            parsedValue = converter.toAttribute(value);
         proxy.invoke(CAPITAL_SETTER.does(property), parsedValue);
     }
 
