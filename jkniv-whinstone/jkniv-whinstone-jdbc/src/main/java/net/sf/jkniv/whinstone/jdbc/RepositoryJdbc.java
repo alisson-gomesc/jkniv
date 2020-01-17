@@ -45,6 +45,16 @@ import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
+import net.sf.jkniv.sqlegance.types.CalendarTimestampType;
+import net.sf.jkniv.sqlegance.types.DateTimestampType;
+import net.sf.jkniv.sqlegance.types.DoubleBigDecimalType;
+import net.sf.jkniv.sqlegance.types.EnumNameType;
+import net.sf.jkniv.sqlegance.types.EnumOrdinalType;
+import net.sf.jkniv.sqlegance.types.FloatDoubleType;
+import net.sf.jkniv.sqlegance.types.IntLongType;
+import net.sf.jkniv.sqlegance.types.LongBigDecimalType;
+import net.sf.jkniv.sqlegance.types.LongIntegerType;
+import net.sf.jkniv.sqlegance.types.ShortIntType;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.ConnectionFactory;
 import net.sf.jkniv.whinstone.QueryFactory;
@@ -54,6 +64,7 @@ import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.UnsupportedDslOperationException;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
+import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 
 /**
@@ -149,6 +160,7 @@ class RepositoryJdbc implements Repository
         Class<? extends ConnectionFactory> adapterClassFactory = null;
 
         configureHandlerException();
+        configureConverters();
         this.sqlContext = sqlContext;
         
         this.repositoryConfig = this.sqlContext.getRepositoryConfig();
@@ -526,6 +538,20 @@ class RepositoryJdbc implements Repository
                 factory.setConstructorTypes(types);
         }
         return factory.newInstance();
+    }
+    
+    private void configureConverters()
+    {
+        ConvertibleFactory.register(new DateTimestampType());
+        ConvertibleFactory.register(new CalendarTimestampType());
+        ConvertibleFactory.register(new IntLongType());
+        ConvertibleFactory.register(new LongBigDecimalType());
+        //ConvertibleFactory.register(new LongIntegerType());
+        ConvertibleFactory.register(new ShortIntType());
+        ConvertibleFactory.register(new FloatDoubleType());
+        ConvertibleFactory.register(new DoubleBigDecimalType());
+        //ConvertibleFactory.register(new EnumOrdinalType());
+        //ConvertibleFactory.register(new EnumNameType());
     }
     
     private void configureHandlerException()

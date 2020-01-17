@@ -1,5 +1,5 @@
 /* 
- * JKNIV, whinstone one contract to access your database.
+ * JKNIV, utils - Helper utilities for jdk code.
  * 
  * Copyright (C) 2017, the original author or authors.
  *
@@ -17,31 +17,24 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.sqlegance.types;
+package net.sf.jkniv.reflect.beans;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 
 import org.junit.Test;
 
-public class TrueTypeTest
+import net.sf.jkniv.acme.domain.FooColor;
+
+public class EnumTranslateTypeTest
 {
-
     @Test
-    public void whenTrueIsOneAndFalseIsZero()  
+    public void whenHaveEnumRuntimeAsString() throws ClassNotFoundException
     {
-        TrueType type = new TrueType("1|0");
-        
-        assertThat(type.toAttribute("0"), is(Boolean.FALSE));
-        assertThat(type.toAttribute("1"), is(Boolean.TRUE));
-        assertThat(type.toAttribute("2"), is(Boolean.FALSE));
-        assertThat(type.toAttribute("A"), is(Boolean.FALSE));
-
-        assertThat(type.toJdbc(Boolean.FALSE), is("0"));
-        assertThat(type.toJdbc(Boolean.TRUE), is("1"));
-        assertThat(type.toJdbc(true), is("1"));
-        assertThat(type.toJdbc(false), is("0"));
+        EnumTranslateType converter = new EnumTranslateType();
+        FooColor RED = converter.convert(FooColor.class, "RED");
+        FooColor WHITE = converter.convert(FooColor.class, 2);
+        assertThat(RED, is(FooColor.RED));
+        assertThat(WHITE, is(FooColor.WHITE));
     }
 }

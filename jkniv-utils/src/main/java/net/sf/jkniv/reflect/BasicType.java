@@ -21,159 +21,135 @@ package net.sf.jkniv.reflect;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
 import java.util.Calendar;
+import java.util.Currency;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.swing.JApplet;
+
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
+import sun.util.calendar.JulianCalendar;
 
+@SuppressWarnings("rawtypes")
 public class BasicType
 {
-    private static final Assertable notNull = AssertsFactory.getNotNull();
-    private static final BasicType instance = new BasicType();
-
+    private static final Assertable         notNull      = AssertsFactory.getNotNull();
+    private static final BasicType          instance     = new BasicType();
+    private static final Map<String, Class> BASIC_TYPES  = new HashMap<String, Class>();
+    private static final Map<String, Class> NUMBER_TYPES = new HashMap<String, Class>();
+    
+    static
+    {
+        BASIC_TYPES.put(String.class.getCanonicalName(), String.class);
+        BASIC_TYPES.put(Integer.class.getCanonicalName(), Integer.class);
+        BASIC_TYPES.put(int.class.getCanonicalName(), int.class);
+        BASIC_TYPES.put(Long.class.getCanonicalName(), Long.class);
+        BASIC_TYPES.put(long.class.getCanonicalName(), long.class);
+        BASIC_TYPES.put(Double.class.getCanonicalName(), Double.class);
+        BASIC_TYPES.put(double.class.getCanonicalName(), double.class);
+        BASIC_TYPES.put(Float.class.getCanonicalName(), Float.class);
+        BASIC_TYPES.put(float.class.getCanonicalName(), float.class);
+        BASIC_TYPES.put(Boolean.class.getCanonicalName(), Boolean.class);
+        BASIC_TYPES.put(boolean.class.getCanonicalName(), boolean.class);
+        BASIC_TYPES.put(Date.class.getCanonicalName(), Date.class);
+        BASIC_TYPES.put(Calendar.class.getCanonicalName(), Calendar.class);
+        BASIC_TYPES.put(GregorianCalendar.class.getCanonicalName(), GregorianCalendar.class);
+        BASIC_TYPES.put(JulianCalendar.class.getCanonicalName(), JulianCalendar.class);
+        BASIC_TYPES.put(BigDecimal.class.getCanonicalName(), BigDecimal.class);
+        BASIC_TYPES.put(Short.class.getCanonicalName(), Short.class);
+        BASIC_TYPES.put(short.class.getCanonicalName(), short.class);
+        BASIC_TYPES.put(Byte.class.getCanonicalName(), Byte.class);
+        BASIC_TYPES.put(byte.class.getCanonicalName(), byte.class);
+        BASIC_TYPES.put(Character.class.getCanonicalName(), Character.class);
+        BASIC_TYPES.put(char.class.getCanonicalName(), char.class);
+        BASIC_TYPES.put(BigInteger.class.getCanonicalName(), BigInteger.class);
+        BASIC_TYPES.put(AtomicInteger.class.getCanonicalName(), AtomicInteger.class);
+        BASIC_TYPES.put(AtomicLong.class.getCanonicalName(), AtomicLong.class);
+        
+        BASIC_TYPES.put(URL.class.getCanonicalName(), URL.class);
+        BASIC_TYPES.put(Currency.class.getCanonicalName(), Currency.class);
+        
+        // new java 8 number types
+        BASIC_TYPES.put("java.util.concurrent.atomic.DoubleAccumulator", FakeJdk8Type.class);
+        BASIC_TYPES.put("java.util.concurrent.atomic.DoubleAdder", FakeJdk8Type.class);
+        BASIC_TYPES.put("java.util.concurrent.atomic.LongAccumulator", FakeJdk8Type.class);
+        BASIC_TYPES.put("java.util.concurrent.atomic.LongAdder", FakeJdk8Type.class);
+        BASIC_TYPES.put("java.time.Duration", FakeJdk8Type.class);
+        BASIC_TYPES.put("java.time.Instant", FakeJdk8Type.class);
+        BASIC_TYPES.put("java.time.LocalDate", FakeJdk8Type.class);
+        BASIC_TYPES.put("java.time.LocalDateTime", FakeJdk8Type.class);
+        BASIC_TYPES.put("java.time.LocalTime", FakeJdk8Type.class);
+        BASIC_TYPES.put("java.time.ZonedDateTime", FakeJdk8Type.class);
+        BASIC_TYPES.put("java.time.ZonaId", FakeJdk8Type.class);
+        BASIC_TYPES.put("java.time.OffsetDateTime", FakeJdk8Type.class);
+        BASIC_TYPES.put("java.time.OffsetTime", FakeJdk8Type.class);
+        
+        NUMBER_TYPES.put(Integer.class.getCanonicalName(), Integer.class);
+        NUMBER_TYPES.put(int.class.getCanonicalName(), int.class);
+        NUMBER_TYPES.put(Long.class.getCanonicalName(), Long.class);
+        NUMBER_TYPES.put(long.class.getCanonicalName(), long.class);
+        NUMBER_TYPES.put(Double.class.getCanonicalName(), Double.class);
+        NUMBER_TYPES.put(double.class.getCanonicalName(), double.class);
+        NUMBER_TYPES.put(Float.class.getCanonicalName(), Float.class);
+        NUMBER_TYPES.put(float.class.getCanonicalName(), float.class);
+        NUMBER_TYPES.put(BigDecimal.class.getCanonicalName(), BigDecimal.class);
+        NUMBER_TYPES.put(Short.class.getCanonicalName(), Short.class);
+        NUMBER_TYPES.put(short.class.getCanonicalName(), short.class);
+        NUMBER_TYPES.put(Byte.class.getCanonicalName(), Byte.class);
+        NUMBER_TYPES.put(byte.class.getCanonicalName(), byte.class);
+        NUMBER_TYPES.put(BigInteger.class.getCanonicalName(), BigInteger.class);
+        NUMBER_TYPES.put(AtomicInteger.class.getCanonicalName(), AtomicInteger.class);
+        NUMBER_TYPES.put(AtomicLong.class.getCanonicalName(), AtomicLong.class);
+        NUMBER_TYPES.put("java.util.concurrent.atomic.DoubleAccumulator", FakeJdk8Type.class);
+        NUMBER_TYPES.put("java.util.concurrent.atomic.DoubleAdder", FakeJdk8Type.class);
+        NUMBER_TYPES.put("java.util.concurrent.atomic.LongAccumulator", FakeJdk8Type.class);
+        NUMBER_TYPES.put("java.util.concurrent.atomic.LongAdder", FakeJdk8Type.class);
+        
+    }
     
     public static BasicType getInstance()
     {
         return instance;
     }
     
-    /*
-     TODO thinking about, primitive types needs overload
-    public boolean isNumber(Object value)
-    {
-        notNull.verify(value);
-        return isNumberType(value.getClass());
-    }
-    */
-    
     public boolean isNumberType(Class<?> type)
     {
         notNull.verify(type);
-        
-        boolean isNumber = false;
-        
-        if (Integer.class.getCanonicalName().equals(type.getCanonicalName()) || int.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        else if (Long.class.getCanonicalName().equals(type.getCanonicalName())  || long.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        else if (Double.class.getCanonicalName().equals(type.getCanonicalName()) || double.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        else if (Float.class.getCanonicalName().equals(type.getCanonicalName()) || float.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;        
-        else if (BigDecimal.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        else if (Short.class.getCanonicalName().equals(type.getCanonicalName()) || short.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        else if (Byte.class.getCanonicalName().equals(type.getCanonicalName()) || byte.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        else if (BigInteger.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        else if (AtomicInteger.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        else if (AtomicLong.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        // new java 8 number types
-        else if ("java.util.concurrent.atomic.DoubleAccumulator".equals(type.getCanonicalName()))
-            isNumber = true;
-        else if ("java.util.concurrent.atomic.DoubleAdder".equals(type.getCanonicalName()))
-            isNumber = true;
-        else if ("java.util.concurrent.atomic.LongAccumulator".equals(type.getCanonicalName()))
-            isNumber = true;
-        else if ("java.util.concurrent.atomic.LongAdder".equals(type.getCanonicalName()))
-            isNumber = true;
-        return isNumber;
-    }
-
-    public boolean isNumberTypeWrapped(Class<?> type)
-    {
-        notNull.verify(type);
-        
-        boolean isNumber = false;
-        
-        if (Integer.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        else if (Long.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        else if (Double.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        else if (Float.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;        
-        else if (BigDecimal.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        else if (Short.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        else if (Byte.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        else if (BigInteger.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        else if (AtomicInteger.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        else if (AtomicLong.class.getCanonicalName().equals(type.getCanonicalName()))
-            isNumber = true;
-        // new java 8 number types
-        else if ("java.util.concurrent.atomic.DoubleAccumulator".equals(type.getCanonicalName()))
-            isNumber = true;
-        else if ("java.util.concurrent.atomic.DoubleAdder".equals(type.getCanonicalName()))
-            isNumber = true;
-        else if ("java.util.concurrent.atomic.LongAccumulator".equals(type.getCanonicalName()))
-            isNumber = true;
-        else if ("java.util.concurrent.atomic.LongAdder".equals(type.getCanonicalName()))
-            isNumber = true;
-        
-        return isNumber;
+        return NUMBER_TYPES.containsKey(type.getCanonicalName());
     }
     
-
-    public boolean isBasicType(Class<?> type)// TODO test me
+    public boolean isBasicType(Class<?> type)
     {
         notNull.verify(type);
-        
-        boolean isBasic = false;
-        
-        if(String.class.getCanonicalName().equals(type.getCanonicalName()))
-            isBasic = true;
-        else if (Integer.class.getCanonicalName().equals(type.getCanonicalName()) || int.class.getCanonicalName().equals(type.getCanonicalName()))
-            isBasic = true;
-        else if (Long.class.getCanonicalName().equals(type.getCanonicalName()) || long.class.getCanonicalName().equals(type.getCanonicalName()))
-            isBasic = true;
-        else if (Double.class.getCanonicalName().equals(type.getCanonicalName()) || double.class.getCanonicalName().equals(type.getCanonicalName()))
-            isBasic = true;
-        else if (Float.class.getCanonicalName().equals(type.getCanonicalName()) || float.class.getCanonicalName().equals(type.getCanonicalName()))
-            isBasic = true;        
-        else if (Boolean.class.getCanonicalName().equals(type.getCanonicalName()) || boolean.class.getCanonicalName().equals(type.getCanonicalName()))
-            isBasic = true;
-        else if(Date.class.isAssignableFrom(type))
-            isBasic = true;
-        else if(Calendar.class.isAssignableFrom(type))
-            isBasic = true;
-        else if (BigDecimal.class.getCanonicalName().equals(type.getCanonicalName()))
-            isBasic = true;
-        else if (Short.class.getCanonicalName().equals(type.getCanonicalName()) || short.class.getCanonicalName().equals(type.getCanonicalName()))
-            isBasic = true;
-        else if (Byte.class.getCanonicalName().equals(type.getCanonicalName()) || byte.class.getCanonicalName().equals(type.getCanonicalName()))
-            isBasic = true;
-        else if (Character.class.getCanonicalName().equals(type.getCanonicalName()) || char.class.getCanonicalName().equals(type.getCanonicalName()))
-            isBasic = true;
-        else if (BigInteger.class.getCanonicalName().equals(type.getCanonicalName()))
-            isBasic = true;
-        else if (AtomicInteger.class.getCanonicalName().equals(type.getCanonicalName()))
-            isBasic = true;
-        else if (AtomicLong.class.getCanonicalName().equals(type.getCanonicalName()))
-            isBasic = true;
-        // new java 8 number types
-        else if ("java.util.concurrent.atomic.DoubleAccumulator".equals(type.getCanonicalName()))
-            isBasic = true;
-        else if ("java.util.concurrent.atomic.DoubleAdder".equals(type.getCanonicalName()))
-            isBasic = true;
-        else if ("java.util.concurrent.atomic.LongAccumulator".equals(type.getCanonicalName()))
-            isBasic = true;
-        else if ("java.util.concurrent.atomic.LongAdder".equals(type.getCanonicalName()))
-            isBasic = true;
-        
-        return isBasic;
+        boolean answer = false;
+        Class clazz = BASIC_TYPES.get(type.getCanonicalName());
+        if (clazz == null)
+            answer = false;
+        else if (clazz.getCanonicalName().equals(FakeJdk8Type.class.getName()))
+            answer = true;
+        else
+            answer = clazz.isAssignableFrom(type);
+        return answer;
     }
-
+    
+    public class FakeJdk8Type
+    {
+        String className;
+        public FakeJdk8Type(String className)
+        {
+            this.className = className;
+        }
+        
+        public boolean isAssignableFrom()
+        {
+            return true;
+        }
+    }
 }

@@ -20,8 +20,8 @@
  */
 package net.sf.jkniv.whinstone.jdbc.domain.acme;
 
+import net.sf.jkniv.sqlegance.types.BooleanStringType;
 import net.sf.jkniv.sqlegance.types.Converter;
-import net.sf.jkniv.sqlegance.types.TrueType;
 
 public class FlatBook
 {
@@ -30,7 +30,7 @@ public class FlatBook
     private String isbn;
     private String author;
     private Long authorId;
-    @Converter(converter = TrueType.class,pattern = "Y|N")
+    @Converter(converter = BooleanStringType.class,pattern = "Y|N")
     private boolean inStock;
     
     public Long getId()

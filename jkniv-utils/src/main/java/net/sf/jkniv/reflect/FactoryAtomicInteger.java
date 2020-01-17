@@ -29,7 +29,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 class FactoryAtomicInteger implements Numerical
 {
-
+    public static final Numerical instance = new FactoryAtomicInteger();
+    
     @Override
     public Number valueOf(Object n)
     {

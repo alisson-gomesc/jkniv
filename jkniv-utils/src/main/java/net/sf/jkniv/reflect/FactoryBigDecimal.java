@@ -29,6 +29,8 @@ import java.math.BigDecimal;
  */
 class FactoryBigDecimal implements Numerical
 {
+    public static final Numerical instance = new FactoryBigDecimal();
+    
     @Override
     public Number valueOf(Object n)
     {

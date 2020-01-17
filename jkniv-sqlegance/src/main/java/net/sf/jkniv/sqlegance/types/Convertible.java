@@ -21,14 +21,16 @@ package net.sf.jkniv.sqlegance.types;
 
 /**
  * Convert or make the parser from Jdbc type to java object (class attribute)
- * or vice versa.
+ * or vice-versa.
  * 
- * <p><b>Note:</b> the implementation must be thread-safe and null-safe.</p>
+ * <p><b>Note:</b> the implementation must be thread-safe, null-safe and provides a constructor:
+ * {@code public MyConverter(String)}
  * 
- * @author alisson gomes
- *
  * @param <A>  the type of the class attribute
  * @param <B>  the type of the jdbc data column
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
  */
 public interface Convertible<A, B>
 {
@@ -46,13 +48,7 @@ public interface Convertible<A, B>
      */
     A toAttribute(B jdbc);
     
-    /**
-     * The jdbc types code from database driver that can be convertible to java type
-     * @return jdbc code from jdbc driver
-     */
-    int[] getTypes();
+    Class<A> getType();
     
-    Class<A> getClassType();
-    
-    //void setPattern(String pattern);
+    ColumnType getColumnType();
 }

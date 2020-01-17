@@ -160,11 +160,10 @@ class QueryName implements Queryable
         Param param = null;
         if (!isTypeOfNull())
         {
-            
             try
             {
                 Object o = PropertyUtils.getProperty(params, name);
-                param = new Param(o, getConverter(name).toJdbc(o), name);
+                param = new Param(o, getConverter(name, o).toJdbc(o), name);
             }
             catch (Exception e)
             {
@@ -184,7 +183,7 @@ class QueryName implements Queryable
             try
             {
                 Object o = PropertyUtils.getProperty(params, name);
-                param = new Param(o, getConverter(name).toJdbc(o), name, index);
+                param = new Param(o, getConverter(name, o).toJdbc(o), name, index);
             }
             catch (Exception e)
             {
@@ -463,14 +462,14 @@ class QueryName implements Queryable
         return it;
     }
     
-    @Override
+    @Override// FIXME mapping types
     public Param[] values()
     {
         List<Param> paramsValues = new ArrayList<Param>();
         int i = 0;
         if (isTypeOfBasic())
         {
-            paramsValues.add(new Param(getParams(), i));
+            paramsValues.add(new Param(getConverter("?", getParams()).toJdbc(getParams()), i));
         }
         else if (isTypeOfBulk()) 
         {
@@ -808,14 +807,22 @@ class QueryName implements Queryable
      * @return A convertible instance if found into class proxy or {@link NoConverterType}
      * instance when the field or method is not annotated.
      */
-    private Convertible<Object, Object> getConverter(String fieldName)
+    private Convertible<Object, Object> getConverter(String fieldName, Object value)
     {
         Convertible<Object, Object> convertible = NoConverterType.getInstance();
-        if(isTypeOfPojo() || isTypeOfCollectionPojo() || isTypeOfArrayPojo())
-        {
-            ObjectProxy<?> proxy = ObjectProxyFactory.of(getParams());
-            convertible = ConvertibleFactory.toJdbc(new PropertyAccess(fieldName, getParams().getClass()), proxy);
-        }
+        //if(isTypeOfPojo() || isTypeOfCollectionPojo() || isTypeOfArrayPojo())
+        //{
+            PropertyAccess propertyAccess = new PropertyAccess(fieldName, getParams().getClass());
+            if (propertyAccess.hasField() || propertyAccess.hasReadMethod())
+            {
+                ObjectProxy<?> proxy = ObjectProxyFactory.of(getParams());
+                convertible = ConvertibleFactory.toJdbc(propertyAccess, proxy);
+            }
+            else if (value != null)
+            {
+                convertible = ConvertibleFactory.getConverter(value.getClass());
+            }
+        //}
         return convertible;
     }
         

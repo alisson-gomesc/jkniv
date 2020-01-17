@@ -19,29 +19,52 @@
  */
 package net.sf.jkniv.sqlegance.types;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
-import java.util.Calendar;
+import java.sql.Timestamp;
 import java.util.Date;
 
-import org.junit.Test;
-
-public class CalendarAsIntTypeTest
+public class DateTimestampType implements Convertible<Date, Timestamp>
 {
-    @Test
-    public void whenCalendarIsInt()  
+    public DateTimestampType()
     {
-        CalendarIntType type = new CalendarIntType("yyyyMMdd");
-        Calendar d1 = Calendar.getInstance();
-        Calendar d2 = Calendar.getInstance();
-        d1.setTime(new Date(2019-1900, 0, 1));
-        d2.setTime(new Date(2019-1900, 1, 10));
+    }
+    
+    public DateTimestampType(String pattern)
+    {
+    }
+    
+    @Override
+    public Timestamp toJdbc(Date attribute)
+    {
+        if (attribute == null)
+            return null;
         
-        assertThat(type.toAttribute(20190101), is(d1));
-        assertThat(type.toAttribute(20190210), is(d2));
+        return new Timestamp(attribute.getTime());
+    }
 
-        assertThat(type.toJdbc(d1), is(20190101));
-        assertThat(type.toJdbc(d2), is(20190210));
+    @Override
+    public java.util.Date toAttribute(Timestamp jdbc)
+    {
+        if (jdbc == null)
+            return null;
+
+        return new Date(jdbc.getTime());
+    }
+
+    @Override
+    public Class<Date> getType()
+    {
+        return Date.class;
+    }
+    
+    @Override
+    public ColumnType getColumnType() 
+    {
+        return JdbcType.TIMESTAMP;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "DateTimestampType [type=" + getType() + ", columnType=" + getColumnType() + "]";
     }
 }

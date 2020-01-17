@@ -21,17 +21,37 @@ package net.sf.jkniv.reflect;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 public final class NumberFactory
 {
+    private static Map<String, Numerical> MAP = new HashMap<String, Numerical>();
+    
+    static {
+        MAP.put(Integer.class.getCanonicalName(), FactoryInteger.instance);
+        MAP.put(Long.class.getCanonicalName(), FactoryLong.instance);
+        MAP.put(Double.class.getCanonicalName(), FactoryDouble.instance);
+        MAP.put(Float.class.getCanonicalName(), FactoryFloat.instance);
+        MAP.put(BigDecimal.class.getCanonicalName(), FactoryBigDecimal.instance);
+        MAP.put(Short.class.getCanonicalName(), FactoryShort.instance);
+        MAP.put(BigInteger.class.getCanonicalName(), FactoryBigInteger.instance);
+        MAP.put(AtomicLong.class.getCanonicalName(), FactoryAtomicLong.instance);
+        MAP.put(AtomicInteger.class.getCanonicalName(), FactoryAtomicInteger.instance);
+        MAP.put(Byte.class.getCanonicalName(), FactoryByte.instance);
+    }
     
     public static Numerical getInstance(Number n)
     {
         Numerical factory = new FactoryLong();
         if (n != null)
         {
+            factory = MAP.get(n.getClass().getCanonicalName());
+            if (factory == null)
+                throw new UnsupportedOperationException("Cannot build a factory number to ["+n.getClass()+"] type");
+            /*
             if (n instanceof Integer)
                 factory = new FactoryInteger();
             else if (n instanceof Long)
@@ -54,6 +74,7 @@ public final class NumberFactory
                 factory = new FactoryByte();
             else
                 throw new UnsupportedOperationException("Cannot build a factory number to ["+n.getClass()+"] type");
+                */
             // TODO new java 8 number types
             /*
             else if ("java.util.concurrent.atomic.DoubleAccumulator".equals(type.getCanonicalName()))
@@ -74,6 +95,11 @@ public final class NumberFactory
         Numerical factory = new FactoryLong();
         if (n != null)
         {
+            factory = MAP.get(n);
+            if (factory == null)
+                throw new UnsupportedOperationException("Cannot build a factory number to ["+n.getClass()+"] type");
+
+            /*
             if (n.equals(Integer.class.getCanonicalName()))
                 factory = new FactoryInteger();
             else if (n.equals(Long.class.getCanonicalName()))
@@ -96,6 +122,7 @@ public final class NumberFactory
                 factory = new FactoryByte();
             else
                 throw new UnsupportedOperationException("Cannot build a factory number to ["+n.getClass()+"] type");
+                */
             //TODO new java 8 number types
             /*
             else if ("java.util.concurrent.atomic.DoubleAccumulator".equals(type.getCanonicalName()))

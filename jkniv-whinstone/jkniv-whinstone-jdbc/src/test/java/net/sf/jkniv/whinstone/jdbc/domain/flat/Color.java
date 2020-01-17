@@ -6,7 +6,7 @@ import java.util.List;
 public class Color
 {
     private String       name;
-    private int          code;
+    private Long          code;
     private List<String> priorities;
     
     public Color()
@@ -14,7 +14,7 @@ public class Color
         this(null, 0);
     }
     
-    public Color(String name, int code)
+    public Color(String name, long code)
     {
         this.name = name;
         this.code = code;
@@ -31,12 +31,12 @@ public class Color
         this.name = name;
     }
     
-    public int getCode()
+    public Long getCode()
     {
         return code;
     }
     
-    public void setCode(int code)
+    public void setCode(Long code)
     {
         this.code = code;
     }

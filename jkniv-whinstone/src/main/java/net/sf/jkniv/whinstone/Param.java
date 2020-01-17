@@ -103,6 +103,8 @@ public class Param
             params = ofArray();
         else if (isCollection())
             params = ofCollection();
+        else
+            throw new IllegalStateException("Cannot retrieve the parameter as array because is not a collection or array");
         return params;
     }
     

@@ -39,4 +39,6 @@ public interface Invokable
     Method getMethodByName(String methodName, Class<?> targetClass);
     
     boolean hasMethod(String methodName, Class<?> theTargetClass);
+    
+    void register(TranslateType castable, Class type);
 }

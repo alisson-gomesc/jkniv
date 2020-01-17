@@ -27,13 +27,15 @@ package net.sf.jkniv.reflect;
  */
 class FactoryByte implements Numerical
 {
+    public static final Numerical instance = new FactoryByte();
+    
     @Override
     public Number valueOf(Object n)
     {
         if (n == null)
             return null;
         else if (n instanceof Number)
-            return valueOf((Number)n);
+            return ((Number)n).byteValue();
         else
             return valueOf(n.toString());
     }
@@ -51,7 +53,7 @@ class FactoryByte implements Numerical
     {
         if (n == null)
             return null;
-        return Byte.valueOf(n.byteValue());
+        return n.byteValue();
     }
     
     @Override

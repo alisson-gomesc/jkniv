@@ -160,4 +160,6 @@ public interface ObjectProxy<T>
     Method getDeclaredMethod(String name);
     
     ObjectProxy<T> with(HandleableException handle);
+    
+    void register(TranslateType cast, Class type);
 }

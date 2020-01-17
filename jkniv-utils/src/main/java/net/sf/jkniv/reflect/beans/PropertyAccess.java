@@ -124,6 +124,21 @@ public class PropertyAccess
         return nestedField;
     }
     
+    public boolean hasField()
+    {
+        return (this.field != null);
+    }
+
+    public boolean hasReadMethod()
+    {
+        return (this.readMethod != null);
+    }
+    
+    public boolean hasWriterMethod()
+    {
+        return (this.writerMethod != null);
+    }
+    
     public void resolve(Class<?> targetClass)
     {
         setTargetClass(targetClass);

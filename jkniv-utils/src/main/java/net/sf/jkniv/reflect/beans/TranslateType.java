@@ -19,37 +19,21 @@
  */
 package net.sf.jkniv.reflect.beans;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
+ * Convert a value to a specific type.
+ * 
  * @author Alisson Gomes
- * @deprecated Needs change Argument Converter
+ * @since 0.6.0
  */
-abstract class AbstractConverter implements TypeConvertible
+public interface TranslateType
 {
-    protected boolean      allowNull;
-    protected List<String> patterns;
-    
-    public AbstractConverter(boolean allowNull)
-    {
-        this.allowNull = allowNull;
-        this.patterns = new ArrayList<String>();
-    }
+    /**
+     * make a cast from {@code value}
+     * @param <T> destiny class type resulted of conversion
+     * @param type of to
+     * @param value original value to be converted
+     * @return the result cast
+     */
+    <T> T convert(Class<T> type, Object value);
 
-    public boolean nullable()
-    {
-        return this.allowNull;
-    }
-    
-    public void withPattern(String pattern)
-    {
-        this.patterns.add(0, pattern);
-    }
-    
-    public void cleanPatterns()
-    {
-        this.patterns.clear();
-    }
-    
 }

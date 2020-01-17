@@ -19,48 +19,52 @@
  */
 package net.sf.jkniv.sqlegance.types;
 
-import java.sql.Types;
+import java.math.BigDecimal;
 
-class DateAsSqlDateType implements Convertible<java.sql.Time, java.util.Date>
+public class LongBigDecimalType implements Convertible<Long, BigDecimal>
 {
-    private final static int[] TYPES = {Types.DATE, Types.TIME, Types.TIMESTAMP};
-    
-    public DateAsSqlDateType()
+    public LongBigDecimalType()
     {
     }
     
-    public DateAsSqlDateType(String pattern)
+    public LongBigDecimalType(String pattern)
     {
     }
     
     @Override
-    public java.util.Date toJdbc(java.sql.Time attribute)
+    public BigDecimal toJdbc(Long attribute)
     {
         if (attribute == null)
             return null;
         
-        return new java.util.Date(attribute.getTime());
+        return new BigDecimal(attribute);
     }
 
     @Override
-    public java.sql.Time toAttribute(java.util.Date jdbc)
+    public Long toAttribute(BigDecimal jdbc)
     {
         if (jdbc == null)
             return null;
-
-        return new java.sql.Time(jdbc.getTime());
+        
+        return jdbc.longValue();
     }
 
     @Override
-    public int[] getTypes()
+    public Class<Long> getType()
     {
-        return TYPES;
-    }
-
-    @Override
-    public Class<java.sql.Time> getClassType()
-    {
-        return java.sql.Time.class;
+        return Long.class;
     }
     
+    @Override
+    public ColumnType getColumnType() 
+    {
+        return JdbcType.NUMERIC;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "LongBigDecimalType [type="
+                + getType() + ", columnType=" + getColumnType() + "]";
+    }
 }

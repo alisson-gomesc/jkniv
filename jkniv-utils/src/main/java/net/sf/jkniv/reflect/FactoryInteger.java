@@ -27,15 +27,17 @@ package net.sf.jkniv.reflect;
  */
 class FactoryInteger implements Numerical
 {
+    public static final Numerical instance = new FactoryInteger();
+    
     @Override
     public Number valueOf(Object n)
     {
         if (n == null)
             return null;
         else if (n instanceof Number)
-            return valueOf((Number)n);
+            return ((Number)n).intValue();
         else
-            return valueOf(n.toString());
+            return Integer.valueOf(n.toString());
     }
 
     @Override
@@ -51,7 +53,7 @@ class FactoryInteger implements Numerical
     {
         if (n == null)
             return null;
-        return Integer.valueOf(n.intValue());
+        return n.intValue();
     }
     
     @Override

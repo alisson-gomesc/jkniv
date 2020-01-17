@@ -19,13 +19,9 @@
  */
 package net.sf.jkniv.sqlegance.types;
 
-import java.sql.Types;
-
 public class NoConverterType implements Convertible<Object, Object>
 {
-    private final static int[] TYPES = {Types.CHAR, Types.VARCHAR, Types.NCHAR, Types.NVARCHAR};
     private final static Convertible<Object, Object> INSTANCE = new NoConverterType();
-    
     
     public static Convertible<Object, Object> getInstance()
     {
@@ -50,15 +46,14 @@ public class NoConverterType implements Convertible<Object, Object>
     }
 
     @Override
-    public int[] getTypes()
-    {
-        return TYPES;
-    }
-
-    @Override
-    public Class<Object> getClassType()
+    public Class<Object> getType()
     {
         return Object.class;
     }
     
+    @Override
+    public ColumnType getColumnType() 
+    {
+        return JdbcType.OTHER;
+    }    
 }

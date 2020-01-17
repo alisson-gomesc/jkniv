@@ -3,12 +3,10 @@ package net.sf.jkniv.whinstone.jdbc.domain.flat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import net.sf.jkniv.sqlegance.types.BooleanStringType;
 import net.sf.jkniv.sqlegance.types.Converter;
-import net.sf.jkniv.sqlegance.types.DateAsIntType;
-import net.sf.jkniv.sqlegance.types.EnumNameType;
-import net.sf.jkniv.sqlegance.types.EnumOrdinalType;
-import net.sf.jkniv.sqlegance.types.TrueType;
 import net.sf.jkniv.sqlegance.types.Converter.EnumType;
+import net.sf.jkniv.sqlegance.types.DateIntType;
 
 public class MyTypes
 {
@@ -25,11 +23,11 @@ public class MyTypes
     private Date    myDate;
     private Date    myTime;
     private Date    myTimestamp;
-    @Converter(converter = TrueType.class, pattern = "S|N")
+    @Converter(converter = BooleanStringType.class, pattern = "S|N")
     private Boolean myBoolChar;
-    @Converter(converter = TrueType.class, pattern = "S|N")
+    @Converter(converter = BooleanStringType.class, pattern = "S|N")
     private Boolean myBoolCharOverride;
-    @Converter(converter = DateAsIntType.class, pattern = "yyyyMMdd")
+    @Converter(converter = DateIntType.class, pattern = "yyyyMMdd")
     private Date myDateInt;
 
     @Converter(converter = TimeUnit.class, isEnum = EnumType.STRING)
@@ -158,13 +156,13 @@ public class MyTypes
         this.myBoolChar = myBoolChar;
     }
     
-    @Converter(converter = TrueType.class, pattern = "YES|NO")
+    @Converter(converter = BooleanStringType.class, pattern = "YES|NO")
     public Boolean getMyBoolCharOverride()
     {
         return myBoolCharOverride;
     }
     
-    @Converter(converter = TrueType.class, pattern = "YES|NO")
+    @Converter(converter = BooleanStringType.class, pattern = "YES|NO")
     public void setMyBoolCharOverride(Boolean myBoolCharOverride)
     {
         this.myBoolCharOverride = myBoolCharOverride;

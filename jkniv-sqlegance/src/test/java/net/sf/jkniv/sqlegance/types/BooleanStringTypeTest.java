@@ -22,26 +22,23 @@ package net.sf.jkniv.sqlegance.types;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import org.junit.Test;
 
-public class CalendarAsIntTypeTest
+public class BooleanStringTypeTest
 {
     @Test
-    public void whenCalendarIsInt()  
+    public void whenTrueIsOneAndFalseIsZero()  
     {
-        CalendarIntType type = new CalendarIntType("yyyyMMdd");
-        Calendar d1 = Calendar.getInstance();
-        Calendar d2 = Calendar.getInstance();
-        d1.setTime(new Date(2019-1900, 0, 1));
-        d2.setTime(new Date(2019-1900, 1, 10));
+        BooleanStringType type = new BooleanStringType("1|0");
         
-        assertThat(type.toAttribute(20190101), is(d1));
-        assertThat(type.toAttribute(20190210), is(d2));
+        assertThat(type.toAttribute("0"), is(Boolean.FALSE));
+        assertThat(type.toAttribute("1"), is(Boolean.TRUE));
+        assertThat(type.toAttribute("2"), is(Boolean.FALSE));
+        assertThat(type.toAttribute("A"), is(Boolean.FALSE));
 
-        assertThat(type.toJdbc(d1), is(20190101));
-        assertThat(type.toJdbc(d2), is(20190210));
+        assertThat(type.toJdbc(Boolean.FALSE), is("0"));
+        assertThat(type.toJdbc(Boolean.TRUE), is("1"));
+        assertThat(type.toJdbc(true), is("1"));
+        assertThat(type.toJdbc(false), is("0"));
     }
 }

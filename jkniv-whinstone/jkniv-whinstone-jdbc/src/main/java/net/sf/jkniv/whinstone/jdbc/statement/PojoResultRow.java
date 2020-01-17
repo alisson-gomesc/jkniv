@@ -132,7 +132,7 @@ class PojoResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultS
     {
         ObjectProxy<?> proxy = ObjectProxyFactory.of(otmValues.get(otm));
         String fieldName = column.getName().substring(otm.getProperty().length() + 1);
-        JdbcColumn<ResultSet> otmColumn = new DefaultJdbcColumn(column.getIndex(),  fieldName, column.getJdbcType());
+        JdbcColumn<ResultSet> otmColumn = new DefaultJdbcColumn(column.getIndex(),  fieldName, column.getType().value());
         setValueOf(proxy, otmColumn, rs);
     }
     

@@ -39,7 +39,6 @@ import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.RepositoryException;
-import sun.util.LocaleServiceProviderPool.LocalizedObjectGetter;
 
 public class JsonMapper
 {

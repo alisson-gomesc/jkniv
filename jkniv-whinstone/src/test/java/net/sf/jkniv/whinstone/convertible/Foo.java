@@ -1,13 +1,13 @@
 package net.sf.jkniv.whinstone.convertible;
 
 import net.sf.jkniv.sqlegance.LanguageType;
+import net.sf.jkniv.sqlegance.types.BooleanStringType;
 import net.sf.jkniv.sqlegance.types.Converter;
 import net.sf.jkniv.sqlegance.types.Converter.EnumType;
-import net.sf.jkniv.sqlegance.types.TrueType;
 
 public class Foo
 {
-    @Converter(converter = TrueType.class, pattern = "T|F")
+    @Converter(converter = BooleanStringType.class, pattern = "T|F")
     private Boolean      active;
     @Converter(converter = LanguageType.class, isEnum = EnumType.ORDINAL)
     private LanguageType languageType;

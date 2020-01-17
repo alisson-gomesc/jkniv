@@ -43,9 +43,9 @@ import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
-import net.sf.jkniv.sqlegance.types.CalendarAsSqlTimestampType;
+import net.sf.jkniv.sqlegance.types.CalendarTimestampType;
 import net.sf.jkniv.sqlegance.types.Convertible;
-import net.sf.jkniv.sqlegance.types.DateAsSqlTimestampType;
+import net.sf.jkniv.sqlegance.types.DateTimestampType;
 import net.sf.jkniv.sqlegance.types.NoConverterType;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.Param;
@@ -94,10 +94,27 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         return this;
     }
     
+    // FIXME Converter/Mapping/Translate values from/to jdbc
     @Override
     public StatementAdapter<T, ResultSet> bind(String name, Object value)
     {
         log(name, value);
+        try {
+            if (name.toLowerCase().startsWith("in:"))
+            {
+                setValue((Object[]) value);
+            }
+            else
+            {
+                setValue(new Param(value, name, this.index));
+            }
+        }
+        catch (SQLException e)
+        {
+            this.handlerException.handle(e);
+        }
+
+        /*
         try
         {
             if (name.toLowerCase().startsWith("in:"))
@@ -125,12 +142,17 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         {
             this.handlerException.handle(e);
         }
+        */
         return this;
     }
     
+    // FIXME Converter/Mapping/Translate values from/to jdbc
     @Override
     public StatementAdapter<T, ResultSet> bind(Param param)
     {
+        log(param);
+        setValue(param);
+        /*
         Object value = param.getValueAs();
         log(param);
         try
@@ -156,6 +178,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         {
             this.handlerException.handle(e);
         }
+        */
         return this;
     }
     
@@ -295,21 +318,24 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     
     private void setValueOfKey(ObjectProxy<?> proxy, String property, Object value)
     {
+        Convertible<Object, Object> converter = ConvertibleFactory.toJdbc(new PropertyAccess(property, proxy.getTargetClass()), proxy);
         Object parsedValue = value;
-        if (value instanceof java.sql.Time)
-            parsedValue = new Date(((java.sql.Time) value).getTime());
-        else if (value instanceof java.sql.Date)
-            parsedValue = new Date(((java.sql.Date) value).getTime());
-        else if (value instanceof java.sql.Timestamp)
-            parsedValue = new Date(((java.sql.Timestamp) value).getTime());
-        
+        if (!converter.getType().isInstance(value))
+            parsedValue = converter.toAttribute(value);
         proxy.invoke(CAPITAL_SETTER.does(property), parsedValue);
     }
     
-    private void setValue(Param param) throws SQLException
+    private void setValue(Param param)
     {
-        int i = currentIndex();
-        stmt.setObject(i, param.getValueAs());
+        try
+        {
+            int i = currentIndex();
+            stmt.setObject(i, param.getValueAs());
+        }
+        catch (SQLException e)
+        {
+            this.handlerException.handle(e);
+        }     
     }
     
     private void setValue(Object[] paramsIN) throws SQLException
@@ -327,7 +353,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
         Convertible<Object, Object> convertible = getConverter(this.paramNames[i-1]);
         if (convertible instanceof NoConverterType)
         {
-            Convertible<java.util.Date, java.sql.Timestamp> convert2Timestamp = new DateAsSqlTimestampType();
+            Convertible<java.util.Date, java.sql.Timestamp> convert2Timestamp = new DateTimestampType();
             stmt.setObject(i, convert2Timestamp.toJdbc(value));
         }
         else
@@ -337,7 +363,7 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
     private void setValue(Calendar value) throws SQLException
     {
         int i = currentIndex();
-        Convertible<java.util.Calendar, java.sql.Timestamp> convertible = new CalendarAsSqlTimestampType();
+        Convertible<java.util.Calendar, java.sql.Timestamp> convertible = new CalendarTimestampType();
         stmt.setObject(i, convertible.toJdbc(value));
     }
     

@@ -21,36 +21,31 @@ package net.sf.jkniv.reflect.beans;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.DecimalFormat;
-import java.text.ParseException;
 
 /**
  * @author Alisson Gomes 
- * @deprecated Needs change Argument Converter
+ * @since 0.6.0
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
-class NumberConverter extends AbstractConverter
+@SuppressWarnings("unchecked")
+class NumberTranslateType implements TranslateType
 {
-    
-    public NumberConverter()
+    public NumberTranslateType()
     {
-        super(true);
+        super();
     }
-        
+    
     public <T> T convert(Class<T> type, Object value)
     {
         T result = null;
-        if (value == null && allowNull)
+        if (value == null)
             return null;
         
         if (value instanceof Number)
             result = match(type, (Number) value);
-        else if (value instanceof String)
-            result = match(type, (String) value);
-        
-        if (result == null && !allowNull)
-            throw new IllegalArgumentException("Date with value [" + value + "] not match with "
-                    + type.getCanonicalName());
+        else 
+            result = (T)value;
+        //else if (value instanceof String)
+        //    result = match(type, (String) value);
         
         return result;
     }
@@ -61,11 +56,11 @@ class NumberConverter extends AbstractConverter
         T result = null;
         if (type == Integer.class || "int".equals(canonicalName))
             result = (T) Integer.valueOf(value.intValue());
-        else if (type == Long.class|| "long".equals(canonicalName))
+        else if (type == Long.class || "long".equals(canonicalName))
             result = (T) Long.valueOf(value.longValue());
-        else if (type == Double.class|| "double".equals(canonicalName))
+        else if (type == Double.class || "double".equals(canonicalName))
             result = (T) Double.valueOf(value.doubleValue());
-        else if (type == Float.class|| "float".equals(canonicalName))
+        else if (type == Float.class || "float".equals(canonicalName))
             result = (T) Float.valueOf(value.floatValue());
         else if (type == BigDecimal.class)
             result = (T) BigDecimal.valueOf(value.doubleValue());
@@ -77,6 +72,7 @@ class NumberConverter extends AbstractConverter
         return result;
     }
     
+    /*
     private <T> T match(Class<T> type, String value)
     {
         Number number = null;
@@ -97,4 +93,5 @@ class NumberConverter extends AbstractConverter
         
         return match(type, number);
     }    
+    */
 }

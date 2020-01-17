@@ -29,6 +29,8 @@ import java.math.BigInteger;
  */
 class FactoryBigInteger implements Numerical
 {
+    public static final Numerical instance = new FactoryBigInteger();
+    
     @Override
     public Number valueOf(Object n)
     {

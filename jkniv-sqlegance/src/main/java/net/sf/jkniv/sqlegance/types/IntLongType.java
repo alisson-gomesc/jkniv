@@ -19,29 +19,50 @@
  */
 package net.sf.jkniv.sqlegance.types;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
-import java.util.Calendar;
-import java.util.Date;
-
-import org.junit.Test;
-
-public class CalendarAsIntTypeTest
+public class IntLongType implements Convertible<Integer, Long>
 {
-    @Test
-    public void whenCalendarIsInt()  
+    public IntLongType()
     {
-        CalendarIntType type = new CalendarIntType("yyyyMMdd");
-        Calendar d1 = Calendar.getInstance();
-        Calendar d2 = Calendar.getInstance();
-        d1.setTime(new Date(2019-1900, 0, 1));
-        d2.setTime(new Date(2019-1900, 1, 10));
+    }
+    
+    public IntLongType(String pattern)
+    {
+    }
+    
+    @Override
+    public Long toJdbc(Integer attribute)
+    {
+        if (attribute == null)
+            return null;
         
-        assertThat(type.toAttribute(20190101), is(d1));
-        assertThat(type.toAttribute(20190210), is(d2));
+        return attribute.longValue();
+    }
 
-        assertThat(type.toJdbc(d1), is(20190101));
-        assertThat(type.toJdbc(d2), is(20190210));
+    @Override
+    public Integer toAttribute(Long jdbc)
+    {
+        if (jdbc == null)
+            return null;
+        
+        return jdbc.intValue();
+    }
+
+    @Override
+    public Class<Integer> getType()
+    {
+        return Integer.class;
+    }
+    
+    @Override
+    public ColumnType getColumnType() 
+    {
+        return JdbcType.BIGINT;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "IntLongType [type="
+                + getType() + ", columnType=" + getColumnType() + "]";
     }
 }
