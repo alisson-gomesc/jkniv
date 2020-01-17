@@ -2,13 +2,13 @@ package net.sf.jkniv.whinstone.jdbc.convertible;
 
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.RepositoryType;
-import net.sf.jkniv.sqlegance.types.BooleanStringType;
+import net.sf.jkniv.sqlegance.types.BooleanCharType;
 import net.sf.jkniv.sqlegance.types.Converter;
 import net.sf.jkniv.sqlegance.types.Converter.EnumType;
 
 public class Boo
 {
-    @Converter(converter = BooleanStringType.class, pattern = "T|F")
+    @Converter(converter = BooleanCharType.class, pattern = "T|F")
     private Boolean        active;
     @Converter(converter = LanguageType.class, isEnum = EnumType.ORDINAL)
     private LanguageType   languageType;

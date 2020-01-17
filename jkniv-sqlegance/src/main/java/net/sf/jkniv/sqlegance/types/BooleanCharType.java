@@ -25,19 +25,19 @@ package net.sf.jkniv.sqlegance.types;
  * The {@code pattern} format is: true|false, where the values can be any string value.
  * 
  * <pre>
- * {@literal @}Converter(converter = BooleanStringType.class,pattern = "Y|N")
+ * {@literal @}Converter(converter = BooleanCharType.class,pattern = "Y|N")
  * </pre>
  */
-public class BooleanStringType implements Convertible<Boolean, String>
+public class BooleanCharType implements Convertible<Boolean, String>
 {
     private String truePattern;
     private String falsePattern;
 
-    public BooleanStringType(String pattern)
+    public BooleanCharType(String pattern)
     {
         String[] patterns = pattern.split("\\|");
         if (patterns.length != 2)
-            throw new ConverterException("BooleanStringType expect a separator \"|\" to handle true and false values, for example \"1|0\". The value was: "+pattern);
+            throw new ConverterException("BooleanCharType expect a separator \"|\" to handle true and false values, for example \"1|0\". The value was: "+pattern);
         this.truePattern = patterns[0];
         this.falsePattern = patterns[1];
     }
@@ -69,13 +69,13 @@ public class BooleanStringType implements Convertible<Boolean, String>
     @Override
     public ColumnType getColumnType() 
     {
-        return JdbcType.BIT;
+        return JdbcType.CHAR;
     }
 
     @Override
     public String toString()
     {
-        return "BooleanStringType [truePattern=" + truePattern + ", falsePattern=" + falsePattern + ", type="
+        return "BooleanCharType [truePattern=" + truePattern + ", falsePattern=" + falsePattern + ", type="
                 + getType() + ", columnType=" + getColumnType() + "]";
     }
 }

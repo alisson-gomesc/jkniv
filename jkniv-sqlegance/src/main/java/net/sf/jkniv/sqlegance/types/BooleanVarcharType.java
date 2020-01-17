@@ -25,25 +25,25 @@ package net.sf.jkniv.sqlegance.types;
  * The {@code pattern} format is: true|false, where the values can be any string value.
  * 
  * <pre>
- * {@literal @}Converter(converter = BooleanIntType.class,pattern = "1|0")
+ * {@literal @}Converter(converter = BooleanVarcharType.class,pattern = "Y|N")
  * </pre>
  */
-public class BooleanIntType implements Convertible<Boolean, Integer>
+public class BooleanVarcharType implements Convertible<Boolean, String>
 {
-    private int truePattern;
-    private int falsePattern;
+    private String truePattern;
+    private String falsePattern;
 
-    public BooleanIntType(String pattern)
+    public BooleanVarcharType(String pattern)
     {
         String[] patterns = pattern.split("\\|");
         if (patterns.length != 2)
-            throw new ConverterException("BooleanIntType expect a separator \"|\" to handle true and false values, for example \"1|0\". The value was: "+pattern);
-        this.truePattern = Integer.valueOf(patterns[0]);
-        this.falsePattern = Integer.valueOf(patterns[1]);
+            throw new ConverterException("BooleanVarcharType expect a separator \"|\" to handle true and false values, for example \"1|0\". The value was: "+pattern);
+        this.truePattern = patterns[0];
+        this.falsePattern = patterns[1];
     }
     
     @Override
-    public Integer toJdbc(Boolean attribute)
+    public String toJdbc(Boolean attribute)
     {
         if (attribute == null)
             return null;
@@ -52,7 +52,7 @@ public class BooleanIntType implements Convertible<Boolean, Integer>
     }
 
     @Override
-    public Boolean toAttribute(Integer jdbc)
+    public Boolean toAttribute(String jdbc)
     {
         if (jdbc == null)
             return null;
@@ -69,15 +69,13 @@ public class BooleanIntType implements Convertible<Boolean, Integer>
     @Override
     public ColumnType getColumnType() 
     {
-        return JdbcType.INTEGER;
+        return JdbcType.VARCHAR;
     }
 
     @Override
     public String toString()
     {
-        return "BooleanIntType [truePattern=" + truePattern + ", falsePattern=" + falsePattern + ", type="
+        return "BooleanVarcharType [truePattern=" + truePattern + ", falsePattern=" + falsePattern + ", type="
                 + getType() + ", columnType=" + getColumnType() + "]";
     }
-
-
 }

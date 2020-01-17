@@ -41,7 +41,7 @@ public class ConverterTest
         assertThat(converter, notNullValue());
         //assertThat(converter.allowNull(), is(true));
         assertThat(converter.pattern(), is("1"));
-        assertThat(converter.converter().getName(), is(BooleanStringType.class.getName()));
+        assertThat(converter.converter().getName(), is(BooleanCharType.class.getName()));
 
         converter = proxy.getAnnotationMethod(Converter.class, "getCreatedAt");
         assertThat(converter, notNullValue());

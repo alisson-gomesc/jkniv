@@ -97,7 +97,7 @@ public class SqlScalarTest extends BaseJdbc
         Queryable q = getQuery("getScalarFloat");
         Number number = repositoryDerby.scalar(q);
         assertThat(number, notNullValue());
-        assertThat(number, instanceOf(Double.class));
+        assertThat(number, instanceOf(Float.class));
         assertThat(q.isScalar(), is(true));
     }
     

@@ -48,12 +48,8 @@ import net.sf.jkniv.sqlegance.transaction.TransactionType;
 import net.sf.jkniv.sqlegance.types.CalendarTimestampType;
 import net.sf.jkniv.sqlegance.types.DateTimestampType;
 import net.sf.jkniv.sqlegance.types.DoubleBigDecimalType;
-import net.sf.jkniv.sqlegance.types.EnumNameType;
-import net.sf.jkniv.sqlegance.types.EnumOrdinalType;
-import net.sf.jkniv.sqlegance.types.FloatDoubleType;
 import net.sf.jkniv.sqlegance.types.IntLongType;
 import net.sf.jkniv.sqlegance.types.LongBigDecimalType;
-import net.sf.jkniv.sqlegance.types.LongIntegerType;
 import net.sf.jkniv.sqlegance.types.ShortIntType;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.ConnectionFactory;
@@ -544,11 +540,11 @@ class RepositoryJdbc implements Repository
     {
         ConvertibleFactory.register(new DateTimestampType());
         ConvertibleFactory.register(new CalendarTimestampType());
-        ConvertibleFactory.register(new IntLongType());
+        //ConvertibleFactory.register(new IntLongType());
         ConvertibleFactory.register(new LongBigDecimalType());
         //ConvertibleFactory.register(new LongIntegerType());
         ConvertibleFactory.register(new ShortIntType());
-        ConvertibleFactory.register(new FloatDoubleType());
+        //ConvertibleFactory.register(new FloatDoubleType());
         ConvertibleFactory.register(new DoubleBigDecimalType());
         //ConvertibleFactory.register(new EnumOrdinalType());
         //ConvertibleFactory.register(new EnumNameType());
