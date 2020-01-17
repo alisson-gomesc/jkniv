@@ -21,7 +21,7 @@ package net.sf.jkniv.whinstone.cassandra.types;
 
 import com.datastax.driver.core.DataType;
 
-import net.sf.jkniv.sqlegance.types.ColumnType;
+import net.sf.jkniv.whinstone.types.ColumnType;
 
 /***
  * Data types supported by cassandra.

@@ -60,8 +60,6 @@ import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.sqlegance.params.ParamParserColonMark;
-import net.sf.jkniv.sqlegance.types.Convertible;
-import net.sf.jkniv.sqlegance.types.NoConverterType;
 import net.sf.jkniv.sqlegance.validation.ValidateType;
 import net.sf.jkniv.whinstone.classification.Transformable;
 import net.sf.jkniv.whinstone.commands.Command;
@@ -69,6 +67,8 @@ import net.sf.jkniv.whinstone.commands.CommandAdapter;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.commands.DefaultQueryHandler;
 import net.sf.jkniv.whinstone.params.AutoBindParams;
+import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.NoConverterType;
 
 @SuppressWarnings("unchecked")
 public class DefaultQueryHandlerTest

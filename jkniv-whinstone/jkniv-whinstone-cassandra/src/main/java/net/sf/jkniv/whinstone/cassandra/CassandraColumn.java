@@ -27,11 +27,11 @@ import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Row;
 
 import net.sf.jkniv.reflect.beans.PropertyAccess;
-import net.sf.jkniv.sqlegance.types.ColumnType;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.JdbcColumnMapper;
 import net.sf.jkniv.whinstone.UnderscoreToCamelCaseMapper;
 import net.sf.jkniv.whinstone.cassandra.types.CassandraType;
+import net.sf.jkniv.whinstone.types.ColumnType;
 
 public class CassandraColumn implements JdbcColumn<Row>
 {

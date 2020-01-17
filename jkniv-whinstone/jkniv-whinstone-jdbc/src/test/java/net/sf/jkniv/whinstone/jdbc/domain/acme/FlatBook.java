@@ -20,8 +20,8 @@
  */
 package net.sf.jkniv.whinstone.jdbc.domain.acme;
 
-import net.sf.jkniv.sqlegance.types.BooleanCharType;
-import net.sf.jkniv.sqlegance.types.Converter;
+import net.sf.jkniv.whinstone.types.BooleanCharType;
+import net.sf.jkniv.whinstone.types.Converter;
 
 public class FlatBook
 {

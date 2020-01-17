@@ -22,7 +22,7 @@ package net.sf.jkniv.whinstone;
 import java.sql.SQLException;
 
 import net.sf.jkniv.reflect.beans.PropertyAccess;
-import net.sf.jkniv.sqlegance.types.ColumnType;
+import net.sf.jkniv.whinstone.types.ColumnType;
 
 /**
  * Represents a column of database.

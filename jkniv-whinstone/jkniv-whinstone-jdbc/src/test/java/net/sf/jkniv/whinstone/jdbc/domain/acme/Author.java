@@ -27,9 +27,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.validation.constraints.NotNull;
 
-import net.sf.jkniv.sqlegance.types.Converter;
-import net.sf.jkniv.sqlegance.types.Converter.EnumType;
 import net.sf.jkniv.sqlegance.validation.UpdateValidate;
+import net.sf.jkniv.whinstone.types.Converter;
+import net.sf.jkniv.whinstone.types.Converter.EnumType;
 
 //import javax.validation.constraints.NotNull;
 //import javax.validation.constraints.Size;

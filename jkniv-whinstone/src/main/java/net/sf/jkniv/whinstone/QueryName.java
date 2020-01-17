@@ -41,14 +41,14 @@ import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.params.ParamParser;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
-import net.sf.jkniv.sqlegance.types.Convertible;
-import net.sf.jkniv.sqlegance.types.NoConverterType;
 import net.sf.jkniv.whinstone.params.AutoBindParams;
 import net.sf.jkniv.whinstone.params.ParameterException;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 import net.sf.jkniv.whinstone.params.PrepareParamsFactory;
 import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.NoConverterType;
 
 /**
  * The object used to name and parameterize a query.

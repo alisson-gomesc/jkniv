@@ -26,11 +26,11 @@ import net.sf.jkniv.reflect.beans.Capitalize;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.reflect.beans.PropertyAccess;
-import net.sf.jkniv.sqlegance.types.Convertible;
 import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.types.Convertible;
 
 class PositionalCollectionPojoParams extends AbstractParam implements AutoBindParams
 {

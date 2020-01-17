@@ -43,10 +43,6 @@ import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.sqlegance.OneToMany;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
-import net.sf.jkniv.sqlegance.types.CalendarTimestampType;
-import net.sf.jkniv.sqlegance.types.Convertible;
-import net.sf.jkniv.sqlegance.types.DateTimestampType;
-import net.sf.jkniv.sqlegance.types.NoConverterType;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
@@ -61,6 +57,10 @@ import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
 import net.sf.jkniv.whinstone.statement.AutoKey;
 import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.types.CalendarTimestampType;
+import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.DateTimestampType;
+import net.sf.jkniv.whinstone.types.NoConverterType;
 
 public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
 {

@@ -1,6 +1,6 @@
 package net.sf.jkniv.whinstone.statement;
 
-import net.sf.jkniv.sqlegance.types.ColumnType;
+import net.sf.jkniv.whinstone.types.ColumnType;
 
 class TypeMap
 {

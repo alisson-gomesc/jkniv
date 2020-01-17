@@ -24,11 +24,11 @@ import java.sql.SQLException;
 import java.util.Date;
 
 import net.sf.jkniv.reflect.beans.PropertyAccess;
-import net.sf.jkniv.sqlegance.types.ColumnType;
-import net.sf.jkniv.sqlegance.types.JdbcType;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.JdbcColumnMapper;
 import net.sf.jkniv.whinstone.UnderscoreToCamelCaseMapper;
+import net.sf.jkniv.whinstone.types.ColumnType;
+import net.sf.jkniv.whinstone.types.JdbcType;
 
 public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
 {

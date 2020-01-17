@@ -36,7 +36,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import net.sf.jkniv.sqlegance.types.JdbcType;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
@@ -46,6 +45,7 @@ import net.sf.jkniv.whinstone.jdbc.domain.acme.Book;
 import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatAuthor;
 import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook;
 import net.sf.jkniv.whinstone.transaction.TransactionStatus;
+import net.sf.jkniv.whinstone.types.JdbcType;
 
 public class SqlSelectMockitoTest
 {

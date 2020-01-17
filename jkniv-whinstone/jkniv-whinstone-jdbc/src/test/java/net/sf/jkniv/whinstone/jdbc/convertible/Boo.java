@@ -2,9 +2,9 @@ package net.sf.jkniv.whinstone.jdbc.convertible;
 
 import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.sqlegance.RepositoryType;
-import net.sf.jkniv.sqlegance.types.BooleanCharType;
-import net.sf.jkniv.sqlegance.types.Converter;
-import net.sf.jkniv.sqlegance.types.Converter.EnumType;
+import net.sf.jkniv.whinstone.types.BooleanCharType;
+import net.sf.jkniv.whinstone.types.Converter;
+import net.sf.jkniv.whinstone.types.Converter.EnumType;
 
 public class Boo
 {

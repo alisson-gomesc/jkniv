@@ -44,8 +44,6 @@ import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.sqlegance.statement.ColumnParserFactory;
-import net.sf.jkniv.sqlegance.types.Convertible;
-import net.sf.jkniv.sqlegance.types.NoConverterType;
 import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
@@ -55,6 +53,8 @@ import net.sf.jkniv.whinstone.classification.Transformable.TransformableType;
 import net.sf.jkniv.whinstone.statement.AutoKey;
 import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.NoConverterType;
 
 public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
 {

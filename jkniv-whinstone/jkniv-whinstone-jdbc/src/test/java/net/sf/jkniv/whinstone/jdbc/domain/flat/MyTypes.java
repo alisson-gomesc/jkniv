@@ -3,10 +3,10 @@ package net.sf.jkniv.whinstone.jdbc.domain.flat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import net.sf.jkniv.sqlegance.types.BooleanCharType;
-import net.sf.jkniv.sqlegance.types.Converter;
-import net.sf.jkniv.sqlegance.types.Converter.EnumType;
-import net.sf.jkniv.sqlegance.types.DateIntType;
+import net.sf.jkniv.whinstone.types.BooleanCharType;
+import net.sf.jkniv.whinstone.types.Converter;
+import net.sf.jkniv.whinstone.types.DateIntType;
+import net.sf.jkniv.whinstone.types.Converter.EnumType;
 
 public class MyTypes
 {

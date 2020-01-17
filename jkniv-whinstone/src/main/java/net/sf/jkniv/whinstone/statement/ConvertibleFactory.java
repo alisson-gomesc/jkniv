@@ -31,14 +31,14 @@ import org.slf4j.LoggerFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.reflect.beans.PropertyAccess;
-import net.sf.jkniv.sqlegance.types.Converter;
-import net.sf.jkniv.sqlegance.types.Converter.EnumType;
 import net.sf.jkniv.whinstone.JdbcColumn;
-import net.sf.jkniv.sqlegance.types.Convertible;
-import net.sf.jkniv.sqlegance.types.EnumNameType;
-import net.sf.jkniv.sqlegance.types.EnumOrdinalType;
-import net.sf.jkniv.sqlegance.types.NoConverterType;
-import net.sf.jkniv.sqlegance.types.UnknowType;
+import net.sf.jkniv.whinstone.types.Converter;
+import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.EnumNameType;
+import net.sf.jkniv.whinstone.types.EnumOrdinalType;
+import net.sf.jkniv.whinstone.types.NoConverterType;
+import net.sf.jkniv.whinstone.types.UnknowType;
+import net.sf.jkniv.whinstone.types.Converter.EnumType;
 
 /**
  * 

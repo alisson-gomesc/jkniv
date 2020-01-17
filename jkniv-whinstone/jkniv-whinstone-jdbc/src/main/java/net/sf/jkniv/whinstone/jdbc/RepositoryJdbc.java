@@ -45,12 +45,6 @@ import net.sf.jkniv.sqlegance.SqlType;
 import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.builder.SqlContextFactory;
 import net.sf.jkniv.sqlegance.transaction.TransactionType;
-import net.sf.jkniv.sqlegance.types.CalendarTimestampType;
-import net.sf.jkniv.sqlegance.types.DateTimestampType;
-import net.sf.jkniv.sqlegance.types.DoubleBigDecimalType;
-import net.sf.jkniv.sqlegance.types.IntLongType;
-import net.sf.jkniv.sqlegance.types.LongBigDecimalType;
-import net.sf.jkniv.sqlegance.types.ShortIntType;
 import net.sf.jkniv.whinstone.ConnectionAdapter;
 import net.sf.jkniv.whinstone.ConnectionFactory;
 import net.sf.jkniv.whinstone.QueryFactory;
@@ -62,6 +56,11 @@ import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
 import net.sf.jkniv.whinstone.transaction.Transactional;
+import net.sf.jkniv.whinstone.types.CalendarTimestampType;
+import net.sf.jkniv.whinstone.types.DateTimestampType;
+import net.sf.jkniv.whinstone.types.DoubleBigDecimalType;
+import net.sf.jkniv.whinstone.types.LongBigDecimalType;
+import net.sf.jkniv.whinstone.types.ShortIntType;
 
 /**
  * Repository pattern implementation for JDBC API.
@@ -540,11 +539,8 @@ class RepositoryJdbc implements Repository
     {
         ConvertibleFactory.register(new DateTimestampType());
         ConvertibleFactory.register(new CalendarTimestampType());
-        //ConvertibleFactory.register(new IntLongType());
         ConvertibleFactory.register(new LongBigDecimalType());
-        //ConvertibleFactory.register(new LongIntegerType());
         ConvertibleFactory.register(new ShortIntType());
-        //ConvertibleFactory.register(new FloatDoubleType());
         ConvertibleFactory.register(new DoubleBigDecimalType());
         //ConvertibleFactory.register(new EnumOrdinalType());
         //ConvertibleFactory.register(new EnumNameType());
