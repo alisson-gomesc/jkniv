@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>net.sf.jkniv</groupId>
+    <artifactId>jkniv</artifactId>
+    <version>0.6.0</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  
+  <artifactId>jkniv-whinstone-jdk8</artifactId>
+  <name>jkniv-whinstone-jdk8</name>
+  <description>Supports for jdk types</description>
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>net.sf.jkniv</groupId>
+      <artifactId>jkniv-whinstone</artifactId>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+          <siteDirectory>src/site/content</siteDirectory>
+          <outputDirectory>../target/generated-site/${project.artifactId}</outputDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <licenses>
+    <license>
+      <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1</name>
+      <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+    </license>
+  </licenses>
+</project>

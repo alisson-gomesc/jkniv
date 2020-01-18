@@ -19,6 +19,27 @@
  */
 package net.sf.jkniv.whinstone.types;
 
+/**
+ * A Enumeration converter value.
+ * 
+ * For save then name values of Enumeration.
+ * <pre>
+ * {@literal @}Converter(converter = TimeUnit.class, isEnum = EnumType.STRING)
+ * </pre>
+ * 
+ * For save then ordinal value of Enumeration.
+ * <pre>
+ * {@literal @}Converter(converter = TimeUnit.class, isEnum = EnumType.ORDINAL)
+ * </pre>
+ * 
+ * If any value is used for {@code isEnum} the {@code EnumType.STRING} is used per default.
+ * <pre>
+ * {@literal @}Converter(converter = TimeUnit.class)
+ * </pre>
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public class EnumOrdinalType implements Convertible<Enum<?>, Integer>
 {
     private Class<?> enumType;

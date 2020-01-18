@@ -21,6 +21,12 @@ package net.sf.jkniv.whinstone.types;
 
 import java.math.BigDecimal;
 
+/**
+ * Conversion type from {@code Java Double} to {@code JDBC Decimal}. This conversion has default usage.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public class DoubleBigDecimalType implements Convertible<Double, BigDecimal>
 {
     public DoubleBigDecimalType()

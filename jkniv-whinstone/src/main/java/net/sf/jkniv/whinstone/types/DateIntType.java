@@ -23,6 +23,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Conversion type from {@code Java java.util.Date} to {@code JDBC INTEGER}.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public class DateIntType implements Convertible<Date, Integer>
 {
     private String pattern;

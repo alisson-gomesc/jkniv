@@ -20,9 +20,9 @@
 package net.sf.jkniv.whinstone.types;
 
 /**
- * A TRUE|FALSE converter value.
+ * Conversion type from {@code Java Boolean} to {@code JDBC INTEGER}.
  * 
- * The {@code pattern} format is: true|false, where the values can be any string value.
+ * <p>The {@code pattern} format is: true|false, where the values can be any string value.
  * 
  * <pre>
  * {@literal @}Converter(converter = BooleanIntType.class,pattern = "1|0")

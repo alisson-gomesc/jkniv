@@ -19,6 +19,12 @@
  */
 package net.sf.jkniv.whinstone.types;
 
+/**
+ * No conversion is done.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public class NoConverterType implements Convertible<Object, Object>
 {
     private final static Convertible<Object, Object> INSTANCE = new NoConverterType();

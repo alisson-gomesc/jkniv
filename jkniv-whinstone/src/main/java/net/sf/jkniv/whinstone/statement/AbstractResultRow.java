@@ -30,6 +30,7 @@ import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.sqlegance.logger.DataMasking;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.ConvertibleFactory;
 
 /**
  * 

@@ -2,11 +2,13 @@ Title: Mapping Data Types
 
 # Mapping Data Types
 
-There are two ways to mapping data from java to database:
+The converters are used to transform the data types from Java to JDBC and vice-versa. They can be used implicit or explicit way.
 
-- **Translate**: is an implicit conversion, applied over the type retrieved from database and translate to java type when the types mismatch. For example: the column is `timestamp` and java type is a `java.util.Calendar`. Another common scenario is when the column is `Decimal` and java type is `java.lang.Double`.
-- **Converter**: is an explicit conversion, applied before set data to POJO value from java to database and vice-versa, always work the two ways. The **Converter** has preference over **Translate**.
+When are registered in `repository-config.xml` file work implicitly transforming the types and when are annotated at Field or Methods work explicitly.
 
+- implicit converter
+- explicit converter on Field (overload implicit)
+- explicit converter on Method (overload Field)
 
 ## Converter
 
@@ -15,11 +17,13 @@ The `Convert` annotation is applied directly to an field or method of a class.
     enum DayOfWeek {
        SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY;
     }
-
-
+    
+    
+    import net.sf.jkniv.whinstone.types.BooleanCharType;
+    
     public class Boo
     {
-        @Converter(converter = BooleanStringType.class, pattern = "T|F")
+        @Converter(converter = BooleanCharType.class, pattern = "T|F")
         private Boolean        active;
         @Converter(converter = DayOfWeek.class, isEnum = EnumType.ORDINAL)
         private DayOfWeek      deliveryDay;
@@ -29,12 +33,87 @@ The `Convert` annotation is applied directly to an field or method of a class.
     }
 
 
-| Converter                    | Example Pattern | Description        |
-| ---------------------------- | --------------- | -------------------|
-| BooleanStringType     | `Y|N` or `T|F`   | save the boolean type as `String` into database column |
-| CalendarIntType       | `yyyyMMdd`       | save the `Calendar` type as `int` into database column |
-| DateIntType           | `yyyyMMdd`       | save the `Date` type as `int` into database column |
-| DateTimestampType     |                 | save the `Date` type as `timestamp` into database column. Default converter for Date type.
-| CalendarTimestampType | `yyyyMMdd`       | save the `Calendar` type as `Timestamp` into database column. Default converter for Calendar type. |
+| Converter             | Example Pattern | Description        | Implicit |
+| --------------------- | --------------- | -------------------|-------|
+| BooleanBitType        | `1|0`            | save `boolean` as `Integer` | no |
+| BooleanCharType       | `Y|N` or `T|F`   | save `boolean` as `String`| no |
+| BooleanIntType        | `1|0`            | save `boolean` as `Integer`   | no |
+| BooleanVarcharType    |  `true|false`    | save `boolean` as `String` | no |
+| CalendarIntType       | `yyyyMMdd`       | save `Calendar` as `Integer` | no |
+| CalendarTimestampType |                 | save `Calendar` as `java.sql.Timestamp` | yes |
+| DateIntType           | `yyyyMMdd`       | save `java.util.Date` as `int` | no |
+| DateTimestampType     |                 | save `java.util.Date` as `java.sql.Timestamp` | yes |
+| DateTimeType          |                 | save `java.util.Date` as `java.sql.Time` | no |
+| DateType              |                 | save `java.util.Date` as `java.sql.Date` | no |
+| DoubleBigDecimalType  |                 | save `double` as `BigDecimal` | yes |
+| EnumNameType          |                 | save `enum` as `enum.name()` | yes |
+| EnumOrdinalType       |                 | save `enum` as `enum.ordinal()` | no |
+| IntLongType           |                 | save `Integer` as `Long` | no |
+| LongBigDecimalType    |                 | save `Long` as `BigDecimal` | yes |
+| LongNumericType       |                 | save `Long` as `BigDecimal` | yes |
+| ShortIntType          |                 | save `Short` as `Integer`   | yes |
 
 
+## Register converter
+
+jkniv-whinstone-jdk8
+
+    <repository name="user">
+     <description>database for users login</description>
+      <properties>
+       <property name="jkniv.repository.type.DateIntType" value="net.sf.jkniv.whinstone.types.DateIntType"/>
+      </properties>
+    </repository>
+    
+
+## Writing a Converter
+
+This example we have a Java Date and want to stored into integer column.
+
+    import net.sf.jkniv.whinstone.types.Convertible;
+    import net.sf.jkniv.whinstone.types.ColumnType;
+    import net.sf.jkniv.whinstone.types.JdbcType;
+    
+    public class DateIntType implements Convertible<Date, Integer> {
+      private String pattern;
+      
+      public DateIntType() {
+        this("yyyyMMdd");
+      }
+    
+      public DateIntType(String pattern) {
+        this.pattern = pattern;
+      }
+    
+      @Override
+      public Integer toJdbc(Date attribute) {
+        if (attribute == null)
+            return null;
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        return Integer.valueOf(sdf.format(attribute));
+      }
+
+      @Override
+      public Date toAttribute(Integer jdbc) {
+        if (jdbc == null)
+            return null;
+        
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        try {
+            return sdf.parse(String.valueOf(jdbc));
+        }
+        catch (ParseException e) {
+            throw new ConverterException(e);
+        }
+      }
+
+      @Override
+      public Class<Date> getType() {
+        return Date.class;
+      }
+    
+      @Override
+      public ColumnType getColumnType() {
+        return JdbcType.INTEGER;
+      }
+    }

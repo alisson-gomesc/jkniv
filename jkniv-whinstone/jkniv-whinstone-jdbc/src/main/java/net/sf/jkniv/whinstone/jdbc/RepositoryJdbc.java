@@ -54,12 +54,15 @@ import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.UnsupportedDslOperationException;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
-import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 import net.sf.jkniv.whinstone.types.CalendarTimestampType;
+import net.sf.jkniv.whinstone.types.ConvertibleFactory;
 import net.sf.jkniv.whinstone.types.DateTimestampType;
 import net.sf.jkniv.whinstone.types.DoubleBigDecimalType;
+import net.sf.jkniv.whinstone.types.EnumNameType;
+import net.sf.jkniv.whinstone.types.EnumOrdinalType;
 import net.sf.jkniv.whinstone.types.LongBigDecimalType;
+import net.sf.jkniv.whinstone.types.LongNumericType;
 import net.sf.jkniv.whinstone.types.ShortIntType;
 
 /**
@@ -539,6 +542,7 @@ class RepositoryJdbc implements Repository
     {
         ConvertibleFactory.register(new DateTimestampType());
         ConvertibleFactory.register(new CalendarTimestampType());
+        ConvertibleFactory.register(new LongNumericType());
         ConvertibleFactory.register(new LongBigDecimalType());
         ConvertibleFactory.register(new ShortIntType());
         ConvertibleFactory.register(new DoubleBigDecimalType());

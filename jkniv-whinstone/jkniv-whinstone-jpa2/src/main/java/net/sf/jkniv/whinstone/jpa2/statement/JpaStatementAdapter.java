@@ -51,9 +51,9 @@ import net.sf.jkniv.whinstone.classification.Groupable;
 import net.sf.jkniv.whinstone.classification.GroupingBy;
 import net.sf.jkniv.whinstone.classification.Transformable.TransformableType;
 import net.sf.jkniv.whinstone.statement.AutoKey;
-import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.ConvertibleFactory;
 import net.sf.jkniv.whinstone.types.NoConverterType;
 
 public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>

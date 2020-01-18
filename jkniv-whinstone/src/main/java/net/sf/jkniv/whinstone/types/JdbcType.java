@@ -1,5 +1,5 @@
 /* 
- * JKNIV, SQLegance keeping queries maintainable.
+ * JKNIV, whinstone one contract to access your database.
  * 
  * Copyright (C) 2017, the original author or authors.
  *
@@ -35,6 +35,36 @@ import org.slf4j.LoggerFactory;
  */
 public enum JdbcType implements ColumnType
 {
+    /*
+JDBC Type       Java Type                       JDBC Type 
+CHAR            String                          CHAR, VARCHAR, or LONGVARCHAR
+VARCHAR         String                          CHAR, VARCHAR, or LONGVARCHAR
+LONGVARCHAR     String                          CHAR, VARCHAR, or LONGVARCHAR
+NUMERIC         java.math.BigDecimal            NUMERIC
+DECIMAL         java.math.BigDecimal            NUMERIC
+BIT             boolean                         BIT
+TINYINT         byte                            TINYINT
+SMALLINT        short                           SMALLINT
+INTEGER         int                             INTEGER
+BIGINT          long                            BIGINT
+REAL            float                           REAL
+FLOAT           double                          DOUBLE
+DOUBLE          double                          DOUBLE
+BINARY          byte[]                          BINARY, VARBINARY, or LONGVARBINARY
+VARBINARY       byte[]                          BINARY, VARBINARY, or LONGVARBINARY
+LONGVARBINARY   byte[]                          BINARY, VARBINARY, or LONGVARBINARY
+DATE            java.sql.Date                   DATE
+TIME            java.sql.Time                   DATE
+TIMESTAMP       java.sql.Timestamp              DATE
+CLOB            Clob                            CLOB
+BLOB            Blob                            BLOB
+ARRAY           Array                           ARRAY
+DISTINCT        mapping of underlying type      
+STRUCT          Struct                          STRUCT
+REF             Ref                             REF
+JAVA_OBJECT     underlying Java class           JAVA_OBJECT 
+     */
+    
     //Types.BINARY 
     //Types.DATALINK 
     //Types.DECIMAL 

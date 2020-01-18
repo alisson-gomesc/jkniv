@@ -55,10 +55,10 @@ import net.sf.jkniv.whinstone.classification.Transformable;
 import net.sf.jkniv.whinstone.jdbc.DefaultJdbcColumn;
 import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
 import net.sf.jkniv.whinstone.statement.AutoKey;
-import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 import net.sf.jkniv.whinstone.types.CalendarTimestampType;
 import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.ConvertibleFactory;
 import net.sf.jkniv.whinstone.types.DateTimestampType;
 import net.sf.jkniv.whinstone.types.NoConverterType;
 

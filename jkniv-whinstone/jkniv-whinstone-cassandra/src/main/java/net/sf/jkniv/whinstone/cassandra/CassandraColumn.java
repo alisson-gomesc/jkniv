@@ -20,7 +20,6 @@
 package net.sf.jkniv.whinstone.cassandra;
 
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.Date;
 
 import com.datastax.driver.core.DataType;
@@ -30,7 +29,7 @@ import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.JdbcColumnMapper;
 import net.sf.jkniv.whinstone.UnderscoreToCamelCaseMapper;
-import net.sf.jkniv.whinstone.cassandra.types.CassandraType;
+import net.sf.jkniv.whinstone.types.CassandraType;
 import net.sf.jkniv.whinstone.types.ColumnType;
 
 public class CassandraColumn implements JdbcColumn<Row>
@@ -65,7 +64,7 @@ public class CassandraColumn implements JdbcColumn<Row>
 //            this.attributeName = jdbcColumnMapper.map(columnName);
 //            this.methodName = capitalizeSetter(attributeName);
         }
-        this.columnType = CassandraType.valueOf(columnType);
+        this.columnType = CassandraType.valueOf(columnType.name());
         //this.jdbcColumnMapper = new UnderscoreToCamelCaseMapper();// TODO design property to config
     }
     

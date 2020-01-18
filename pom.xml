@@ -37,6 +37,7 @@
     <module>jkniv-whinstone/jkniv-whinstone-jpa2</module>
     <module>jkniv-whinstone/jkniv-whinstone-cassandra</module>
     <module>jkniv-whinstone/jkniv-whinstone-couchdb</module>
+    <module>jkniv-whinstone/jkniv-whinstone-jdk8</module>
     <!-- <module>jkniv-whinstone/jkniv-whinstone-couchbase</module> <module>jkniv-test-jdk8</module> <module>jkniv-whinstone/jkniv-whinstone-rest</module> 
       <module>jkniv-whinstone/jkniv-whinstone-fluent</module> <module>jkniv-camel/jkniv-camel-sap-jco3</module> <module>jkniv-jaas/jkniv-jaas-glassfish</module> -->
   </modules>
@@ -75,6 +76,11 @@
       <dependency>
         <groupId>net.sf.jkniv</groupId>
         <artifactId>jkniv-whinstone-jpa2</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.jkniv</groupId>
+        <artifactId>jkniv-whinstone-jdk8</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
