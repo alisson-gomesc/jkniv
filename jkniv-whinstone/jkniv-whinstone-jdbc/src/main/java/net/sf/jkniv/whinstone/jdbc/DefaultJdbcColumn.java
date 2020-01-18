@@ -23,19 +23,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import net.sf.jkniv.reflect.beans.ObjectProxy;
+import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.JdbcColumnMapper;
 import net.sf.jkniv.whinstone.UnderscoreToCamelCaseMapper;
 import net.sf.jkniv.whinstone.types.ColumnType;
+import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.ConvertibleFactory;
 import net.sf.jkniv.whinstone.types.JdbcType;
 
 public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
 {
     private final int                     columnIndex;
     private final String                  columnName;
-    private final ColumnType              columnType;
     private final String                  methodName;
+    private final ColumnType              columnType;
     //private final String                  attributeName;
     //private final int                     jdbcType;
     private boolean nestedAttribute;
@@ -106,39 +110,6 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
     }
     
     @Override
-    public boolean isClob()
-    {
-        // FIXME implements read CLOB as string, 
-        // FIXME implements write CLOB to database
-        return this.columnType.isClob();
-    }
-    
-    @Override
-    public boolean isBlob()
-    {
-        // FIXME implements write BLOB to database
-        return this.columnType.isBlob();
-    }
-    
-    @Override
-    public boolean isDate()
-    {
-        return this.columnType.isDate();
-    }
-    
-    @Override
-    public boolean isTimestamp()
-    {
-        return this.columnType.isTimestamp();
-    }
-    
-    @Override
-    public boolean isTime()
-    {
-        return this.columnType.isTime();
-    }
-    
-    @Override
     public boolean isNestedAttribute()
     {
         return nestedAttribute;
@@ -148,15 +119,10 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
     public Object getValue(ResultSet rs) throws SQLException
     {
         Object value = rs.getObject(columnIndex);
-        if (value != null)
-        {
-            if (isDate())
-                value = new Date(rs.getDate(columnIndex).getTime());
-            else if (isTimestamp())
-                value = new Date(rs.getTimestamp(columnIndex).getTime());
-            else if (isTime())
-                value = new Date(rs.getTime(columnIndex).getTime());
-        }
+        ObjectProxy<?> proxy = ObjectProxyFactory.of(this.propertyAccess.getTargetClass());
+        Convertible<Object, Object> convertible = ConvertibleFactory.toAttribute(this, proxy);
+        if (!convertible.getType().isInstance(value))
+            value = convertible.toAttribute(value);
         return value;
     }
     
@@ -172,26 +138,6 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
         return this.columnType;
     }
 
-    /*
-     * Append prefix <code>set<code> to attributeColumnName and capitalize it.
-     * @param attributeColumnName attribute name to capitalize with <code>set</code> prefix
-     * @return return capitalize attribute name, sample: identityName -> setIdentityName
-     *
-    private String capitalizeSetter(String attributeColumnName)// TODO design config capitalize algorithm
-    {
-        String capitalize = "";
-        
-        if (attributeColumnName != null)
-        {
-            int length = attributeColumnName.length();
-            capitalize = attributeColumnName.substring(0, 1).toUpperCase(Locale.ENGLISH);
-            if (length > 1)
-                capitalize += attributeColumnName.substring(1, length);
-        }
-        //sqlLogger.log(LogLevel.RESULTSET, "Mapping column [{}] to property [{}]", attributeColumnName, "set" + capitalize);
-        return "set" + capitalize;
-    }
-*/
     @Override
     public String toString()
     {

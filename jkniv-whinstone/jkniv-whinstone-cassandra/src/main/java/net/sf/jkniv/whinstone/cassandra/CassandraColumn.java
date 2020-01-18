@@ -25,103 +25,119 @@ import java.util.Date;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Row;
 
+import net.sf.jkniv.reflect.beans.ObjectProxy;
+import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.JdbcColumnMapper;
 import net.sf.jkniv.whinstone.UnderscoreToCamelCaseMapper;
 import net.sf.jkniv.whinstone.types.CassandraType;
 import net.sf.jkniv.whinstone.types.ColumnType;
+import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.ConvertibleFactory;
+import net.sf.jkniv.whinstone.types.JdbcType;
 
 public class CassandraColumn implements JdbcColumn<Row>
 {
     private final int                     columnIndex;
     private final String                  columnName;
-    private final String                  attributeName;
     private final String                  methodName;
-    //private final int                     jdbcType;
     private final ColumnType              columnType;
+    //private final String                  attributeName;
+    //private final int                     jdbcType;
     private boolean nestedAttribute;
     private PropertyAccess propertyAccess;
-    private final static JdbcColumnMapper jdbcColumnMapper = new UnderscoreToCamelCaseMapper();// TODO design property to config;
+    private final static JdbcColumnMapper JDBC_COLUMN_MAPPER = new UnderscoreToCamelCaseMapper();// TODO design property to config;
     
-    public CassandraColumn(int columnIndex, String columnName, DataType.Name columnType)
+    public CassandraColumn(int columnIndex, String columnName, DataType.Name columnType, Class<?> classTarget)
     {
         super();
         this.columnIndex = columnIndex;
         this.columnName = columnName;
         this.nestedAttribute = false;
+        this.propertyAccess = new PropertyAccess(JDBC_COLUMN_MAPPER.map(columnName), classTarget);
+        this.columnType = CassandraType.valueOf(columnType.name());
         if(columnName.indexOf(".") > 0)
         {
             this.nestedAttribute = true;
             this.methodName = columnName;
-            this.attributeName = columnName;
         }
         else
         {
-            this.propertyAccess = new PropertyAccess(jdbcColumnMapper.map(columnName));
-            this.attributeName = propertyAccess.getFieldName();
             this.methodName = propertyAccess.getWriterMethodName();
-//            this.attributeName = jdbcColumnMapper.map(columnName);
-//            this.methodName = capitalizeSetter(attributeName);
         }
-        this.columnType = CassandraType.valueOf(columnType.name());
-        //this.jdbcColumnMapper = new UnderscoreToCamelCaseMapper();// TODO design property to config
     }
     
+    @Override
+    public PropertyAccess getPropertyAccess()
+    {
+        return this.propertyAccess;
+    }
+
+    @Override
     public String getAttributeName()
     {
-        return this.attributeName;
+        return propertyAccess.getFieldName();
     }
     
+    @Override
     public String getMethodName()
     {
         return methodName;
     }
     
+    @Override
     public String getName()
     {
         return this.columnName;
     }
     
+    @Override
     public int getIndex()
     {
         return this.columnIndex;
     }
     
+    @Override
     public boolean isBinary()
     {
         return this.columnType.isBinary();
     }
     
-    public boolean isClob()
-    {
-        
-        // FIXME implements read CLOB as string, 
-        // FIXME implements write CLOB to database
-        return this.columnType.isClob();
-    }
+//    @Override
+//    public boolean isClob()
+//    {
+//        // FIXME implements read CLOB as string, 
+//        // FIXME implements write CLOB to database
+//        return this.columnType.isClob();
+//    }
+//    
+//    @Override
+//    public boolean isBlob()
+//    {
+//        // FIXME implements write BLOB to database
+//        return this.columnType.isBlob();
+//    }
+//    
+//    @Override
+//    public boolean isDate()
+//    {
+//        return this.columnType.isDate();
+//    }
+//    
+//    @Override
+//    public boolean isTimestamp()
+//    {
+//        return this.columnType.isTimestamp();
+//    }
+//    
+//    @Override
+//    public boolean isTime()
+//    {
+//        return this.columnType.isTime();
+//    }
     
-    public boolean isBlob()
-    {
-        // FIXME implements write BLOB to database
-        return this.columnType.isBlob();
-    }
-    
-    public boolean isDate()
-    {
-        return this.columnType.isDate();
-    }
-    
-    public boolean isTimestamp()
-    {
-        return this.columnType.isTimestamp();
-    }
-    
-    public boolean isTime()
-    {
-        return this.columnType.isTime();
-    }
-    
+    @Override
     public boolean isNestedAttribute()
     {
         return nestedAttribute;
@@ -131,16 +147,25 @@ public class CassandraColumn implements JdbcColumn<Row>
     public Object getValue(Row row) throws SQLException
     {
         Object value = row.getObject(columnIndex);
+        ObjectProxy<?> proxy = ObjectProxyFactory.of(this.propertyAccess.getTargetClass());
+        Convertible<Object, Object> convertible = ConvertibleFactory.toAttribute(this, proxy);
+        if (!convertible.getType().isInstance(value))
+            value = convertible.toAttribute(value);
+        return value;
+
+        /*
+        Object value = row.getObject(columnIndex);
         if (value != null)
         {
-            if (isDate())
+            if (this.columnType.isDate())
                 value = new Date(row.getDate(columnIndex).getMillisSinceEpoch());
-            else if (isTimestamp())
+            else if (this.columnType.isTimestamp())
                 value = new Date(row.getTimestamp(columnIndex).getTime());
-            else if (isTime())
+            else if (this.columnType.isTime())
                 value = new Date(row.getTime(columnIndex));
         }
         return value;
+        */
     }
     
     @Override
@@ -148,40 +173,13 @@ public class CassandraColumn implements JdbcColumn<Row>
     {
         return row.getBytes(columnIndex);
     }
-    
-    
+
     @Override
     public ColumnType getType()
     {
         return this.columnType;
     }
-    
-    /*
-     * Append prefix <code>set<code> to attributeColumnName and capitalize it.
-     * @param attributeColumnName attribute name to capitalize with <code>set</code> prefix
-     * @return return capitalize attribute name, sample: identityName -> setIdentityName
-     *
-    private String capitalizeSetter(String attributeColumnName)// TODO design config capitalize algorithm
-    {
-        String capitalize = "";
-        
-        if (attributeColumnName != null)
-        {
-            int length = attributeColumnName.length();
-            capitalize = attributeColumnName.substring(0, 1).toUpperCase(Locale.ENGLISH);
-            if (length > 1)
-                capitalize += attributeColumnName.substring(1, length);
-        }
-        //sqlLogger.log(LogLevel.RESULTSET, "Mapping column [{}] to property [{}]", attributeColumnName, "set" + capitalize);
-        return "set" + capitalize;
-    }*/
 
-    @Override
-    public PropertyAccess getPropertyAccess()
-    {
-        return this.propertyAccess;
-    }
-    
     @Override
     public String toString()
     {

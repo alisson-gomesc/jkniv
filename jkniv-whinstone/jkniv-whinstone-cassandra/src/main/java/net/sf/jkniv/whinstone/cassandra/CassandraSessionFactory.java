@@ -41,14 +41,8 @@ import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.commands.CommandAdapter;
-import net.sf.jkniv.whinstone.types.CalendarTimestampType;
 import net.sf.jkniv.whinstone.types.Convertible;
 import net.sf.jkniv.whinstone.types.ConvertibleFactory;
-import net.sf.jkniv.whinstone.types.DateTimestampType;
-import net.sf.jkniv.whinstone.types.DoubleBigDecimalType;
-import net.sf.jkniv.whinstone.types.LongBigDecimalType;
-import net.sf.jkniv.whinstone.types.LongNumericType;
-import net.sf.jkniv.whinstone.types.ShortIntType;
 
 public class CassandraSessionFactory //implements ConnectionFactory
 {
@@ -150,12 +144,6 @@ public class CassandraSessionFactory //implements ConnectionFactory
         String className = String.valueOf(props.get(k));// (22) -> "jkniv.repository.type."
         ObjectProxy<Convertible> proxy = ObjectProxyFactory.of(className);
         ConvertibleFactory.register(proxy.newInstance());
-//        ConvertibleFactory.register(new DateTimestampType());
-//        ConvertibleFactory.register(new CalendarTimestampType());
-//        ConvertibleFactory.register(new LongNumericType());
-//        ConvertibleFactory.register(new LongBigDecimalType());
-//        ConvertibleFactory.register(new ShortIntType());
-//        ConvertibleFactory.register(new DoubleBigDecimalType());
     }
 
     

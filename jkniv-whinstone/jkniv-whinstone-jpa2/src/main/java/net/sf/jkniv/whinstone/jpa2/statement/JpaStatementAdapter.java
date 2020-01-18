@@ -374,18 +374,4 @@ public class JpaStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
     {
         return !queryable.getDynamicSql().asSelectable().getGroupByAsList().isEmpty();
     }
-
-    /**
-     * Retrieve a {@link Convertible} instance to customize the
-     * value of parameter to database field.
-     * @param column Column of row
-     * @param proxy of return type from query
-     * @return A convertible instance if found into class proxy or {@link NoConverterType}
-     * instance when the field or method is not annotated.
-     */
-    private Convertible<Object, Object> getConverter(PropertyAccess access)
-    {
-        ObjectProxy<?> proxy = ObjectProxyFactory.of(queryable.getParams());
-        return ConvertibleFactory.toJdbc(access, proxy);
-    }
 }

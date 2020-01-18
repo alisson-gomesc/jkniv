@@ -56,11 +56,10 @@ import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 import net.sf.jkniv.whinstone.types.CalendarTimestampType;
+import net.sf.jkniv.whinstone.types.Convertible;
 import net.sf.jkniv.whinstone.types.ConvertibleFactory;
 import net.sf.jkniv.whinstone.types.DateTimestampType;
 import net.sf.jkniv.whinstone.types.DoubleBigDecimalType;
-import net.sf.jkniv.whinstone.types.EnumNameType;
-import net.sf.jkniv.whinstone.types.EnumOrdinalType;
 import net.sf.jkniv.whinstone.types.LongBigDecimalType;
 import net.sf.jkniv.whinstone.types.LongNumericType;
 import net.sf.jkniv.whinstone.types.ShortIntType;
@@ -538,6 +537,14 @@ class RepositoryJdbc implements Repository
         return factory.newInstance();
     }
     
+    @SuppressWarnings("rawtypes")
+    private void settingConverters(String k, Properties props)
+    {
+        String className = String.valueOf(props.get(k));// (22) -> "jkniv.repository.type."
+        ObjectProxy<Convertible> proxy = ObjectProxyFactory.of(className);
+        ConvertibleFactory.register(proxy.newInstance());
+    }
+
     private void configureConverters()
     {
         ConvertibleFactory.register(new DateTimestampType());
@@ -546,8 +553,6 @@ class RepositoryJdbc implements Repository
         ConvertibleFactory.register(new LongBigDecimalType());
         ConvertibleFactory.register(new ShortIntType());
         ConvertibleFactory.register(new DoubleBigDecimalType());
-        //ConvertibleFactory.register(new EnumOrdinalType());
-        //ConvertibleFactory.register(new EnumNameType());
     }
     
     private void configureHandlerException()

@@ -23,9 +23,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -56,10 +54,8 @@ import net.sf.jkniv.whinstone.jdbc.DefaultJdbcColumn;
 import net.sf.jkniv.whinstone.jdbc.LoggerFactory;
 import net.sf.jkniv.whinstone.statement.AutoKey;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
-import net.sf.jkniv.whinstone.types.CalendarTimestampType;
 import net.sf.jkniv.whinstone.types.Convertible;
 import net.sf.jkniv.whinstone.types.ConvertibleFactory;
-import net.sf.jkniv.whinstone.types.DateTimestampType;
 import net.sf.jkniv.whinstone.types.NoConverterType;
 
 public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, ResultSet>
@@ -345,33 +341,6 @@ public class JdbcPreparedStatementAdapter<T, R> implements StatementAdapter<T, R
             Convertible<Object, Object> convertible = getConverter(this.paramNames[index+j-1]);
             stmt.setObject(index + j, convertible.toJdbc(paramsIN[j]));
         }
-    }
-    
-    private void setValue(Date value) throws SQLException
-    {
-        int i = currentIndex();
-        Convertible<Object, Object> convertible = getConverter(this.paramNames[i-1]);
-        if (convertible instanceof NoConverterType)
-        {
-            Convertible<java.util.Date, java.sql.Timestamp> convert2Timestamp = new DateTimestampType();
-            stmt.setObject(i, convert2Timestamp.toJdbc(value));
-        }
-        else
-            stmt.setObject(i, convertible.toJdbc(value));
-    }
-    
-    private void setValue(Calendar value) throws SQLException
-    {
-        int i = currentIndex();
-        Convertible<java.util.Calendar, java.sql.Timestamp> convertible = new CalendarTimestampType();
-        stmt.setObject(i, convertible.toJdbc(value));
-    }
-    
-    private void setValue(Enum<?> value) throws SQLException
-    {
-        int i = currentIndex();
-        Convertible<Object, Object> convertible = getConverter(this.paramNames[i-1]);
-        stmt.setObject(i, convertible.toJdbc(value));
     }
     
     /**

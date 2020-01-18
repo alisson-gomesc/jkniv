@@ -785,19 +785,16 @@ class QueryName implements Queryable
     private Convertible<Object, Object> getConverter(String fieldName, Object value)
     {
         Convertible<Object, Object> convertible = NoConverterType.getInstance();
-        //if(isTypeOfPojo() || isTypeOfCollectionPojo() || isTypeOfArrayPojo())
-        //{
-            PropertyAccess propertyAccess = new PropertyAccess(fieldName, getParams().getClass());
-            if (propertyAccess.hasField() || propertyAccess.hasReadMethod())
-            {
-                ObjectProxy<?> proxy = ObjectProxyFactory.of(getParams());
-                convertible = ConvertibleFactory.toJdbc(propertyAccess, proxy);
-            }
-            else if (value != null)
-            {
-                convertible = ConvertibleFactory.getConverter(value.getClass());
-            }
-        //}
+        PropertyAccess propertyAccess = new PropertyAccess(fieldName, getParams().getClass());
+        if (propertyAccess.hasField() || propertyAccess.hasReadMethod())
+        {
+            ObjectProxy<?> proxy = ObjectProxyFactory.of(getParams());
+            convertible = ConvertibleFactory.toJdbc(propertyAccess, proxy);
+        }
+        else if (value != null)
+        {
+            convertible = ConvertibleFactory.getConverter(value.getClass());
+        }
         return convertible;
     }
         

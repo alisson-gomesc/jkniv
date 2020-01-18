@@ -15,6 +15,9 @@ From CouchDB Documentation:
  - Array of POJO
  - Array of Map
 
+Example bulk operations:
+
+
     Repository repository = getRepository();
     List<Author> authors = new ArrayList<Author>();
         
@@ -30,6 +33,7 @@ From CouchDB Documentation:
         
     int rows = repository.add(q);
     assertThat(rows, is(3));
+
 
 **whinstone-couchdb** there are built-in queries: `add`, `remove`, `update`, `get` and `_all_docs`, isn't necessary wrote in XML file. So, to use bulk API you must be invoke repository method using one from these built-in queries. 
 

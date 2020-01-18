@@ -25,8 +25,9 @@
 
   <body>
     <head><![CDATA[
-      <meta name="description" content="JPA Java API" />
-      <meta name="keywords" content="JPA, JDBC, Java, API, LGPL, Free, Open Source, Framework, Repository Pattern" />
+      <meta name="description" content="jkniv whinstone, database power back">
+      <meta name="keywords" content="JDBC, SQL, Java SQL, Java JDBC, Java SQL API, Java stored procedures, Java PL/SQL, stored procedures, stored functions, JPA, CouchDB, Cassandra, Couchbase">      
+      <meta name="robots" content="index, follow">
       ]]>
     </head>
     <menu name="Whinstone JPA2" inherit="top">
@@ -34,8 +35,7 @@
       <item name="Configuring a Persistence Context" href="config-persistence-ctx.html" />
       <item name="Logging" href="logging.html" />
       <item name="Javadoc"  href="http://jkniv.sourceforge.net/apidocs/whinstone/index.html" />
-      <item name="Donwload"  href="https://sourceforge.net/projects/jkniv/files/whinstone-jpa2/" />
+      <item name="Donwload"  href="download.html" />
     </menu>
-    <menu ref="reports" />
   </body>
 </project>

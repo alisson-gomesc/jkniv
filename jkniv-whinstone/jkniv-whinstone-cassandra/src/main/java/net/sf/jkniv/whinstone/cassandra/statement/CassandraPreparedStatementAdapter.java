@@ -510,7 +510,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         {
             String columnName = metadata.getName(i);//getColumnName(metadata, columnNumber);
             //int columnType = metadata.getType(i).getName().ordinal(); //metadata.getColumnType(columnNumber);
-            columns[i] = new CassandraColumn(i, columnName, metadata.getType(i).getName());
+            columns[i] = new CassandraColumn(i, columnName, metadata.getType(i).getName(), queryable.getReturnType());
         }
         return columns;
     }

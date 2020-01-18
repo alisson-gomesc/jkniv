@@ -33,42 +33,44 @@ The `Convert` annotation is applied directly to an field or method of a class.
     }
 
 
-| Converter             | Example Pattern | Description        | Implicit |
+| Converter             | Example Pattern | Description        | Implicit Built-in configured|
 | --------------------- | --------------- | -------------------|-------|
 | BooleanBitType        | `1|0`            | save `boolean` as `Integer` | no |
 | BooleanCharType       | `Y|N` or `T|F`   | save `boolean` as `String`| no |
 | BooleanIntType        | `1|0`            | save `boolean` as `Integer`   | no |
 | BooleanVarcharType    |  `true|false`    | save `boolean` as `String` | no |
 | CalendarIntType       | `yyyyMMdd`       | save `Calendar` as `Integer` | no |
-| CalendarTimestampType |                 | save `Calendar` as `java.sql.Timestamp` | yes |
+| CalendarTimestampType |                 | save `Calendar` as `java.sql.Timestamp` | `yes` |
 | DateIntType           | `yyyyMMdd`       | save `java.util.Date` as `int` | no |
-| DateTimestampType     |                 | save `java.util.Date` as `java.sql.Timestamp` | yes |
+| DateTimestampType     |                 | save `java.util.Date` as `java.sql.Timestamp` | `yes` |
 | DateTimeType          |                 | save `java.util.Date` as `java.sql.Time` | no |
 | DateType              |                 | save `java.util.Date` as `java.sql.Date` | no |
-| DoubleBigDecimalType  |                 | save `double` as `BigDecimal` | yes |
-| EnumNameType          |                 | save `enum` as `enum.name()` | yes |
+| DoubleBigDecimalType  |                 | save `double` as `BigDecimal` | `yes` |
+| EnumNameType          |                 | save `enum` as `enum.name()` | `yes` |
 | EnumOrdinalType       |                 | save `enum` as `enum.ordinal()` | no |
 | IntLongType           |                 | save `Integer` as `Long` | no |
-| LongBigDecimalType    |                 | save `Long` as `BigDecimal` | yes |
-| LongNumericType       |                 | save `Long` as `BigDecimal` | yes |
-| ShortIntType          |                 | save `Short` as `Integer`   | yes |
+| LongBigDecimalType    |                 | save `Long` as `BigDecimal` | `yes` |
+| LongNumericType       |                 | save `Long` as `BigDecimal` | `yes` |
+| ShortIntType          |                 | save `Short` as `Integer`   | `yes` |
 
 
-## Register converter
+## Registering Convertible
 
-jkniv-whinstone-jdk8
+To register a built-in converter or custom Convertible use the file `repository-config.xml` to do that:
 
     <repository name="user">
      <description>database for users login</description>
       <properties>
-       <property name="jkniv.repository.type.DateIntType" value="net.sf.jkniv.whinstone.types.DateIntType"/>
+       <property name="jkniv.repository.type.InstantDateType" value="net.sf.jkniv.whinstone.jdk8.types.InstantDateType" />
       </properties>
     </repository>
-    
+
+1. The property name MUST start with `jkniv.repository.type`
+2. The property value is a fully qualified class name that implements `Convertible` interface.
 
 ## Writing a Converter
 
-This example we have a Java Date and want to stored into integer column.
+This example we have a Java Date and want to stored into integer column (year month day).
 
     import net.sf.jkniv.whinstone.types.Convertible;
     import net.sf.jkniv.whinstone.types.ColumnType;

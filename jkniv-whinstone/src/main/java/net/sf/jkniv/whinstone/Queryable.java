@@ -285,9 +285,10 @@ public interface Queryable
      * @return parameters names that was query bound, array based-zero is return if query no have parameters
      */
     String[] getParamsNames();
-    
+
     /**
      * Overload the return type from XML query.
+     * @param <T> type of return class
      * @return the class to return by repository using this query
      */
     <T> Class<T> getReturnType();

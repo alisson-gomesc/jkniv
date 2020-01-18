@@ -23,8 +23,9 @@
   <body>
     <head>
       <![CDATA[
-      <meta name="description" content="CouchDB Java API" />
-      <meta name="keywords" content="CouchDB, JDBC, Java, API, LGPL, Free, Open Source, Framework, Repository Pattern" />
+      <meta name="description" content="jkniv whinstone, database power back">
+      <meta name="keywords" content="JDBC, SQL, Java SQL, Java JDBC, Java SQL API, Java stored procedures, Java PL/SQL, stored procedures, stored functions, JPA, CouchDB, Cassandra, Couchbase">      
+      <meta name="robots" content="index, follow">
       ]]>
     </head>
     <breadcrumbs>
@@ -40,7 +41,7 @@
       <item name="Bulk Command" href="bulk-command.html" />
       <item name="Logging" href="logging.html" />
       <item name="Javadoc" href="api-docs/index.html" />
-      <item name="Donwload" href="https://sourceforge.net/projects/jkniv/files/jkniv-whinstone/couchdb/" />
+      <item name="Donwload" href="download.html" />
      </menu>
   </body>
 </project>

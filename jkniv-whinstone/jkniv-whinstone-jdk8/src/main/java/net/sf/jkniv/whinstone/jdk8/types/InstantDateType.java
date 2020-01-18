@@ -19,13 +19,12 @@
  */
 package net.sf.jkniv.whinstone.jdk8.types;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Date;
 
+import net.sf.jkniv.whinstone.types.CassandraType;
 import net.sf.jkniv.whinstone.types.ColumnType;
 import net.sf.jkniv.whinstone.types.Convertible;
-import net.sf.jkniv.whinstone.types.JdbcType;
 
 /**
  * Conversion type from {@code Java Instant} to {@code JDBC TIMESTAMP}
@@ -49,7 +48,7 @@ public class InstantDateType implements Convertible<Instant, Date>
         if (attribute == null)
             return null;
         
-        return Timestamp.from(attribute);
+        return Date.from(attribute);
     }
 
     @Override
@@ -70,12 +69,12 @@ public class InstantDateType implements Convertible<Instant, Date>
     @Override
     public ColumnType getColumnType() 
     {
-        return JdbcType.DATE;
+        return CassandraType.TIMESTAMP;
     }
 
     @Override
     public String toString()
     {
-        return "InstantTimestampType [type=" + getType() + ", columnType=" + getColumnType() + "]";
+        return "InstantDateType [type=" + getType() + ", columnType=" + getColumnType() + "]";
     }
 }

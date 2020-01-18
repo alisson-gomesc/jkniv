@@ -19,7 +19,7 @@
  */
 package net.sf.jkniv.whinstone.jdk8.types;
 
-import java.sql.Timestamp;
+import java.sql.Time;
 import java.time.Instant;
 
 import net.sf.jkniv.whinstone.types.CassandraType;
@@ -32,27 +32,27 @@ import net.sf.jkniv.whinstone.types.Convertible;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public class InstantTimestampType implements Convertible<Instant, Timestamp>
+public class InstantTimeType implements Convertible<Instant, Time>
 {
-    public InstantTimestampType()
+    public InstantTimeType()
     {
     }
     
-    public InstantTimestampType(String pattern)
+    public InstantTimeType(String pattern)
     {
     }
     
     @Override
-    public Timestamp toJdbc(Instant attribute)
+    public Time toJdbc(Instant attribute)
     {
         if (attribute == null)
             return null;
         
-        return Timestamp.from(attribute);
+        return new Time(attribute.toEpochMilli());
     }
 
     @Override
-    public Instant toAttribute(Timestamp jdbc)
+    public Instant toAttribute(Time jdbc)
     {
         if (jdbc == null)
             return null;
@@ -69,12 +69,12 @@ public class InstantTimestampType implements Convertible<Instant, Timestamp>
     @Override
     public ColumnType getColumnType() 
     {
-        return CassandraType.TIMESTAMP;
+        return CassandraType.TIME;
     }
 
     @Override
     public String toString()
     {
-        return "InstantTimestampType [type=" + getType() + ", columnType=" + getColumnType() + "]";
+        return "InstantTimeType [type=" + getType() + ", columnType=" + getColumnType() + "]";
     }
 }

@@ -73,19 +73,21 @@ public abstract class AbstractResultRow //implements ResultRow
         
         if (column.isNestedAttribute())
         {
-            Convertible<Object, Object> convertible = ConvertibleFactory.toAttribute(column, proxy);
-            reflect.inject(column.getAttributeName(), convertible.toAttribute(jdbcObject));
+            //Convertible<Object, Object> convertible = ConvertibleFactory.toAttribute(column, proxy);
+            //reflect.inject(column.getAttributeName(), convertible.toAttribute(jdbcObject));
+            reflect.inject(column.getAttributeName(), jdbcObject);
         }
         else
         {
             String method = column.getMethodName();
             if (proxy.hasMethod(method))
             {
-                Convertible<Object, Object> convertible = ConvertibleFactory.toAttribute(column, proxy);
-                if (convertible.getType().isInstance(jdbcObject))
-                    reflect.inject(method, jdbcObject);
-                else
-                    reflect.inject(method, convertible.toAttribute(jdbcObject));
+                reflect.inject(method, jdbcObject);
+//                Convertible<Object, Object> convertible = ConvertibleFactory.toAttribute(column, proxy);
+//                if (convertible.getType().isInstance(jdbcObject))
+//                    reflect.inject(method, jdbcObject);
+//                else
+//                    reflect.inject(method, convertible.toAttribute(jdbcObject));
             }
             else
                 LOG.warn("Method [{}] doesn't exists for [{}] to set value [{}]", method,

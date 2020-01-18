@@ -27,7 +27,7 @@
   <body>
     <head><![CDATA[
       <meta name="description" content="jkniv whinstone, database power back">
-      <meta name="keywords" content="JDBC, SQL, Java SQL, Java JDBC, Java SQL API, Java stored procedures, Java PL/SQL, stored procedures, stored functions">      
+      <meta name="keywords" content="JDBC, SQL, Java SQL, Java JDBC, Java SQL API, Java stored procedures, Java PL/SQL, stored procedures, stored functions, JPA, CouchDB, Cassandra, Couchbase">      
       <meta name="robots" content="index, follow">
       ]]>
     </head>

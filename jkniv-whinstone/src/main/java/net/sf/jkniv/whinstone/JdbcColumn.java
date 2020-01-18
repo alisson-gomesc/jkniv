@@ -47,7 +47,7 @@ public interface JdbcColumn<R>
     ColumnType getType();
     
     boolean isBinary();
-
+    /*
     boolean isClob();
 
     boolean isBlob();
@@ -57,6 +57,7 @@ public interface JdbcColumn<R>
     boolean isTimestamp();
 
     boolean isTime();
+    */
 
     boolean isNestedAttribute();
     

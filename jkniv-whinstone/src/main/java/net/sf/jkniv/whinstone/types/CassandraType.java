@@ -23,7 +23,6 @@ package net.sf.jkniv.whinstone.types;
  * Data types supported by cassandra.
  * 
  * @author Alisson Gomes
- * @see com.datastax.driver.core.DataType
  * @since 0.6.0
  */
 public enum CassandraType implements ColumnType
@@ -97,21 +96,6 @@ public enum CassandraType implements ColumnType
     {
         return (this == TIME);
     }
-
-    /*
-    public static ColumnType valueOf(String name)
-    {
-        ColumnType answer = null;
-        for (ColumnType type : CassandraType.values())
-        {
-            if (type.name().equals(name))
-            {
-                answer = type;
-                break;
-            }
-        }
-        return answer;
-    }*/
 
     public static ColumnType valueOf(int typeValue)
     {
