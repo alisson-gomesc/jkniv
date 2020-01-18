@@ -17,52 +17,65 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.types;
+package net.sf.jkniv.whinstone.jdk8.types;
 
-public class LongIntegerType implements Convertible<Long, Integer>
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.Date;
+
+import net.sf.jkniv.whinstone.types.ColumnType;
+import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.JdbcType;
+
+/**
+ * Conversion type from {@code Java Instant} to {@code JDBC TIMESTAMP}
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
+public class InstantDateType implements Convertible<Instant, Date>
 {
-    public LongIntegerType()
+    public InstantDateType()
     {
     }
     
-    public LongIntegerType(String pattern)
+    public InstantDateType(String pattern)
     {
     }
     
     @Override
-    public Integer toJdbc(Long attribute)
+    public Date toJdbc(Instant attribute)
     {
         if (attribute == null)
             return null;
         
-        return attribute.intValue();
+        return Timestamp.from(attribute);
     }
 
     @Override
-    public Long toAttribute(Integer jdbc)
+    public Instant toAttribute(Date jdbc)
     {
         if (jdbc == null)
             return null;
-        
-        return jdbc.longValue();
+
+        return jdbc.toInstant();
     }
 
     @Override
-    public Class<Long> getType()
+    public Class<Instant> getType()
     {
-        return Long.class;
+        return Instant.class;
     }
     
     @Override
     public ColumnType getColumnType() 
     {
-        return JdbcType.INTEGER;
+        return JdbcType.DATE;
     }
 
     @Override
     public String toString()
     {
-        return "LongIntegerType [type="
-                + getType() + ", columnType=" + getColumnType() + "]";
+        return "InstantTimestampType [type=" + getType() + ", columnType=" + getColumnType() + "]";
     }
 }

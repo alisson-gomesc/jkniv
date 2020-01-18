@@ -1,6 +1,4 @@
-package net.sf.jkniv.whinstone.statement;
-
-import net.sf.jkniv.whinstone.types.ColumnType;
+package net.sf.jkniv.whinstone.types;
 
 class TypeMap
 {

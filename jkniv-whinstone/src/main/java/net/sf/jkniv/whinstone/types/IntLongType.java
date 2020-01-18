@@ -19,6 +19,12 @@
  */
 package net.sf.jkniv.whinstone.types;
 
+/**
+ * Conversion type from {@code Java Integer} to {@code JDBC BIGINT}.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public class IntLongType implements Convertible<Integer, Long>
 {
     public IntLongType()

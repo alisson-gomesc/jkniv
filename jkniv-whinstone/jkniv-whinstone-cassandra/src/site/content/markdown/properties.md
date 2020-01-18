@@ -28,4 +28,3 @@ Example how to register a codec:
     </repository>
     
     
-jkniv.repository.protocol_version

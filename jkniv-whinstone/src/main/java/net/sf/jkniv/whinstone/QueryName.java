@@ -45,9 +45,9 @@ import net.sf.jkniv.whinstone.params.AutoBindParams;
 import net.sf.jkniv.whinstone.params.ParameterException;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 import net.sf.jkniv.whinstone.params.PrepareParamsFactory;
-import net.sf.jkniv.whinstone.statement.ConvertibleFactory;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.ConvertibleFactory;
 import net.sf.jkniv.whinstone.types.NoConverterType;
 
 /**
@@ -442,6 +442,7 @@ class QueryName implements Queryable
         } while (param == null && it.hasNext());
     }
     
+    // FIXME Converter/Mapping/Translate values from/to jdbc
     @Override
     public Iterator<Param> iterator()
     {
@@ -477,35 +478,9 @@ class QueryName implements Queryable
             while(it.hasNext())
                 paramsValues.add(it.next());
         }
-        ////        else if(isTypeOfMap())
-        ////        {
-        ////            Set<Entry<String,Object>> entries = ((Map)this.params).entrySet();
-        ////            for(Entry<String, Object> entry : entries)
-        ////                paramsValues.add(new Param(entry.getValue(), i++, entry.getKey()));
-        ////        }
-        //        else if(isTypeOfArrayFromBasicTypes())
-        //        {
-        //            if(!hasInClause(paramsNames) && paramsNames.length != getParamsAsArray().length)
-        //                throw new ParameterException("A query [" + this.name
-        //                        + "] with positional parameters needs an array exactly have the same number of parameters from query.");
-        //
-        //            Object[] arrayOfParams = (Object[])this.params;
-        //            for(int j=0; j<arrayOfParams.length; j++)
-        //                paramsValues.add(new Param(arrayOfParams[j], j));
-        //        }
-        //        else if(isTypeOfCollectionFromBasicTypes())
-        //        {
-        //            if(!hasInClause(paramsNames) && paramsNames.length != getParamsAsCollection().size())
-        //                throw new ParameterException("A query [" + this.name
-        //                        + "] with positional parameters needs an collection exactly have the same number of parameters from query.");
-        //
-        //            Collection<?> colOfParams = (Collection<?>)this.params;
-        //            int j=0;
-        //            for(Object o : colOfParams)
-        //                paramsValues.add(new Param(o, j++));
-        //        }
         else
         {
+            // FIXME Converter/Mapping/Translate values from/to jdbc
             //int k = 0; // index params for clause IN
             for (String name : paramsNames)
             {

@@ -19,6 +19,11 @@
  */
 package net.sf.jkniv.whinstone;
 
+/**
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public interface JdbcColumnMapper
 {
     String map(String row); // TODO test column mapper

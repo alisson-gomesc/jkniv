@@ -19,6 +19,12 @@
  */
 package net.sf.jkniv.whinstone.types;
 
+/**
+ * Conversion type from {@code Java java.util.Date} to {@code JDBC DATE}.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public class DateType implements Convertible<java.util.Date,java.sql.Date>
 {
     public DateType()

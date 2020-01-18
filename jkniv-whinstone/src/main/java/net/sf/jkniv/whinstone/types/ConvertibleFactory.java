@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.statement;
+package net.sf.jkniv.whinstone.types;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -32,12 +32,6 @@ import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.whinstone.JdbcColumn;
-import net.sf.jkniv.whinstone.types.Converter;
-import net.sf.jkniv.whinstone.types.Convertible;
-import net.sf.jkniv.whinstone.types.EnumNameType;
-import net.sf.jkniv.whinstone.types.EnumOrdinalType;
-import net.sf.jkniv.whinstone.types.NoConverterType;
-import net.sf.jkniv.whinstone.types.UnknowType;
 import net.sf.jkniv.whinstone.types.Converter.EnumType;
 
 /**
@@ -59,12 +53,9 @@ public class ConvertibleFactory
             LOG.warn("The converter {} was replaced by {}", c, convertible);
         
         TypeMap typeMapByClass = new TypeMap(convertible.getType(), UnknowType.getInstance());
-        if (!REGISTRY.containsKey(typeMapByClass))
-        {
-            c = REGISTRY.put(typeMapByClass, convertible);
-            if (c != null && c != convertible)
-                LOG.warn("The class converter {} was replaced by {}", c, convertible);
-        }
+        c = REGISTRY.put(typeMapByClass, convertible);
+        if (c != null && c != convertible)
+            LOG.warn("Default converter for {} was replaced by {}", c, convertible);
     }
     
     /**

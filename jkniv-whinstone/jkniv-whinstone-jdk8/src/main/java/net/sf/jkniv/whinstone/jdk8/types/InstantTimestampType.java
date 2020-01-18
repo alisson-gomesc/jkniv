@@ -17,49 +17,53 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.types;
+package net.sf.jkniv.whinstone.jdk8.types;
 
 import java.sql.Timestamp;
-import java.util.Date;
+import java.time.Instant;
+
+import net.sf.jkniv.whinstone.types.ColumnType;
+import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.JdbcType;
 
 /**
- * Conversion type from {@code Java java.util.Date} to {@code JDBC TIMESTAMP}. This conversion has default usage.
+ * Conversion type from {@code Java Instant} to {@code JDBC TIMESTAMP}
  * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public class DateTimestampType implements Convertible<Date, Timestamp>
+public class InstantTimestampType implements Convertible<Instant, Timestamp>
 {
-    public DateTimestampType()
+    public InstantTimestampType()
     {
     }
     
-    public DateTimestampType(String pattern)
+    public InstantTimestampType(String pattern)
     {
     }
     
     @Override
-    public Timestamp toJdbc(Date attribute)
+    public Timestamp toJdbc(Instant attribute)
     {
         if (attribute == null)
             return null;
         
-        return new Timestamp(attribute.getTime());
+        return Timestamp.from(attribute);
     }
 
     @Override
-    public java.util.Date toAttribute(Timestamp jdbc)
+    public Instant toAttribute(Timestamp jdbc)
     {
         if (jdbc == null)
             return null;
 
-        return new Date(jdbc.getTime());
+        return jdbc.toInstant();
     }
 
     @Override
-    public Class<Date> getType()
+    public Class<Instant> getType()
     {
-        return Date.class;
+        return Instant.class;
     }
     
     @Override
@@ -71,6 +75,6 @@ public class DateTimestampType implements Convertible<Date, Timestamp>
     @Override
     public String toString()
     {
-        return "DateTimestampType [type=" + getType() + ", columnType=" + getColumnType() + "]";
+        return "InstantTimestampType [type=" + getType() + ", columnType=" + getColumnType() + "]";
     }
 }

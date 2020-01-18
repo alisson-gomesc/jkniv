@@ -21,6 +21,12 @@ package net.sf.jkniv.whinstone.types;
 
 import java.util.Calendar;
 
+/**
+ * Conversion type from {@code Java Calendar} to {@code JDBC TIMESTAMP}. This conversion has default usage.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public class CalendarTimestampType implements Convertible<java.util.Calendar, java.sql.Timestamp>
 {
     public CalendarTimestampType()
@@ -60,7 +66,7 @@ public class CalendarTimestampType implements Convertible<java.util.Calendar, ja
     @Override
     public ColumnType getColumnType() 
     {
-        return JdbcType.DATE;
+        return JdbcType.TIMESTAMP;
     }
 
     @Override

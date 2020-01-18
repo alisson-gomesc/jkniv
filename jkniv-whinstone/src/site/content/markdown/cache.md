@@ -80,4 +80,15 @@ There isn't synchronization between the cache and the repository, so to help des
      Queryable query = QueryFactory.of("session", "email", "someone@nohome.com");
      query.cacheIgnore();
      List<Session> list = repositoryDb.list(query);
+     
+     
+### Logging
+
+To trace what the caching is doing active the logger category `jkniv.utils.CACHE`.
+
+    <logger name="jkniv.utils.CACHE" additivity="false">
+      <level value="info"/>
+      <appender-ref ref="console" />
+    </logger>
+
  

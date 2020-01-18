@@ -20,6 +20,9 @@
 package net.sf.jkniv.whinstone.types;
 
 /**
+ * Conversion type from {@code Java Short} to {@code JDBC Integer}. This conversion has default usage.
+ * 
+ * <i>Numeric type promotion</i> some drivers keep the {@code Short} values as {@code Integer}
  * 
  * @author Alisson Gomes
  * @since 0.6.0

@@ -19,58 +19,58 @@
  */
 package net.sf.jkniv.whinstone.types;
 
-import java.sql.Timestamp;
-import java.util.Date;
+import java.math.BigDecimal;
 
 /**
- * Conversion type from {@code Java java.util.Date} to {@code JDBC TIMESTAMP}. This conversion has default usage.
+ * Conversion type from {@code Java Long} to {@code JDBC NUMERIC}. This conversion has default usage.
  * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public class DateTimestampType implements Convertible<Date, Timestamp>
+public class LongNumericType implements Convertible<Long, BigDecimal>
 {
-    public DateTimestampType()
+    public LongNumericType()
     {
     }
     
-    public DateTimestampType(String pattern)
+    public LongNumericType(String pattern)
     {
     }
     
     @Override
-    public Timestamp toJdbc(Date attribute)
+    public BigDecimal toJdbc(Long attribute)
     {
         if (attribute == null)
             return null;
         
-        return new Timestamp(attribute.getTime());
+        return new BigDecimal(attribute);
     }
 
     @Override
-    public java.util.Date toAttribute(Timestamp jdbc)
+    public Long toAttribute(BigDecimal jdbc)
     {
         if (jdbc == null)
             return null;
-
-        return new Date(jdbc.getTime());
+        
+        return jdbc.longValue();
     }
 
     @Override
-    public Class<Date> getType()
+    public Class<Long> getType()
     {
-        return Date.class;
+        return Long.class;
     }
     
     @Override
     public ColumnType getColumnType() 
     {
-        return JdbcType.TIMESTAMP;
+        return JdbcType.NUMERIC;
     }
 
     @Override
     public String toString()
     {
-        return "DateTimestampType [type=" + getType() + ", columnType=" + getColumnType() + "]";
+        return "LongBigDecimalType [type="
+                + getType() + ", columnType=" + getColumnType() + "]";
     }
 }

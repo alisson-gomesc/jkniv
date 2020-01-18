@@ -36,6 +36,9 @@ package net.sf.jkniv.whinstone.types;
  * <pre>
  * {@literal @}Converter(converter = TimeUnit.class)
  * </pre>
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
  */
 public class EnumNameType implements Convertible<Enum<?>, String>
 {

@@ -23,6 +23,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+/**
+ * Conversion type from {@code Java Calendar} to {@code JDBC INTEGER}.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public class CalendarIntType implements Convertible<Calendar, Integer>
 {
     private String pattern;

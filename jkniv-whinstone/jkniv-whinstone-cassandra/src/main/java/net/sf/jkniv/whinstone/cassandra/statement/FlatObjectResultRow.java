@@ -74,11 +74,12 @@ class FlatObjectResultRow<T> extends AbstractResultRow implements ResultRow<T, R
     {
         ObjectProxy<T> proxy = ObjectProxyFactory.of(returnType);
         for (JdbcColumn<Row> column : columns)
-            setValueOf(column, rs, proxy);
+            setValueOf(proxy, column, rs);
+ //       setValueOf(column, rs, proxy);
         // list jdbcType = 22
         return proxy.getInstance();
     }
-    
+    /*
     private void setValueOf(JdbcColumn<Row> column, Row rs, ObjectProxy<T> proxy) throws SQLException
     {
         Injectable<T> reflect = InjectableFactory.of(proxy);
@@ -101,6 +102,7 @@ class FlatObjectResultRow<T> extends AbstractResultRow implements ResultRow<T, R
                 LOG.warn("Method [{}] doesn't exists for [{}] to set value [{}]", method, proxy.getTargetClass().getName(), jdbcObject);
         }
     }
+    */
 
     @Override
     public Transformable<T> getTransformable()

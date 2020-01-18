@@ -21,6 +21,12 @@ package net.sf.jkniv.whinstone.types;
 
 import java.math.BigDecimal;
 
+/**
+ * Conversion type from {@code Java Long} to {@code JDBC DECIMAL}. This conversion has default usage.
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
 public class LongBigDecimalType implements Convertible<Long, BigDecimal>
 {
     public LongBigDecimalType()
@@ -58,7 +64,7 @@ public class LongBigDecimalType implements Convertible<Long, BigDecimal>
     @Override
     public ColumnType getColumnType() 
     {
-        return JdbcType.NUMERIC;
+        return JdbcType.DECIMAL;
     }
 
     @Override

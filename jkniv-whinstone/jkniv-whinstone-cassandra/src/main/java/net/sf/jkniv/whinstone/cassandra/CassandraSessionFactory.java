@@ -41,6 +41,14 @@ import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.commands.CommandAdapter;
+import net.sf.jkniv.whinstone.types.CalendarTimestampType;
+import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.ConvertibleFactory;
+import net.sf.jkniv.whinstone.types.DateTimestampType;
+import net.sf.jkniv.whinstone.types.DoubleBigDecimalType;
+import net.sf.jkniv.whinstone.types.LongBigDecimalType;
+import net.sf.jkniv.whinstone.types.LongNumericType;
+import net.sf.jkniv.whinstone.types.ShortIntType;
 
 public class CassandraSessionFactory //implements ConnectionFactory
 {
@@ -71,7 +79,8 @@ public class CassandraSessionFactory //implements ConnectionFactory
         
         CODECS.put("jdk8.InstantCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.InstantCodec"));
         CODECS.put("jdk8.LocalDateCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.LocalDateCodec"));
-        CODECS.put("jdk8.LocalDateTimeCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.LocalDateTimeCodec"));
+        CODECS.put("jdk8.LocalDateTimeCodec",
+                new CodecMap("com.datastax.driver.extras.codecs.jdk8.LocalDateTimeCodec"));
         CODECS.put("jdk8.LocalTimeCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.LocalTimeCodec"));
         CODECS.put("jdk8.OptinalCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.OptionalCodec"));
         CODECS.put("jdk8.ZonedDateTimeCodec",
@@ -83,7 +92,7 @@ public class CassandraSessionFactory //implements ConnectionFactory
         CODECS.put("joda.LocalDateCodec", new CodecMap("com.datastax.driver.extras.codecs.joda.LocalDateCodec"));
         CODECS.put("joda.LocalTimeCodec", new CodecMap("com.datastax.driver.extras.codecs.joda.LocalTimeCodec"));
         CODECS.put("json.JacksonJsonCodec", new CodecMap("com.datastax.driver.extras.codecs.json.JacksonJsonCodec"));
-
+        
         CODECS.put("InstantCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.InstantCodec"));
         CODECS.put("LocalDateCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.LocalDateCodec"));
         CODECS.put("LocalDateTimeCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.LocalDateTimeCodec"));
@@ -108,7 +117,7 @@ public class CassandraSessionFactory //implements ConnectionFactory
         else
             cluster = Cluster.builder().withProtocolVersion(version).addContactPoints(urls).build();
         
-        settingCodec(props);
+        settingProperties(props);
         
         final Metadata metadata = cluster.getMetadata();
         if (LOG.isInfoEnabled())
@@ -122,56 +131,75 @@ public class CassandraSessionFactory //implements ConnectionFactory
         this.conn = new CassandraCommandAdapter(cluster, session, contextName, handlerException);
     }
     
-    private void settingCodec(Properties props)
+    private void settingProperties(Properties props)
     {
         Enumeration<Object> keys = props.keys();
         while (keys.hasMoreElements())
         {
             String k = keys.nextElement().toString();
             if (k.startsWith("codec."))
-            {
-                boolean enable = Boolean.valueOf(props.getProperty(k));
-                if (enable)
-                {
-                    CodecMap codecMap = CODECS.get(k.substring(6));
-                    Field field = null;
-                    if (codecMap != null)
-                    {
-                        ObjectProxy<TypeCodec<?>> proxy = ObjectProxyFactory.of(codecMap.codecClassName);
-                        field = proxy.getDeclaredField("instance");
-                        if (field != null)
-                        {
-                            TypeCodec<?> instance = null;
-                            try
-                            {
-                                instance = (TypeCodec<?>) field.get(null);
-                                cluster.getConfiguration().getCodecRegistry().register(instance);
-                                codecMap.instance = instance;
-                                if (k.endsWith("InstantCodec"))
-                                    CODECS.get("InstantCodec").instance = instance;
-                                else if (k.endsWith("LocalDateCodec"))
-                                    CODECS.get("LocalDateCodec").instance = instance;
-                                else if (k.endsWith("LocalTimeCodec"))
-                                    CODECS.get("LocalTimeCodec").instance = instance;
-                                else if (k.endsWith("LocalDateTimeCodec"))
-                                    CODECS.get("LocalDateTimeCodec").instance = instance;
-                                else if (k.endsWith("OptinalCodec"))
-                                    CODECS.get("OptinalCodec").instance = instance;
+                settingCodec(k, props);
+            else if (k.startsWith("jkniv.repository.type."))
+                settingConverters(k, props);                
+        }
+    }
+    
+    @SuppressWarnings("rawtypes")
+    private void settingConverters(String k, Properties props)
+    {
+        String className = String.valueOf(props.get(k));// (22) -> "jkniv.repository.type."
+        ObjectProxy<Convertible> proxy = ObjectProxyFactory.of(className);
+        ConvertibleFactory.register(proxy.newInstance());
+//        ConvertibleFactory.register(new DateTimestampType());
+//        ConvertibleFactory.register(new CalendarTimestampType());
+//        ConvertibleFactory.register(new LongNumericType());
+//        ConvertibleFactory.register(new LongBigDecimalType());
+//        ConvertibleFactory.register(new ShortIntType());
+//        ConvertibleFactory.register(new DoubleBigDecimalType());
+    }
 
-                                LOG.info("The codec {} was registered with {}", k, codecMap.codecClassName);
-                            }
-                            catch (Exception e)//IllegalArgumentException, IllegalAccessException
-                            {
-                                LOG.error("Error registering codec {}", k, e);
-                            }
-                        }
+    
+    private void settingCodec(String k, Properties props)
+    {
+        boolean enable = Boolean.valueOf(props.getProperty(k));
+        if (enable)
+        {
+            CodecMap codecMap = CODECS.get(k.substring(6));// (6) -> "codec."
+            Field field = null;
+            if (codecMap != null)
+            {
+                ObjectProxy<TypeCodec<?>> proxy = ObjectProxyFactory.of(codecMap.codecClassName);
+                field = proxy.getDeclaredField("instance");
+                if (field != null)
+                {
+                    TypeCodec<?> instance = null;
+                    try
+                    {
+                        instance = (TypeCodec<?>) field.get(null);
+                        cluster.getConfiguration().getCodecRegistry().register(instance);
+                        codecMap.instance = instance;
+                        if (k.endsWith("InstantCodec"))
+                            CODECS.get("InstantCodec").instance = instance;
+                        else if (k.endsWith("LocalDateCodec"))
+                            CODECS.get("LocalDateCodec").instance = instance;
+                        else if (k.endsWith("LocalTimeCodec"))
+                            CODECS.get("LocalTimeCodec").instance = instance;
+                        else if (k.endsWith("LocalDateTimeCodec"))
+                            CODECS.get("LocalDateTimeCodec").instance = instance;
+                        else if (k.endsWith("OptinalCodec"))
+                            CODECS.get("OptinalCodec").instance = instance;
+                        
+                        LOG.info("The codec {} was registered with {}", k, codecMap.codecClassName);
                     }
-                    if (codecMap == null || field == null)
-                        LOG.error("Codec {} not found ", k);
+                    catch (Exception e)//IllegalArgumentException, IllegalAccessException
+                    {
+                        LOG.error("Error registering codec {}", k, e);
+                    }
                 }
             }
-        }
-        
+            if (codecMap == null || field == null)
+                LOG.error("Codec {} not found ", k);
+        }        
     }
     
     private ProtocolVersion getProtocolVersion(String protocol)
