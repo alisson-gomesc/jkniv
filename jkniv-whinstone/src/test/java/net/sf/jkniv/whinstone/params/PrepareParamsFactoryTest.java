@@ -46,6 +46,7 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.domain.orm.Animal;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 public class PrepareParamsFactoryTest
 {
@@ -93,7 +94,6 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id IN (:in:id)");
         Queryable queryable = QueryFactory.of("dummy", params);
         queryable.bind(this.selectableMock);
-        
         AutoBindParams auto = PrepareParamsFactory.newPrepareParams(stmtAdapter, queryable);
         assertThat(auto, instanceOf(NamedParams.class));
     }
@@ -275,7 +275,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = ?");
         Queryable queryable = QueryFactory.of("dummy", values);
         queryable.bind(this.selectableMock);
-        AutoBindParams auto = PrepareParamsFactory.newPositionalCollectionPojoParams(stmtAdapter, queryable);
+        AutoBindParams auto = PrepareParamsFactory.newPositionalCollectionPojoParams(stmtAdapter, queryable, new RegisterType());
         assertThat(auto, instanceOf(PositionalCollectionPojoParams.class));
     }
 

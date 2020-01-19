@@ -35,11 +35,11 @@ public interface CommandAdapter
     
     <T,R> Command asSelectCommand(Queryable queryable, ResultRow<T, R> overloadResultRow);
 
-    <T, R> Command asUpdateCommand(Queryable queryable);
+    <T,R> Command asUpdateCommand(Queryable queryable);
 
-    <T, R> Command asRemoveCommand(Queryable queryable);
+    <T,R> Command asRemoveCommand(Queryable queryable);
 
-    <T, R> Command asAddCommand(Queryable queryable);
+    <T,R> Command asAddCommand(Queryable queryable);
 
     void close();
 }

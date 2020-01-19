@@ -41,6 +41,7 @@ import net.sf.jkniv.whinstone.transaction.TransactionContext;
 import net.sf.jkniv.whinstone.transaction.TransactionSessions;
 import net.sf.jkniv.whinstone.transaction.TransactionStatus;
 import net.sf.jkniv.whinstone.transaction.Transactional;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 abstract class AbstractJdbcAdapter implements ConnectionFactory
 {

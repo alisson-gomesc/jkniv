@@ -120,7 +120,10 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
                 {
                     Command command = cmdAdapter.asSelectCommand(createQueryableForPaging(), null);
                     List<Number> rows = command.execute();
-                    queryable.setTotal(rows.get(0).longValue());
+                    if (rows.isEmpty())
+                        queryable.setTotal(0);
+                    else
+                        queryable.setTotal(rows.get(0).longValue());
                 }
                 catch (RepositoryException e)
                 {
@@ -164,7 +167,7 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
         for(int i=0; i<paramValues.length; i++)
             paramArray[i] = paramValues[i].getValue();
             
-        Queryable paging = QueryFactory.ofArray(queryName, paramArray);
+        Queryable paging = QueryFactory.ofArray(queryName, queryable.getRegisterType(), paramArray);
         Selectable selectable = TagFactory.newSelect(queryName, LanguageType.NATIVE, queryable.getDynamicSql().getSqlDialect());
         if (selectable instanceof SqlTag)
         {

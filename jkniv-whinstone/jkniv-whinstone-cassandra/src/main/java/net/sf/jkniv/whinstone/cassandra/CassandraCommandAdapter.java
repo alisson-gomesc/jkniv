@@ -19,8 +19,6 @@
  */
 package net.sf.jkniv.whinstone.cassandra;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 
 import com.datastax.driver.core.Cluster;
@@ -34,7 +32,6 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.Insertable;
-import net.sf.jkniv.sqlegance.LanguageType;
 import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
@@ -49,6 +46,7 @@ import net.sf.jkniv.whinstone.commands.Command;
 import net.sf.jkniv.whinstone.commands.CommandAdapter;
 import net.sf.jkniv.whinstone.statement.AutoKey;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 /**
  * 
@@ -64,13 +62,17 @@ class CassandraCommandAdapter implements CommandAdapter
     private Cluster cluster;
     private StatementCache stmtCache;
     private final String contextName;
+    private final RegisterType registerType;
+    private final RegisterCodec registerCodec;
     private final HandleableException handlerException;
     
-    public CassandraCommandAdapter(Cluster cluster, Session session, String contextName, HandleableException handlerException)
+    public CassandraCommandAdapter(String contextName, Cluster cluster, Session session, RegisterType registerType, RegisterCodec registerCodec, HandleableException handlerException)
     {
         NOT_NULL.verify(cluster, session, contextName);
         this.cluster = cluster;
         this.session = session;
+        this.registerType = registerType;
+        this.registerCodec = registerCodec;
         this.stmtCache = new StatementCache(session);
         this.contextName = contextName;
         this.handlerException = handlerException;
@@ -194,13 +196,13 @@ class CassandraCommandAdapter implements CommandAdapter
         {
             Param[] params = queryable.values();
             Statement statement = new SimpleStatement(sql, extracValues(params));
-            stmt = new CassandraStatementAdapter(this.session, statement, queryable);
+            stmt = new CassandraStatementAdapter(this.session, statement, queryable, registerType);
             stmt.setFetchSize(queryable.getMax());
         }
         else
         {
             PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
-            stmt = new CassandraPreparedStatementAdapter(this.session, stmtPrep, queryable);
+            stmt = new CassandraPreparedStatementAdapter(this.session, stmtPrep, queryable, registerType, registerCodec);
         }
         queryable.bind(stmt).on();
         stmt.with(overloadResultRow);
@@ -236,7 +238,7 @@ class CassandraCommandAdapter implements CommandAdapter
             SQLLOG.info("Bind Native SQL\n{}",sql);
         
         PreparedStatement stmtPrep = this.stmtCache.prepare(sql);
-        CassandraPreparedStatementAdapter<Number, Row> stmt = new CassandraPreparedStatementAdapter<Number, Row>(this.session, stmtPrep, queryable);
+        CassandraPreparedStatementAdapter<Number, Row> stmt = new CassandraPreparedStatementAdapter<Number, Row>(this.session, stmtPrep, queryable, registerType, registerCodec);
         if (queryable.isTypeOfBulk())
             command = new BulkCommand(queryable).with(stmt);
         else if (queryable.getDynamicSql().isInsertable() && 

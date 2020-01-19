@@ -21,6 +21,7 @@ package net.sf.jkniv.whinstone.jpa2;
 
 import java.sql.Statement;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,8 @@ import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.jpa2.dialect.JpaDialect;
 import net.sf.jkniv.whinstone.transaction.Transactional;
+import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 /**
  * This an abstract class that implements Repository pattern using JPA 2. 
@@ -90,7 +93,7 @@ class RepositoryJpa implements RepositoryJpaExtend
     private boolean                                   isDebugEnabled;
     private HandleableException                       handlerException;
     private CommandAdapter                            cmdAdapter;
-    
+    private final RegisterType        registerType;
     /**
      * Create a JPA repository using default persistence unit name, where
      * EntityManager is a container-managed persistence context.
@@ -116,9 +119,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.persistenceInfo = getPersitenceInfo(unitName);
         sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
         this.strategyQueryName = null;
-        //this.emFactory = new JpaEmFactoryJndi(sqlContextName);
-        //if (!emFactory.isActive())
-        ///    this.emFactory = new JpaEmFactorySEenv(unitName);
+        this.registerType = new RegisterType();
         this.init();
     }
     
@@ -129,10 +130,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.sqlContext = SqlContextFactory.newInstance("/repository-sql.xml", this.persistenceInfo.getProperties());
         this.sqlContext.getRepositoryConfig().add(props);
         this.strategyQueryName = null;
-        //this.emFactory = new JpaEmFactoryJndi(persistenceInfo.getUnitName());
-        //if (!emFactory.isActive())
-        //    this.emFactory = new JpaEmFactorySEenv(persistenceInfo.getUnitName());
-        
+        this.registerType = new RegisterType();
         this.init();
     }
     
@@ -144,6 +142,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.sqlContext.getRepositoryConfig().add(props);
         this.sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
         this.strategyQueryName = null;
+        this.registerType = new RegisterType();
         this.init();
     }
     
@@ -154,6 +153,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.sqlContext = sqlContext;
         this.sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
         this.strategyQueryName = null;
+        this.registerType = new RegisterType();
         this.init();
     }
     
@@ -164,6 +164,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.sqlContext = sqlContext;
         this.sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
         this.strategyQueryName = null;
+        this.registerType = new RegisterType();
         this.init();
     }
     
@@ -184,13 +185,13 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.persistenceInfo = PersistenceReader.getPersistenceInfo(sqlContext.getName());
         this.strategyQueryName = null;
         this.sqlContext = sqlContext;
+        this.registerType = new RegisterType();
         init();
     }
     
     private void init()
     {
-        boolean showConfig = Boolean
-                .valueOf(sqlContext.getRepositoryConfig().getProperty(RepositoryProperty.SHOW_CONFIG));
+        boolean showConfig = Boolean.valueOf(sqlContext.getRepositoryConfig().getProperty(RepositoryProperty.SHOW_CONFIG));
         String queryNameStrategyClass = sqlContext.getRepositoryConfig().getQueryNameStrategy();
         ObjectProxy<QueryNameStrategy> proxy = ObjectProxyFactory.of(queryNameStrategyClass);
         this.strategyQueryName = proxy.newInstance();
@@ -200,6 +201,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         isDebugEnabled = LOG.isDebugEnabled();
         this.sqlContext.getRepositoryConfig().add(RepositoryProperty.SQL_DIALECT.key(), JpaDialect.class.getName());
         this.sqlContext.setSqlDialect(this.sqlContext.getRepositoryConfig().getSqlDialect());
+        this.settingProperties();
         configureEntityManagerFactory();
         configureHandlerException();
         this.cmdAdapter = new JpaCommandAdapter(this.sqlContext.getName(), emFactory, handlerException);
@@ -232,7 +234,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as add command", queryName);
 
-        Queryable queryable = QueryFactory.of(queryName, entity);
+        Queryable queryable = QueryFactory.of(queryName, registerType, entity);
         Sql sql = TagFactory.newInsert("dummy", LanguageType.JPQL, this.sqlContext.getSqlDialect());
         CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
         int rows = handler.with(queryable)
@@ -246,13 +248,15 @@ class RepositoryJpa implements RepositoryJpaExtend
     public int add(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
-        Sql sql = getQuery(queryable);
+        Queryable queryableCloned = QueryFactory.clone(queryable, registerType);
+        Sql sql = getQuery(queryableCloned);
         CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
-        int rows = handler.with(queryable)
+        int rows = handler.with(queryableCloned)
                 .with(sql)
                 .checkSqlType(SqlType.INSERT)
                 .with(handlerException)
                 .run();
+        copy(queryable, queryableCloned);
         return rows;
     }
     
@@ -269,7 +273,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as remove command", queryName);
 
-        Queryable queryable = QueryFactory.of(queryName, entity);
+        Queryable queryable = QueryFactory.of(queryName, registerType, entity);
         Sql sql = TagFactory.newInsert("dummy", LanguageType.JPQL, this.sqlContext.getSqlDialect());
         CommandHandler handler = CommandHandlerFactory.ofRemove(this.cmdAdapter);
         
@@ -293,13 +297,15 @@ class RepositoryJpa implements RepositoryJpaExtend
     public int remove(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
-        Sql sql = getQuery(queryable);
+        Queryable queryableCloned = QueryFactory.clone(queryable, registerType);
+        Sql sql = getQuery(queryableCloned);
         CommandHandler handler = CommandHandlerFactory.ofRemove(this.cmdAdapter);
-        int rows = handler.with(queryable)
+        int rows = handler.with(queryableCloned)
                 .with(sql)
                 .checkSqlType(SqlType.DELETE)
                 .with(handlerException)
                 .run();
+        copy(queryable,queryableCloned);
         return rows;
     }
     
@@ -331,13 +337,15 @@ class RepositoryJpa implements RepositoryJpaExtend
         NOT_NULL.verify(queryable);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
-        Sql sql = getQuery(queryable);
+        Queryable queryableCloned = QueryFactory.clone(queryable, registerType);
+        Sql sql = getQuery(queryableCloned);
         CommandHandler handler = CommandHandlerFactory.ofUpdate(this.cmdAdapter);
-        int rows = handler.with(queryable)
+        int rows = handler.with(queryableCloned)
                 .with(sql)
                 .checkSqlType(SqlType.UPDATE)
                 .with(handlerException)
                 .run();
+        copy(queryable, queryableCloned);
         return rows;
     }
     
@@ -355,7 +363,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryName);
 
-        Queryable queryable = QueryFactory.of(queryName, entity);
+        Queryable queryable = QueryFactory.of(queryName, registerType, entity);
         Sql sql = TagFactory.newInsert("dummy", LanguageType.JPQL, this.sqlContext.getSqlDialect());
         CommandHandler handler = CommandHandlerFactory.ofUpdate(this.cmdAdapter);
         
@@ -380,7 +388,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toGetName(entity);
         Queryable queryable = QueryFactory.of(queryName, entity.getClass(), entity);
-        T ret = (T) handleGet(queryable, null);
+        T ret = handleGet(queryable, null, null);
         return ret;
         /*
         // TODO test me case null object
@@ -397,7 +405,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toGetName(entity);
         Queryable queryable = QueryFactory.of(queryName, returnType, entity);
-        T ret = (T) handleGet(queryable, null);
+        T ret = handleGet(queryable, null, null);
         return ret;
     }
     
@@ -405,7 +413,7 @@ class RepositoryJpa implements RepositoryJpaExtend
     public <T> T get(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
-        T ret = handleGet(queryable, null);
+        T ret = handleGet(queryable, null, null);
         return ret;
     }
     
@@ -413,16 +421,15 @@ class RepositoryJpa implements RepositoryJpaExtend
     public <T> T get(Queryable queryable, Class<T> returnType)
     {
         NOT_NULL.verify(queryable, returnType);
-        Queryable queryableClone = QueryFactory.clone(queryable, returnType);
-        T ret = handleGet(queryableClone, null);
-        queryable.setTotal(queryableClone.getTotal());
+        T ret = handleGet(queryable, null, null);
         return ret;
     }
     
     @Override
     public <T, R> T get(Queryable queryable, ResultRow<T, R> customResultRow)
     {
-        return handleGet(queryable, customResultRow);
+        NOT_NULL.verify(customResultRow);
+        return handleGet(queryable, customResultRow, null);
     }
     
     /**
@@ -437,24 +444,21 @@ class RepositoryJpa implements RepositoryJpaExtend
     @Override
     public <T> List<T> list(Queryable queryable)
     {
-        return handleList(queryable, null);
+        return handleList(queryable, null, null);
     }
     
     @Override
     public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> customResultRow)
     {
-        return handleList(queryable, customResultRow);
+        NOT_NULL.verify(customResultRow);
+        return handleList(queryable, customResultRow, null);
     }
     
     @Override
     public <T> List<T> list(Queryable queryable, Class<T> overloadReturnType)
     {
-        List<T> list = Collections.emptyList();
-        Queryable queryableClone = queryable;
-        if (overloadReturnType != null)
-            queryableClone = QueryFactory.clone(queryable, overloadReturnType);
-        list = handleList(queryableClone, null);
-        queryable.setTotal(queryableClone.getTotal());
+        NOT_NULL.verify(overloadReturnType);
+        List<T> list = handleList(queryable, null, overloadReturnType);
         return list;
     }
     
@@ -463,41 +467,45 @@ class RepositoryJpa implements RepositoryJpaExtend
     {
         NOT_NULL.verify(queryable);
         queryable.scalar();
-        T ret = handleGet(queryable, null);
+        T ret = handleGet(queryable, null, null);
         return ret;
     }
     
-    private <T, R> T handleGet(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    private <T, R> T handleGet(Queryable queryable, ResultRow<T, R> overloadResultRow, Class<T> overloadReturnType)
     {
         T ret = null;
-        Sql sql = getQuery(queryable);
+        Queryable queryableCloned = QueryFactory.clone(queryable, registerType, overloadReturnType);
+        Sql sql = getQuery(queryableCloned);
         CommandHandler handler = CommandHandlerFactory.ofSelect(this.cmdAdapter);
         List<T> list = handler
-                .with(queryable)
+                .with(queryableCloned)
                 .with(sql)
                 .checkSqlType(SqlType.SELECT)
                 .with(handlerException)
                 .with(overloadResultRow)
                 .run();
         if (list.size() > 1)
-            throw new NonUniqueResultException("No unique result for query [" + queryable.getName() + "] with params ["+ queryable.getParams() + "result fetch ["+list.size()+"] rows, Repository.get(..) method must return just one row]");
+            throw new NonUniqueResultException("No unique result for query [" + queryableCloned.getName() + "] with params ["+ queryableCloned.getParams() + "result fetch ["+list.size()+"] rows, Repository.get(..) method must return just one row]");
 
         else if (list.size() == 1)
             ret = list.get(0);
         
+        copy(queryable, queryableCloned);
         return ret;
     }
     
-    private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow, Class<T> overloadReturnType)
     {
-        Sql sql = getQuery(queryable);
+        Queryable queryableCloned = QueryFactory.clone(queryable, registerType, overloadReturnType);
+        Sql sql = getQuery(queryableCloned);
         CommandHandler handler = CommandHandlerFactory.ofSelect(this.cmdAdapter);
         List<T> list = handler
-                .with(queryable)
+                .with(queryableCloned)
                 .with(sql)
                 .checkSqlType(SqlType.SELECT)
                 .with(handlerException)
                 .with(overloadResultRow).run();
+        copy(queryable, queryableCloned);
         return list;
     }
     
@@ -631,6 +639,24 @@ class RepositoryJpa implements RepositoryJpaExtend
         return pInfo;
     }
     
+    private void settingProperties()
+    {
+        Properties props = this.sqlContext.getRepositoryConfig().getProperties();
+        Enumeration<Object> keys = props.keys();
+        while (keys.hasMoreElements())
+        {
+            String k = keys.nextElement().toString();
+            if (k.startsWith("jkniv.repository.type."))
+                configConverters(k, props);                
+        }
+    }
+    private void configConverters(String k, Properties props)
+    {
+        String className = String.valueOf(props.get(k));// (22) -> "jkniv.repository.type."
+        ObjectProxy<Convertible> proxy = ObjectProxyFactory.of(className);
+        registerType.register(proxy.newInstance());
+    }
+
     private void configureHandlerException()
     {
         /*
@@ -666,5 +692,13 @@ class RepositoryJpa implements RepositoryJpaExtend
         //pessimistic locking
         /* @throws PersistenceException if the query execution exceeds the query timeout */
         this.handlerException.config(PersistenceException.class, "The query %s exceeds the timeout value: %s");
+    }
+    
+    private void copy(Queryable original, Queryable clone)
+    {
+        original.setTotal(clone.getTotal());
+        original.setBookmark(clone.getBookmark());
+        if (clone.isCached())
+            original.cached();
     }
 }

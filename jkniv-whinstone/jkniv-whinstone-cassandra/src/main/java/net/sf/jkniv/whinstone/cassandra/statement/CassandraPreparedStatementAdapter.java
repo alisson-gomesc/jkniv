@@ -40,6 +40,7 @@ import net.sf.jkniv.whinstone.ResultSetParser;
 import net.sf.jkniv.whinstone.cassandra.CassandraColumn;
 import net.sf.jkniv.whinstone.cassandra.CassandraSessionFactory;
 import net.sf.jkniv.whinstone.cassandra.LoggerFactory;
+import net.sf.jkniv.whinstone.cassandra.RegisterCodec;
 import net.sf.jkniv.whinstone.classification.Groupable;
 import net.sf.jkniv.whinstone.classification.GroupingBy;
 import net.sf.jkniv.whinstone.classification.NoGroupingBy;
@@ -47,7 +48,7 @@ import net.sf.jkniv.whinstone.classification.Transformable;
 import net.sf.jkniv.whinstone.statement.AutoKey;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 import net.sf.jkniv.whinstone.types.Convertible;
-import net.sf.jkniv.whinstone.types.ConvertibleFactory;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 /*
  * https://docs.datastax.com/en/developer/java-driver/3.1/manual/statements/prepared/
@@ -65,6 +66,7 @@ import net.sf.jkniv.whinstone.types.ConvertibleFactory;
  * @author Alisson Gomes
  * @since 0.6.0
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter<T, Row>
 {
     private static final Logger  LOG = LoggerFactory.getLogger();
@@ -73,24 +75,27 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     private static final Capitalize  CAPITAL_SETTER = CapitalNameFactory.getInstanceOfSetter();
     private final HandlerException  handlerException;
     private final PreparedStatement stmt;
-    private BoundStatement          bound;
-    private int                     index, indexIN;
-    private Class<T>                returnType;
-    private ResultRow<T, Row>       resultRow;
-    private boolean                 scalar;
+    private final Class<T>          returnType;
     private final Session           session;
     private final Queryable         queryable;
+    private BoundStatement          bound;
+    private int                     index, indexIN;
+    private ResultRow<T, Row>       resultRow;
+    private boolean                 scalar;
     private AutoKey                 autoKey;
+    private final RegisterType      registerType;
+    private final RegisterCodec    registerCodec;
     
-    @SuppressWarnings("unchecked")
-    public CassandraPreparedStatementAdapter(Session session, PreparedStatement stmt, Queryable queryable)
+    public CassandraPreparedStatementAdapter(Session session, PreparedStatement stmt, Queryable queryable, RegisterType registerType, RegisterCodec registerCodec)
     {
         this.stmt = stmt;
         this.session = session;
+        this.registerType = registerType;
+        this.registerCodec = registerCodec;
         this.bound = stmt.bind();
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
         this.queryable = queryable;
-        returnType = (Class<T>)queryable.getReturnType();
+        this.returnType = (Class<T>)queryable.getReturnType();
         this.reset();
     }
     
@@ -184,7 +189,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         // TODO https://www.datastax.com/dev/blog/client-side-improvements-in-cassandra-2-0
     }
     */
-    @SuppressWarnings({"unchecked" })
+    
     public List<T> rows()
     {
         ResultSet rs = null;
@@ -231,7 +236,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     
     private void setValueOfKey(ObjectProxy<?> proxy, String property, Object value)
     {
-        Convertible<Object, Object> converter = ConvertibleFactory.toJdbc(new PropertyAccess(property, proxy.getTargetClass()), proxy);
+        Convertible<Object, Object> converter = registerType.toJdbc(new PropertyAccess(property, proxy.getTargetClass()), proxy);
         Object parsedValue = value;
         if (!converter.getType().isInstance(value))
             parsedValue = converter.toAttribute(value);
@@ -277,7 +282,6 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     }
     
     /*******************************************************************************/
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     private StatementAdapter<T, Row> bindInternal(Object value)
     {
         if (value == null)
@@ -315,19 +319,19 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
             else if (value instanceof Map)
                 setInternalValue((Map) value);
             else if (classNameValue.equals("java.time.Instant"))
-                bound.set(currentIndex(), value, CassandraSessionFactory.CODECS.get("InstantCodec").instance);
+                bound.set(currentIndex(), value, registerCodec.getCodec("InstantCodec").instance);
             else if (classNameValue.equals("java.time.LocalDate"))
-                bound.set(currentIndex(), value, CassandraSessionFactory.CODECS.get("LocalDateCodec").instance);
+                bound.set(currentIndex(), value, registerCodec.getCodec("LocalDateCodec").instance);
             else if (classNameValue.equals("java.time.LocalDateTime"))
-                bound.set(currentIndex(), value, CassandraSessionFactory.CODECS.get("LocalDateTimeCodec").instance);
+                bound.set(currentIndex(), value, registerCodec.getCodec("LocalDateTimeCodec").instance);
             else if (classNameValue.equals("java.time.LocalTime"))
-                bound.set(currentIndex(), value, CassandraSessionFactory.CODECS.get("LocalTimeCodec").instance);
+                bound.set(currentIndex(), value, registerCodec.getCodec("LocalTimeCodec").instance);
             else if (classNameValue.equals("java.time.ZonedDateTime"))
-                bound.set(currentIndex(), value, CassandraSessionFactory.CODECS.get("jkd8.ZonedDateTimeCodec").instance);
+                bound.set(currentIndex(), value, registerCodec.getCodec("jkd8.ZonedDateTimeCodec").instance);
             else if (classNameValue.equals("java.util.Optional"))
-                bound.set(currentIndex(), value, CassandraSessionFactory.CODECS.get("jkd8.OptionalCodec").instance);
+                bound.set(currentIndex(), value, registerCodec.getCodec("jkd8.OptionalCodec").instance);
             else if (classNameValue.equals("java.time.ZoneId"))
-                bound.set(currentIndex(), value, CassandraSessionFactory.CODECS.get("jkd8.ZoneIdCodec").instance);
+                bound.set(currentIndex(), value, registerCodec.getCodec("jkd8.ZoneIdCodec").instance);
             else if (value instanceof BigInteger)
                 setInternalValue((BigInteger) value);
             else if (value instanceof Short)
@@ -453,12 +457,9 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     {
         return ( index++ + (indexIN));
     }
-
     
     /*******************************************************************************/
     
-    @SuppressWarnings(
-    { "unchecked", "rawtypes" })
     private void setResultRow(JdbcColumn<Row>[] columns)
     {
         if (resultRow != null)
@@ -501,7 +502,6 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
      * @param metadata  object that contains information about the types and properties of the columns in a <code>ResultSet</code> 
      * @return Array of columns with name and index
      */
-    @SuppressWarnings("unchecked")
     private JdbcColumn<Row>[] getJdbcColumns(ColumnDefinitions metadata)
     {
         JdbcColumn<Row>[] columns = new JdbcColumn[metadata.size()];
@@ -509,8 +509,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         for (int i = 0; i < columns.length; i++)
         {
             String columnName = metadata.getName(i);//getColumnName(metadata, columnNumber);
-            //int columnType = metadata.getType(i).getName().ordinal(); //metadata.getColumnType(columnNumber);
-            columns[i] = new CassandraColumn(i, columnName, metadata.getType(i).getName(), queryable.getReturnType());
+            columns[i] = new CassandraColumn(i, columnName, metadata.getType(i).getName(), registerType, queryable.getReturnType());
         }
         return columns;
     }

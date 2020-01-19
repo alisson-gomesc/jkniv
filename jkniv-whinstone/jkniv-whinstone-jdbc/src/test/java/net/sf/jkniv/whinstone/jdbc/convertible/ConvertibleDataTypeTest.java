@@ -27,17 +27,12 @@ import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.calls;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.atMost;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 
 import java.sql.ResultSet;
@@ -53,7 +48,6 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.verification.VerificationMode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jkniv.sqlegance.LanguageType;
@@ -252,7 +246,6 @@ public class ConvertibleDataTypeTest extends BaseJdbc
         values = query.values();
         assertThat(values[0].getValueAs().toString(), is("F"));
         assertThat(values[1].getValueAs().toString(), is(String.valueOf(LanguageType.STORED.ordinal())));
-
     }
 
     

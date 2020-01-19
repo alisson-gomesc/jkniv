@@ -48,6 +48,7 @@ import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 public class NamedParamsTest
 {

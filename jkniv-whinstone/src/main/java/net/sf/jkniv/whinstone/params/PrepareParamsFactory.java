@@ -25,6 +25,7 @@ import java.util.Date;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 /**
  * Factory to create new instances of {@link AutoBindParams}.
@@ -80,7 +81,7 @@ public class PrepareParamsFactory
     }
 
 
-    public static <T,R> AutoBindParams newPositionalCollectionPojoParams(StatementAdapter<T,R> adapter, Queryable queryable)
+    public static <T,R> AutoBindParams newPositionalCollectionPojoParams(StatementAdapter<T,R> adapter, Queryable queryable, RegisterType registerType)
     {
         return new PositionalCollectionPojoParams(adapter, queryable);
     }

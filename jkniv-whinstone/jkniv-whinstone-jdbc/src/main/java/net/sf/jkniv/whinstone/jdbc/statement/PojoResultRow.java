@@ -41,6 +41,7 @@ import net.sf.jkniv.whinstone.classification.ObjectTransform;
 import net.sf.jkniv.whinstone.classification.Transformable;
 import net.sf.jkniv.whinstone.jdbc.DefaultJdbcColumn;
 import net.sf.jkniv.whinstone.statement.AbstractResultRow;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 /**
  * 
@@ -53,6 +54,7 @@ import net.sf.jkniv.whinstone.statement.AbstractResultRow;
  * @author Alisson Gomes
  * @since 0.6.0
  */
+@SuppressWarnings("unchecked")
 class PojoResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultSet>
 {
     //private final static Logger      LOG     = LoggerFactory.getLogger(PojoResultRow.class);
@@ -64,18 +66,18 @@ class PojoResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultS
     private final Set<OneToMany>     oneToManies;
     private final Transformable<T>   transformable;
     private JdbcColumn<ResultSet>[]  columns;
+    private final RegisterType registerType;
     
-    @SuppressWarnings("unchecked")
-    public PojoResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns, Set<OneToMany> oneToManies)
+    public PojoResultRow(Class<T> returnType, JdbcColumn<ResultSet>[] columns, Set<OneToMany> oneToManies, RegisterType registerType)
     {
         super(SQLLOG, MASKING);
         this.returnType = returnType;
         this.columns = columns;
         this.oneToManies = oneToManies;
+        this.registerType = registerType;
         this.transformable = (Transformable<T>) new ObjectTransform();
     }
     
-    @SuppressWarnings("unchecked")
     public T row(ResultSet rs, int rownum) throws SQLException
     {
         final Map<OneToMany, Object> otmValues = new HashMap<OneToMany, Object>();
@@ -132,7 +134,7 @@ class PojoResultRow<T> extends AbstractResultRow implements ResultRow<T, ResultS
     {
         ObjectProxy<?> proxy = ObjectProxyFactory.of(otmValues.get(otm));
         String fieldName = column.getName().substring(otm.getProperty().length() + 1);
-        JdbcColumn<ResultSet> otmColumn = new DefaultJdbcColumn(column.getIndex(),  fieldName, column.getType().value(), proxy.getTargetClass());
+        JdbcColumn<ResultSet> otmColumn = new DefaultJdbcColumn(column.getIndex(),  fieldName, column.getType().value(), registerType, proxy.getTargetClass());
         setValueOf(proxy, otmColumn, rs);
     }
     

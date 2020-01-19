@@ -20,6 +20,7 @@
 package net.sf.jkniv.whinstone.cassandra;
 
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -52,6 +53,8 @@ import net.sf.jkniv.whinstone.commands.CommandAdapter;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.transaction.Transactional;
+import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 /**
  * Encapsulate the data access for Cassandra
@@ -59,6 +62,7 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
  * @author Alisson Gomes
  *
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 class RepositoryCassandra implements Repository
 {
     private static final Logger       LOG      = LoggerFactory.getLogger(RepositoryCassandra.class);
@@ -68,6 +72,7 @@ class RepositoryCassandra implements Repository
     private RepositoryConfig          repositoryConfig;
     private SqlContext                sqlContext;
     private CommandAdapter            cmdAdapter;
+    private final RegisterType        registerType;
     private boolean                   isTraceEnabled;
     private boolean                   isDebugEnabled;
     
@@ -106,16 +111,17 @@ class RepositoryCassandra implements Repository
         else
             sqlContext.getRepositoryConfig().add(props);
         
-        this.handlerException = new HandlerException(RepositoryException.class,
-                "Cassandra Error cannot execute SQL [%s]");
+        this.registerType = new RegisterType();
+        this.handlerException = new HandlerException(RepositoryException.class, "Cassandra Error cannot execute SQL [%s]");
         this.sqlContext = sqlContext;
         this.repositoryConfig = this.sqlContext.getRepositoryConfig();
         this.repositoryConfig.add(RepositoryProperty.SQL_DIALECT.key(), CassandraDialect.class.getName());
         this.sqlContext.setSqlDialect(this.repositoryConfig.getSqlDialect());
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
+        this.settingProperties();
         this.cmdAdapter = new CassandraSessionFactory(sqlContext.getRepositoryConfig().getProperties(),
-                sqlContext.getName(), handlerException).open();
+                sqlContext.getName(), registerType, handlerException).open();
         this.configQueryNameStrategy();
     }
     
@@ -123,7 +129,7 @@ class RepositoryCassandra implements Repository
     public <T> T get(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
-        T ret = handleGet(queryable, null);
+        T ret = handleGet(queryable, null, null);
         return ret;
     }
     
@@ -131,43 +137,37 @@ class RepositoryCassandra implements Repository
     public <T> T get(Queryable queryable, Class<T> returnType)
     {
         NOT_NULL.verify(queryable, returnType);
-        Queryable queryableClone = QueryFactory.clone(queryable, returnType);
-        T ret = handleGet(queryableClone, null);
-        queryable.setTotal(queryableClone.getTotal());
+        T ret = handleGet(queryable, null, returnType);
         return ret;
     }
     
     @Override
     public <T, R> T get(Queryable queryable, ResultRow<T, R> customResultRow)
     {
-        return handleGet(queryable, customResultRow);
+        return handleGet(queryable, customResultRow, null);
     }
     
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T get(T entity)
     {
         NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toGetName(entity);
         Queryable queryable = QueryFactory.of(queryName, entity.getClass(), entity);
-        T ret = (T) handleGet(queryable, null);
+        T ret = (T) handleGet(queryable, null, null);
         return ret;
     }
     
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T get(Class<T> returnType, Object entity)
     {
         NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toGetName(entity);
         Queryable queryable = QueryFactory.of(queryName, returnType, entity);
-        T ret = (T) handleGet(queryable, null);
+        T ret = (T) handleGet(queryable, null, null);
         return ret;
     }
     
     @Override
-    @SuppressWarnings(
-    { "rawtypes", "unchecked" })
     public <T> T scalar(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
@@ -201,19 +201,14 @@ class RepositoryCassandra implements Repository
     @Override
     public <T> List<T> list(Queryable queryable)
     {
-        return handleList(queryable, null);
+        return handleList(queryable, null, null);
     }
     
     @Override
     public <T> List<T> list(Queryable queryable, Class<T> overloadReturnType)
     {
         List<T> list = Collections.emptyList();
-        Queryable queryableClone = queryable;
-        if (overloadReturnType != null)
-            queryableClone = QueryFactory.clone(queryable, overloadReturnType);
-        list = handleList(queryableClone, null);
-        queryable.setTotal(queryableClone.getTotal());
-        
+        list = handleList(queryable, null, overloadReturnType);
         if (isDebugEnabled)
             LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
         
@@ -223,41 +218,54 @@ class RepositoryCassandra implements Repository
     @Override
     public <T, R> List<T> list(Queryable queryable, ResultRow<T, R> customResultRow)
     {
-        return handleList(queryable, customResultRow);
+        return handleList(queryable, customResultRow, null);
     }
     
-    private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
+    private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow, Class<T> overloadReturnType)
     {
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as list command", queryable);
-        Sql sql = sqlContext.getQuery(queryable.getName());
+        
+        Queryable queryableCloned = QueryFactory.clone(queryable, registerType, overloadReturnType); 
+        Sql sql = sqlContext.getQuery(queryableCloned.getName());
         CommandHandler handler = CommandHandlerFactory.ofSelect(this.cmdAdapter);
-        List<T> list = handler.with(queryable).with(sql).checkSqlType(SqlType.SELECT).with(handlerException)
-                .with(overloadResultRow).run();
+        List<T> list = handler.with(queryableCloned)
+                              .with(sql)
+                              .checkSqlType(SqlType.SELECT)
+                              .with(handlerException)
+                              .with(overloadResultRow)
+                              .run();
         if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, {} rows fetched", queryable.getName(), list.size());
+            LOG.debug("Executed [{}] query, {} rows fetched", queryableCloned.getName(), list.size());
+        copy(queryable, queryableCloned);
         return list;
     }
     
-    private <T, R> T handleGet(Queryable q, ResultRow<T, R> overloadResultRow)
+    private <T, R> T handleGet(Queryable queryable, ResultRow<T, R> overloadResultRow, Class<T> overloadReturnType)
     {
         if (isTraceEnabled)
-            LOG.trace("Executing [{}] as get command", q);
+            LOG.trace("Executing [{}] as get command", queryable);
         
         T ret = null;
-        Sql sql = sqlContext.getQuery(q.getName());
+        Queryable queryableCloned = QueryFactory.clone(queryable, registerType, overloadReturnType); 
+        Sql sql = sqlContext.getQuery(queryableCloned.getName());
         CommandHandler handler = CommandHandlerFactory.ofSelect(this.cmdAdapter);
-        List<T> list = handler.with(q).with(sql).checkSqlType(SqlType.SELECT).with(handlerException)
-                .with(overloadResultRow).run();
+        List<T> list = handler.with(queryableCloned)
+                              .with(sql)
+                              .checkSqlType(SqlType.SELECT)
+                              .with(handlerException)
+                              .with(overloadResultRow)
+                              .run();
         if (list.size() > 1)
             throw new NonUniqueResultException(
-                    "No unique result for query [" + q.getName() + "] with params [" + q.getParams() + "]");
+                    "No unique result for query [" + queryableCloned.getName() + "] with params [" + queryableCloned.getParams() + "]");
         else if (list.size() == 1)
             ret = list.get(0);
         
         if (isDebugEnabled)
-            LOG.debug("Executed [{}] query, fetched object {}", q.getName(), ret);
+            LOG.debug("Executed [{}] query, fetched object {}", queryableCloned.getName(), ret);
         
+        copy(queryable, queryableCloned);
         return ret;
     }
     
@@ -265,9 +273,11 @@ class RepositoryCassandra implements Repository
     public int add(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
-        Sql sql = sqlContext.getQuery(queryable.getName());
+        Queryable queryableCloned = QueryFactory.clone(queryable, registerType);
+        Sql sql = sqlContext.getQuery(queryableCloned.getName());
         CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
-        int rows = handler.with(queryable).with(sql).checkSqlType(SqlType.INSERT).with(handlerException).run();
+        int rows = handler.with(queryableCloned).with(sql).checkSqlType(SqlType.INSERT).with(handlerException).run();
+        copy(queryable, queryableCloned);
         return rows;
     }
     
@@ -279,7 +289,7 @@ class RepositoryCassandra implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as add command", queryName);
         
-        Queryable queryable = QueryFactory.of(queryName, entity);
+        Queryable queryable = QueryFactory.of(queryName, registerType, entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
         int rows = handler
@@ -295,11 +305,13 @@ class RepositoryCassandra implements Repository
     public int update(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
+        Queryable queryableCloned = QueryFactory.clone(queryable, registerType);
         if (isTraceEnabled)
-            LOG.trace("Executing [{}] as update command", queryable);
-        Sql sql = sqlContext.getQuery(queryable.getName());
+            LOG.trace("Executing [{}] as update command", queryableCloned);
+        Sql sql = sqlContext.getQuery(queryableCloned.getName());
         CommandHandler handler = CommandHandlerFactory.ofUpdate(this.cmdAdapter);
-        int rows = handler.with(queryable).with(sql).checkSqlType(SqlType.UPDATE).with(handlerException).run();
+        int rows = handler.with(queryableCloned).with(sql).checkSqlType(SqlType.UPDATE).with(handlerException).run();
+        copy(queryable, queryableCloned);
         return rows;
     }
     
@@ -308,7 +320,7 @@ class RepositoryCassandra implements Repository
     {
         NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toUpdateName(entity);
-        Queryable queryable = QueryFactory.of(queryName, entity);
+        Queryable queryable = QueryFactory.of(queryName, registerType, entity);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
@@ -321,9 +333,11 @@ class RepositoryCassandra implements Repository
     public int remove(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
-        Sql sql = sqlContext.getQuery(queryable.getName());
+        Queryable queryableCloned = QueryFactory.clone(queryable, registerType);
+        Sql sql = sqlContext.getQuery(queryableCloned.getName());
         CommandHandler handler = CommandHandlerFactory.ofRemove(this.cmdAdapter);
-        int rows = handler.with(queryable).with(sql).checkSqlType(SqlType.DELETE).with(handlerException).run();
+        int rows = handler.with(queryableCloned).with(sql).checkSqlType(SqlType.DELETE).with(handlerException).run();
+        copy(queryable, queryableCloned);
         return rows;
     }
     
@@ -334,10 +348,15 @@ class RepositoryCassandra implements Repository
         String queryName = this.strategyQueryName.toRemoveName(entity);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as remove command", queryName);
-        Queryable queryable = QueryFactory.of(queryName, entity);
+        Queryable queryable = QueryFactory.of(queryName, registerType, entity);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofRemove(this.cmdAdapter);
-        int rows = handler.with(queryable).with(sql).checkSqlType(SqlType.DELETE).with(handlerException).run();
+        int rows = handler
+                    .with(queryable)
+                    .with(sql)
+                    .checkSqlType(SqlType.DELETE)
+                    .with(handlerException)
+                    .run();
         return rows;
     }
     
@@ -392,6 +411,24 @@ class RepositoryCassandra implements Repository
         return prop;
     }
     
+    private void settingProperties()
+    {
+        Properties props = this.repositoryConfig.getProperties();
+        Enumeration<Object> keys = props.keys();
+        while (keys.hasMoreElements())
+        {
+            String k = keys.nextElement().toString();
+            if (k.startsWith("jkniv.repository.type."))
+                configConverters(k, props);                
+        }
+    }
+    private void configConverters(String k, Properties props)
+    {
+        String className = String.valueOf(props.get(k));// (22) -> "jkniv.repository.type."
+        ObjectProxy<Convertible> proxy = ObjectProxyFactory.of(className);
+        registerType.register(proxy.newInstance());
+    }
+    
     private void configQueryNameStrategy()
     {
         String nameStrategy = repositoryConfig.getQueryNameStrategy();
@@ -399,4 +436,12 @@ class RepositoryCassandra implements Repository
         this.strategyQueryName = proxy.newInstance();
     }
     
+    
+    private void copy(Queryable original, Queryable clone)
+    {
+        original.setTotal(clone.getTotal());
+        original.setBookmark(clone.getBookmark());
+        if (clone.isCached())
+            original.cached();
+    }
 }

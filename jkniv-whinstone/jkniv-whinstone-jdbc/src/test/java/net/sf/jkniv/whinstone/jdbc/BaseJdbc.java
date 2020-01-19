@@ -49,22 +49,4 @@ public class BaseJdbc extends BaseSpringJUnit4
     {
         return new RepositoryJdbc(config);
     }
-
-    protected Queryable getQuery(String name)
-    {
-        Queryable q = QueryFactory.of(name);
-        return q;
-    }
-    
-    protected Queryable getQuery(String name, Object params)
-    {
-        Queryable q = QueryFactory.of(name,params);
-        return q;
-    }    
-    
-    protected Queryable getQuery(String name, Object params, int offset, int max)
-    {
-        Queryable q = QueryFactory.of(name, params, offset, max);
-        return q;
-    }
 }

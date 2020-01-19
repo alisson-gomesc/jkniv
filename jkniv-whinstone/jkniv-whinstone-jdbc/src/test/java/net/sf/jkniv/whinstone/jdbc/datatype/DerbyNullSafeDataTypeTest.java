@@ -42,7 +42,7 @@ public class DerbyNullSafeDataTypeTest extends BaseJdbc
     @Test
     public void whenNullValuesDoesnotGenerateNullPointerException()
     {
-        Queryable q = getQuery("getNulValues");
+        Queryable q = QueryFactory.of("getNulValues");
         Map<String, Object> data = repositoryDerby.get(q);
         assertThat(data.get("MY_SMALLINT"), nullValue());
         assertThat(data.get("MY_INTEGER"), nullValue());

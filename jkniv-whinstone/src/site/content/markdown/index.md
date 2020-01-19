@@ -101,7 +101,7 @@ The library is 100% protected against [SQL injection](https://www.owasp.org/inde
 |`0.6.0 version`| Query Cache         | ![close][chk]  | ![close][chk]  | ![close][chk]       | ![close][chk]     | in development      |
 |`0.6.0 version`| Query Statistics    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      | ![open][clo]        |
 |`0.6.0 version`| Converter Annotation| ![open][clo]   | ![close][chk]  | ![open][clo]        | ![open][clo]      | ![open][clo]        |
-|`0.6.0 version`| Jdk8 Timers         | ![open][clo]   | ![open][clo]   | ![close][chk]       | ![close][chk]     | ![open][clo]        | 
+|`0.6.0 version`| Jdk8 Timers         | ![open][clo]   | ![close][chk]  | ![close][chk]       | ![close][chk]     | ![open][clo]        | 
 |`0.7.0 version`| Batch Commands      | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      | ![open][clo]        |
 |`0.7.0 version`| Triggers Events     | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      | ![open][clo]        |
 |`0.7.0 version`| Stored Procedure    | ![open][clo]   | ![open][clo]   | ![open][clo]        | ![open][clo]      | ![open][clo]        |

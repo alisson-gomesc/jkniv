@@ -30,15 +30,16 @@ import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 import net.sf.jkniv.whinstone.types.Convertible;
-import net.sf.jkniv.whinstone.types.ConvertibleFactory;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 class PositionalCollectionPojoParams extends AbstractParam implements AutoBindParams
 {
 	private final static Capitalize CAPITAL_GETTER =  CapitalNameFactory.getInstanceOfGetter();
-	private StatementAdapter<?, ?> stmtAdapter;
-    private Iterator<Param>        it;
-    private String                 queryName;
-    private String[]               paramsNames;
+	private final StatementAdapter<?, ?> stmtAdapter;
+    private final Iterator<Param>        it;
+    private final String                 queryName;
+    private final String[]               paramsNames;
+    private final RegisterType           registerType;
     
     public PositionalCollectionPojoParams(StatementAdapter<?, ?> stmtAdapter, Queryable queryable)
     {
@@ -46,6 +47,7 @@ class PositionalCollectionPojoParams extends AbstractParam implements AutoBindPa
         this.stmtAdapter = stmtAdapter;
         this.it = queryable.iterator();
         this.queryName = queryable.getName();
+        this.registerType = queryable.getRegisterType();
         this.paramsNames = queryable.getParamsNames();
     }
     
@@ -69,7 +71,7 @@ class PositionalCollectionPojoParams extends AbstractParam implements AutoBindPa
             {
             	//String getterName = CAPITAL_GETTER.does(paramName);
             	PropertyAccess propertyAccess = new PropertyAccess(paramName, proxy.getTargetClass());
-            	Convertible<Object,Object> convertible = ConvertibleFactory.toJdbc(propertyAccess, proxy);
+            	Convertible<Object,Object> convertible = registerType.toJdbc(propertyAccess, proxy);
             	Object value = proxy.invoke(propertyAccess.getReadMethod(), pojo.getValue());
                 stmtAdapter.bind(new Param(value, convertible.toJdbc(value), paramName, i++));
             }
@@ -80,8 +82,10 @@ class PositionalCollectionPojoParams extends AbstractParam implements AutoBindPa
         return rowsAfftected;
     }
 
+    /*
 	public static <T,R> AutoBindParams newPositionalCollectionMapParams(StatementAdapter<T,R> adapter, Queryable queryable)
 	{
 	    return new PositionalCollectionPojoParams(adapter, queryable);
 	}
+	*/
 }

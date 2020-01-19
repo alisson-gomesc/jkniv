@@ -33,7 +33,6 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
 
-@SuppressWarnings("rawtypes")
 public class CassandraCacheTest extends BaseJdbc
 {
     

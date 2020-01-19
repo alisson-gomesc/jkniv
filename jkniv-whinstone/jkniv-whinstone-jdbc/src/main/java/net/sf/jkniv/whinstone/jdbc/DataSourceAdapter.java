@@ -40,16 +40,6 @@ public class DataSourceAdapter extends AbstractJdbcAdapter
         this.defaultIsolation = Isolation.DEFAULT;
     }
     
-    
-    /*
-    public DataSourceConnection(RepositoryConfig config)//DataSource dataSource, Isolation defaultIsolation, String name)
-    {
-        super(config);
-        this.dataSource = config.getDataSource();
-        this.defaultIsolation = Isolation.DEFAULT;
-    }
-    */
-    
     /**
      * Attempts to establish a connection to the database 
      * @return a Connection from DataSource
@@ -89,7 +79,7 @@ public class DataSourceAdapter extends AbstractJdbcAdapter
                 LOG.trace("Getting new connection from DataSource");
                 Connection jdbcConn = dataSource.getConnection();
                 setIsolation(jdbcConn, isolation);
-                adapter = new JdbcConnectionAdapter(jdbcConn, contextName, handlerException);
+                adapter = new JdbcConnectionAdapter(contextName, jdbcConn, handlerException);
             }
             catch (Exception e)//SQLException
             {

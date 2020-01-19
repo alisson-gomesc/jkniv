@@ -12,6 +12,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import javax.sql.DataSource;
 
@@ -81,8 +82,10 @@ public class JdbcCommandMock
             given(this.dbMetadata.getDriverVersion()).willReturn("1");
             
             //given(this.rs.getMetaData()).willReturn(this.rsMetadata);
-            
+            Properties props = new Properties();
+            props.put(RepositoryProperty.JDBC_ADAPTER_FACTORY.key(), DataSourceAdapter.class.getName());
             given(this.repositoryConfig.getName()).willReturn("Mockito");
+            given(this.repositoryConfig.getProperties()).willReturn(props);
             given(this.repositoryConfig.lookup()).willReturn(this.dataSource);
             given(this.repositoryConfig.getJndiDataSource()).willReturn("jdbc/Mockito");
             given(this.repositoryConfig.getProperty(RepositoryProperty.JDBC_ADAPTER_FACTORY.key()))

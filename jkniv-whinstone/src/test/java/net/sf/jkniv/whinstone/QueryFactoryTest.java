@@ -180,7 +180,7 @@ public class QueryFactoryTest
         assertThat(q.isPaging(), is(true));
         assertThat(q.getReturnType().getName(), is(Map.class.getName()));
 
-        Queryable clone = QueryFactory.clone(q, null);
+        Queryable clone = QueryFactory.clone(q);
         assertThat(clone.getOffset(), is(5));
         assertThat(clone.getMax(), is(10));
         assertThat(clone.getTotal(), is(-1L));

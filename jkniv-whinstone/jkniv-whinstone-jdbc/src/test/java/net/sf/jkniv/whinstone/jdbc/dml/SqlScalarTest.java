@@ -32,6 +32,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.BaseJdbc;
@@ -44,7 +45,7 @@ public class SqlScalarTest extends BaseJdbc
     @Test
     public void whenGetScalarFromSequence()
     {
-        Queryable q = getQuery("getSequenceAuthor");
+        Queryable q = QueryFactory.of("getSequenceAuthor");
         Number seq = repositoryDerby.scalar(q);
         assertThat(seq, notNullValue());
         assertThat(seq.intValue(), is(Integer.MIN_VALUE));
@@ -54,7 +55,7 @@ public class SqlScalarTest extends BaseJdbc
     @Test
     public void whenGetScalarValueNumber()
     {
-        Queryable q = getQuery("getScalarSmallint");
+        Queryable q = QueryFactory.of("getScalarSmallint");
         Number number = repositoryDerby.scalar(q);
         assertThat(number, notNullValue());
         assertThat(number, instanceOf(Number.class));
@@ -64,7 +65,7 @@ public class SqlScalarTest extends BaseJdbc
     @Test
     public void whenGetScalarValueSmallint()
     {
-        Queryable q = getQuery("getScalarSmallint");
+        Queryable q = QueryFactory.of("getScalarSmallint");
         Number number = repositoryDerby.scalar(q);
         assertThat(number, notNullValue());
         assertThat(number, instanceOf(Integer.class));
@@ -74,7 +75,7 @@ public class SqlScalarTest extends BaseJdbc
     @Test
     public void whenGetScalarValueInteger()
     {
-        Queryable q = getQuery("getScalarInteger");
+        Queryable q = QueryFactory.of("getScalarInteger");
         Number number = repositoryDerby.scalar(q);
         assertThat(number, notNullValue());
         assertThat(number, instanceOf(Integer.class));
@@ -84,7 +85,7 @@ public class SqlScalarTest extends BaseJdbc
     @Test
     public void whenGetScalarValueBigInt()
     {
-        Queryable q = getQuery("getScalarBigInt");
+        Queryable q = QueryFactory.of("getScalarBigInt");
         Number number = repositoryDerby.scalar(q);
         assertThat(number, notNullValue());
         assertThat(number, instanceOf(Long.class));
@@ -94,7 +95,7 @@ public class SqlScalarTest extends BaseJdbc
     @Test
     public void whenGetScalarValueFloat()
     {
-        Queryable q = getQuery("getScalarFloat");
+        Queryable q = QueryFactory.of("getScalarFloat");
         Number number = repositoryDerby.scalar(q);
         assertThat(number, notNullValue());
         assertThat(number, instanceOf(Float.class));
@@ -104,7 +105,7 @@ public class SqlScalarTest extends BaseJdbc
     @Test
     public void whenGetScalarValueDecimal()
     {
-        Queryable q = getQuery("getScalarDecimal");
+        Queryable q = QueryFactory.of("getScalarDecimal");
         Number number = repositoryDerby.scalar(q);
         assertThat(number, notNullValue());
         assertThat(number, instanceOf(BigDecimal.class));
@@ -114,7 +115,7 @@ public class SqlScalarTest extends BaseJdbc
     @Test
     public void whenGetScalarValueVarchar()
     {
-        Queryable q = getQuery("getScalarVarchar");
+        Queryable q = QueryFactory.of("getScalarVarchar");
         String s = repositoryDerby.scalar(q);
         assertThat(s, notNullValue());
         assertThat(s, instanceOf(String.class));
@@ -124,7 +125,7 @@ public class SqlScalarTest extends BaseJdbc
     @Test
     public void whenGetScalarValueChar()
     {
-        Queryable q = getQuery("getScalarChar");
+        Queryable q = QueryFactory.of("getScalarChar");
         String s = repositoryDerby.scalar(q);
         assertThat(s, notNullValue());
         assertThat(s, instanceOf(String.class));
@@ -134,7 +135,7 @@ public class SqlScalarTest extends BaseJdbc
     @Test
     public void whenGetScalarValueDate()
     {
-        Queryable q = getQuery("getScalarDate");
+        Queryable q = QueryFactory.of("getScalarDate");
         Date d = repositoryDerby.scalar(q);
         assertThat(d, notNullValue());
         assertThat(d, instanceOf(Date.class));
@@ -144,7 +145,7 @@ public class SqlScalarTest extends BaseJdbc
     @Test
     public void whenGetScalarValueTime()
     {
-        Queryable q = getQuery("getScalarTime");
+        Queryable q = QueryFactory.of("getScalarTime");
         Date d = repositoryDerby.scalar(q);
         assertThat(d, notNullValue());
         assertThat(d, instanceOf(Date.class));
@@ -154,7 +155,7 @@ public class SqlScalarTest extends BaseJdbc
     @Test
     public void whenGetScalarValueTimestamp()
     {
-        Queryable q = getQuery("getScalarTimestamp");
+        Queryable q = QueryFactory.of("getScalarTimestamp");
         Date d = repositoryDerby.scalar(q);
         assertThat(d, notNullValue());
         assertThat(d, instanceOf(Date.class));
@@ -165,7 +166,7 @@ public class SqlScalarTest extends BaseJdbc
     @Ignore("needs make insert blob type")
     public void whenGetScalarValueBlob()
     {
-        Queryable q = getQuery("getScalarBlob");
+        Queryable q = QueryFactory.of("getScalarBlob");
         String s = repositoryDerby.scalar(q);
         assertThat(s, notNullValue());
         assertThat(s, instanceOf(String.class));
@@ -176,7 +177,7 @@ public class SqlScalarTest extends BaseJdbc
     @Ignore("needs make insert clob type")
     public void whenGetScalarValueClob()
     {
-        Queryable q = getQuery("getScalarBlob");
+        Queryable q = QueryFactory.of("getScalarBlob");
         String s = repositoryDerby.scalar(q);
         assertThat(s, notNullValue());
         assertThat(s, instanceOf(String.class));

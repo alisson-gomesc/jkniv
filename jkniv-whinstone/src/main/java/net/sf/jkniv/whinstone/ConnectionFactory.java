@@ -27,6 +27,7 @@ import java.sql.Statement;
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.transaction.Transactional;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 
 /**
@@ -46,7 +47,7 @@ public interface ConnectionFactory
     ConnectionAdapter open();
 
     ConnectionFactory with(HandleableException handlerException);
-    
+
     /**
      * Attempts to establish a connection to the database with specific isolation 
      * @param isolation isolation level from transaction

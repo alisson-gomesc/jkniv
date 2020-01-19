@@ -52,8 +52,6 @@ public interface StatementAdapter<T, R>
      * @return instance of this object
      */
     StatementAdapter<T, R> bind(Param value);
-    //* @param position index of parameter positions, initial is 1
-    //StatementAdapter<T, R> bind(int position, Object value);
 
     /**
      * Bind the varargs parameters to statement

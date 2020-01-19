@@ -35,25 +35,26 @@ import net.sf.jkniv.whinstone.JdbcColumn;
 import net.sf.jkniv.whinstone.types.Converter.EnumType;
 
 /**
+ * A register type of {@link Convertible} data
  * 
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public class ConvertibleFactory
+@SuppressWarnings({ "unchecked", "rawtypes" })
+public class RegisterType
 {
-    private final static Logger                    LOG = LoggerFactory.getLogger(ConvertibleFactory.class);
-    private final static Map<TypeMap, Convertible<Object, Object>> REGISTRY = new HashMap<TypeMap, Convertible<Object, Object>>();
+    private final static Logger                    LOG = LoggerFactory.getLogger(RegisterType.class);
+    private final Map<TypeMap, Convertible<Object, Object>> registry = new HashMap<TypeMap, Convertible<Object, Object>>();
     
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static void register(Convertible convertible)
+    public void register(Convertible convertible)
     {
         LOG.info("Registering converter {} {}", convertible);
-        Convertible<Object, Object> c = REGISTRY.put(new TypeMap(convertible.getType(), convertible.getColumnType()), convertible);
+        Convertible<Object, Object> c = registry.put(new TypeMap(convertible.getType(), convertible.getColumnType()), convertible);
         if (c != null && c != convertible)
             LOG.warn("The converter {} was replaced by {}", c, convertible);
         
         TypeMap typeMapByClass = new TypeMap(convertible.getType(), UnknowType.getInstance());
-        c = REGISTRY.put(typeMapByClass, convertible);
+        c = registry.put(typeMapByClass, convertible);
         if (c != null && c != convertible)
             LOG.warn("Default converter for {} was replaced by {}", c, convertible);
     }
@@ -67,22 +68,22 @@ public class ConvertibleFactory
      * @return A convertible instance if found into class proxy or {@link NoConverterType}
      * instance when the field or method is not annotated.
      */
-    public static <T> Convertible<Object, Object> toJdbc(PropertyAccess access, ObjectProxy<T> proxy)
+    public <T> Convertible<Object, Object> toJdbc(PropertyAccess access, ObjectProxy<T> proxy)
     {
         Convertible<Object, Object> convertible = getConverterByAnnotation(access.getField(), access.getReadMethod(), proxy);
         if (convertible == null)
         {
             if(access.hasField())
-                convertible = REGISTRY.get(new TypeMap(access.getField().getType(), UnknowType.getInstance()));
+                convertible = registry.get(new TypeMap(access.getField().getType(), UnknowType.getInstance()));
             if (convertible == null)
                 convertible = NoConverterType.getInstance();
         }
         return convertible;
     }
 
-    public static Convertible<Object, Object> getConverter(Class classType)
+    public Convertible<Object, Object> getConverter(Class classType)
     {
-        Convertible<Object, Object> convertible = REGISTRY.get(new TypeMap(classType, UnknowType.getInstance()));
+        Convertible<Object, Object> convertible = registry.get(new TypeMap(classType, UnknowType.getInstance()));
         if (convertible == null)
             convertible = NoConverterType.getInstance();
 
@@ -99,16 +100,16 @@ public class ConvertibleFactory
      * @return A convertible instance if found into class proxy or {@link NoConverterType}
      * instance when the field or method is not annotated.
      */
-    public static <T,R> Convertible<Object, Object> toAttribute(JdbcColumn<R> column, ObjectProxy<T> proxy)
+    public <T,R> Convertible<Object, Object> toAttribute(JdbcColumn<R> column, ObjectProxy<T> proxy)
     {
         PropertyAccess access = column.getPropertyAccess();
         Convertible<Object, Object> convertible = getConverterByAnnotation(access.getField(), access.getWriterMethod(), proxy);
         if (convertible == null)
         {
             if (column.getPropertyAccess().hasField())
-                convertible = REGISTRY.get(new TypeMap(column.getPropertyAccess().getField().getType(), column.getType()));
+                convertible = registry.get(new TypeMap(column.getPropertyAccess().getField().getType(), column.getType()));
             else if (column.getPropertyAccess().hasWriterMethod())
-                convertible = REGISTRY.get(new TypeMap(column.getPropertyAccess().getWriterMethod().getParameterTypes()[0], column.getType()));
+                convertible = registry.get(new TypeMap(column.getPropertyAccess().getWriterMethod().getParameterTypes()[0], column.getType()));
             
             if (convertible == null)
                 convertible = NoConverterType.getInstance();
@@ -126,9 +127,7 @@ public class ConvertibleFactory
      * @return A convertible instance if found into class proxy or {@link NoConverterType}
      * instance when the field or method is not annotated.
      */
-    @SuppressWarnings(
-    { "unchecked", "rawtypes" })
-    private static <T> Convertible<Object, Object> getConverterByAnnotation(Field field, Method method,
+    private <T> Convertible<Object, Object> getConverterByAnnotation(Field field, Method method,
             ObjectProxy<T> proxy)
     {
         Convertible convertible = null;
@@ -163,16 +162,8 @@ public class ConvertibleFactory
         return convertible;
     }
     
-    private static <T> Converter getConverterByMethod(Method method, ObjectProxy<T> proxy)
+    public boolean isEmpty()
     {
-        Converter converter = (Converter) method.getAnnotation(Converter.class);
-        return converter;
+        return registry.isEmpty();
     }
-
-    private static <T> Converter getConverterByField(Field field, ObjectProxy<T> proxy)
-    {
-        Converter converter = (Converter) field.getAnnotation(Converter.class);
-        return converter;
-    }
-
 }

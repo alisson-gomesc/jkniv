@@ -29,6 +29,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.jdbc.BaseJdbc;
@@ -46,7 +47,7 @@ public class DerbyPagingTest extends BaseJdbc
     @Test
     public void whenSimplePagingQueryWorks()
     {
-        Queryable q = getQuery("listBooks", null, 0, SIZE_PAGE);
+        Queryable q = QueryFactory.of("listBooks", 0, SIZE_PAGE);
         List<FlatAuthor> list = repositoryDerby.list(q);
         assertThat(list.size(), is(SIZE_PAGE));
         assertThat(q.getTotal(), is((long)TOTAL_BOOKS));
@@ -59,7 +60,7 @@ public class DerbyPagingTest extends BaseJdbc
         params.put("author1", 3);
         params.put("author2", 4);
         
-        Queryable q = getQuery("listBooksAuthor", params, 3, SIZE_PAGE);
+        Queryable q = QueryFactory.of("listBooksAuthor", params, 3, SIZE_PAGE);
         List<FlatAuthor> list = repositoryDerby.list(q);
         assertThat(list.size(), is(SIZE_PAGE-1));
         assertThat(q.getTotal(), is(7L));
@@ -69,7 +70,7 @@ public class DerbyPagingTest extends BaseJdbc
     public void whenPagingResultWithNoRecords()
     {
         Map<String, Integer> params = new HashMap<String, Integer>();
-        Queryable q = getQuery("pagingWithNoRecords", params, 3, SIZE_PAGE);
+        Queryable q = QueryFactory.of("pagingWithNoRecords", params, 3, SIZE_PAGE);
         List<FlatAuthor> list = repositoryDerby.list(q);
         assertThat(list.size(), is(0));
         assertThat(q.getTotal(), is(0L));

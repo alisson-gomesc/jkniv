@@ -66,7 +66,7 @@ public class SpringDataSourceAdapter extends AbstractJdbcAdapter
             LOG.debug("Getting Connection from Spring TransactionAwareDataSourceProxy class");
             Connection conn = (Connection) this.transactionAwareDataSourceProxy.invoke("getConnection");
             conn.setAutoCommit(false);
-            adapter = new JdbcConnectionAdapter(conn, contextName, this.handlerException);
+            adapter = new JdbcConnectionAdapter(contextName, conn, this.handlerException);
         }
         catch (SQLException e)
         {

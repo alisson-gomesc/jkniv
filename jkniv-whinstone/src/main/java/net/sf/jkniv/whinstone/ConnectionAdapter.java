@@ -22,7 +22,6 @@ package net.sf.jkniv.whinstone;
 import java.sql.SQLException;
 
 import net.sf.jkniv.whinstone.commands.CommandAdapter;
-import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 /**
  * Adapter to abstract the Jdbc Connection {@link java.sql.Connection} 
