@@ -26,6 +26,7 @@ import net.sf.jkniv.whinstone.params.AutoBindParams;
 import net.sf.jkniv.whinstone.params.ParameterException;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 /**
  * This class represent a query object to find the query to be performed and
@@ -136,12 +137,7 @@ public interface Queryable
      * @return return true if have query must be paging, false otherwise.
      */
     boolean hasRowsOffset();
-/*    * Verify if query is paginated, that must return the total records of the
-    * query.
-    * 
-    * @param query The query
-    * @return Return true if the query is paginated, false otherwise.
-*/
+
     /**
      * Mark the query as scalar value, means must be return just one value
      */
@@ -160,13 +156,7 @@ public interface Queryable
      * @return {@code true} when was bind, {@code false} otherwise.
      */
     boolean isBoundSql();
-    
-//    /**
-//     * Check if return type from was bind to this instance
-//     * @return {@code true} when was bind, {@code false} otherwise.
-//     */
-//    boolean isBoundReturnType();
-    
+        
     /**
      * Check if the parameters from queryable was bind to {@link StatementAdapter} instance.
      * 
@@ -330,4 +320,8 @@ public interface Queryable
      * @see <a href="https://docs.couchdb.org/en/stable/api/database/find.html#pagination">Find Pagination</a>
      */
     void setBookmark(String bookmark);
+    
+    void setRegisterType(RegisterType registerType);
+    
+    RegisterType getRegisterType();
 }

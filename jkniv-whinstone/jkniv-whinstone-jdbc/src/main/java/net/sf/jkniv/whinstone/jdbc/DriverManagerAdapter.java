@@ -86,7 +86,7 @@ public class DriverManagerAdapter extends AbstractJdbcAdapter
                 LOG.debug("Getting new connection from DriverManager");
                 Connection jdbcConn = DriverManager.getConnection(url, props);
                 setIsolation(jdbcConn, isolation);
-                adapter = new JdbcConnectionAdapter(jdbcConn, contextName, this.handlerException);
+                adapter = new JdbcConnectionAdapter(contextName, jdbcConn, this.handlerException);
             }
             catch (Exception e)//SQLException
             {

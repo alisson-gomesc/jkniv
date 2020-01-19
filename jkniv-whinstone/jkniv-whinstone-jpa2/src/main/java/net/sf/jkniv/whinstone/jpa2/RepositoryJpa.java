@@ -21,6 +21,7 @@ package net.sf.jkniv.whinstone.jpa2;
 
 import java.sql.Statement;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,8 @@ import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.jpa2.dialect.JpaDialect;
 import net.sf.jkniv.whinstone.transaction.Transactional;
+import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 /**
  * This an abstract class that implements Repository pattern using JPA 2. 
@@ -90,7 +93,7 @@ class RepositoryJpa implements RepositoryJpaExtend
     private boolean                                   isDebugEnabled;
     private HandleableException                       handlerException;
     private CommandAdapter                            cmdAdapter;
-    
+    private final RegisterType        registerType;
     /**
      * Create a JPA repository using default persistence unit name, where
      * EntityManager is a container-managed persistence context.
@@ -116,9 +119,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.persistenceInfo = getPersitenceInfo(unitName);
         sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
         this.strategyQueryName = null;
-        //this.emFactory = new JpaEmFactoryJndi(sqlContextName);
-        //if (!emFactory.isActive())
-        ///    this.emFactory = new JpaEmFactorySEenv(unitName);
+        this.registerType = new RegisterType();
         this.init();
     }
     
@@ -129,10 +130,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.sqlContext = SqlContextFactory.newInstance("/repository-sql.xml", this.persistenceInfo.getProperties());
         this.sqlContext.getRepositoryConfig().add(props);
         this.strategyQueryName = null;
-        //this.emFactory = new JpaEmFactoryJndi(persistenceInfo.getUnitName());
-        //if (!emFactory.isActive())
-        //    this.emFactory = new JpaEmFactorySEenv(persistenceInfo.getUnitName());
-        
+        this.registerType = new RegisterType();
         this.init();
     }
     
@@ -144,6 +142,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.sqlContext.getRepositoryConfig().add(props);
         this.sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
         this.strategyQueryName = null;
+        this.registerType = new RegisterType();
         this.init();
     }
     
@@ -154,6 +153,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.sqlContext = sqlContext;
         this.sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
         this.strategyQueryName = null;
+        this.registerType = new RegisterType();
         this.init();
     }
     
@@ -164,6 +164,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.sqlContext = sqlContext;
         this.sqlContext.getRepositoryConfig().add(this.persistenceInfo.getProperties());
         this.strategyQueryName = null;
+        this.registerType = new RegisterType();
         this.init();
     }
     
@@ -184,13 +185,13 @@ class RepositoryJpa implements RepositoryJpaExtend
         this.persistenceInfo = PersistenceReader.getPersistenceInfo(sqlContext.getName());
         this.strategyQueryName = null;
         this.sqlContext = sqlContext;
+        this.registerType = new RegisterType();
         init();
     }
     
     private void init()
     {
-        boolean showConfig = Boolean
-                .valueOf(sqlContext.getRepositoryConfig().getProperty(RepositoryProperty.SHOW_CONFIG));
+        boolean showConfig = Boolean.valueOf(sqlContext.getRepositoryConfig().getProperty(RepositoryProperty.SHOW_CONFIG));
         String queryNameStrategyClass = sqlContext.getRepositoryConfig().getQueryNameStrategy();
         ObjectProxy<QueryNameStrategy> proxy = ObjectProxyFactory.of(queryNameStrategyClass);
         this.strategyQueryName = proxy.newInstance();
@@ -200,6 +201,7 @@ class RepositoryJpa implements RepositoryJpaExtend
         isDebugEnabled = LOG.isDebugEnabled();
         this.sqlContext.getRepositoryConfig().add(RepositoryProperty.SQL_DIALECT.key(), JpaDialect.class.getName());
         this.sqlContext.setSqlDialect(this.sqlContext.getRepositoryConfig().getSqlDialect());
+        this.settingProperties();
         configureEntityManagerFactory();
         configureHandlerException();
         this.cmdAdapter = new JpaCommandAdapter(this.sqlContext.getName(), emFactory, handlerException);
@@ -529,6 +531,7 @@ class RepositoryJpa implements RepositoryJpaExtend
     private Sql getQuery(Queryable queryable)
     {
         Sql sql = null;
+        queryable.setRegisterType(registerType);
         String queryName = queryable.getName();
         if (sqlContext.containsQuery(queryName))
         {
@@ -631,6 +634,24 @@ class RepositoryJpa implements RepositoryJpaExtend
         return pInfo;
     }
     
+    private void settingProperties()
+    {
+        Properties props = this.sqlContext.getRepositoryConfig().getProperties();
+        Enumeration<Object> keys = props.keys();
+        while (keys.hasMoreElements())
+        {
+            String k = keys.nextElement().toString();
+            if (k.startsWith("jkniv.repository.type."))
+                configConverters(k, props);                
+        }
+    }
+    private void configConverters(String k, Properties props)
+    {
+        String className = String.valueOf(props.get(k));// (22) -> "jkniv.repository.type."
+        ObjectProxy<Convertible> proxy = ObjectProxyFactory.of(className);
+        registerType.register(proxy.newInstance());
+    }
+
     private void configureHandlerException()
     {
         /*

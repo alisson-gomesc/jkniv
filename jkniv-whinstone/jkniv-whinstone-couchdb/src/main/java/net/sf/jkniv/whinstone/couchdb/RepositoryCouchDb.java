@@ -64,6 +64,8 @@ import net.sf.jkniv.whinstone.couchdb.commands.JsonMapper;
 import net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect2o1;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 import net.sf.jkniv.whinstone.transaction.Transactional;
+import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 /**
  * Encapsulate the data access for CouchDB
@@ -74,11 +76,12 @@ import net.sf.jkniv.whinstone.transaction.Transactional;
 class RepositoryCouchDb implements Repository
 {
     private static final Logger               LOG                = LoggerFactory.getLogger(RepositoryCouchDb.class);
-    private static final Assertable           notNull            = AssertsFactory.getNotNull();
+    private static final Assertable           NOT_NULL            = AssertsFactory.getNotNull();
     private QueryNameStrategy                 strategyQueryName;
     private HandleableException               handlerException;
     private CouchDbSqlContext                 sqlContext;
     private HttpCookieCommandAdapter          cmdAdapter;
+    private final RegisterType        registerType;
     private final static Map<String, Boolean> DOC_SCHEMA_UPDATED = new HashMap<String, Boolean>();
     
     RepositoryCouchDb()
@@ -103,7 +106,7 @@ class RepositoryCouchDb implements Repository
     
     RepositoryCouchDb(Properties props, SqlContext sqlContext)
     {
-        notNull.verify(props, sqlContext);
+        NOT_NULL.verify(props, sqlContext);
         if (props.isEmpty() || !props.containsKey(RepositoryProperty.JDBC_URL.key()))
         {
             String jndiName = sqlContext.getRepositoryConfig().getJndiDataSource();
@@ -116,6 +119,7 @@ class RepositoryCouchDb implements Repository
         else
             sqlContext.getRepositoryConfig().add(props);
         
+        this.registerType = new RegisterType();
         this.sqlContext = new CouchDbSqlContext(sqlContext);
         
         if (this.sqlContext.getRepositoryConfig().getSqlDialect() instanceof AnsiDialect)
@@ -125,6 +129,7 @@ class RepositoryCouchDb implements Repository
         this.sqlContext.buildInQueries();
         this.cmdAdapter = (HttpCookieCommandAdapter) new HttpConnectionFactory(
                 sqlContext.getRepositoryConfig().getProperties(), sqlContext.getName()).open();
+        this.settingProperties();
         this.configHanlerException();
         this.configJacksonObjectMapper();
         this.updateCouchDbViews();
@@ -202,7 +207,7 @@ class RepositoryCouchDb implements Repository
     @Override
     public <T> T get(Queryable queryable)
     {
-        notNull.verify(queryable);
+        NOT_NULL.verify(queryable);
         T ret = handleGet(queryable, null);
         return ret;
     }
@@ -210,7 +215,7 @@ class RepositoryCouchDb implements Repository
     @Override
     public <T> T get(Queryable queryable, Class<T> returnType)
     {
-        notNull.verify(queryable, returnType);
+        NOT_NULL.verify(queryable, returnType);
         Queryable queryableClone = QueryFactory.clone(queryable, returnType);
         T ret = handleGet(queryableClone, null);
         queryable.setTotal(queryableClone.getTotal());
@@ -220,7 +225,7 @@ class RepositoryCouchDb implements Repository
     @Override
     public <T> T get(T object)
     {
-        notNull.verify(object);
+        NOT_NULL.verify(object);
         Queryable queryable = QueryFactory.of("get", object.getClass(), object);
         T ret = (T) handleGet(queryable, null);
         return ret;
@@ -229,7 +234,7 @@ class RepositoryCouchDb implements Repository
     @Override
     public <T> T get(Class<T> returnType, Object object)
     {
-        notNull.verify(object);
+        NOT_NULL.verify(object);
         Queryable queryable = QueryFactory.of("get", returnType, object);
         T ret = (T) handleGet(queryable, null);
         return ret;
@@ -241,19 +246,20 @@ class RepositoryCouchDb implements Repository
         return handleGet(queryable, customResultRow);
     }
     
-    private <T, R> T handleGet(Queryable q, ResultRow<T, R> overloadResultRow)
+    private <T, R> T handleGet(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         T ret = null;
-        Sql sql = sqlContext.getQuery(q.getName());
+        queryable.setRegisterType(registerType);
+        Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofSelect(this.cmdAdapter);
-        List<T> list = handler.with(q)
+        List<T> list = handler.with(queryable)
                 .with(sql)
                 .checkSqlType(SqlType.SELECT)
                 .with(handlerException)
                 .with(overloadResultRow)
                 .run();
         if (list.size() > 1)
-            throw new NonUniqueResultException("No unique result for query ["+q.getName()+"] with params ["+q.getParams()+"]");
+            throw new NonUniqueResultException("No unique result for query ["+queryable.getName()+"] with params ["+queryable.getParams()+"]");
         else if (list.size() == 1)
             ret = list.get(0);
         
@@ -263,7 +269,7 @@ class RepositoryCouchDb implements Repository
     @Override
     public <T> T scalar(Queryable queryable)
     {
-        notNull.verify(queryable);
+        NOT_NULL.verify(queryable);
         T result = null;
         Queryable queryableClone = QueryFactory.clone(queryable, Map.class);
         Map<String,T> map = handleGet(queryableClone, null);
@@ -282,7 +288,7 @@ class RepositoryCouchDb implements Repository
     @Override
     public boolean enrich(Queryable queryable)
     {
-        notNull.verify(queryable, queryable.getParams());
+        NOT_NULL.verify(queryable, queryable.getParams());
         boolean enriched = false;
         Object o = handleGet(queryable, null);
         if(o != null)
@@ -320,6 +326,7 @@ class RepositoryCouchDb implements Repository
     
     private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofSelect(this.cmdAdapter);
         List<T> list = handler.with(queryable)
@@ -335,7 +342,8 @@ class RepositoryCouchDb implements Repository
     @Override
     public int add(Queryable queryable)
     {
-        notNull.verify(queryable);
+        NOT_NULL.verify(queryable);
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
         int rows = handler.with(queryable)
@@ -349,8 +357,9 @@ class RepositoryCouchDb implements Repository
     @Override
     public <T> int add(T entity)
     {
-        notNull.verify(entity);
+        NOT_NULL.verify(entity);
         Queryable queryable = QueryFactory.of("add", entity);
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
         int rows = handler.with(queryable)
@@ -364,7 +373,8 @@ class RepositoryCouchDb implements Repository
     @Override
     public int update(Queryable queryable)
     {
-        notNull.verify(queryable);
+        NOT_NULL.verify(queryable);
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName()).asUpdateable();
         CommandHandler handler = CommandHandlerFactory.ofUpdate(this.cmdAdapter);
         int rows = handler.with(queryable)
@@ -378,8 +388,9 @@ class RepositoryCouchDb implements Repository
     @Override
     public <T> T update(T entity)
     {
-        notNull.verify(entity);
+        NOT_NULL.verify(entity);
         Queryable queryable = QueryFactory.of("update", entity);
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName()).asUpdateable();
         CommandHandler handler = CommandHandlerFactory.ofUpdate(this.cmdAdapter);
         handler.with(queryable)
@@ -393,7 +404,8 @@ class RepositoryCouchDb implements Repository
     @Override
     public int remove(Queryable queryable)
     {
-        notNull.verify(queryable);
+        NOT_NULL.verify(queryable);
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofRemove(this.cmdAdapter);
         int rows = handler.with(queryable)
@@ -407,8 +419,9 @@ class RepositoryCouchDb implements Repository
     @Override
     public <T> int remove(T entity)
     {
-        notNull.verify(entity);
+        NOT_NULL.verify(entity);
         Queryable queryable = QueryFactory.of("remove", entity);
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofRemove(this.cmdAdapter);
         int rows = handler.with(queryable)
@@ -455,6 +468,24 @@ class RepositoryCouchDb implements Repository
     public <T> T dsl()
     {
         throw new UnsupportedDslOperationException("CouchDB Repository does not support DSL operation");
+    }
+
+    private void settingProperties()
+    {
+        Properties props = this.sqlContext.getRepositoryConfig().getProperties();
+        Enumeration<Object> keys = props.keys();
+        while (keys.hasMoreElements())
+        {
+            String k = keys.nextElement().toString();
+            if (k.startsWith("jkniv.repository.type."))
+                configConverters(k, props);                
+        }
+    }
+    private void configConverters(String k, Properties props)
+    {
+        String className = String.valueOf(props.get(k));// (22) -> "jkniv.repository.type."
+        ObjectProxy<Convertible> proxy = ObjectProxyFactory.of(className);
+        registerType.register(proxy.newInstance());
     }
 
     private Properties lookup(String remaining)

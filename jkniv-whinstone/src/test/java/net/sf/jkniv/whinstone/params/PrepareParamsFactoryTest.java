@@ -46,6 +46,7 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.domain.orm.Animal;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 public class PrepareParamsFactoryTest
 {
@@ -93,7 +94,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id IN (:in:id)");
         Queryable queryable = QueryFactory.of("dummy", params);
         queryable.bind(this.selectableMock);
-        
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newPrepareParams(stmtAdapter, queryable);
         assertThat(auto, instanceOf(NamedParams.class));
     }
@@ -106,6 +107,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = ?");
         Queryable queryable = QueryFactory.of("dummy", params);
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newPrepareParams(stmtAdapter, queryable);
         assertThat(auto, instanceOf(NamedParams.class));
     }
@@ -119,6 +121,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getParamParser()).willReturn(ParamParserQuestionMark.getInstance());
         Queryable queryable = QueryFactory.of("dummy", params);
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newPrepareParams(stmtAdapter, queryable);
         assertThat(auto, instanceOf(PositionalParams.class));
     }
@@ -130,6 +133,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id IN (:in:id)");
         Queryable queryable = QueryFactory.of("dummy", values);
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newPrepareParams(stmtAdapter, queryable);
         assertThat(auto, instanceOf(PositionalCollectionParams.class));
     }
@@ -141,6 +145,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id IN (:in:id)");
         Queryable queryable = QueryFactory.ofArray("dummy", values);
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newPrepareParams(stmtAdapter, queryable);
         assertThat(auto, instanceOf(PositionalArrayParams.class));
     }
@@ -151,6 +156,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id IN (:in:id)");
         Queryable queryable = QueryFactory.ofArray("dummy", 1,2,3,4);
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newPrepareParams(stmtAdapter, queryable);
         assertThat(auto, instanceOf(PositionalArrayParams.class));
     }
@@ -161,6 +167,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = ?");
         Queryable queryable = QueryFactory.of("dummy", "1");
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newPrepareParams(stmtAdapter, queryable);
         assertThat(auto, instanceOf(BasicParam.class));
     }
@@ -172,6 +179,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = ?");
         Queryable queryable = QueryFactory.of("dummy");
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newPrepareParams(stmtAdapter, queryable);
         assertThat(auto, instanceOf(NoParams.class));
     }
@@ -182,6 +190,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = ?");
         Queryable queryable = QueryFactory.of("dummy", new Date());
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newPrepareParams(stmtAdapter, queryable);
         assertThat(auto, instanceOf(BasicParam.class));
     }
@@ -192,6 +201,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = ?");
         Queryable queryable = QueryFactory.of("dummy", Calendar.getInstance());
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newPrepareParams(stmtAdapter, queryable);
         assertThat(auto, instanceOf(BasicParam.class));
     }
@@ -202,6 +212,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = ?");
         Queryable queryable = QueryFactory.of("dummy", Calendar.getInstance());
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newBasicParam(stmtAdapter, queryable);
         assertThat(auto, instanceOf(BasicParam.class));
     }
@@ -212,6 +223,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = ?");
         Queryable queryable = QueryFactory.of("dummy", Calendar.getInstance());
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newNamedParams(stmtAdapter, queryable);
         assertThat(auto, instanceOf(NamedParams.class));
     }
@@ -222,6 +234,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = ?");
         Queryable queryable = QueryFactory.of("dummy", Calendar.getInstance());
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newNoParams(stmtAdapter);
         assertThat(auto, instanceOf(NoParams.class));
     }
@@ -232,6 +245,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = ?");
         Queryable queryable = QueryFactory.of("dummy", Calendar.getInstance());
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newPositionalArrayParams(stmtAdapter, queryable);
         assertThat(auto, instanceOf(PositionalArrayParams.class));
     }
@@ -243,6 +257,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = ?");
         Queryable queryable = QueryFactory.of("dummy", values);
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newPositionalCollectionArrayParams(stmtAdapter, queryable);
         assertThat(auto, instanceOf(PositionalCollectionArrayParams.class));
     }
@@ -254,6 +269,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = ?");
         Queryable queryable = QueryFactory.of("dummy", values);
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newPositionalCollectionMapParams(stmtAdapter, queryable);
         assertThat(auto, instanceOf(PositionalCollectionMapParams.class));
     }
@@ -264,6 +280,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = ?");
         Queryable queryable = QueryFactory.of("dummy", Calendar.getInstance());
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newPositionalCollectionParams(stmtAdapter, queryable);
         assertThat(auto, instanceOf(PositionalCollectionParams.class));
     }
@@ -275,7 +292,8 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = ?");
         Queryable queryable = QueryFactory.of("dummy", values);
         queryable.bind(this.selectableMock);
-        AutoBindParams auto = PrepareParamsFactory.newPositionalCollectionPojoParams(stmtAdapter, queryable);
+        queryable.setRegisterType(new RegisterType());
+        AutoBindParams auto = PrepareParamsFactory.newPositionalCollectionPojoParams(stmtAdapter, queryable, new RegisterType());
         assertThat(auto, instanceOf(PositionalCollectionPojoParams.class));
     }
 
@@ -285,6 +303,7 @@ public class PrepareParamsFactoryTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = ?");
         Queryable queryable = QueryFactory.of("dummy", Calendar.getInstance());
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         AutoBindParams auto = PrepareParamsFactory.newPositionalParams(stmtAdapter, queryable);
         assertThat(auto, instanceOf(PositionalParams.class));
     }

@@ -21,7 +21,6 @@ package net.sf.jkniv.whinstone.jdbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
@@ -31,8 +30,8 @@ import net.sf.jkniv.whinstone.JdbcColumnMapper;
 import net.sf.jkniv.whinstone.UnderscoreToCamelCaseMapper;
 import net.sf.jkniv.whinstone.types.ColumnType;
 import net.sf.jkniv.whinstone.types.Convertible;
-import net.sf.jkniv.whinstone.types.ConvertibleFactory;
 import net.sf.jkniv.whinstone.types.JdbcType;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
 {
@@ -40,28 +39,21 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
     private final String                  columnName;
     private final String                  methodName;
     private final ColumnType              columnType;
-    //private final String                  attributeName;
-    //private final int                     jdbcType;
-    private boolean nestedAttribute;
-    private PropertyAccess propertyAccess;
+    private final boolean nestedAttribute;
+    private final PropertyAccess propertyAccess;
+    private final RegisterType registerType;
     
     // TODO design property to config UnderscoreToCamelCaseMapper
     private final static JdbcColumnMapper JDBC_COLUMN_MAPPER = new UnderscoreToCamelCaseMapper();
     
-    public DefaultJdbcColumn(int columnIndex, String columnName, int jdbcType)
-    {
-        this(columnIndex, columnName, jdbcType, null);
-    }
-    
-    public DefaultJdbcColumn(int columnIndex, String columnName, int jdbcTypeValue, Class<?> classTarget)
+    public DefaultJdbcColumn(int columnIndex, String columnName, int jdbcTypeValue, RegisterType registerType, Class<?> classTarget)
     {
         super();
         this.columnIndex = columnIndex;
         this.columnName = columnName;
-        this.nestedAttribute = false;
         this.propertyAccess = new PropertyAccess(JDBC_COLUMN_MAPPER.map(columnName), classTarget);
-        //this.attributeName = propertyAccess.getFieldName();
         this.columnType = JdbcType.valueOf(jdbcTypeValue);
+        this.registerType = registerType;
         if(columnName.indexOf(".") > 0)
         {
             this.nestedAttribute = true;
@@ -69,6 +61,7 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
         }
         else
         {
+            this.nestedAttribute = false;
             this.methodName = propertyAccess.getWriterMethodName();
         }
     }
@@ -120,7 +113,7 @@ public class DefaultJdbcColumn implements JdbcColumn<ResultSet>
     {
         Object value = rs.getObject(columnIndex);
         ObjectProxy<?> proxy = ObjectProxyFactory.of(this.propertyAccess.getTargetClass());
-        Convertible<Object, Object> convertible = ConvertibleFactory.toAttribute(this, proxy);
+        Convertible<Object, Object> convertible = registerType.toAttribute(this, proxy);
         if (!convertible.getType().isInstance(value))
             value = convertible.toAttribute(value);
         return value;

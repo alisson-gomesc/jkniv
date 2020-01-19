@@ -51,6 +51,7 @@ public class OraclePagingTest extends BaseJdbc
         assertThat(list.size(), is(SIZE_PAGE));
         assertThat(q.getTotal(), is((long)TOTAL_BOOKS));
     }
+    
     @Test
     public void whenPagingWithParamsQueryWorks()
     {

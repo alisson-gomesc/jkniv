@@ -241,11 +241,6 @@ public class RepositoryConfig
         }
     }
     
-    //    public String getPreparedStatementStrategy()
-    //    {
-    //        return getProperty(RepositoryProperty.PREPARED_STATEMENT_STRATEGY);
-    //    }
-    
     public String getQueryNameStrategy()
     {
         return getProperty(RepositoryProperty.QUERY_NAME_STRATEGY);
@@ -257,31 +252,6 @@ public class RepositoryConfig
         return adpterClassName;
     }
 
-//    public ConnectionFactory getJdbcAdapterFactory(Class<? extends ConnectionFactory> defaultClass, Object[] args,
-//            Class<?>[] types)
-//    {
-//        String adpterClassName = getProperty(RepositoryProperty.JDBC_ADAPTER_FACTORY);
-//        ObjectProxy<? extends ConnectionFactory> factory = null;
-//        
-//        if (adpterClassName == null)
-//            factory = ObjectProxyFactory.newProxy(defaultClass);
-//        else
-//            factory = ObjectProxyFactory.newProxy(adpterClassName);
-//        
-//        if (args != null)
-//        {
-//            factory.setConstructorArgs(args);
-//            if (types != null)
-//                factory.setConstructorTypes(types);
-//        }
-//        return factory.newInstance();
-//    }
-    
-//    public String getSqlDialect()
-//    {
-//        return getProperty(RepositoryProperty.SQL_DIALECT);//this.sqlDialectName;
-//    }
-    
     public boolean isShotKeyEnable()
     {
         return Boolean.valueOf(getProperty(RepositoryProperty.SHORT_NAME_ENABLE));
@@ -292,20 +262,12 @@ public class RepositoryConfig
         return Boolean.valueOf(getProperty(RepositoryProperty.RELOADABLE_XML_ENABLE));
     }
     
-    /*
-    public boolean isProjectPackageEnable()
-    {
-        return Boolean.valueOf(getProperty(RepositoryProperty.PROJECT_PACKAGE_ENABLE));
-    }
-    */
-    
     public void add(String key,  String value)
     {
         Properties props = new Properties();
         props.put(key, value);
         add(props);
     }
-    
     
     public void add(Properties props)
     {
@@ -323,35 +285,11 @@ public class RepositoryConfig
         }
     }
 
-    
-    /*
-    public void add(DataSource ds)
-    {
-        if (ds != null)
-            this.ds = ds;
-    }
-    
-    public boolean hasDataSource()
-    {
-        return (this.ds != null);
-    }
-    */
     public boolean hasProperties()
     {
         return (!this.properties.isEmpty());
     }
-    /*    
-    public DataSource getDataSource()
-    {
-        return ds;
-    }
-    */
-    
-//    public SqlLogger getSqlLogger()
-//    {
-//        return loggers.get(name);
-//    }
-    
+
     public DataMasking getDataMasking()
     {
         return this.masking;

@@ -47,8 +47,8 @@ import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 import net.sf.jkniv.whinstone.params.PrepareParamsFactory;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 import net.sf.jkniv.whinstone.types.Convertible;
-import net.sf.jkniv.whinstone.types.ConvertibleFactory;
 import net.sf.jkniv.whinstone.types.NoConverterType;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 /**
  * The object used to name and parameterize a query.
@@ -94,6 +94,7 @@ class QueryName implements Queryable
     private boolean      boundParams;
     private boolean      cached;
     private boolean      cacheIgnore;
+    private RegisterType registerType;
     
     /**
      * Creates a Query object parameterized starting at first row and retrieve all rows, isolation default, no timeout and online (no batch).
@@ -596,7 +597,7 @@ class QueryName implements Queryable
         else if (isTypeOfArrayMap() || isTypeOfCollectionMap())
             prepareParams = PrepareParamsFactory.newPositionalCollectionMapParams(adapter, this);
         else if (isTypeOfArrayPojo() || isTypeOfCollectionPojo())
-            prepareParams = PrepareParamsFactory.newPositionalCollectionPojoParams(adapter, this);
+            prepareParams = PrepareParamsFactory.newPositionalCollectionPojoParams(adapter, this, registerType);
         else if (isTypeOfCollectionBasicTypes())
             prepareParams = PrepareParamsFactory.newPositionalCollectionParams(adapter, this);
         else if (isTypeOfCollectionArray())
@@ -690,6 +691,18 @@ class QueryName implements Queryable
     {
         IS_NULL.verify(this.returnType);
         this.returnType = clazz;
+    }
+    
+    @Override
+    public void setRegisterType(RegisterType registerType)
+    {
+        this.registerType = registerType;
+    }
+    
+    @Override
+    public RegisterType getRegisterType()
+    {
+        return this.registerType;
     }
     
     @Override
@@ -789,11 +802,11 @@ class QueryName implements Queryable
         if (propertyAccess.hasField() || propertyAccess.hasReadMethod())
         {
             ObjectProxy<?> proxy = ObjectProxyFactory.of(getParams());
-            convertible = ConvertibleFactory.toJdbc(propertyAccess, proxy);
+            convertible = registerType.toJdbc(propertyAccess, proxy);
         }
         else if (value != null)
         {
-            convertible = ConvertibleFactory.getConverter(value.getClass());
+            convertible = registerType.getConverter(value.getClass());
         }
         return convertible;
     }

@@ -21,6 +21,7 @@ package net.sf.jkniv.whinstone.jdbc;
 
 import java.sql.DatabaseMetaData;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
@@ -57,7 +58,7 @@ import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 import net.sf.jkniv.whinstone.types.CalendarTimestampType;
 import net.sf.jkniv.whinstone.types.Convertible;
-import net.sf.jkniv.whinstone.types.ConvertibleFactory;
+import net.sf.jkniv.whinstone.types.RegisterType;
 import net.sf.jkniv.whinstone.types.DateTimestampType;
 import net.sf.jkniv.whinstone.types.DoubleBigDecimalType;
 import net.sf.jkniv.whinstone.types.LongBigDecimalType;
@@ -70,6 +71,7 @@ import net.sf.jkniv.whinstone.types.ShortIntType;
  * @author Alisson Gomes
  * @since 0.6.0
  */
+@SuppressWarnings({"unchecked", "rawtypes"})
 class RepositoryJdbc implements Repository
 {
     private static final Logger     LOG     = LoggerFactory.getLogger(RepositoryJdbc.class);
@@ -81,6 +83,7 @@ class RepositoryJdbc implements Repository
     private SqlContext              sqlContext;
     private boolean                 isTraceEnabled;
     private boolean                 isDebugEnabled;
+    private RegisterType            registerType;
     
     RepositoryJdbc()// TODO test constructor
     {
@@ -149,55 +152,58 @@ class RepositoryJdbc implements Repository
 
     private RepositoryJdbc(DataSource ds, SqlContext sqlContext, Properties props)
     {
-        // TODO refactoy constructor
-        //if (ds instanceof BasicDataSource)
-        //    LOG.trace("datasource {}, properties {}", ((BasicDataSource)ds).getDriverClassName(), props);
-        Object[] args = null;
-        Class<?>[] types = null;
-        Class<? extends ConnectionFactory> adapterClassFactory = null;
-
-        configureHandlerException();
-        configureConverters();
+//        Object[] args = null;
+//        Class<?>[] types = null;
+//        Class<? extends ConnectionFactory> classForConnFactory = null;
+        this.registerType = new RegisterType();
+        
+        configHandlerException();
         this.sqlContext = sqlContext;
         
         this.repositoryConfig = this.sqlContext.getRepositoryConfig();
         checkTransactionSupports();
         this.repositoryConfig.add(props);
-        
+
         if (ds == null)
             ds = repositoryConfig.lookup();
         
+        configDefaultConverters();
+        configQueryNameStrategy();
+        settingProperties();
+        configConnFactory(ds);
+        /*
         String classNameJdbcAdapter = repositoryConfig.getProperty(RepositoryProperty.JDBC_ADAPTER_FACTORY.key());
         
         if (ds == null && repositoryConfig.getProperty(RepositoryProperty.JDBC_URL) != null)
         {
-            adapterClassFactory = DriverManagerAdapter.class;
+            classForConnFactory = DriverManagerAdapter.class;
             args = new Object[]{repositoryConfig.getProperties(), repositoryConfig.getName()};
             types = new Class<?>[] {Properties.class, String.class};                        
         }
         else if (classNameJdbcAdapter == null || DataSourceAdapter.class.getName().equals(classNameJdbcAdapter))
         {
-            adapterClassFactory = DataSourceAdapter.class;
+            classForConnFactory = DataSourceAdapter.class;
             args = new Object[]{ds, repositoryConfig.getName()};
             types = new Class<?>[] {DataSource.class, String.class};
         }
         else if (SpringDataSourceAdapter.class.getName().equals(classNameJdbcAdapter))
         {
-            adapterClassFactory = SpringDataSourceAdapter.class;
+            classForConnFactory = SpringDataSourceAdapter.class;
             args = new Object[]{ds, repositoryConfig.getName()};
             types = new Class<?>[] {DataSource.class, String.class};
         }
         else if(DriverManagerAdapter.class.getName().equals(classNameJdbcAdapter))
         {
-            adapterClassFactory = DriverManagerAdapter.class;
+            classForConnFactory = DriverManagerAdapter.class;
             args = new Object[]{repositoryConfig.getProperties(), repositoryConfig.getName()};
             types = new Class<?>[] {Properties.class, String.class};            
         }
-        this.connectionFactory = getJdbcAdapterFactory(classNameJdbcAdapter, adapterClassFactory, args, types);
+        this.connectionFactory = getJdbcAdapterFactory(classNameJdbcAdapter, classForConnFactory, args, types);
+        */
         this.connectionFactory.with(handlerException);
         this.isDebugEnabled = LOG.isDebugEnabled();
         this.isTraceEnabled = LOG.isTraceEnabled();
-        configQueryNameStrategy();
+        
         if (LOG.isInfoEnabled())
             LOG.info("Repository JDBC was started with context [{}] using [{}] as JDBC Adapter", this.sqlContext.getName(), this.connectionFactory.getClass().getName());
         if (isDebugEnabled) //FIXME show metadata must be have property? counter effect to unit test, there are twice invocation into close connection
@@ -224,7 +230,6 @@ class RepositoryJdbc implements Repository
     }
     
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T get(T entity)
     {
         NOT_NULL.verify(entity);
@@ -235,7 +240,6 @@ class RepositoryJdbc implements Repository
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T get(Class<T> returnType, Object entity)
     {
         NOT_NULL.verify(entity);
@@ -278,6 +282,7 @@ class RepositoryJdbc implements Repository
     
     private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofSelect(this.connectionFactory.open(sql.getIsolation()));
         List<T> list = handler.with(queryable)
@@ -292,14 +297,16 @@ class RepositoryJdbc implements Repository
     private <T, R> T handleGet(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         T ret = null;
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofSelect(this.connectionFactory.open(sql.getIsolation()));
         List<T> list = handler.with(queryable)
-        .with(sql)
-        .checkSqlType(SqlType.SELECT)
-        .with(handlerException)
-        .with(overloadResultRow)
-        .run();
+                .with(sql)
+                .checkSqlType(SqlType.SELECT)
+                .with(handlerException)
+                .with(overloadResultRow)
+                .run();
+        
         if (list.size() > 1)
             throw new NonUniqueResultException("No unique result for query ["+queryable.getName()+"] with params ["+queryable.getParams()+"]");
         else if (list.size() == 1)
@@ -332,6 +339,7 @@ class RepositoryJdbc implements Repository
     public int add(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofAdd(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
@@ -351,6 +359,7 @@ class RepositoryJdbc implements Repository
             LOG.trace("Executing [{}] as add command", queryName);
 
         Queryable queryable = QueryFactory.of(queryName, entity);
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofAdd(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
@@ -380,6 +389,7 @@ class RepositoryJdbc implements Repository
     public int update(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
+        queryable.setRegisterType(registerType);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
@@ -398,6 +408,7 @@ class RepositoryJdbc implements Repository
         NOT_NULL.verify(entity);
         String queryName = this.strategyQueryName.toUpdateName(entity);
         Queryable queryable = QueryFactory.of(queryName, entity);
+        queryable.setRegisterType(registerType);
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as update command", queryable);
         Sql sql = sqlContext.getQuery(queryable.getName());
@@ -414,6 +425,7 @@ class RepositoryJdbc implements Repository
     public int remove(Queryable queryable)
     {
         NOT_NULL.verify(queryable);
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofRemove(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
@@ -432,6 +444,7 @@ class RepositoryJdbc implements Repository
         if (isTraceEnabled)
             LOG.trace("Executing [{}] as remove command", queryName);
         Queryable queryable = QueryFactory.of(queryName, entity);
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofRemove(this.connectionFactory.open(sql.getIsolation()));
         int rows = handler.with(queryable)
@@ -477,14 +490,6 @@ class RepositoryJdbc implements Repository
         throw new UnsupportedDslOperationException("JDBC Repository does not support DSL operation");
     }
 
-    
-    private void configQueryNameStrategy()
-    {
-        String nameStrategy = repositoryConfig.getQueryNameStrategy();
-        ObjectProxy<? extends QueryNameStrategy> proxy = ObjectProxyFactory.of(nameStrategy);
-        this.strategyQueryName = proxy.newInstance();
-    }
-    
     private void checkTransactionSupports()
     {
         TransactionType type = this.repositoryConfig.getTransactionType();
@@ -525,7 +530,7 @@ class RepositoryJdbc implements Repository
         
         if (adpterClassName == null)
             factory = ObjectProxyFactory.of(defaultClass);
-        else
+        else 
             factory = ObjectProxyFactory.of(adpterClassName);
         
         if (args != null)
@@ -536,26 +541,78 @@ class RepositoryJdbc implements Repository
         }
         return factory.newInstance();
     }
+
+    private void settingProperties()
+    {
+        Properties props = repositoryConfig.getProperties();
+        Enumeration<Object> keys = props.keys();
+        while (keys.hasMoreElements())
+        {
+            String k = keys.nextElement().toString();
+            if (k.startsWith("jkniv.repository.type."))
+                configConverters(k, props);                
+        }
+    }
     
-    @SuppressWarnings("rawtypes")
-    private void settingConverters(String k, Properties props)
+    private void configConnFactory(DataSource ds)
+    {
+        Object[] args = null;
+        Class<?>[] types = null;
+        Class<? extends ConnectionFactory> classForConnFactory = null;
+        String classNameJdbcAdapter = repositoryConfig.getProperty(RepositoryProperty.JDBC_ADAPTER_FACTORY.key());
+        if (ds == null && repositoryConfig.getProperty(RepositoryProperty.JDBC_URL) != null)
+        {
+            classForConnFactory = DriverManagerAdapter.class;
+            args = new Object[]{repositoryConfig.getProperties(), repositoryConfig.getName()};
+            types = new Class<?>[] {Properties.class, String.class};                        
+        }
+        else if (classNameJdbcAdapter == null || DataSourceAdapter.class.getName().equals(classNameJdbcAdapter))
+        {
+            classForConnFactory = DataSourceAdapter.class;
+            args = new Object[]{ds, repositoryConfig.getName()};
+            types = new Class<?>[] {DataSource.class, String.class};
+        }
+        else if (SpringDataSourceAdapter.class.getName().equals(classNameJdbcAdapter))
+        {
+            classForConnFactory = SpringDataSourceAdapter.class;
+            args = new Object[]{ds, repositoryConfig.getName()};
+            types = new Class<?>[] {DataSource.class, String.class};
+        }
+        else if(DriverManagerAdapter.class.getName().equals(classNameJdbcAdapter))
+        {
+            classForConnFactory = DriverManagerAdapter.class;
+            args = new Object[]{repositoryConfig.getProperties(), repositoryConfig.getName()};
+            types = new Class<?>[] {Properties.class, String.class};            
+        }
+        this.connectionFactory = getJdbcAdapterFactory(classNameJdbcAdapter, classForConnFactory, args, types);
+
+    }
+    
+    private void configQueryNameStrategy()
+    {
+        String nameStrategy = repositoryConfig.getQueryNameStrategy();
+        ObjectProxy<? extends QueryNameStrategy> proxy = ObjectProxyFactory.of(nameStrategy);
+        this.strategyQueryName = proxy.newInstance();
+    }
+
+    private void configConverters(String k, Properties props)
     {
         String className = String.valueOf(props.get(k));// (22) -> "jkniv.repository.type."
         ObjectProxy<Convertible> proxy = ObjectProxyFactory.of(className);
-        ConvertibleFactory.register(proxy.newInstance());
+        registerType.register(proxy.newInstance());
     }
 
-    private void configureConverters()
+    private void configDefaultConverters()
     {
-        ConvertibleFactory.register(new DateTimestampType());
-        ConvertibleFactory.register(new CalendarTimestampType());
-        ConvertibleFactory.register(new LongNumericType());
-        ConvertibleFactory.register(new LongBigDecimalType());
-        ConvertibleFactory.register(new ShortIntType());
-        ConvertibleFactory.register(new DoubleBigDecimalType());
+        registerType.register(new DateTimestampType());
+        registerType.register(new CalendarTimestampType());
+        registerType.register(new LongNumericType());
+        registerType.register(new LongBigDecimalType());
+        registerType.register(new ShortIntType());
+        registerType.register(new DoubleBigDecimalType());
     }
     
-    private void configureHandlerException()
+    private void configHandlerException()
     {
         this.handlerException = new HandlerException(RepositoryException.class, "JDBC Error cannot execute SQL [%s]");
     }

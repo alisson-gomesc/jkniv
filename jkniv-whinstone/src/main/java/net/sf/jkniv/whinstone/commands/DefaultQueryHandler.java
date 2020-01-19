@@ -165,6 +165,7 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
             paramArray[i] = paramValues[i].getValue();
             
         Queryable paging = QueryFactory.ofArray(queryName, paramArray);
+        paging.setRegisterType(queryable.getRegisterType());
         Selectable selectable = TagFactory.newSelect(queryName, LanguageType.NATIVE, queryable.getDynamicSql().getSqlDialect());
         if (selectable instanceof SqlTag)
         {

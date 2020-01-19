@@ -19,10 +19,7 @@
  */
 package net.sf.jkniv.whinstone.cassandra;
 
-import java.lang.reflect.Field;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -33,7 +30,6 @@ import com.datastax.driver.core.Host;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.ProtocolVersion;
 import com.datastax.driver.core.Session;
-import com.datastax.driver.core.TypeCodec;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
@@ -42,59 +38,24 @@ import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.commands.CommandAdapter;
 import net.sf.jkniv.whinstone.types.Convertible;
-import net.sf.jkniv.whinstone.types.ConvertibleFactory;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
+/**
+ * 
+ * @author Alisson Gomes
+ * @since 0.6.0
+ */
+@SuppressWarnings("rawtypes")
 public class CassandraSessionFactory //implements ConnectionFactory
 {
-    private static final Logger               LOG    = LoggerFactory.getLogger(CassandraSessionFactory.class);
-    private final String                      contextName;
-    private Cluster                           cluster;
-    private CassandraCommandAdapter           conn;
-    private final HandleableException         handlerException;
-    public static final Map<String, CodecMap> CODECS = new HashMap<String, CodecMap>();
+    private static final Logger       LOG = LoggerFactory.getLogger(CassandraSessionFactory.class);
+    private final String              contextName;
+    private Cluster                   cluster;
+    private CassandraCommandAdapter   conn;
+    private final HandleableException handlerException;
+    private final RegisterCodec      registerCodec;
     
-    static
-    {
-        CODECS.put("arrays.DoubleArrayCodec",
-                new CodecMap("com.datastax.driver.extras.codecs.arrays.DoubleArrayCodec"));
-        CODECS.put("arrays.FloatArrayCodec", new CodecMap("com.datastax.driver.extras.codecs.arrays.FloatArrayCodec"));
-        CODECS.put("arrays.IntArrayCodec", new CodecMap("com.datastax.driver.extras.codecs.arrays.IntArrayCodec"));
-        CODECS.put("arrays.LongArrayCodec", new CodecMap("com.datastax.driver.extras.codecs.arrays.LongArrayCodec"));
-        CODECS.put("arrays.ObjectArrayCodec",
-                new CodecMap("com.datastax.driver.extras.codecs.arrays.ObjectArrayCodec"));
-        
-        CODECS.put("date.SimpleDateCodec", new CodecMap("com.datastax.driver.extras.codecs.date.SimpleDateCodec"));
-        CODECS.put("date.SimpleTimestampCodec", new CodecMap("com.datastax.driver.extras.codecs.date.SimpleTimestamp"));
-        
-        CODECS.put("enums.EnumNameCodec", new CodecMap("com.datastax.driver.extras.codecs.enums.EnumNameCodec"));
-        CODECS.put("enums.EnumOrdinalCodec", new CodecMap("com.datastax.driver.extras.codecs.enums.EnumOrdinalCodec"));
-        
-        CODECS.put("guava.OptionalCodec", new CodecMap("com.datastax.driver.extras.codecs.guava.OptionalCodec"));
-        
-        CODECS.put("jdk8.InstantCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.InstantCodec"));
-        CODECS.put("jdk8.LocalDateCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.LocalDateCodec"));
-        CODECS.put("jdk8.LocalDateTimeCodec",
-                new CodecMap("com.datastax.driver.extras.codecs.jdk8.LocalDateTimeCodec"));
-        CODECS.put("jdk8.LocalTimeCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.LocalTimeCodec"));
-        CODECS.put("jdk8.OptinalCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.OptionalCodec"));
-        CODECS.put("jdk8.ZonedDateTimeCodec",
-                new CodecMap("com.datastax.driver.extras.codecs.jdk8.ZonedDateTimeCodec"));
-        CODECS.put("jdk8.ZonaIdCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.ZoneIdCodec"));
-        
-        CODECS.put("joda.DateTimeCodec", new CodecMap("com.datastax.driver.extras.codecs.joda.DateTimeCodec"));
-        CODECS.put("joda.InstantCodec", new CodecMap("com.datastax.driver.extras.codecs.joda.InstantCodec"));
-        CODECS.put("joda.LocalDateCodec", new CodecMap("com.datastax.driver.extras.codecs.joda.LocalDateCodec"));
-        CODECS.put("joda.LocalTimeCodec", new CodecMap("com.datastax.driver.extras.codecs.joda.LocalTimeCodec"));
-        CODECS.put("json.JacksonJsonCodec", new CodecMap("com.datastax.driver.extras.codecs.json.JacksonJsonCodec"));
-        
-        CODECS.put("InstantCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.InstantCodec"));
-        CODECS.put("LocalDateCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.LocalDateCodec"));
-        CODECS.put("LocalDateTimeCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.LocalDateTimeCodec"));
-        CODECS.put("LocalTimeCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.LocalTimeCodec"));
-        CODECS.put("OptinalCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.OptionalCodec"));
-    }
-    
-    public CassandraSessionFactory(Properties props, String contextName, HandleableException handlerException)
+    public CassandraSessionFactory(Properties props, String contextName, RegisterType registerType, HandleableException handlerException)
     {
         this.handlerException = handlerException;
         String[] urls = props.getProperty(RepositoryProperty.JDBC_URL.key(), "127.0.0.1").split(",");
@@ -103,8 +64,9 @@ public class CassandraSessionFactory //implements ConnectionFactory
         String password = props.getProperty(RepositoryProperty.JDBC_PASSWORD.key());
         String protocol = props.getProperty(RepositoryProperty.PROTOCOL_VERSION.key());
         ProtocolVersion version = getProtocolVersion(protocol);
-        
+        this.registerCodec = new RegisterCodec();
         this.contextName = contextName;
+        
         if (username != null)
             cluster = Cluster.builder().addContactPoints(urls).withCredentials(username, password)
                     .withProtocolVersion(version).build();
@@ -122,72 +84,7 @@ public class CassandraSessionFactory //implements ConnectionFactory
                 LOG.info("Datacenter: {}; Host: {}; Rack: {}", host.getDatacenter(), host.getAddress(), host.getRack());
         }
         Session session = cluster.connect(keyspace);
-        this.conn = new CassandraCommandAdapter(cluster, session, contextName, handlerException);
-    }
-    
-    private void settingProperties(Properties props)
-    {
-        Enumeration<Object> keys = props.keys();
-        while (keys.hasMoreElements())
-        {
-            String k = keys.nextElement().toString();
-            if (k.startsWith("codec."))
-                settingCodec(k, props);
-            else if (k.startsWith("jkniv.repository.type."))
-                settingConverters(k, props);                
-        }
-    }
-    
-    @SuppressWarnings("rawtypes")
-    private void settingConverters(String k, Properties props)
-    {
-        String className = String.valueOf(props.get(k));// (22) -> "jkniv.repository.type."
-        ObjectProxy<Convertible> proxy = ObjectProxyFactory.of(className);
-        ConvertibleFactory.register(proxy.newInstance());
-    }
-
-    
-    private void settingCodec(String k, Properties props)
-    {
-        boolean enable = Boolean.valueOf(props.getProperty(k));
-        if (enable)
-        {
-            CodecMap codecMap = CODECS.get(k.substring(6));// (6) -> "codec."
-            Field field = null;
-            if (codecMap != null)
-            {
-                ObjectProxy<TypeCodec<?>> proxy = ObjectProxyFactory.of(codecMap.codecClassName);
-                field = proxy.getDeclaredField("instance");
-                if (field != null)
-                {
-                    TypeCodec<?> instance = null;
-                    try
-                    {
-                        instance = (TypeCodec<?>) field.get(null);
-                        cluster.getConfiguration().getCodecRegistry().register(instance);
-                        codecMap.instance = instance;
-                        if (k.endsWith("InstantCodec"))
-                            CODECS.get("InstantCodec").instance = instance;
-                        else if (k.endsWith("LocalDateCodec"))
-                            CODECS.get("LocalDateCodec").instance = instance;
-                        else if (k.endsWith("LocalTimeCodec"))
-                            CODECS.get("LocalTimeCodec").instance = instance;
-                        else if (k.endsWith("LocalDateTimeCodec"))
-                            CODECS.get("LocalDateTimeCodec").instance = instance;
-                        else if (k.endsWith("OptinalCodec"))
-                            CODECS.get("OptinalCodec").instance = instance;
-                        
-                        LOG.info("The codec {} was registered with {}", k, codecMap.codecClassName);
-                    }
-                    catch (Exception e)//IllegalArgumentException, IllegalAccessException
-                    {
-                        LOG.error("Error registering codec {}", k, e);
-                    }
-                }
-            }
-            if (codecMap == null || field == null)
-                LOG.error("Codec {} not found ", k);
-        }        
+        this.conn = new CassandraCommandAdapter(contextName, cluster, session, registerType, registerCodec, handlerException);
     }
     
     private ProtocolVersion getProtocolVersion(String protocol)
@@ -208,12 +105,20 @@ public class CassandraSessionFactory //implements ConnectionFactory
         return version;
     }
     
-    //    @Override
-    //    public ConnectionFactory with(HandleableException handlerException)
-    //    {
-    //        //this.handlerException = handlerException;
-    //        return this;
-    //    }
+    private void settingProperties(Properties props)
+    {
+        Enumeration<Object> keys = props.keys();
+        while (keys.hasMoreElements())
+        {
+            String k = keys.nextElement().toString();
+            if (k.startsWith("codec."))
+            {
+                boolean enable = Boolean.valueOf(props.getProperty(k));
+                String codecName = k.substring(6);// (6) -> "codec."
+                registerCodec.register(this.cluster, codecName, enable);
+            }
+        }
+    }
     
     //@Override
     public CommandAdapter open()
@@ -282,15 +187,4 @@ public class CassandraSessionFactory //implements ConnectionFactory
     //        
     //    }
     
-    public static class CodecMap
-    {
-        public final String codecClassName;
-        public TypeCodec    instance;
-        
-        CodecMap(String codecClassName)
-        {
-            this.codecClassName = codecClassName;
-            this.instance = instance;
-        }
-    }
 }

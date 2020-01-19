@@ -76,6 +76,7 @@ import net.sf.jkniv.whinstone.jdbc.domain.acme.Book;
 import net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook;
 import net.sf.jkniv.whinstone.jdbc.domain.flat.MyTypes;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 public class ConvertibleDataTypeTest extends BaseJdbc
 {
@@ -209,6 +210,7 @@ public class ConvertibleDataTypeTest extends BaseJdbc
         given(this.paramParser.replaceForPlaceholder(anyString(), anyObject())).willReturn("select id, name, description from author where active = ? and language = ?");
         given(this.dialect.supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY)).willReturn(false);
         
+        query.setRegisterType(new RegisterType());
         query.bind(this.sql);
         query.bind(stmtAdapter);
         assertThat(query.isBoundSql(), is(true));
@@ -226,6 +228,7 @@ public class ConvertibleDataTypeTest extends BaseJdbc
         assertThat(values[1].getValueAs().toString(), is(String.valueOf(LanguageType.CRITERIA.ordinal())));
         
         query = QueryFactory.of("dummy", param2);
+        query.setRegisterType(new RegisterType());
         query.bind(this.sql);
         query.bind(stmtAdapter);
         values = query.values();
@@ -233,6 +236,7 @@ public class ConvertibleDataTypeTest extends BaseJdbc
         assertThat(values[1].getValueAs().toString(), is(String.valueOf(LanguageType.HQL.ordinal())));
 
         query = QueryFactory.of("dummy", param3);
+        query.setRegisterType(new RegisterType());
         query.bind(this.sql);
         query.bind(stmtAdapter);
         values = query.values();
@@ -240,6 +244,7 @@ public class ConvertibleDataTypeTest extends BaseJdbc
         assertThat(values[1].getValueAs().toString(), is(String.valueOf(LanguageType.JPQL.ordinal())));
 
         query = QueryFactory.of("dummy", param4);
+        query.setRegisterType(new RegisterType());
         query.bind(this.sql);
         query.bind(stmtAdapter);
         values = query.values();
@@ -247,12 +252,12 @@ public class ConvertibleDataTypeTest extends BaseJdbc
         assertThat(values[1].getValueAs().toString(), is(String.valueOf(LanguageType.NATIVE.ordinal())));
 
         query = QueryFactory.of("dummy", param5);
+        query.setRegisterType(new RegisterType());
         query.bind(this.sql);
         query.bind(stmtAdapter);
         values = query.values();
         assertThat(values[0].getValueAs().toString(), is("F"));
         assertThat(values[1].getValueAs().toString(), is(String.valueOf(LanguageType.STORED.ordinal())));
-
     }
 
     

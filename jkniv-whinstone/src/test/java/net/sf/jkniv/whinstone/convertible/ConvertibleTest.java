@@ -63,6 +63,7 @@ import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 public class ConvertibleTest
 {
@@ -102,6 +103,7 @@ public class ConvertibleTest
         
         query.bind(this.sql);
         query.bind(stmt);
+        query.setRegisterType(new RegisterType());
         assertThat(query.isBoundSql(), is(true));
         assertThat(query.isBoundParams(), is(true));
         assertThat(query.isTypeOfPojo(), is(true));
@@ -119,6 +121,7 @@ public class ConvertibleTest
         query = QueryFactory.of("dummy", param2);
         query.bind(this.sql);
         query.bind(stmt);
+        query.setRegisterType(new RegisterType());
         values = query.values();
         assertThat(values[0].getValueAs().toString(), is("T"));
         assertThat(values[1].getValueAs().toString(), is(String.valueOf(LanguageType.HQL.ordinal())));
@@ -126,6 +129,7 @@ public class ConvertibleTest
         query = QueryFactory.of("dummy", param3);
         query.bind(this.sql);
         query.bind(stmt);
+        query.setRegisterType(new RegisterType());
         values = query.values();
         assertThat(values[0].getValueAs().toString(), is("T"));
         assertThat(values[1].getValueAs().toString(), is(String.valueOf(LanguageType.JPQL.ordinal())));
@@ -133,6 +137,7 @@ public class ConvertibleTest
         query = QueryFactory.of("dummy", param4);
         query.bind(this.sql);
         query.bind(stmt);
+        query.setRegisterType(new RegisterType());
         values = query.values();
         assertThat(values[0].getValueAs().toString(), is("F"));
         assertThat(values[1].getValueAs().toString(), is(String.valueOf(LanguageType.NATIVE.ordinal())));
@@ -140,6 +145,7 @@ public class ConvertibleTest
         query = QueryFactory.of("dummy", param5);
         query.bind(this.sql);
         query.bind(stmt);
+        query.setRegisterType(new RegisterType());
         values = query.values();
         assertThat(values[0].getValueAs().toString(), is("F"));
         assertThat(values[1].getValueAs().toString(), is(String.valueOf(LanguageType.STORED.ordinal())));

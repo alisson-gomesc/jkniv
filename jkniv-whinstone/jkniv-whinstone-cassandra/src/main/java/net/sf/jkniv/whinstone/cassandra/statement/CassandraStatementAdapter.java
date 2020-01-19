@@ -52,8 +52,9 @@ import net.sf.jkniv.whinstone.classification.NoGroupingBy;
 import net.sf.jkniv.whinstone.classification.Transformable;
 import net.sf.jkniv.whinstone.statement.AutoKey;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
-/**
+/*
  * https://docs.datastax.com/en/developer/java-driver/3.1/manual/statements/prepared/
  * 
  * //FIXME unsupported method bound.setInet(...)
@@ -69,6 +70,7 @@ import net.sf.jkniv.whinstone.statement.StatementAdapter;
  * @author Alisson Gomes
  * @since 0.6.0
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
 {
     private static final Logger SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
@@ -82,12 +84,13 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     private boolean                  scalar;
     private Session                  session;
     private Queryable                queryable;
+    private final RegisterType       registerType;
     
-    @SuppressWarnings("unchecked")
-    public CassandraStatementAdapter(Session session, Statement stmt, Queryable queryable)
+    public CassandraStatementAdapter(Session session, Statement stmt, Queryable queryable, RegisterType registerType)
     {
         this.stmt = stmt;
         this.session = session;
+        this.registerType = registerType;
         this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
         this.queryable = queryable;
         this.returnType = (Class<T>) queryable.getReturnType();
@@ -172,8 +175,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         // TODO https://www.datastax.com/dev/blog/client-side-improvements-in-cassandra-2-0
     }
     */
-    @SuppressWarnings(
-    { "rawtypes", "unchecked" })
+
     public List<T> rows()
     {
         ResultSet rs = null;
@@ -247,8 +249,6 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     
     /*******************************************************************************/
     
-    @SuppressWarnings(
-    { "unchecked", "rawtypes" })
     private void setResultRow(JdbcColumn<Row>[] columns)
     {
         if (resultRow != null)
@@ -291,16 +291,14 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
      * @param metadata  object that contains information about the types and properties of the columns in a <code>ResultSet</code> 
      * @return Array of columns with name and index
      */
-    @SuppressWarnings("unchecked")
     private JdbcColumn<Row>[] getJdbcColumns(ColumnDefinitions metadata)
     {
         JdbcColumn<Row>[] columns = new JdbcColumn[metadata.size()];
         
         for (int i = 0; i < columns.length; i++)
         {
-            String columnName = metadata.getName(i);//getColumnName(metadata, columnNumber);
-            //int columnType = metadata.getType(i).getName().ordinal(); //metadata.getColumnType(columnNumber);
-            columns[i] = new CassandraColumn(i, columnName, metadata.getType(i).getName(), queryable.getReturnType());
+            String columnName = metadata.getName(i);
+            columns[i] = new CassandraColumn(i, columnName, metadata.getType(i).getName(), registerType, queryable.getReturnType());
         }
         return columns;
     }

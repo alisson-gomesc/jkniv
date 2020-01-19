@@ -22,6 +22,7 @@ package net.sf.jkniv.whinstone.couchbase;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -57,6 +58,8 @@ import net.sf.jkniv.whinstone.couchbase.commands.CouchbaseCommand;
 import net.sf.jkniv.whinstone.couchbase.dialect.CouchbaseDialect6o5;
 import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
 import net.sf.jkniv.whinstone.transaction.Transactional;
+import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 /**
  * Encapsulate the data access for Couchbase
@@ -71,6 +74,7 @@ class RepositoryCouchbase implements Repository
     private HandleableException               handlerException;
     private CouchbaseSqlContext               sqlContext;
     private CouchbaseCommandAdapter           cmdAdapter;
+    private final RegisterType        registerType;
     //private final static Map<String, Boolean> DOC_SCHEMA_UPDATED = new HashMap<String, Boolean>();
     
     RepositoryCouchbase()
@@ -108,12 +112,14 @@ class RepositoryCouchbase implements Repository
         else
             sqlContext.getRepositoryConfig().add(props);
         
+        this.registerType = new RegisterType();
         this.sqlContext = new CouchbaseSqlContext(sqlContext);
         this.sqlContext.getRepositoryConfig().add(RepositoryProperty.SQL_DIALECT.key(),
                 CouchbaseDialect6o5.class.getName());
         this.sqlContext.setSqlDialect(this.sqlContext.getRepositoryConfig().getSqlDialect());
         this.sqlContext.buildInQueries();
         configHanlerException();
+        this.settingProperties();
         this.cmdAdapter = (CouchbaseCommandAdapter) new CouchbaseSessionFactory(
                 sqlContext.getRepositoryConfig().getProperties(), sqlContext.getName(), this.handlerException).open();
     }
@@ -213,16 +219,17 @@ DocumentDoesNotExistException: The original replace failed because the document 
         return handleGet(queryable, customResultRow);
     }
     
-    private <T, R> T handleGet(Queryable q, ResultRow<T, R> overloadResultRow)
+    private <T, R> T handleGet(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
         T ret = null;
-        Sql sql = sqlContext.getQuery(q.getName());
+        queryable.setRegisterType(registerType);
+        Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofSelect(this.cmdAdapter);
-        List<T> list = handler.with(q).with(sql).checkSqlType(SqlType.SELECT).with(handlerException)
+        List<T> list = handler.with(queryable).with(sql).checkSqlType(SqlType.SELECT).with(handlerException)
                 .with(overloadResultRow).run();
         if (list.size() > 1)
             throw new NonUniqueResultException(
-                    "No unique result for query [" + q.getName() + "] with params [" + q.getParams() + "]");
+                    "No unique result for query [" + queryable.getName() + "] with params [" + queryable.getParams() + "]");
         else if (list.size() == 1)
             ret = list.get(0);
         
@@ -290,6 +297,7 @@ DocumentDoesNotExistException: The original replace failed because the document 
     
     private <T, R> List<T> handleList(Queryable queryable, ResultRow<T, R> overloadResultRow)
     {
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofSelect(this.cmdAdapter);
         List<T> list = handler.with(queryable)
@@ -305,6 +313,7 @@ DocumentDoesNotExistException: The original replace failed because the document 
     public int add(Queryable queryable)
     {
         notNull.verify(queryable);
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
         int rows = handler.with(queryable)
@@ -320,6 +329,7 @@ DocumentDoesNotExistException: The original replace failed because the document 
     {
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("add", entity);
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofAdd(this.cmdAdapter);
         int rows = handler.with(queryable)
@@ -334,6 +344,7 @@ DocumentDoesNotExistException: The original replace failed because the document 
     public int update(Queryable queryable)
     {
         notNull.verify(queryable);
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName()).asUpdateable();
         CommandHandler handler = CommandHandlerFactory.ofUpdate(this.cmdAdapter);
         int rows = handler.with(queryable)
@@ -349,6 +360,7 @@ DocumentDoesNotExistException: The original replace failed because the document 
     {
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of(CouchbaseCommand.REPLACE.getCommandName(), entity);
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName()).asUpdateable();
         CommandHandler handler = CommandHandlerFactory.ofUpdate(this.cmdAdapter);
         handler.with(queryable)
@@ -363,6 +375,7 @@ DocumentDoesNotExistException: The original replace failed because the document 
     public int remove(Queryable queryable)
     {
         notNull.verify(queryable);
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofRemove(this.cmdAdapter);
         int rows = handler.with(queryable)
@@ -378,6 +391,7 @@ DocumentDoesNotExistException: The original replace failed because the document 
     {
         notNull.verify(entity);
         Queryable queryable = QueryFactory.of("remove", entity);
+        queryable.setRegisterType(registerType);
         Sql sql = sqlContext.getQuery(queryable.getName());
         CommandHandler handler = CommandHandlerFactory.ofRemove(this.cmdAdapter);
         int rows = handler.with(queryable)
@@ -429,7 +443,24 @@ DocumentDoesNotExistException: The original replace failed because the document 
         throw new UnsupportedDslOperationException("Couchbase Repository does not support DSL operation");
     }
 
-    
+    private void settingProperties()
+    {
+        Properties props = this.sqlContext.getRepositoryConfig().getProperties();
+        Enumeration<Object> keys = props.keys();
+        while (keys.hasMoreElements())
+        {
+            String k = keys.nextElement().toString();
+            if (k.startsWith("jkniv.repository.type."))
+                configConverters(k, props);                
+        }
+    }
+    private void configConverters(String k, Properties props)
+    {
+        String className = String.valueOf(props.get(k));// (22) -> "jkniv.repository.type."
+        ObjectProxy<Convertible> proxy = ObjectProxyFactory.of(className);
+        registerType.register(proxy.newInstance());
+    }
+
     private Properties lookup(String remaining)
     {
         Properties prop = null;
