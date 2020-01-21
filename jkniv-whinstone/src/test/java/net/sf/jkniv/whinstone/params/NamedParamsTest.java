@@ -92,6 +92,7 @@ public class NamedParamsTest
     {
         Queryable queryable = QueryFactory.of("dummy", newParams());
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         NamedParams auto = new NamedParams(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
@@ -107,6 +108,7 @@ public class NamedParamsTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id IN (:in:id)");
         Queryable queryable = QueryFactory.of("dummy", params);
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         NamedParams auto = new NamedParams(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
@@ -122,6 +124,7 @@ public class NamedParamsTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id IN (:in:id)");
         Queryable queryable = QueryFactory.of("dummy", params);
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         NamedParams auto = new NamedParams(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
@@ -133,6 +136,7 @@ public class NamedParamsTest
     {
         Queryable queryable = QueryFactory.of("dummy", newParams());
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         NamedParams auto = new NamedParams(this.stmtAdapter, queryable);
         assertThat(auto.onBulk(), is(1));
         verify(stmtAdapter).execute();

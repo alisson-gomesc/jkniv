@@ -46,6 +46,7 @@ import net.sf.jkniv.sqlegance.params.ParamParserQuestionMark;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 public class BasicParamsTest
 {
@@ -89,6 +90,7 @@ public class BasicParamsTest
     {
         Queryable queryable = QueryFactory.of("dummy", newParams());
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         BasicParam auto = new BasicParam(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
@@ -103,6 +105,7 @@ public class BasicParamsTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = :id");
         Queryable queryable = QueryFactory.of("dummy", params);
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         BasicParam auto = new BasicParam(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
@@ -117,6 +120,7 @@ public class BasicParamsTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = ?");
         Queryable queryable = QueryFactory.of("dummy", params);
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         BasicParam auto = new BasicParam(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
@@ -128,6 +132,7 @@ public class BasicParamsTest
     {
         Queryable queryable = QueryFactory.of("dummy", newParams());
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         BasicParam auto = new BasicParam(this.stmtAdapter, queryable);
         assertThat(auto.onBulk(), is(1));
         verify(stmtAdapter).execute();

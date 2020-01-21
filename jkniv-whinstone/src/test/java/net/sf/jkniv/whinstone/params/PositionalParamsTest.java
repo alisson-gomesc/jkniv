@@ -47,6 +47,7 @@ import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
+import net.sf.jkniv.whinstone.types.RegisterType;
 
 public class PositionalParamsTest
 {
@@ -97,6 +98,7 @@ public class PositionalParamsTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id IN (:in:id)");
         Queryable queryable = QueryFactory.of("dummy", params);
         queryable.bind(this.selectableMock);
+        queryable.setRegisterType(new RegisterType());
         PositionalParams auto = new PositionalParams(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
