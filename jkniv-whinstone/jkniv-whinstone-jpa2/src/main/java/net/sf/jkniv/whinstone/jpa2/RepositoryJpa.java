@@ -537,7 +537,6 @@ class RepositoryJpa implements RepositoryJpaExtend
     private Sql getQuery(Queryable queryable)
     {
         Sql sql = null;
-        queryable.setRegisterType(registerType);
         String queryName = queryable.getName();
         if (sqlContext.containsQuery(queryName))
         {

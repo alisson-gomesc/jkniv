@@ -272,12 +272,12 @@ class RepositoryCouchDb implements Repository
         NOT_NULL.verify(queryable);
         T result = null;
         //Queryable queryableClone = QueryFactory.clone(queryable, Map.class);
-        Map<String,T> map = handleGet(queryable, null, Map.class);
+        Map map = handleGet(queryable, null, Map.class);
         if (map != null)
         {
             if(map.size() > 1)
                 throw new NonUniqueResultException("Query ["+queryable.getName()+"] no return scalar value, scalar function must return unique field");
-            result = map.values().iterator().next();
+            result = (T)map.values().iterator().next();
             queryable.setTotal(1);
         }
         else

@@ -98,7 +98,6 @@ public class PositionalArrayParamsTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id IN (:in:id)");
         Queryable queryable = QueryFactory.of("dummy", params);
         queryable.bind(this.selectableMock);
-        queryable.setRegisterType(new RegisterType());
         PositionalArrayParams auto = new PositionalArrayParams(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
@@ -110,7 +109,6 @@ public class PositionalArrayParamsTest
     {
         Queryable queryable = QueryFactory.ofArray("dummy", newParams());
         queryable.bind(this.selectableMock);
-        queryable.setRegisterType(new RegisterType());
         PositionalArrayParams auto = new PositionalArrayParams(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
@@ -124,7 +122,6 @@ public class PositionalArrayParamsTest
         given(this.selectableMock.getSql(any())).willReturn("select id, name from author where id = ?");
         Queryable queryable = QueryFactory.ofArray("dummy", values);
         queryable.bind(this.selectableMock);
-        queryable.setRegisterType(new RegisterType());
         PositionalArrayParams auto = new PositionalArrayParams(this.stmtAdapter, queryable);
         auto.on();
         verify(stmtAdapter, never()).execute();
@@ -136,7 +133,6 @@ public class PositionalArrayParamsTest
     {
         Queryable queryable = QueryFactory.ofArray("dummy", newParams());
         queryable.bind(this.selectableMock);
-        queryable.setRegisterType(new RegisterType());
         PositionalArrayParams auto = new PositionalArrayParams(this.stmtAdapter, queryable);
         assertThat(auto.onBulk(), is(1));
         verify(stmtAdapter).execute();
@@ -149,7 +145,6 @@ public class PositionalArrayParamsTest
         catcher.expectMessage("A query [dummy] with positional parameters needs an array exactly have the same number of parameters from query.");
         Queryable queryable = QueryFactory.ofArray("dummy", new Object[] {Long.valueOf("2"),Float.valueOf("3.1")});
         queryable.bind(this.selectableMock);
-        queryable.setRegisterType(new RegisterType());
         PositionalArrayParams auto = new PositionalArrayParams(this.stmtAdapter, queryable);
         auto.on();
     }
