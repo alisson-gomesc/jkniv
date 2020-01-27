@@ -211,7 +211,7 @@ public class QueryFactory
     
     /**
      * Clone {@code queryable} object with a return type if no {@code null}
-     * @param name of new query
+     * @param queryName of new query
      * @param queryable query instance
      * @param params parameter of new query
      * @param registerType registry of type data

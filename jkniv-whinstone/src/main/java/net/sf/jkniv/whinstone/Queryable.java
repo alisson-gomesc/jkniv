@@ -284,7 +284,7 @@ public interface Queryable
     <T> Class<T> getReturnType();
     
     /**
-     * Default value of {@code getReturnType()} is {@ java.util.Map} instance,
+     * Default value of {@code getReturnType()} is {@code java.util.Map} instance,
      * this method check if there is a type is not default.
      * @return {@code true} if there is a return type, {@code false} otherwise
      */
