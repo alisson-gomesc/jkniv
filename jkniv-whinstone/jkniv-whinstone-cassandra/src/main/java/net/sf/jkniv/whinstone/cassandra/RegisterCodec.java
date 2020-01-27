@@ -39,6 +39,7 @@ import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
  * @since 0.6.0
  *
  */
+@SuppressWarnings("rawtypes")
 public class RegisterCodec
 {
     private static final Logger        LOG = LoggerFactory.getLogger(RegisterCodec.class);
@@ -86,7 +87,7 @@ public class RegisterCodec
     {
         if (enable)
         {
-            CodecMap codecMap = codecs.get(codecName.substring(6));// (6) -> "codec."
+            CodecMap codecMap = codecs.get(codecName);
             Field field = null;
             if (codecMap != null)
             {
@@ -137,7 +138,6 @@ public class RegisterCodec
         CodecMap(String codecClassName)
         {
             this.codecClassName = codecClassName;
-            this.instance = instance;
         }
     }
 }

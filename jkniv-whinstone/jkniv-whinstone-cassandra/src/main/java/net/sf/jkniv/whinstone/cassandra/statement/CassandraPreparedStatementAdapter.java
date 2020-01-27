@@ -38,7 +38,6 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.ResultSetParser;
 import net.sf.jkniv.whinstone.cassandra.CassandraColumn;
-import net.sf.jkniv.whinstone.cassandra.CassandraSessionFactory;
 import net.sf.jkniv.whinstone.cassandra.LoggerFactory;
 import net.sf.jkniv.whinstone.cassandra.RegisterCodec;
 import net.sf.jkniv.whinstone.classification.Groupable;
@@ -79,7 +78,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     private final Session           session;
     private final Queryable         queryable;
     private BoundStatement          bound;
-    private int                     index, indexIN;
+    private int                     index;
     private ResultRow<T, Row>       resultRow;
     private boolean                 scalar;
     private AutoKey                 autoKey;
@@ -137,29 +136,13 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     @Override
     public StatementAdapter<T, Row> bind(Param param)
     {
-        //this.index = position;
-        Object value = param.getValue();
+        Object value = param.getValueAs();
         log(param);
         try
         {
-            if (value instanceof java.util.Date)
-            {
-                setInternalValue((java.util.Date) value);
-            }
-            else if (Enum.class.isInstance(value))
-            {
-                setInternalValue((Enum<?>) value);
-            }
-            else if (value instanceof java.util.Calendar)
-            {
-                setInternalValue((Calendar) value);
-            }
-            else
-            {
-                bindInternal(value);
-            }
+            bindInternal(value);
         }
-        catch (SQLException e)
+        catch (Exception e)
         {
             this.handlerException.handle(e);// FIXME handler default message with custom params
         }
@@ -260,9 +243,8 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     @Override
     public int reset()
     {
-        int before = (index+indexIN);
+        int before = (index);
         index = 0;
-        indexIN = 0;
         reBound();
         return before;
     }
@@ -292,6 +274,32 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         try
         {
             String classNameValue = value.getClass().getName();
+            if (Enum.class.isInstance(value))
+                setInternalValue((Enum<?>) value);
+            else if (value instanceof List)
+                setInternalValue((List) value);
+            else if (value instanceof Set)
+                setInternalValue((Set) value);
+            else if (value instanceof Map)
+                setInternalValue((Map) value);
+            else if (classNameValue.equals("java.time.Instant"))
+                bound.set(currentIndex(), value, registerCodec.getCodec("InstantCodec").instance);
+            else if (classNameValue.equals("java.time.LocalDate"))
+                bound.set(currentIndex(), value, registerCodec.getCodec("LocalDateCodec").instance);
+            else if (classNameValue.equals("java.time.LocalDateTime"))
+                bound.set(currentIndex(), value, registerCodec.getCodec("LocalDateTimeCodec").instance);
+            else if (classNameValue.equals("java.time.LocalTime"))
+                bound.set(currentIndex(), value, registerCodec.getCodec("LocalTimeCodec").instance);
+            else if (classNameValue.equals("java.time.ZonedDateTime"))
+                bound.set(currentIndex(), value, registerCodec.getCodec("jkd8.ZonedDateTimeCodec").instance);
+            else if (classNameValue.equals("java.util.Optional"))
+                bound.set(currentIndex(), value, registerCodec.getCodec("jkd8.OptionalCodec").instance);
+            else if (classNameValue.equals("java.time.ZoneId"))
+                bound.set(currentIndex(), value, registerCodec.getCodec("jkd8.ZoneIdCodec").instance);
+            else
+                setObjectValue(value);
+            /*
+            String classNameValue = value.getClass().getName();
             if (value instanceof String)
                 setInternalValue((String) value);
             else if (value instanceof Integer)
@@ -318,6 +326,8 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
                 setInternalValue((Set) value);
             else if (value instanceof Map)
                 setInternalValue((Map) value);
+            else if (value instanceof com.datastax.driver.core.Duration)
+                setValue((com.datastax.driver.core.Duration)value);
             else if (classNameValue.equals("java.time.Instant"))
                 bound.set(currentIndex(), value, registerCodec.getCodec("InstantCodec").instance);
             else if (classNameValue.equals("java.time.LocalDate"))
@@ -344,17 +354,29 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
                 setInternalValue((ByteBuffer) value);
             else
             {
-                LOG.warn("CANNOT Set SQL Parameter from index [{}] with value of [{}] type of [{}]", (index+indexIN), 
+                LOG.warn("CANNOT Set SQL Parameter from index [{}] with value of [{}] type of [{}]", (index), 
                         value, (value == null ? "NULL" : value.getClass()));
 
                 //setValue(value);
             }
+            */
         }
         catch (SQLException e)
         {
             this.handlerException.handle(e);// FIXME handler default message with custom params
         }
         return this;
+    }
+
+    private void setObjectValue(Object value)
+    {
+        ObjectProxy proxy = ObjectProxyFactory.of(value);
+        bound.set(currentIndex(), value, proxy.getTargetClass());
+    }
+    
+    private void setValue(com.datastax.driver.core.Duration value)
+    {
+        bound.set(currentIndex(), value, com.datastax.driver.core.Duration.class);
     }
     
     private void setInternalValue(com.datastax.driver.core.LocalDate value)
@@ -455,7 +477,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
 
     private int currentIndex()
     {
-        return ( index++ + (indexIN));
+        return (index++);
     }
     
     /*******************************************************************************/
@@ -485,16 +507,15 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     private void log(String name, Object value)
     {
         if (SQLLOG.isDebugEnabled())
-            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", (index+indexIN), name,
+            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index, name,
                     MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
     }
     
-    private void log(Object value)
+    private void log(Param param)
     {
-        String name = String.valueOf(index+indexIN);
         if (SQLLOG.isDebugEnabled())
-            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", (index+indexIN), name,
-                    MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
+            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]", index, param.getName(),
+                    MASKING.mask(param.getName(), param.getValueAs()), (param.getValueAs() == null ? "NULL" : param.getValueAs().getClass()));
     }
     
     /**

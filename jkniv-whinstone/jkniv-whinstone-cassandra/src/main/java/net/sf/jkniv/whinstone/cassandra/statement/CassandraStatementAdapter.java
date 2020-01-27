@@ -271,21 +271,6 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
             resultRow = new PojoResultRow(returnType, columns, getOneToMany());
     }
     
-    private void log(String name, Object value)
-    {
-        if (SQLLOG.isDebugEnabled())
-            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]",
-                    (index + indexIN), name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
-    }
-    
-    private void log(Object value)
-    {
-        String name = String.valueOf(index + indexIN);
-        if (SQLLOG.isDebugEnabled())
-            SQLLOG.debug("Setting SQL Parameter from index [{}] with name [{}] with value of [{}] type of [{}]",
-                    (index + indexIN), name, MASKING.mask(name, value), (value == null ? "NULL" : value.getClass()));
-    }
-    
     /**
      * Summarize the columns from SQL result in binary data or not.
      * @param metadata  object that contains information about the types and properties of the columns in a <code>ResultSet</code> 

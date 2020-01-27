@@ -32,12 +32,9 @@ import com.datastax.driver.core.ProtocolVersion;
 import com.datastax.driver.core.Session;
 
 import net.sf.jkniv.exception.HandleableException;
-import net.sf.jkniv.reflect.beans.ObjectProxy;
-import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.commands.CommandAdapter;
-import net.sf.jkniv.whinstone.types.Convertible;
 import net.sf.jkniv.whinstone.types.RegisterType;
 
 /**

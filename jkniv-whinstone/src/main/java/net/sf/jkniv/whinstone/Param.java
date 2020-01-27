@@ -29,6 +29,7 @@ import java.util.Collection;
  */
 public class Param
 {
+    private final static int NO_INDEX = -1;
     private Object value;
     private Object valueAs;// converted value
     private int index;
@@ -36,11 +37,13 @@ public class Param
 
     public Param() 
     {
+        super();
+        this.index = NO_INDEX;
     }
 
     public Param(Object value) 
     {
-        this(value, value, "?", 0);
+        this(value, value, "?", NO_INDEX);
     }
 
     public Param(Object value, int index)
@@ -50,12 +53,12 @@ public class Param
 
     public Param(Object value, String name)
     {
-        this(value, value, name, 0);
+        this(value, value, name, NO_INDEX);
     }
 
     public Param(Object value, Object valueAs, String name)
     {
-        this(value, valueAs, name, 0);
+        this(value, valueAs, name, NO_INDEX);
     }
 
     public Param(Object value, String name, int index)
@@ -65,7 +68,7 @@ public class Param
 
     public Param(Object value, Object valueAs, String name, int index)
     {
-        super();
+        this();
         this.value = value;
         this.valueAs = valueAs;
         this.index = index;
@@ -94,6 +97,12 @@ public class Param
     public String getName()
     {
         return name;
+    }
+    
+    public void setIndex(int index)
+    {
+        if (this.index == NO_INDEX)
+            this.index = index;
     }
 
     public Param[] asArray()

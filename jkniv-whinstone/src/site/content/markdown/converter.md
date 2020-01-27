@@ -119,3 +119,24 @@ This example we have a Java Date and want to stored into integer column (year mo
         return JdbcType.INTEGER;
       }
     }
+    
+### JDK 8 
+
+The JDK 8 is not in the core module because the compatibility with older JDK (>= 1.6) is a good feature to support the improvement of legacy projects. 
+
+So to add native support for Java 8 types, such as the ones from the java.time API. The module `jkniv-whinstone-jdk8` is published as a separate Maven artifact:
+
+    <dependency>
+      <groupId>net.sf.jkniv</groupId>
+      <artifactId>jkniv-whinstone-jdk8</artifactId>
+      <version>0.6.0</version>
+    </dependency>
+    
+These types can be registered into `repository-config.xml` file with the prefix `jkniv.repository.type` and correspondent class value:
+
+    <property name="jkniv.repository.type.DurationStringType" value="net.sf.jkniv.whinstone.jdk8.types.DurationStringType" />
+    <property name="jkniv.repository.type.InstantTimeType" value="net.sf.jkniv.whinstone.jdk8.types.InstantTimeType" />
+    <property name="jkniv.repository.type.InstantDateType" value="net.sf.jkniv.whinstone.jdk8.types.InstantDateType" />
+    <property name="jkniv.repository.type.InstantTimestampType" value="net.sf.jkniv.whinstone.jdk8.types.InstantTimestampType" />
+    
+    

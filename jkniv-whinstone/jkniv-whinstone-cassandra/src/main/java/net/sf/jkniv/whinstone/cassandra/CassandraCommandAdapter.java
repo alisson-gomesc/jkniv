@@ -262,11 +262,12 @@ class CassandraCommandAdapter implements CommandAdapter
     {
         return "CassandraCommandAdapter [session=" + session + ", cluster=" + cluster + "]";
     }
+    
     private Object[] extracValues(Param[] params)
     {
         Object[] values = new Object[params.length];
         for(int i=0; i<params.length; i++)
-            values[i] = params[i].getValue();
+            values[i] = params[i].getValueAs();
             
         return values;
     }
