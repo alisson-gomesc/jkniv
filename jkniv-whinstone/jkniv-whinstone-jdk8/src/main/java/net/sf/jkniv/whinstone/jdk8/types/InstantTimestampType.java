@@ -20,7 +20,12 @@
 package net.sf.jkniv.whinstone.jdk8.types;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
 import net.sf.jkniv.whinstone.types.CassandraType;
 import net.sf.jkniv.whinstone.types.ColumnType;
@@ -34,6 +39,9 @@ import net.sf.jkniv.whinstone.types.Convertible;
  */
 public class InstantTimestampType implements Convertible<Instant, Timestamp>
 {
+    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.S";
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
+
     public InstantTimestampType()
     {
     }
@@ -48,7 +56,19 @@ public class InstantTimestampType implements Convertible<Instant, Timestamp>
         if (attribute == null)
             return null;
         
-        return Timestamp.from(attribute);
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(attribute, ZoneOffset.UTC);
+        String dateTimeFormatter = FORMATTER.format(localDateTime);
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_TIME_FORMAT);
+        Timestamp timestamp = null;
+        try
+        {
+            timestamp = new Timestamp(sdf.parse(dateTimeFormatter).getTime());
+        }
+        catch (ParseException e)
+        {
+            timestamp = Timestamp.from(attribute);// last chance, but pass Date to Time Zone
+        }
+        return timestamp;
     }
 
     @Override

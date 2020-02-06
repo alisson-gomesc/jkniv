@@ -19,7 +19,12 @@
  */
 package net.sf.jkniv.whinstone.jdk8.types;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import net.sf.jkniv.whinstone.types.CassandraType;
@@ -34,6 +39,8 @@ import net.sf.jkniv.whinstone.types.Convertible;
  */
 public class InstantDateType implements Convertible<Instant, Date>
 {
+    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.S";
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
     public InstantDateType()
     {
     }
@@ -48,7 +55,19 @@ public class InstantDateType implements Convertible<Instant, Date>
         if (attribute == null)
             return null;
         
-        return Date.from(attribute);
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(attribute, ZoneOffset.UTC);
+        String dateTimeFormatter = FORMATTER.format(localDateTime);
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_TIME_FORMAT);
+        Date date = null;
+        try
+        {
+            date = sdf.parse(dateTimeFormatter);
+        }
+        catch (ParseException e)
+        {
+            date = Date.from(attribute);// last chance, but pass Date to Time Zone
+        }
+        return date;
     }
 
     @Override
