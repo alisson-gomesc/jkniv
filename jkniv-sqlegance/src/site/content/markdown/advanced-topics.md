@@ -101,8 +101,4 @@ To enable a level of result cache.
     <select cache="user-cache">
     
 
-<<<<<<< HEAD
 A full implementation of this characteristics was implemented on top of <a href="http://jkniv.sourceforge.net/jkniv-whinstone/index.html">jkniv-whinstone</a> framework that will help you eliminate the boilerplate code. `jkniv-whinstone` is tight coupled with JDBC, but you will not remember it. One repository contract to get a java code agnostic for database and API like: JPA, JDBC, Apache CouchDB, Apache Cassandra. Run, Forrest, run...
-=======
-A full implementation of this characteristics was implemented on top of <a href="http://jkniv.sourceforge.net/jkniv-whinstone/index.html">jkniv-whinstone</a> framework that will help you eliminate the boilerplate code. `jkniv-whinstone` is tight coupled with JDBC, but you will not remember it. One repository contract to get a java code agnostic for database and API like: JPA, JDBC, Apache CouchDB, Apache Cassandra. Run, forrest, run...
->>>>>>> branch '0.6.0.M52' of https://github.com/alisson-gomesc/jkniv.git
