@@ -135,7 +135,6 @@ So to add native support for Java 8 types, such as the ones from the java.time A
 These types can be registered into `repository-config.xml` file with the prefix `jkniv.repository.type` and correspondent class value:
 
     <property name="jkniv.repository.type.DurationStringType" value="net.sf.jkniv.whinstone.jdk8.types.DurationStringType" />
-    <property name="jkniv.repository.type.InstantTimeType" value="net.sf.jkniv.whinstone.jdk8.types.InstantTimeType" />
     <property name="jkniv.repository.type.InstantDateType" value="net.sf.jkniv.whinstone.jdk8.types.InstantDateType" />
     <property name="jkniv.repository.type.InstantTimestampType" value="net.sf.jkniv.whinstone.jdk8.types.InstantTimestampType" />
     

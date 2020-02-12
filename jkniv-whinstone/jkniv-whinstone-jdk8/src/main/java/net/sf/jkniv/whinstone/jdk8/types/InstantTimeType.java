@@ -30,6 +30,7 @@ import java.time.format.DateTimeFormatter;
 import net.sf.jkniv.whinstone.types.CassandraType;
 import net.sf.jkniv.whinstone.types.ColumnType;
 import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.JdbcType;
 
 /**
  * Conversion type from {@code Java Instant} to {@code JDBC TIMESTAMP}
@@ -37,7 +38,7 @@ import net.sf.jkniv.whinstone.types.Convertible;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-public class InstantTimeType implements Convertible<Instant, Time>
+class InstantTimeType implements Convertible<Instant, Time>
 {
     private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.S";
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
@@ -89,7 +90,7 @@ public class InstantTimeType implements Convertible<Instant, Time>
     @Override
     public ColumnType getColumnType() 
     {
-        return CassandraType.TIME;
+        return JdbcType.TIME;
     }
 
     @Override

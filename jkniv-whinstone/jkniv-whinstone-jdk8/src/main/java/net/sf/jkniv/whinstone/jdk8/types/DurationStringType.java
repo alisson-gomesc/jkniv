@@ -24,6 +24,7 @@ import java.time.Duration;
 import net.sf.jkniv.whinstone.types.CassandraType;
 import net.sf.jkniv.whinstone.types.ColumnType;
 import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.JdbcType;
 
 /**
  * Conversion type from {@code Java java.time.Duration} to {@code JDBC DURATION}.
@@ -73,7 +74,7 @@ public class DurationStringType implements Convertible<Duration, String>
     @Override
     public ColumnType getColumnType() 
     {
-        return CassandraType.TEXT;
+        return JdbcType.VARCHAR;
     }
 
     @Override

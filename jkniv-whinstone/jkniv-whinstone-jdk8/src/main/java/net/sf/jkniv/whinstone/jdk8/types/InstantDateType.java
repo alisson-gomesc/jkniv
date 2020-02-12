@@ -30,6 +30,7 @@ import java.util.Date;
 import net.sf.jkniv.whinstone.types.CassandraType;
 import net.sf.jkniv.whinstone.types.ColumnType;
 import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.JdbcType;
 
 /**
  * Conversion type from {@code Java Instant} to {@code JDBC TIMESTAMP}
@@ -88,7 +89,7 @@ public class InstantDateType implements Convertible<Instant, Date>
     @Override
     public ColumnType getColumnType() 
     {
-        return CassandraType.TIMESTAMP;
+        return JdbcType.TIMESTAMP;
     }
 
     @Override
