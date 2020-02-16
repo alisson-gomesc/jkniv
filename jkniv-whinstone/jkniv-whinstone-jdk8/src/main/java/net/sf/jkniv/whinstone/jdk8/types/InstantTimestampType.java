@@ -22,9 +22,9 @@ package net.sf.jkniv.whinstone.jdk8.types;
 import java.sql.Timestamp;
 import java.time.Instant;
 
-import net.sf.jkniv.whinstone.types.CassandraType;
 import net.sf.jkniv.whinstone.types.ColumnType;
 import net.sf.jkniv.whinstone.types.Convertible;
+import net.sf.jkniv.whinstone.types.JdbcType;
 
 /**
  * Conversion type from {@code Java Instant} to {@code JDBC TIMESTAMP}
@@ -69,7 +69,7 @@ public class InstantTimestampType implements Convertible<Instant, Timestamp>
     @Override
     public ColumnType getColumnType() 
     {
-        return CassandraType.TIMESTAMP;
+        return JdbcType.TIMESTAMP;
     }
 
     @Override
