@@ -21,7 +21,6 @@ package net.sf.jkniv.whinstone.jdk8.types;
 
 import java.time.Duration;
 
-import net.sf.jkniv.whinstone.types.CassandraType;
 import net.sf.jkniv.whinstone.types.ColumnType;
 import net.sf.jkniv.whinstone.types.Convertible;
 import net.sf.jkniv.whinstone.types.JdbcType;
