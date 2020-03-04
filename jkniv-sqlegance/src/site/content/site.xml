@@ -43,7 +43,6 @@
     </breadcrumbs>    
     <menu name="SQLegance"  inherit="top">
       <item name="Introduction" href="index.html" />
-      <item name="Changelog" href="change-log.html" />
       <item name="Getting Started" href="getting-started.html" />
       <item name="Documentation" href="documentation.html" collapse="true">
         <item name="Dynamic SQL" href="dynamic-sql.html">
@@ -64,6 +63,7 @@
       <item name="Data Source" href="data-source.html" />
       <item name="Advanced Topics" href="advanced-topics.html" />
       <item name="Logging" href="logging.html" />
+      <item name="Release Notes" href="release-notes.html" />
       <item name="Javadoc" href="api-docs/index.html" />
       <item name="Donwload" href="https://sourceforge.net/projects/jkniv/files/jkniv-sqlegance/" />
     </menu>

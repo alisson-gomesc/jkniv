@@ -35,7 +35,6 @@ import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.sqlegance.SqlType;
-import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
@@ -97,13 +96,6 @@ public abstract class DefaultCommandHandler implements CommandHandler
         return this;
     }
     
-//    @Override
-//    public CommandHandler with(RepositoryConfig repositoryConfig)
-//    {
-//        this.config = repositoryConfig;
-//        return this;
-//    }
-    
     public CommandHandler with(HandleableException handlerException)
     {
         this.handleableException = handlerException;
@@ -122,12 +114,12 @@ public abstract class DefaultCommandHandler implements CommandHandler
         {
             // JPA with a entity doesn't assert validate
             // how can fix/improve this?
-            sql.getValidateType().assertValidate(queryable.getParams());
             if(!queryable.isBoundSql())
                 queryable.bind(sql);
             try
             {
                 preCallback();
+                sql.getValidateType().assertValidate(queryable.getParams());
                 this.command = asCommand();
                 t = this.command.execute();
                 if (t instanceof Number)

@@ -33,7 +33,6 @@
     </head>
     <menu name="jkniv-whinstone" inherit="top">
       <item name="Introduction" href="index.html" />
-      <item name="Changelog" href="changelog.html" />
       <item name="Architecture" href="arch.html" />
       <item name="Connection" href="connection.html" />
       <item name="Querying" href="querying.html" />
@@ -41,6 +40,7 @@
       <item name="Converter" href="converter.html" />
       <item name="Callback Methods" href="callback-methods.html" />
       <item name="Cache" href="cache.html" />
+      <item name="Release Notes" href="release-notes.html" />
       <item name="Whinstone for JDBC"
             href="http://jkniv.sourceforge.net/jkniv-whinstone-jdbc/index.html" />
       <item name="Whinstone for JPA2"

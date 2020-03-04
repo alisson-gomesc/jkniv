@@ -10,7 +10,8 @@ When are registered in `repository-config.xml` file work implicitly transforming
 - explicit converter on Field (overload implicit)
 - explicit converter on Method (overload Field)
 
-## Converter
+Converter
+--------------------
 
 The `Convert` annotation is applied directly to an field or method of a class.
 
@@ -54,7 +55,8 @@ The `Convert` annotation is applied directly to an field or method of a class.
 | ShortIntType          |                 | save `Short` as `Integer`   | `yes` |
 
 
-## Registering Convertible
+Registering Convertible
+--------------------
 
 To register a built-in converter or custom Convertible use the file `repository-config.xml` to do that:
 
@@ -68,7 +70,8 @@ To register a built-in converter or custom Convertible use the file `repository-
 1. The property name MUST start with `jkniv.repository.type`
 2. The property value is a fully qualified class name that implements `Convertible` interface.
 
-## Writing a Converter
+Writing a Converter
+--------------------
 
 This example we have a Java Date and want to stored into integer column (year month day).
 
@@ -129,7 +132,7 @@ So to add native support for Java 8 types, such as the ones from the java.time A
     <dependency>
       <groupId>net.sf.jkniv</groupId>
       <artifactId>jkniv-whinstone-jdk8</artifactId>
-      <version>0.6.0</version>
+      <version>${current-version}</version>
     </dependency>
     
 These types can be registered into `repository-config.xml` file with the prefix `jkniv.repository.type` and correspondent class value:

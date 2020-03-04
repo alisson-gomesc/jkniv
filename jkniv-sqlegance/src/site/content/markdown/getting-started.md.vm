@@ -9,7 +9,7 @@ Maven users will need to add the following dependency to their pom.xml for this 
     <dependency>
       <groupId>net.sf.jkniv</groupId>
       <artifactId>jkniv-sqlegance</artifactId>
-      <version>0.6.0</version>
+      <version>${current-version}</version>
     </dependency>
 
 
@@ -20,7 +20,8 @@ The libraries below are necessary if you want to resolve the dependencies manual
 
 Once you have configured your database, you will write SQL to manipulate your records at database. Here we began to use SQLegance, writing SQL.
 
-## Sql Context
+Sql Context
+--------------
 
 The all sentences queries are keep in XML file, to get access the queries a central interface SqlContext is provided.
 
@@ -58,7 +59,8 @@ Below present a full sample with yours tags:
     </statements>      
 
 
-## SQL
+SQL
+-----------
 
 Before to get a query it's necessary load the sentences in `SqlContext` instance to get a query calling the methods:
 
@@ -78,7 +80,8 @@ Before to get a query it's necessary load the sentences in `SqlContext` instance
 
 Invoking `statement.getSql()` just recover the static part of the query ignoring all conditional parts.
 
-## SQL Dynamically
+SQL Dynamically
+----------------
 
     <select id="select-roles">
       select id, name, status from Roles
