@@ -13,11 +13,6 @@ Maven users will need to add the following dependency to their pom.xml for this 
     </dependency>
 
 
-The libraries below are necessary if you want to resolve the dependencies manually:
-
-![Dependencies](images/sqlegance-dependencies.png "Dependencies")
-
-
 Once you have configured your database, you will write SQL to manipulate your records at database. Here we began to use SQLegance, writing SQL.
 
 Sql Context

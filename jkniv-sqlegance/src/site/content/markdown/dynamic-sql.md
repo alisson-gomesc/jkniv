@@ -4,9 +4,9 @@ Title: Dynamic SQL
 Dynamic SQL
 ----------------------
 
+The SQLegance don't need a complex configuration, everything is wrote at <a href="getting-started.html">Getting started section</a>.
 
 This framework was inspired by iBatis, where it's possible put our queries at XML file and provide dynamic SQL capabilities.
-Quote MyBatis team:
 
 <blockquote><i>"How painful  it is to conditionally concatenate strings of SQL together, making  sure not to forget spaces or to omit a comma at the end of a list of columns. Dynamic SQL can be downright painful to deal with."</i></blockquote>
 

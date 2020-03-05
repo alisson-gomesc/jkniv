@@ -46,8 +46,14 @@ To enable the property `jkniv.repository.short_name_enable` must be `true` into 
 
 To support <a href="https://docs.oracle.com/javaee/6/tutorial/doc/gircz.html">Bean Validation.</a>
 
-    <select validation="UPDATE">
-
+    <select id="users-by-name" validation="LIST">
+      SELECT id, name FROM users WHERE name LIKE :name
+    </select>
+    
+    <delete id="remove-user-by-id" validate="REMOVE">
+     DELETE FROM users WHERE id = :id 
+    </delete>
+    
 Validation groups:
 
 - `NONE`
@@ -79,7 +85,9 @@ Defines a association with one-to-many multiplicity, allowing the tabular result
 
     <select groupBy="id">
       <one-to-many property="books" typeOf="org.acme.model.Book"/>
-
+      ...
+    </select>
+    
 ### Cache
 
 To enable a level of result cache.
@@ -98,7 +106,8 @@ To enable a level of result cache.
         <cache:policy name="user-cache" ttl="900" tti="300" size="15000" sizeof="2M"/>
       </cache:cache-manager>
 
-    <select cache="user-cache">
-    
+    <select id="user-by-id" cache="user-cache">
+     SELECT id, name FROM users WHERE id = :id
+    </select>
 
-A full implementation of this characteristics was implemented on top of <a href="http://jkniv.sourceforge.net/jkniv-whinstone/index.html">jkniv-whinstone</a> framework that will help you eliminate the boilerplate code. `jkniv-whinstone` is tight coupled with JDBC, but you will not remember it. One repository contract to get a java code agnostic for database and API like: JPA, JDBC, Apache CouchDB, Apache Cassandra. Run, Forrest, run...
+A full implementation of this characteristics was implemented on top of <a href="http://jkniv.sourceforge.net/jkniv-whinstone/index.html">jkniv-whinstone</a> framework that will help you eliminate the boilerplate code. `jkniv-whinstone` is tight coupled with JDBC and you will not remember it. One repository contract to get a java code agnostic for database and API like: JPA, JDBC, Apache CouchDB, Apache Cassandra. Run, Forrest, run...

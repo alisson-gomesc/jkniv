@@ -44,20 +44,18 @@
     <menu name="SQLegance"  inherit="top">
       <item name="Introduction" href="index.html" />
       <item name="Getting Started" href="getting-started.html" />
-      <item name="Documentation" href="documentation.html" collapse="true">
-        <item name="Dynamic SQL" href="dynamic-sql.html">
-          <item href="dynamic-sql.html#Parameter_Name_Format" name="Parameter Name Format" />
-          <item href="dynamic-sql.html#insert_Tag" name="insert Tag" />
-          <item href="dynamic-sql.html#delete_Tag" name="delete Tag" />
-          <item href="dynamic-sql.html#update_Tag" name="update Tag" />
-          <item href="dynamic-sql.html#select_Tag" name="select Tag" />
-          <item href="dynamic-sql.html#where_Tag" name="where Tag" />
-          <item href="dynamic-sql.html#set_Tag" name="set Tag" />
-          <item href="dynamic-sql.html#if_Tag" name="if Tag" />
-          <item href="dynamic-sql.html#choose_Tag" name="choose Tag" />
-          <item href="dynamic-sql.html#package_Tag" name="package Tag" />
-          <item href="dynamic-sql.html#description_Tag" name="description Tag" />
-        </item>
+      <item name="Dynamic SQL" href="dynamic-sql.html" collapse="true">
+        <item href="dynamic-sql.html#Parameter_Name_Format" name="Parameter Name Format" />
+        <item href="dynamic-sql.html#insert_Tag" name="insert Tag" />
+        <item href="dynamic-sql.html#delete_Tag" name="delete Tag" />
+        <item href="dynamic-sql.html#update_Tag" name="update Tag" />
+        <item href="dynamic-sql.html#select_Tag" name="select Tag" />
+        <item href="dynamic-sql.html#where_Tag" name="where Tag" />
+        <item href="dynamic-sql.html#set_Tag" name="set Tag" />
+        <item href="dynamic-sql.html#if_Tag" name="if Tag" />
+        <item href="dynamic-sql.html#choose_Tag" name="choose Tag" />
+        <item href="dynamic-sql.html#package_Tag" name="package Tag" />
+        <item href="dynamic-sql.html#description_Tag" name="description Tag" />
       </item>
       <item name="Data Masking" href="data-masking.html" />
       <item name="Data Source" href="data-source.html" />
