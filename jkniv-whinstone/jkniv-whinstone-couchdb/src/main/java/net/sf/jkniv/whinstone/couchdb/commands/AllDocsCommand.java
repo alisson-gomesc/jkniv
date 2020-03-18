@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -40,6 +41,7 @@ import net.sf.jkniv.whinstone.couchdb.statement.AllDocsAnswer;
 public class AllDocsCommand extends AbstractCommand implements CouchCommand 
 {
     private static final Logger LOG = LoggerFactory.getLogger(FindCommand.class);
+    private static final Logger LOGSQL = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
     private HttpBuilder httpBuilder;
     private Queryable queryable;
 
@@ -73,7 +75,13 @@ public class AllDocsCommand extends AbstractCommand implements CouchCommand
                 http = new HttpGet(url);
                 this.httpBuilder.setHeader(http);
             }
-            LOG.debug(http.getURI().toString());
+            if(LOGSQL.isInfoEnabled())
+            {
+                StringBuilder sb = new StringBuilder("\nHTTP GET " + url);
+                for (Header h : http.getAllHeaders())
+                    sb.append("\n ").append(h.getName()+": "+h.getValue());
+                LOGSQL.info(sb.toString());
+            }
             response = httpclient.execute(http);
             json = EntityUtils.toString(response.getEntity());
             int statusCode = response.getStatusLine().getStatusCode();

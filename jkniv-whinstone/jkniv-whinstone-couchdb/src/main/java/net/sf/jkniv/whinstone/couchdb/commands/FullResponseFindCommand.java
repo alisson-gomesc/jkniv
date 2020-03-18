@@ -67,9 +67,8 @@ public class FullResponseFindCommand extends AbstractCommand implements CouchCom
             CloseableHttpClient httpclient = HttpClients.createDefault();
             HttpPost httpPost = httpBuilder.newFind(body);
             if(LOGSQL.isInfoEnabled())
-            {
                 LOGSQL.info("\nHTTP POST [{}] \n {}", httpPost.getURI(), body);
-            }
+
             response = httpclient.execute(httpPost);
             json = EntityUtils.toString(response.getEntity());
             int statusCode = response.getStatusLine().getStatusCode();

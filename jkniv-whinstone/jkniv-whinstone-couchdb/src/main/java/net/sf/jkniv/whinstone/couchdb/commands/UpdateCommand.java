@@ -23,9 +23,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -35,9 +33,7 @@ import org.slf4j.LoggerFactory;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.reflect.beans.PropertyAccess;
-import net.sf.jkniv.sqlegance.Insertable;
 import net.sf.jkniv.sqlegance.RepositoryException;
-import net.sf.jkniv.sqlegance.Updateable;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 
@@ -142,9 +138,8 @@ public class UpdateCommand extends AbstractCommand implements CouchCommand
             // FIXME supports header request for PUT commands -> Headers: "If-Match", "X-Couch-Full-Commit"
             httpBuilder.setHeader(http);
             if(LOGSQL.isInfoEnabled())
-            {
                 LOGSQL.info("\nHTTP PUT {}\n{}", url, body);
-            }
+            
             response = httpclient.execute(http);
             json = EntityUtils.toString(response.getEntity());
             int statusCode = response.getStatusLine().getStatusCode();

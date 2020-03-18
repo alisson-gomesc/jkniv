@@ -41,8 +41,8 @@ import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 import net.sf.jkniv.whinstone.couchdb.statement.AllDocsAnswer;
-import net.sf.jkniv.whinstone.couchdb.statement.CouchDbStatementAdapter;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ViewCommand extends AbstractCommand implements CouchCommand
 {
     private static final Logger LOG    = LoggerFactory.getLogger(ViewCommand.class);
@@ -57,8 +57,6 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
         this.queryable = queryable;
     }
     
-    @SuppressWarnings(
-    { "unchecked", "rawtypes" })
     @Override
     public <T> T execute()
     {
@@ -72,7 +70,9 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
         {
             CloseableHttpClient httpclient = HttpClients.createDefault();
             String url = httpBuilder.getUrlForView(queryable);
-            LOGSQL.debug(url);
+            if(LOGSQL.isInfoEnabled())
+                LOGSQL.info("\nHTTP POST {}\n{}", url, body);
+
             HttpGet http = (HttpGet) asGet().newHttp(url);
             httpBuilder.setHeader(http);
             response = httpclient.execute(http);

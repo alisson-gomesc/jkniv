@@ -79,7 +79,7 @@ public class GetCommand extends AbstractCommand implements CouchCommand
                 StringBuilder sb = new StringBuilder("\nHTTP GET " + url);
                 for (Header h : http.getAllHeaders())
                     sb.append("\n ").append(h.getName()+": "+h.getValue());
-                LOGSQL.debug(sb.toString());
+                LOGSQL.info(sb.toString());
             }
             response = httpclient.execute(http);
             json = EntityUtils.toString(response.getEntity());

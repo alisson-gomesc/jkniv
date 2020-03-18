@@ -135,7 +135,9 @@ public class AddCommand extends AbstractCommand implements CouchCommand
             CloseableHttpClient httpclient = HttpClients.createDefault();
             String url = httpBuilder.getUrlForAddOrUpdateOrDelete(queryable);
             HttpRequestBase http = null;
-            LOGSQL.debug(url);
+            if(LOGSQL.isInfoEnabled())
+                LOGSQL.info("\nHTTP GET {}", url);
+
             if (url.equals(httpBuilder.getHostContext()))
             {
                 http = asPost().newHttp(url);

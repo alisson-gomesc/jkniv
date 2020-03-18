@@ -134,7 +134,9 @@ public class DeleteCommand extends AbstractCommand implements CouchCommand
             CloseableHttpClient httpclient = HttpClients.createDefault();
             String url = httpBuilder.getUrlForAddOrUpdateOrDelete(queryable);
             HttpDelete http = null;
-            LOGSQL.debug(url);
+            if(LOGSQL.isInfoEnabled())
+                LOGSQL.info("\nHTTP DELETE {}\n{}", url, body);
+
             http = (HttpDelete)asDelete().newHttp(url);
             //http.setEntity( getEntity() );
             
