@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.reflect.beans.PropertyAccess;
+import net.sf.jkniv.sqlegance.params.ParamMarkType;
 
 /**
  * Represents the support from SQL ANSI that are queries cross-platform.
@@ -116,6 +117,12 @@ public class AnsiDialect implements SqlDialect
             answer = sqlFeature.supports();
         
         return answer;
+    }
+    
+    @Override
+    public boolean supportsParmMark(ParamMarkType paramParse)
+    {
+        return true;
     }
     
     @Override

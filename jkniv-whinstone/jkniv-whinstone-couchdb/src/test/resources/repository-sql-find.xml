@@ -47,6 +47,18 @@
       "limit": 10000
     }
   </select>
+  
+  <select id="authorsUsingEqual">  
+  {
+      "selector": {
+         "$and": [ { 
+              "name":  "Friedrich Nietzsche" 
+             }, { 
+              "nationality":  "DE" 
+          } ]
+      }
+    }
+  </select>
 
   <select id="authorsBRTyped" returnType="net.sf.jkniv.whinstone.couchdb.model.orm.Author">
     {

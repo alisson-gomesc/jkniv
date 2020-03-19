@@ -37,9 +37,11 @@ import net.sf.jkniv.sqlegance.Selectable;
 import net.sf.jkniv.sqlegance.Statistical;
 import net.sf.jkniv.sqlegance.Storable;
 import net.sf.jkniv.sqlegance.Updateable;
+import net.sf.jkniv.sqlegance.builder.xml.dynamic.ChooseTag;
 import net.sf.jkniv.sqlegance.builder.xml.dynamic.ITextTag;
 import net.sf.jkniv.sqlegance.builder.xml.dynamic.StaticText;
 import net.sf.jkniv.sqlegance.builder.xml.dynamic.WhereTag;
+import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlDialect;
 import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.sqlegance.params.ParamParser;
@@ -59,8 +61,8 @@ import net.sf.jkniv.sqlegance.validation.ValidateType;
  */
 public abstract class AbstractSqlTag implements SqlTag
 {
-    protected static final Assertable NOT_NULL                         = AssertsFactory.getNotNull();
-    private static final Logger       log                             = LoggerFactory.getLogger(AbstractSqlTag.class);
+    protected static final Assertable NOT_NULL                        = AssertsFactory.getNotNull();
+    private static final Logger       LOG                             = LoggerFactory.getLogger(AbstractSqlTag.class);
     // find the pattern #{id}
     private static final String       REGEX_HASH_MARK                 = "#\\{[\\w\\.?]+\\}";
     // find the pattern :id
@@ -68,14 +70,14 @@ public abstract class AbstractSqlTag implements SqlTag
     // find the pattern ?
     private static final String       REGEX_QUESTION_MARK             = "[\\?]+";
     // find the pattern :id
-    private static final String       REGEX_DOLLAR_MARK                = "\\$[\\w\\.?]+";
+    private static final String       REGEX_DOLLAR_MARK               = "\\$[\\w\\.?]+";
     private static final Pattern      PATTERN_HASH                    = Pattern.compile(REGEX_HASH_MARK,
             Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private static final Pattern      PATTERN_COLON                   = Pattern.compile(REGEX_COLON_MARK,
             Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private static final Pattern      PATTERN_QUESTION                = Pattern.compile(REGEX_QUESTION_MARK,
             Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-    private static final Pattern      PATTERN_DOLLAR                   = Pattern.compile(REGEX_DOLLAR_MARK,
+    private static final Pattern      PATTERN_DOLLAR                  = Pattern.compile(REGEX_DOLLAR_MARK,
             Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     
     public static final String        ATTRIBUTE_NAME                  = "id";
@@ -154,8 +156,8 @@ public abstract class AbstractSqlTag implements SqlTag
      * @param validateType validation to apply before execute SQL.
      * @param stats SQL statistical
      */
-    public AbstractSqlTag(String id, LanguageType languageType, Isolation isolation, 
-            int timeout, ValidateType validateType, Statistical stats)
+    public AbstractSqlTag(String id, LanguageType languageType, Isolation isolation, int timeout,
+            ValidateType validateType, Statistical stats)
     {
         this(id, languageType, isolation, timeout, ResultSetType.DEFAULT, ResultSetConcurrency.DEFAULT,
                 ResultSetHoldability.DEFAULT, "", validateType, stats);
@@ -181,7 +183,7 @@ public abstract class AbstractSqlTag implements SqlTag
      * @param validateType TODO javadoc
      * @param stats statistical for procedures
      */
-    public AbstractSqlTag(String id, LanguageType languageType, Isolation isolation, int timeout, 
+    public AbstractSqlTag(String id, LanguageType languageType, Isolation isolation, int timeout,
             ResultSetType resultSetType, ResultSetConcurrency resultSetConcurrency,
             ResultSetHoldability resultSetHoldability, String returnType, ValidateType validateType, Statistical stats)
     {
@@ -202,8 +204,7 @@ public abstract class AbstractSqlTag implements SqlTag
         this.stats = stats;
         if (hasReturnType())
         {
-            this.returnTypeClass = ObjectProxyFactory.of(returnType)
-                    .mute(ClassNotFoundException.class)
+            this.returnTypeClass = ObjectProxyFactory.of(returnType).mute(ClassNotFoundException.class)
                     .getTargetClass();
         }
         //this.timeToLive = -1;//testing 30*1000; 
@@ -266,7 +267,7 @@ public abstract class AbstractSqlTag implements SqlTag
             }
         }
         String q = sb.toString();
-        log.trace("SQL [{}] [{}]:\n{}", id, languageType, q);
+        LOG.trace("SQL [{}] [{}]:\n{}", id, languageType, q);
         return q;
     }
     //    
@@ -307,21 +308,38 @@ public abstract class AbstractSqlTag implements SqlTag
         if (hasParamParser())
             return;
         
-        for (ITextTag t : tag.getTags())
+        reBindParamParser();
+    }
+    
+    private void reBindParamParser()
+    {
+        for (ITextTag firstTag : this.textTag)
         {
-            setParamParser(t.getText());
-        }
-        if (tag instanceof WhereTag && tag.isDynamicGroup())//FIXME BUG implements params from set, choose tags
-        {
-            for (ITextTag t : tag.getTags())
+            if (!(firstTag instanceof WhereTag) && !firstTag.isDynamicGroup())
             {
-                setParamParser(t.getText());
-                for (ITextTag t2 : t.getTags())
-                    setParamParser(t2.getText());
+                if (bindParamParser(firstTag.getText()))
+                    return;
+            }
+            
+            for (ITextTag tag : firstTag.getTags())
+            {
+                if ((tag instanceof WhereTag || tag instanceof ChooseTag) 
+                        && tag.isDynamicGroup())//FIXME BUG implements params from set, choose tags
+                {
+                    for (ITextTag innerTag : tag.getTags())
+                    {
+                        if (bindParamParser(innerTag.getText()))
+                            return;
+                        
+                        for (ITextTag t2 : innerTag.getTags())
+                            if (bindParamParser(t2.getText()))
+                                return;
+                    }
+                }
+                else if (!tag.isDynamicGroup())
+                    bindParamParser(tag.getText());
             }
         }
-        else if (!tag.isDynamicGroup())
-            setParamParser(tag.getText());
     }
     
     /**
@@ -331,7 +349,8 @@ public abstract class AbstractSqlTag implements SqlTag
     public void addTag(String text)
     {
         this.textTag.add(new StaticText(text));
-        this.setParamParser(text);
+        if (!hasParamParser())
+            this.bindParamParser(text);
     }
     
     /**
@@ -354,7 +373,7 @@ public abstract class AbstractSqlTag implements SqlTag
     {
         this.isolation = isolation;
     }
-
+    
     @Override
     public int getTimeout()
     {
@@ -366,17 +385,17 @@ public abstract class AbstractSqlTag implements SqlTag
         this.timeout = timeout;
     }
     
-//    @Override
-//    public boolean isBatch()
-//    {
-//        return this.batch;
-//    }
-//    
-//    public void setBatch(boolean batch)
-//    {
-//        this.batch = batch;
-//    }
-//    
+    //    @Override
+    //    public boolean isBatch()
+    //    {
+    //        return this.batch;
+    //    }
+    //    
+    //    public void setBatch(boolean batch)
+    //    {
+    //        this.batch = batch;
+    //    }
+    //    
     /*
     public String getCache()
     {
@@ -438,11 +457,11 @@ public abstract class AbstractSqlTag implements SqlTag
     }
     
     @Override
-    public boolean isStorable() 
+    public boolean isStorable()
     {
         return false;
     }
-
+    
     @Override
     public Storable asStorable()
     {
@@ -454,7 +473,7 @@ public abstract class AbstractSqlTag implements SqlTag
     {
         return resultSetType;
     }
-
+    
     public void setResultSetType(ResultSetType resultSetType)
     {
         this.resultSetType = resultSetType;
@@ -491,7 +510,7 @@ public abstract class AbstractSqlTag implements SqlTag
     {
         return this.returnType;
     }
-
+    
     @Override
     public boolean hasReturnType()
     {
@@ -503,24 +522,6 @@ public abstract class AbstractSqlTag implements SqlTag
     {
         return this.returnTypeClass;
     }
-    
-    /*
-    public ResultRow<?, ?> getParserRow()
-    {
-        return parserRow;
-    }
-    
-    public void setParserRow(ResultRow<?, ?> parserRow)
-    {
-        this.parserRow = parserRow;
-    }
-    */
-    
-    //    @Override
-    //    public boolean isReturnTypeManaged()
-    //    {
-    //        return this.returnTypeManaged;
-    //    }
     
     @Override
     public void setValidateType(ValidateType validateType)
@@ -586,9 +587,10 @@ public abstract class AbstractSqlTag implements SqlTag
     @Override
     public void bind(SqlDialect sqlDialect)
     {
-        //if (this.sqlDialect != null)
-        //    throw new IllegalStateException("Cannot re-assign SqlDialect for Sql object");
         this.sqlDialect = sqlDialect;
+        if (!sqlDialect.supportsParmMark(this.paramParser.getType()))
+            this.paramParser = ParamParserNoMark.emptyParser();
+        reBindParamParser();
     }
     
     @Override
@@ -618,6 +620,38 @@ public abstract class AbstractSqlTag implements SqlTag
     protected void setStats(Statistical stats)
     {
         this.stats = stats;
+    }
+    
+    private boolean bindParamParser(String text)
+    {
+        boolean assignedParamParser = false;
+        SqlDialect sqlDialectToCheck = sqlDialect != null ? sqlDialect : new AnsiDialect();
+        if (sqlDialectToCheck.supportsParmMark(ParamMarkType.COLON) && PATTERN_COLON.matcher(text).find())
+        {
+            this.paramParser = ParamParserFactory.getInstance(ParamMarkType.COLON);
+            assignedParamParser = true;
+        }
+        else if (sqlDialectToCheck.supportsParmMark(ParamMarkType.HASH) && PATTERN_HASH.matcher(text).find())
+        {
+            this.paramParser = ParamParserFactory.getInstance(ParamMarkType.HASH);
+            assignedParamParser = true;
+        }
+        else if (sqlDialectToCheck.supportsParmMark(ParamMarkType.QUESTION) && PATTERN_QUESTION.matcher(text).find())
+        {
+            this.paramParser = ParamParserFactory.getInstance(ParamMarkType.QUESTION);
+            assignedParamParser = true;
+        }
+        else if (sqlDialectToCheck.supportsParmMark(ParamMarkType.DOLLAR) && PATTERN_DOLLAR.matcher(text).find())
+        {
+            this.paramParser = ParamParserFactory.getInstance(ParamMarkType.DOLLAR);
+            assignedParamParser = true;
+        }
+        return assignedParamParser;
+    }
+    
+    private boolean hasParamParser()
+    {
+        return !(this.paramParser instanceof ParamParserNoMark);
     }
     
     @Override
@@ -663,26 +697,6 @@ public abstract class AbstractSqlTag implements SqlTag
         else if (!resourceName.equals(other.resourceName))
             return false;
         return true;
-    }
-    
-    private void setParamParser(String text)
-    {
-        if (!hasParamParser())
-        {
-            if (PATTERN_COLON.matcher(text).find())
-                this.paramParser = ParamParserFactory.getInstance(ParamMarkType.COLON);
-            else if (PATTERN_HASH.matcher(text).find())
-                this.paramParser = ParamParserFactory.getInstance(ParamMarkType.HASH);
-            else if (PATTERN_QUESTION.matcher(text).find())
-                this.paramParser = ParamParserFactory.getInstance(ParamMarkType.QUESTION);
-            else if (PATTERN_DOLLAR.matcher(text).find())
-                this.paramParser = ParamParserFactory.getInstance(ParamMarkType.DOLLAR);
-        }
-    }
-    
-    private boolean hasParamParser()
-    {
-        return !(this.paramParser instanceof ParamParserNoMark);
     }
     
     //    /**

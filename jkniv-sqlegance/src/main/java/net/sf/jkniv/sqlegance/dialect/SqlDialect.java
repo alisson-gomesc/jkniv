@@ -20,6 +20,7 @@
 package net.sf.jkniv.sqlegance.dialect;
 
 import net.sf.jkniv.reflect.beans.PropertyAccess;
+import net.sf.jkniv.sqlegance.params.ParamMarkType;
 
 /**
  * Represents a SQL syntax from a specific database.
@@ -47,6 +48,13 @@ public interface SqlDialect
      * @return {@code true} when the dialect supports, {@code false} otherwise
      */
     boolean supportsFeature(SqlFeatureSupport feature);
+    
+    /**
+     * verify if dialect supports a specific {@link ParamMarkType}
+     * @param paramParse parameter mark type
+     * @return {@code true} when the parse type is supported, {@code false} otherwise
+     */
+    boolean supportsParmMark(ParamMarkType paramParse);
     
     /**
      * Override a SQL ANSI feature

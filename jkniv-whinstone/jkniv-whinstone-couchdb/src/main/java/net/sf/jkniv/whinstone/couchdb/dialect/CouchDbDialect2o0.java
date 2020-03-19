@@ -22,6 +22,7 @@ package net.sf.jkniv.whinstone.couchdb.dialect;
 import net.sf.jkniv.sqlegance.dialect.AnsiDialect;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureFactory;
 import net.sf.jkniv.sqlegance.dialect.SqlFeatureSupport;
+import net.sf.jkniv.sqlegance.params.ParamMarkType;
 import net.sf.jkniv.whinstone.params.ParameterException;
 
 /**
@@ -95,6 +96,12 @@ public class CouchDbDialect2o0 extends AnsiDialect
                                     (bookmark != null ? ", \"bookmark\": \"" + bookmark + "\"": "")
                                     + " }";
         return bodyWithLimitAndSkip;        
+    }
+
+    @Override
+    public boolean supportsParmMark(ParamMarkType paramParse)
+    {
+        return paramParse != ParamMarkType.DOLLAR;
     }
 
     @Override

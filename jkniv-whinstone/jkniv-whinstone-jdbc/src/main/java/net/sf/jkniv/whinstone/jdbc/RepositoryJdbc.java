@@ -20,7 +20,6 @@
 package net.sf.jkniv.whinstone.jdbc;
 
 import java.sql.DatabaseMetaData;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
@@ -58,11 +57,11 @@ import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
 import net.sf.jkniv.whinstone.transaction.Transactional;
 import net.sf.jkniv.whinstone.types.CalendarTimestampType;
 import net.sf.jkniv.whinstone.types.Convertible;
-import net.sf.jkniv.whinstone.types.RegisterType;
 import net.sf.jkniv.whinstone.types.DateTimestampType;
 import net.sf.jkniv.whinstone.types.DoubleBigDecimalType;
 import net.sf.jkniv.whinstone.types.LongBigDecimalType;
 import net.sf.jkniv.whinstone.types.LongNumericType;
+import net.sf.jkniv.whinstone.types.RegisterType;
 import net.sf.jkniv.whinstone.types.ShortIntType;
 
 /**

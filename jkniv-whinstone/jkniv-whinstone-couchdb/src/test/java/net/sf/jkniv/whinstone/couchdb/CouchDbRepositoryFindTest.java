@@ -114,6 +114,18 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
     }
 
     @Test
+    public void whenCouchDbGetRecordUsingAndClause()
+    {
+        Repository repositoryDb = getRepository();
+        Queryable q = QueryFactory.of("authorsUsingEqual");
+        List<Map> list = repositoryDb.list(q);
+        assertThat(list.size(), is(1));
+        assertThat(q.getTotal(), is(1L));
+        assertThat(list.get(0), instanceOf(Map.class));
+        System.out.println(list.get(0));
+    }
+
+    @Test
     public void whenListEmptyReturn()
     {
         Repository repositoryDb = getRepository();

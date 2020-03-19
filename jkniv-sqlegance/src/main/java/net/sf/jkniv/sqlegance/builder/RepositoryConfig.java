@@ -314,6 +314,11 @@ public class RepositoryConfig
     {
         return this.sqlDialect;
     }
+
+    public void setSqlDialect(SqlDialect sqlDialect)
+    {
+        this.sqlDialect = sqlDialect;
+    }
     
     public Statistical getStatistical()
     {
