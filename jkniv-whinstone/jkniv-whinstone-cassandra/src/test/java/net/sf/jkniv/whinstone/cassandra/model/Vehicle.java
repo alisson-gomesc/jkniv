@@ -8,6 +8,7 @@ public class Vehicle
     private String      plate;
     private String      color;
     private List<String> alarms;
+    private Frequency    frequency;
     
     public Vehicle()
     {
@@ -64,6 +65,16 @@ public class Vehicle
     public void setAlarms(List<String> alarms)
     {
         this.alarms = alarms;
+    }
+    
+    public Frequency getFrequency()
+    {
+        return frequency;
+    }
+    
+    public void setFrequency(Frequency frequency)
+    {
+        this.frequency = frequency;
     }
     
     @Override

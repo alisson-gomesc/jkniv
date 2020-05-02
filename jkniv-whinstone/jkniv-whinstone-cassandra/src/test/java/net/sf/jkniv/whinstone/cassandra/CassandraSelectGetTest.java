@@ -32,6 +32,7 @@ import org.junit.Test;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
+import net.sf.jkniv.whinstone.cassandra.model.Frequency;
 import net.sf.jkniv.whinstone.cassandra.model.Vehicle;
 import net.sf.jkniv.whinstone.cassandra.result.CustomResultRow;
 
@@ -51,11 +52,13 @@ public class CassandraSelectGetTest extends BaseJdbc
         assertThat(v, instanceOf(Vehicle.class));
         assertThat(v.getPlate(), is(PLATE));
         assertThat(v.getColor(), is(COLOR));
+        assertThat(v.getFrequency(), is(Frequency.DAILY));
 
         Map<String, Object> map  = repositoryCas.get(q, Map.class);
         assertThat(map, instanceOf(Map.class));
         assertThat(map.get("plate").toString(), is(PLATE));
         assertThat(map.get("color").toString(), is(COLOR));
+        assertThat((String)map.get("frequency"), is("DAILY"));
         assertThat(map, instanceOf(Map.class));
         assertThat(map, instanceOf(HashMap.class));
     }

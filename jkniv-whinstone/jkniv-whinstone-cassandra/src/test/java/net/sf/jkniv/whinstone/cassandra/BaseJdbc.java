@@ -29,7 +29,7 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 
 // Embedded cassandra test http://www.baeldung.com/spring-data-cassandra-tutorial
-public class BaseJdbc //extends BaseSpringJUnit4
+public class BaseJdbc// extends BaseSpringJUnit4
 {
     protected static final String url = "127.0.0.1";
     protected static final String schema = "dev_data_3t";

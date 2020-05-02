@@ -16,6 +16,7 @@ CREATE TABLE VEHICLE
   plate text,
   name text,
   color text,
+  frequency text,
   alarms list<text>
  ,PRIMARY KEY( plate )
 );

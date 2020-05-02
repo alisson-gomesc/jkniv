@@ -12,7 +12,7 @@ INSERT INTO COLOR (NAME, PRIORITY, CODE) VALUES ('white', 'NORMAL', 301);
 INSERT INTO COLOR (NAME, PRIORITY, CODE) VALUES ('white', 'LOW', 302);
 
 
-INSERT INTO VEHICLE(plate, name, color, alarms) VALUES ('OMN7176', 'bugatti', 'white', ['anchor','over_speed']);
-INSERT INTO VEHICLE(plate, name, color, alarms) VALUES ('OMN7000', 'fusca', 'white', ['anchor']);
-INSERT INTO VEHICLE(plate, name, color) VALUES ('OMN7001', 'mustang', 'blue');
-INSERT INTO VEHICLE(plate, name, color) VALUES ('OMN7002', 'mustang', 'black');
+INSERT INTO VEHICLE(plate, name, color, alarms, frequency) VALUES ('OMN7176', 'bugatti', 'white', ['anchor','over_speed'], 'DAILY');
+INSERT INTO VEHICLE(plate, name, color, alarms, frequency) VALUES ('OMN7000', 'fusca', 'white', ['anchor'], 'DAILY');
+INSERT INTO VEHICLE(plate, name, color, frequency) VALUES ('OMN7001', 'mustang', 'blue', 'DAILY');
+INSERT INTO VEHICLE(plate, name, color, frequency) VALUES ('OMN7002', 'mustang', 'black', 'DAILY');

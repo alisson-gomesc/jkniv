@@ -159,6 +159,10 @@ public class RegisterType
                 convertible = (Convertible) proxyConvertible.newInstance();
             }
         }
+        else if(field.getType().isEnum()) // doesn't use @Converter default is persist as String
+        {
+            convertible = new EnumNameType(field.getType());
+        }
         return convertible;
     }
     

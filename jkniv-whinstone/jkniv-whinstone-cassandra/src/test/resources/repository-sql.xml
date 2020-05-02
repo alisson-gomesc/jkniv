@@ -61,7 +61,7 @@
   </delete>
 
   <select id="Vehicle#get" returnType="net.sf.jkniv.whinstone.cassandra.model.Vehicle">
-   SELECT plate, name, color, alarms FROM VEHICLE where plate = :plate
+   SELECT plate, name, color, alarms, frequency FROM VEHICLE where plate = :plate
   </select>
   
   <insert id="vehicle">
@@ -69,7 +69,7 @@
   </insert>
 
   <select id="selectVehicle" returnType="net.sf.jkniv.whinstone.cassandra.model.Vehicle">
-   select plate, name, color, alarms from VEHICLE where plate = :plate
+   select plate, name, color, alarms, frequency  from VEHICLE where plate = :plate
   </select>
 
   <select id="simpleSelect" returnType="java.util.HashMap">
