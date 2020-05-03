@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
@@ -60,6 +62,7 @@ import net.sf.jkniv.whinstone.types.RegisterType;
 { "unchecked", "rawtypes" })
 class QueryName implements Queryable
 {
+    private static final Logger LOG = LoggerFactory.getLogger(QueryName.class);
     private static final Assertable NOT_NULL   = AssertsFactory.getNotNull();
     private static final Assertable IS_NULL    = AssertsFactory.getIsNull();
     private static final BasicType  BASIC_TYPE = BasicType.getInstance();
@@ -184,7 +187,7 @@ class QueryName implements Queryable
             catch (Exception e)
             {
                 throw new ParameterNotFoundException("Cannot find the property [" + name + "] at param object ["
-                        + (params != null ? params.getClass().getName() : "null") + "] ");
+                        + (params != null ? params.getClass().getName() : "null") + "] ", e);
             }
         }
         return param;
@@ -204,7 +207,7 @@ class QueryName implements Queryable
             catch (Exception e)
             {
                 throw new ParameterNotFoundException("Cannot find the property [" + name + "] at param object ["
-                        + (params != null ? params.getClass().getName() : "null") + "] ");
+                        + (params != null ? params.getClass().getName() : "null") + "] ", e);
             }
         }
         return param;
