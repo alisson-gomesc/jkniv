@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthorView
 {
-    
     private String     id;
     private String     key;
     private String     name;

@@ -51,12 +51,24 @@ public class HttpBuilder
             "end_key", "endkey_docid", "end_key_doc_id", "include_docs", "inclusive_end", "key", "keys", "stale",
             "startkey", "start_key", "startkey_docid", "start_key_doc_id", "update_seq");                            /*"limit","skip"*/
     
-    private static final List<QueryParam> KEY_PARAMS_VIEW        = Arrays.asList(new QueryParam("key", true),
-            new QueryParam("keys", true), new QueryParam("startkey", true), new QueryParam("endkey", true),
-            new QueryParam("descending"), new QueryParam("group"), new QueryParam("group_level"),
-            new QueryParam("startkey_docid"), new QueryParam("endkey_docid"), new QueryParam("limit"),
-            new QueryParam("skip"), new QueryParam("descending"), new QueryParam("stale"), new QueryParam("reduce"),
-            new QueryParam("include_docs"), new QueryParam("inclusive_end"), new QueryParam("update_seq"));
+    private static final List<QueryParam> KEY_PARAMS_VIEW        = Arrays.asList(
+            new QueryParam("key", true),    //
+            new QueryParam("keys", true),   //
+            new QueryParam("startkey", true),//
+            new QueryParam("endkey", true), //
+            new QueryParam("descending"),   //
+            new QueryParam("group"),        //
+            new QueryParam("group_level"),  //
+            new QueryParam("startkey_docid"),//
+            new QueryParam("endkey_docid"), //
+            new QueryParam("limit"),        //
+            new QueryParam("skip"),         //
+            new QueryParam("descending"),   //
+            new QueryParam("stale"),        //
+            new QueryParam("reduce"),       //
+            new QueryParam("include_docs"), //
+            new QueryParam("inclusive_end"),//
+            new QueryParam("update_seq"));
     
     private static final List<QueryParam> KEY_PARAMS_GET         = Arrays.asList(new QueryParam("attachments"),
             new QueryParam("att_encoding_info"), new QueryParam("atts_since"), new QueryParam("conflicts"),
@@ -286,7 +298,7 @@ public class HttpBuilder
         return hostContext + "/";
     }
     
-    private Param getProperty(Queryable queryable, String name)
+    public Param getProperty(Queryable queryable, String name)
     {
         Param v = null;
         try

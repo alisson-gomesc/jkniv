@@ -22,6 +22,7 @@ package net.sf.jkniv.whinstone.couchdb.commands;
 import java.io.IOException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 import net.sf.jkniv.whinstone.couchdb.statement.AllDocsAnswer;
@@ -85,11 +87,15 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
                 if (returnType != null)
                 {
                     list = new ArrayList();
+                    String keyToReturnType = "value";
+                    Param includeDocs = httpBuilder.getProperty(this.queryable, "include_docs");
+                    if (includeDocs != null && "true".equals(includeDocs.getValue()))
+                        keyToReturnType = "doc";
                     // FIXME overload performance, writer better deserialization using jackson
                     for (Map map : answer.getRows())
                     {
-                        Map content = (Map) map.get("value");
-                        //list.add(proxy.from(r));
+                        Map content = (Map) map.get(keyToReturnType);
+                        //Map content = (Map) map.get("value");
                         Object o = JsonMapper.mapper(content, returnType);
                         list.add(o);
                         if (o instanceof Map)

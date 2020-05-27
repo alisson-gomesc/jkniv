@@ -19,6 +19,11 @@
       emit(doc.nationality, doc)
      }
    </select>
+   <select id="map#author">
+    function(doc) { 
+       emit( doc.name, 1)
+     }
+   </select>
   </package>
   
 <!--
@@ -40,8 +45,5 @@ function(doc){ emit(doc._id, doc._rev)}
 function(key, values){ return sum(values);}
    </select>   
   </package>
-
    -->
-
-
 </statements>

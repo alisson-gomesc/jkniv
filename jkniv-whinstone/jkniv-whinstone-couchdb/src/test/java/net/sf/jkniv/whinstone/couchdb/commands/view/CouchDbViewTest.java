@@ -31,6 +31,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
@@ -50,7 +51,7 @@ public class CouchDbViewTest extends BaseJdbc
         assertThat(list.get(0), instanceOf(Map.class));
         assertThat(list.get(0).get("id"), notNullValue());
         assertThat(list.get(0).get("key"), is(list.get(0).get("nationality")));
-        System.out.println(list.get(0));
+        //System.out.println(list.get(0));
     }
 
     @Test
@@ -88,6 +89,18 @@ public class CouchDbViewTest extends BaseJdbc
         assertThat(list.size(), greaterThanOrEqualTo(3));
         assertThat(list.get(0), instanceOf(AuthorView.class));
         assertThat(list.get(0).getKey(), is("DE"));
+    }
+
+    @Test
+    public void whenUseViewIncludeDoc()
+    {
+        Repository repositoryDb = getRepository();
+        Queryable q = QueryFactory.of("docs/_view/author", asParams("key","Franz Kafka","include_docs","true"));
+        List<Author> list = repositoryDb.list(q);
+        assertThat(q.getTotal(), is((long)list.size()));
+        assertThat(list.size(), is(1));
+        assertThat(list.get(0).getBooks().size(), is(2));
+        assertThat(list.get(0), instanceOf(Author.class));
     }
     
 }

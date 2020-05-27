@@ -7,8 +7,10 @@
        http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
   
 <!-- 
- GET /{db}/_design/{ddoc}/_view/{view}¶
+ GET /{db}/_design/{ddoc}/_view/{view}
  -->
   <select id="docs/_view/natio" type="STORED" returnType="net.sf.jkniv.whinstone.couchdb.model.orm.AuthorView"/>
+
+  <select id="docs/_view/author" type="STORED" returnType="net.sf.jkniv.whinstone.couchdb.model.orm.Author"/>
 
 </statements>

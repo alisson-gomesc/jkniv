@@ -20,6 +20,7 @@
 package net.sf.jkniv.whinstone.couchdb;
 
 import static org.hamcrest.Matchers.instanceOf;
+import static org.mockito.Matchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -59,14 +60,12 @@ public class CouchDbPaginationTest extends BaseJdbc
     public void whenCouchDbTryPaginateQueryWithLimit()
     {
         catcher.expect(ParameterException.class);
+        catcher.expectMessage(endsWith("has a \"limit\" property defined, cannot use auto paging Queryable for this query."));
         Repository repositoryDb = getRepository();
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("nations", Arrays.asList("DE","GB","BR","CZ"));
         Queryable q = QueryFactory.of("authors-page-override", params, 0, 3);
-        List<Map<String, ?>> list = repositoryDb.list(q);
-        //assertThat(q.getTotal(), is(-1L));
-        assertThat(q.getTotal(), is((long)Statement.SUCCESS_NO_INFO));
-        assertThat(q.getBookmark(), notNullValue());
+        repositoryDb.list(q);
     }
     
     @Test
