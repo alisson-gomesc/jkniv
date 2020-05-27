@@ -46,7 +46,6 @@ import net.sf.jkniv.whinstone.RepositoryService;
 import net.sf.jkniv.whinstone.couchdb.CouchDbAuthenticate;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 import net.sf.jkniv.whinstone.couchdb.RequestParams;
-import net.sf.jkniv.whinstone.couchdb.commands.PutCommand;
 import net.sf.jkniv.whinstone.jdbc.dialect.Derby10o7Dialect;
 
 public class BaseJdbc extends BaseSpringJUnit4

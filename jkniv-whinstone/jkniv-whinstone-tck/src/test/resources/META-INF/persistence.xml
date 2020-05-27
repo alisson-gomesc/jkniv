@@ -20,8 +20,8 @@
       <property name="hibernate.hbm2ddl.auto" value="none" />
       <property name="javax.persistence.jdbc.driver" value="oracle.jdbc.driver.OracleDriver" />
       <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@192.168.99.100:1521:XE" />
-      <property name="javax.persistence.jdbc.user" value="whinstone" />
-      <property name="javax.persistence.jdbc.password" value="whinstone" />
+      <property name="javax.persistence.jdbc.user" value="system" />
+      <property name="javax.persistence.jdbc.password" value="oracle" />
       <property name="hibernate.show_sql" value="true" />
       <property name="jkniv.repository.method_namestrategy" value="net.sf.jkniv.sqlegance.DefaultXmlQueryNameStrategy" />
       <!--property name="jkniv.repository.persistenceunitname" value="" / -->
