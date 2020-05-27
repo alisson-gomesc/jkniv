@@ -1,3 +1,15 @@
+## Release notes - jkniv-whinstone - Version 0.6.4
+   
+### Bug
+   
+- [<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-119'>JKNIVWHIN-119</a>] - ![BUG Fix](images/bug_icon.png "BUG Fix") [couchdb] cannot fetch include_docs with a view
+            
+
+## Release notes - jkniv-whinstone - Version 0.6.3
+
+### Bug
+- [<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-117'>JKNIVWHIN-117</a>] - ![BUG Fix](images/bug_icon.png "BUG Fix") [cassandra] Bug retrieve enum values 
+
 
 ## Release notes - jkniv-whinstone - Version 0.6.1
                 
