@@ -30,7 +30,7 @@ public class ApacheHttpClientTest
     {
         //"AuthSession=YWRtaW46NUFCODQ5MkU6z0cUPq7oPfFz6zh3-ghAZJeDNEE"
         RequestParams header = new RequestParams("tecno3t-useraccess");
-        String uri = "http://127.0.0.1:5984/tecno3t-useraccess/1";
+        String uri = "http://192.168.99.100:5984/tecno3t-useraccess/1";
         String answer = executeGet(uri, header);
         System.out.println(answer);
         assertThat(answer, not(is("Unauthorized")));
@@ -39,7 +39,7 @@ public class ApacheHttpClientTest
     @Test @Ignore("Use CouchDbAuthenticate")
     public void whenAuthRequestGetSecurity()
     {
-        String uri = "http://admin:admin@127.0.0.1:5984/tecno3t-useraccess/_security";
+        String uri = "http://admin:admin@192.168.99.100:5984/tecno3t-useraccess/_security";
         String answer = executeGet(uri, null);
         System.out.println(answer);
         assertThat(answer, not(is("Unauthorized")));
@@ -48,7 +48,7 @@ public class ApacheHttpClientTest
     @Test //@Ignore("Use CouchDbAuthenticate")
     public void whenAuthenticate()
     {
-        String uri = "http://127.0.0.1:5984/_session";
+        String uri = "http://192.168.99.100:5984/_session";
         String answer = authenticate(uri);
         System.out.println(answer);
         assertThat(answer, not(is("Unauthorized")));
@@ -57,7 +57,7 @@ public class ApacheHttpClientTest
     @Test
     public void whenAuthRequestAllDbs()
     {
-        String uri = "http://admin:admiin@127.0.0.1:5984/_all_dbs";
+        String uri = "http://admin:admiin@192.168.99.100:5984/_all_dbs";
         String answer = executeGet(uri, null);
         System.out.println(answer);
         assertThat(answer, not(is("Unauthorized")));

@@ -45,7 +45,7 @@ public class BaseCouchbase extends BaseSpringJUnit4
 {
     private static final Logger    LOG                 = LoggerFactory.getLogger(BaseCouchbase.class);
     public static final Properties config, configDb3t;
-    private static final String    URL                 = "127.0.0.1";
+    private static final String    URL                 = "192.168.99.100";
     private static final String    SCHEMA              = "travel-sample";
     private static final String    USER                = "admin";
     private static final String    PASSWD              = "123456";

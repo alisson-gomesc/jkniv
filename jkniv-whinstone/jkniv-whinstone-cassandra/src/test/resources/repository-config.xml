@@ -4,8 +4,8 @@
 
   <repository name="whin-cassandra" type="CASSANDRA">
    <properties>
-     <property name="url" value="127.0.0.1" />
-     <property name="schema" value="dev_data_3t"/>
+     <property name="url" value="192.168.99.100" />
+     <property name="schema" value="dev_whin"/>
      <property name="user" value="cassandra"/>
      <property name="password" value="cassandra"/>
    </properties>

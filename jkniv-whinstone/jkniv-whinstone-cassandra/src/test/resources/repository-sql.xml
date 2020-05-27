@@ -26,11 +26,11 @@
   </select>
 
   <delete id="removeAll">
-    delete from dev_data_3t.TEST_DATA
+    delete from TEST_DATA
   </delete>
 
   <insert id="simpleInsert">
-    INSERT INTO dev_data_3t.TEST_DATA (my_key,evt_date,object_id, lat, lng, warn)
+    INSERT INTO TEST_DATA (my_key,evt_date,object_id, lat, lng, warn)
     values (?,?,?,?,?,?)
   </insert>
 
@@ -73,7 +73,7 @@
   </select>
 
   <select id="simpleSelect" returnType="java.util.HashMap">
-    select my_key, evt_date, object_id, lat, lng, warn from dev_data_3t.TEST_DATA
+    select my_key, evt_date, object_id, lat, lng, warn from TEST_DATA
   </select>
 
   <select id="all-vehicles" returnType="java.util.HashMap">

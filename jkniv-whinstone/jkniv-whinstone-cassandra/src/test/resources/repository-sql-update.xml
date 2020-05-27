@@ -8,7 +8,7 @@
   
 
   <update id="simpleUpsert">
-   UPDATE dev_data_3t.TEST_DATA SET
+   UPDATE TEST_DATA SET
    object_id=?, 
    lat=?, 
    lng=?, 

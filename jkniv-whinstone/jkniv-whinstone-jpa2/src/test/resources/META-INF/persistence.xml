@@ -19,9 +19,9 @@
       <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle9iDialect" />
       <property name="hibernate.hbm2ddl.auto" value="update" />
       <property name="javax.persistence.jdbc.driver" value="oracle.jdbc.driver.OracleDriver" />
-      <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@127.0.0.1:1521:XE" />
-      <property name="javax.persistence.jdbc.user" value="whinstone" />
-      <property name="javax.persistence.jdbc.password" value="whinstone" />
+      <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@192.168.99.100:1521:XE" />
+      <property name="javax.persistence.jdbc.user" value="system" />
+      <property name="javax.persistence.jdbc.password" value="oracle" />
       <property name="hibernate.show_sql" value="true" />
       <property name="jkniv.repository.method_namestrategy" value="net.sf.jkniv.sqlegance.HashQueryNameStrategy" />
       <!--property name="jkniv.repository.persistenceunitname" value="" / -->
@@ -52,9 +52,9 @@
       <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServer2008Dialect" />
       <property name="hibernate.hbm2ddl.auto" value="update" />
       <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
-      <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://10.1.200.13:1433;databaseName=clusterizacaoProducao" />
-      <property name="javax.persistence.jdbc.user" value="usrcluster" />
-      <property name="javax.persistence.jdbc.password" value="cluster@123" />
+      <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://127.0.0.1:1433;databaseName=cluster" />
+      <property name="javax.persistence.jdbc.user" value="user" />
+      <property name="javax.persistence.jdbc.password" value="123" />
       <property name="hibernate.show_sql" value="true" />
       <property name="jkniv.repository.method_namestrategy" value="net.sf.jkniv.sqlegance.HashQueryNameStrategy" />
       <property name="jkniv.repository.show_config" value="false" />

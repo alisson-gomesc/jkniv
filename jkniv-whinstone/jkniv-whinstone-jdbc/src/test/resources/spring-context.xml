@@ -35,14 +35,14 @@
   <bean id="dataSourceOra" class="org.apache.commons.dbcp.BasicDataSource"
     destroy-method="close">
     <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
-    <property name="url" value="jdbc:oracle:thin:@127.0.0.1:1521/XE" />
-    <property name="username" value="orawhinstone" />
-    <property name="password" value="orawhinstone" />
+    <property name="url" value="jdbc:oracle:thin:@192.168.99.100:1521/XE" />
+    <property name="username" value="system" />
+    <property name="password" value="oracle" />
   </bean>
   <bean id="dataSourcePostgres" class="org.apache.commons.dbcp.BasicDataSource"
     destroy-method="close">
     <property name="driverClassName" value="org.postgresql.Driver" />
-    <property name="url" value="jdbc:postgresql://127.0.0.1:5432/pgwhinstone" />
+    <property name="url" value="jdbc:postgresql://192.168.99.100:5432/WHINSTONE" />
     <property name="username" value="pgwhinstone" />
     <property name="password" value="pgwhinstone" />
   </bean>
@@ -51,7 +51,7 @@
   <bean id="dataSourceCas" class="org.apache.commons.dbcp.BasicDataSource"
     destroy-method="close">
     <property name="driverClassName" value="com.dbschema.CassandraJdbcDriver" />
-    <property name="url" value="jdbc:cassandra://127.0.0.1:9042/dev_data_3t" />
+    <property name="url" value="jdbc:cassandra://192.168.99.100:9042/dev_data_3t" />
     <property name="username" value="cassandra" />
     <property name="password" value="" />
   </bean>
@@ -76,9 +76,9 @@
     <jdbc:script location="classpath:database/ora/db-drop.sql"  execution="DESTROY" encoding="UTF-8" />
     <jdbc:script location="classpath:database/ora/db-create.sql" execution="INIT" encoding="UTF-8" />
     <jdbc:script location="classpath:database/ora/db-load.sql" execution="INIT" encoding="UTF-8" />
-    <!--
+    <!-- 
     <jdbc:script location="classpath:database/ora/db-create-stored-hello.sql" execution="INIT" encoding="UTF-8" />
-    -->
+     -->
   </jdbc:initialize-database>
   <jdbc:initialize-database data-source="dataSourcePostgres"
     enabled="true" ignore-failures="DROPS">

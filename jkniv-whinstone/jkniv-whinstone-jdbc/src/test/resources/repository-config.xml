@@ -37,9 +37,9 @@
       <property name="jkniv.repository.jdbc.dialect"         value="net.sf.jkniv.whinstone.jdbc.dialect.Derby10o7Dialect" />
       <property name="jkniv.repository.jdbc_adapter_factory" value="net.sf.jkniv.whinstone.jdbc.DriverManagerAdapter" />
       <property name="driver"                                value="oracle.jdbc.driver.OracleDriver" />
-      <property name="url"                                   value="jdbc:oracle:thin:@127.0.0.1:1521/XE" />
-      <property name="user"                                  value="orawhinstone" />
-      <property name="password"                              value="orawhinstone" />
+      <property name="url"                                   value="jdbc:oracle:thin:@192.168.99.100:1521/XE" />
+      <property name="user"                                  value="system" />
+      <property name="password"                              value="oracle" />
     </properties>
   </repository>
 

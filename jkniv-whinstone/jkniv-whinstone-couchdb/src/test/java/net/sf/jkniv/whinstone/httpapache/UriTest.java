@@ -15,7 +15,7 @@ public class UriTest
     @Test
     public void whenInstanceNewUri() throws URISyntaxException
     {
-        URI uri = new URI("http://127.0.0.1:5984");
+        URI uri = new URI("http://192.168.99.100:5984");
         System.out.println(uri);
         System.out.println(uri.normalize());
     }
@@ -30,8 +30,8 @@ public class UriTest
     //@Test
     public void whenEncodeUrl() throws URISyntaxException
     {
-        System.out.println( encode( "http://127.0.0.1:5984/authors?t=hi" ));
-        System.out.println( encode( "http://127.0.0.1:5984/authors?t=\"hi\"" ));
+        System.out.println( encode( "http://192.168.99.100:5984/authors?t=hi" ));
+        System.out.println( encode( "http://192.168.99.100:5984/authors?t=\"hi\"" ));
         System.out.println( encode( "\"hi\"" ));
     }
     
