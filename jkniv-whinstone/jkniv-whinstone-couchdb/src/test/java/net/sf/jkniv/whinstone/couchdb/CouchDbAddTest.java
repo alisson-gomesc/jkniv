@@ -41,7 +41,7 @@ import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
 
-public class CouchDbRepositoryAddTest extends BaseJdbc
+public class CouchDbAddTest extends BaseJdbc
 {
     
     @Test

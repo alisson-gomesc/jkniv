@@ -146,24 +146,6 @@ public class BaseJdbc extends BaseSpringJUnit4
                 SqlContextFactory.newInstance("/repository-sql-db3t.xml"));
     }
     
-//    protected Queryable getQuery(String name)
-//    {
-//        Queryable q = QueryFactory.of(name);
-//        return q;
-//    }
-//    
-//    protected Queryable getQuery(String name, Object params)
-//    {
-//        Queryable q = QueryFactory.of(name, params);
-//        return q;
-//    }
-//    
-//    protected Queryable getQuery(String name, Object params, int offset, int max)
-//    {
-//        Queryable q = QueryFactory.of(name, params, offset, max);
-//        return q;
-//    }
-    
     private static String streamToString(InputStream is)
     {
         int ch;

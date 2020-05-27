@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.couchdb;
+package net.sf.jkniv.whinstone.couchdb.commands.view;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,8 +35,9 @@ import org.junit.Test;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
+import net.sf.jkniv.whinstone.couchdb.BaseJdbc;
 
-public class CouchDbRepositoryAllDocsTest extends BaseJdbc
+public class CouchDbAllDocsTest extends BaseJdbc
 {
     // TODO implements POST /{db}/_all_docs/queries
     // http://docs.couchdb.org/en/latest/api/database/bulk-api.html#post--db-_all_docs-queries

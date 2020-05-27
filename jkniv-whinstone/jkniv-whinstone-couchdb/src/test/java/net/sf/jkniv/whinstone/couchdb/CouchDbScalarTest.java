@@ -35,7 +35,7 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 
-public class CouchDbRepositoryScalarTest extends BaseJdbc
+public class CouchDbScalarTest extends BaseJdbc
 {
     @Rule
     public ExpectedException catcher = ExpectedException.none();  

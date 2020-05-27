@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.couchdb;
+package net.sf.jkniv.whinstone.couchdb.commands.find;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.instanceOf;
@@ -39,24 +39,53 @@ import org.springframework.beans.factory.annotation.Autowired;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
+import net.sf.jkniv.whinstone.couchdb.BaseJdbc;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
 import net.sf.jkniv.whinstone.couchdb.statement.FindAnswer;
 
-public class CouchDbRepositoryFindTest extends BaseJdbc
+public class CouchDbFindTest extends BaseJdbc
 {
-    
+
     @Test
     public void whenCouchDbListWithFixedFind()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = QueryFactory.of("authorsBR");
+        Queryable q = QueryFactory.of("adminRoles");
         
-        List<Map<String, ?>> list = repositoryDb.list(q);
+        List<Map> list = repositoryDb.list(q);
+        assertThat(list.size(), greaterThan(0));
+        assertThat(list.get(0), instanceOf(Map.class));
+    
+        q = QueryFactory.of("authorsBR");
+        
+        List<Map<String, ?>> listAuthors = repositoryDb.list(q);
+        assertThat(listAuthors.size(), greaterThan(0));
+        assertThat(q.getTotal(), greaterThan(0L));
+        assertThat(listAuthors.get(0), instanceOf(Map.class));
+    }
+    
+    @Test
+    public void whenCouchDbListWithFindParametrized()
+    {
+        Repository repositoryDb = getRepository();
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("nat", "DE");
+        Queryable q = QueryFactory.of("role", params);
+        
+        List<Map> list = repositoryDb.list(q);
+        assertThat(list.size(), greaterThan(0));
+        assertThat(list.get(0), instanceOf(Map.class));
+
+
+        params = new HashMap<String, String>();
+        params.put("nat", "DE");
+        q = QueryFactory.of("authorsNat", params);
+        
+        list = repositoryDb.list(q);
         assertThat(list.size(), greaterThan(0));
         assertThat(q.getTotal(), greaterThan(0L));
         assertThat(list.get(0), instanceOf(Map.class));
-        //System.out.println(list.get(0));
     }
 
     @Test
@@ -86,21 +115,6 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
     }
     
     
-    @Test
-    public void whenCouchDbListWithFindParametrized()
-    {
-        Repository repositoryDb = getRepository();
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("nat", "DE");
-        Queryable q = QueryFactory.of("authorsNat", params);
-        
-        List<Map> list = repositoryDb.list(q);
-        assertThat(list.size(), greaterThan(0));
-        assertThat(q.getTotal(), greaterThan(0L));
-        assertThat(list.get(0), instanceOf(Map.class));
-        System.out.println(list.get(0));
-    }
-
     @Test
     public void whenCouchDbListUsingLikeTwoFieldsSameParam()
     {
@@ -163,6 +177,7 @@ public class CouchDbRepositoryFindTest extends BaseJdbc
         assertThat(answer.getDocs(Author.class).get(0), instanceOf(Author.class));
     }
 
+    
     @Test @Ignore("Use integer as paramter")
     public void whenFindCommandUseIntegerAsParameter()
     {

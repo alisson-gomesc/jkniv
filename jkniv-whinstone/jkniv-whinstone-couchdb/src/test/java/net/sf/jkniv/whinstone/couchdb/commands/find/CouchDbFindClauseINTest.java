@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.sf.jkniv.whinstone.couchdb;
+package net.sf.jkniv.whinstone.couchdb.commands.find;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
@@ -32,8 +32,9 @@ import org.junit.Test;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
+import net.sf.jkniv.whinstone.couchdb.BaseJdbc;
 
-public class CouchDbRepositoryFindClauseINTest extends BaseJdbc
+public class CouchDbFindClauseINTest extends BaseJdbc
 {
     
     @Test @Ignore("Test copy of another scenary")

@@ -37,7 +37,7 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 
-public class CouchDbRepositoryDeleteTest extends BaseJdbc
+public class CouchDbDeleteTest extends BaseJdbc
 {
     @Rule
     public ExpectedException catcher = ExpectedException.none();  

@@ -8,6 +8,8 @@ import static org.hamcrest.Matchers.instanceOf;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +32,7 @@ public class JsonTest
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         //2018-04-02T15:21:23.225-0300
         //2018-04-02T15:21:39.698-0300
-        System.out.println(sdf.format(new Date()));
+        //System.out.println(sdf.format(new Date()));
         
     }
     
@@ -66,6 +68,24 @@ public class JsonTest
         assertThat(bookmark, is("g1AAAAAyeJzLYWBgYMpgSmHgKy5JLCrJTq2MT8lPzkzJBYozGoMkOGASEKEsAErgDR0"));
         assertThat(list.size(), is(1));
         assertThat(list.get(0), instanceOf(Author.class));
-        System.out.println(docs);
+        //System.out.println(docs);
+    }
+    
+    @Test
+    public void whenJsonMapperStringfyData()
+    {
+        assertThat("1", is(JsonMapper.mapper(1)));
+        assertThat("\"2\"", is(JsonMapper.mapper("2")));
+        assertThat("3.0", is(JsonMapper.mapper(3F)));
+        assertThat("4.0", is(JsonMapper.mapper(4D)));
+        assertThat("5", is(JsonMapper.mapper(5L)));
+        assertThat("6", is(JsonMapper.mapper(Short.valueOf("6"))));
+        assertThat("true", is(JsonMapper.mapper(true)));
+        assertThat("false", is(JsonMapper.mapper(Boolean.FALSE)));
+        
+        
+        assertThat("[]", is(JsonMapper.mapper(Collections.emptyList())));
+        assertThat("[\"a\",\"b\",\"c\"]", is(JsonMapper.mapper(Arrays.asList("a","b","c"))));
+        assertThat("[\"a\",\"b\",\"c\"]", is(JsonMapper.mapper(new String[]{"a","b","c"})));
     }
 }

@@ -50,7 +50,7 @@ import net.sf.jkniv.whinstone.couchdb.model.orm.AuthorView;
 import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
 import net.sf.jkniv.whinstone.params.ParameterException;
 
-public class CouchDbRepositoryPaginationTest extends BaseJdbc
+public class CouchDbPaginationTest extends BaseJdbc
 {
     @Rule
     public ExpectedException  catcher = ExpectedException.none();
@@ -64,7 +64,8 @@ public class CouchDbRepositoryPaginationTest extends BaseJdbc
         params.put("nations", Arrays.asList("DE","GB","BR","CZ"));
         Queryable q = QueryFactory.of("authors-page-override", params, 0, 3);
         List<Map<String, ?>> list = repositoryDb.list(q);
-        assertThat(q.getTotal(), is(-1L));
+        //assertThat(q.getTotal(), is(-1L));
+        assertThat(q.getTotal(), is((long)Statement.SUCCESS_NO_INFO));
         assertThat(q.getBookmark(), notNullValue());
     }
     

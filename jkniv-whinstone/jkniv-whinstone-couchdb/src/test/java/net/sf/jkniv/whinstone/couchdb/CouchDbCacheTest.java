@@ -40,7 +40,7 @@ import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
 
 @SuppressWarnings("rawtypes")
-public class CouchDbRepositoryCacheTest extends BaseJdbc
+public class CouchDbCacheTest extends BaseJdbc
 {
     
     @Test
