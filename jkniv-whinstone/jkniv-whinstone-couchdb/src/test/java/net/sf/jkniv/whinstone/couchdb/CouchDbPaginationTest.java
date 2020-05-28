@@ -22,6 +22,7 @@ package net.sf.jkniv.whinstone.couchdb;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.Matchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -81,6 +82,13 @@ public class CouchDbPaginationTest extends BaseJdbc
         assertThat(q.getTotal(), is((long)Statement.SUCCESS_NO_INFO));
         assertThat(list.get(0), instanceOf(Map.class));
         assertThat(q.getBookmark(), notNullValue());
+        
+        String bookmark = q.getBookmark();
+        
+        list = repositoryDb.list(q);
+        assertThat(list.size(), is(1));
+        assertThat(q.getBookmark(), notNullValue());
+        assertThat(q.getBookmark(), is(not(bookmark)));
     }
 
     @Test

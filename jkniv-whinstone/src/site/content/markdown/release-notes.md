@@ -2,8 +2,8 @@
    
 ### Bug
    
-- [<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-119'>JKNIVWHIN-119</a>] - ![BUG Fix](images/bug_icon.png "BUG Fix") [couchdb] cannot fetch include_docs with a view
-            
+- [<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-119'>JKNIVWHIN-119</a>] - ![BUG Fix](images/bug_icon.png "BUG Fix") [couchdb] cannot fetch include_docs with a view           
+-[<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-120'>JKNIVWHIN-120</a>] -  ![BUG Fix](images/bug_icon.png "BUG Fix") [couchdb] Paginate doesn't works because Bookmark wasn't cloned
 
 ## Release notes - jkniv-whinstone - Version 0.6.3
 

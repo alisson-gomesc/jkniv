@@ -36,23 +36,23 @@ public class QueryFactory
      * Creates a Query object parameterized starting at first row and retrieve all rows, isolation default, no timeout and online (no batch).
      * 
      * @param name query name
-     * @param args dynamically arguments to create {@code Queryable}.
+     * @param params dynamically arguments to create {@code Queryable}.
      * <p>
      * 1o first param it's key name and 2o your value
      * <p>
      * 3o it's key 4o your value and so on.
      * @return Queryable object with unlimited result
      */
-    public static Queryable of(String name, Object... args)
+    public static Queryable of(String name, Object... params)
     {
         NOT_NULL.verify(name);
-        return buildQueryable(name, null, args);
+        return buildQueryable(name, 0, Integer.MAX_VALUE, null, params);
     }
 
     public static Queryable of(String name, RegisterType registerType, Object... args)
     {
         NOT_NULL.verify(name, registerType);
-        return buildQueryable(name, registerType, args);
+        return buildQueryable(name, 0, Integer.MAX_VALUE, registerType, args);
     }
 
     /**
@@ -133,7 +133,7 @@ public class QueryFactory
     public static <T> Queryable of(String name, Class<T> returnType, Object... args)
     {
         NOT_NULL.verify(name, returnType, args);
-        QueryName q = (QueryName) buildQueryable(name, null, args);
+        QueryName q = (QueryName) buildQueryable(name, 0, Integer.MAX_VALUE, null, args);
         q.setReturnType(returnType);
         return q;
     }
@@ -234,6 +234,7 @@ public class QueryFactory
         if(queryable.isScalar())
             q.scalar();
         
+        q.setBookmark(queryable.getBookmark());
         return q;
     }
 
@@ -294,7 +295,7 @@ public class QueryFactory
      * 2º and 3º are pair of name and value of first parameter and so on 4º/5º are second, etc.
      * @return new instance of Queryable with your parameters
      */
-    private static Queryable buildQueryable(String name, RegisterType registerType, Object... args)
+    private static Queryable buildQueryable(String name, int offset, int max, RegisterType registerType, Object... args)
     {
         NOT_NULL.verify(args);
         Map<String, Object> params = new HashMap<String, Object>();
@@ -302,7 +303,7 @@ public class QueryFactory
         Queryable queryable = null;
         if (args.length == 1)
         {
-            queryable = new QueryName(name, args[0], 0, Integer.MAX_VALUE, registerType);
+            queryable = new QueryName(name, args[0], offset, max, registerType);
         }
         else
         {
@@ -324,9 +325,9 @@ public class QueryFactory
                 i++;
             }
             if (i > 1 )
-                queryable = new QueryName(name, params, 0, Integer.MAX_VALUE, registerType);
+                queryable = new QueryName(name, params, offset, max, registerType);
             else
-                queryable = new QueryName(name, null, 0, Integer.MAX_VALUE, registerType);
+                queryable = new QueryName(name, null, offset, max, registerType);
         }
         return queryable;
     }
