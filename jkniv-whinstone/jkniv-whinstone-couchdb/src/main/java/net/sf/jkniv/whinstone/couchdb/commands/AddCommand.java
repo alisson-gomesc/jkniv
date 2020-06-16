@@ -152,6 +152,7 @@ public class AddCommand extends AbstractCommand implements CouchCommand
             httpBuilder.setHeader(http);
             response = httpclient.execute(http);
             json = EntityUtils.toString(response.getEntity());
+            printResponse(response, json);
             int statusCode = response.getStatusLine().getStatusCode();
             if (isCreated(statusCode))
             {

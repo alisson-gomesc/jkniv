@@ -59,7 +59,6 @@ public class JsonTest
         {
             JsonNode n = docs.get(i);
             list.add(JsonMapper.mapper(n.toString(), Author.class));
-            //System.out.println(n.toString());
             //Object currentRow = row;
             //list.add(JsonMapper.mapper((Map) row, returnType));
         }        
@@ -68,7 +67,6 @@ public class JsonTest
         assertThat(bookmark, is("g1AAAAAyeJzLYWBgYMpgSmHgKy5JLCrJTq2MT8lPzkzJBYozGoMkOGASEKEsAErgDR0"));
         assertThat(list.size(), is(1));
         assertThat(list.get(0), instanceOf(Author.class));
-        //System.out.println(docs);
     }
     
     @Test

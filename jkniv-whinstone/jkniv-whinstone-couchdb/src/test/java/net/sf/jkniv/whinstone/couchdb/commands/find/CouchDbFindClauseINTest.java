@@ -46,7 +46,6 @@ public class CouchDbFindClauseINTest extends BaseJdbc
         List<Map> list = repositoryDb.list(q);
         assertThat(list.size(), greaterThan(0));
         assertThat(list.get(0), instanceOf(Map.class));
-        System.out.println(list.get(0));
     }
     
 

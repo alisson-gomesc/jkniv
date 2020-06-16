@@ -83,6 +83,7 @@ public class GetCommand extends AbstractCommand implements CouchCommand
             }
             response = httpclient.execute(http);
             json = EntityUtils.toString(response.getEntity());
+            printResponse(response, json);
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HTTP_OK)
             {

@@ -51,7 +51,6 @@ public class CouchDbGetTest extends BaseJdbc
         assertThat(ret, notNullValue());
         assertThat(ret, instanceOf(Map.class));
         assertThat(ret.get("name").toString(), is("Friedrich Nietzsche"));
-        System.out.println(ret);
     }
 
     @Test

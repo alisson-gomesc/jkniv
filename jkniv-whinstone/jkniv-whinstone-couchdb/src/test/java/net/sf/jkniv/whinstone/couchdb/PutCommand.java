@@ -74,6 +74,7 @@ public class PutCommand //implements DbCommand
             CloseableHttpClient httpclient = HttpClients.createDefault();
             response = httpclient.execute(this.put);
             json = EntityUtils.toString(response.getEntity());
+            
             //LOG.debug(response.getStatusLine().toString());
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HTTP_OK || statusCode == HTTP_CREATED)

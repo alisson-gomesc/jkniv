@@ -58,9 +58,9 @@ public class FindCommand extends AbstractCommand implements CouchCommand
     {
         String json = null;
         CloseableHttpResponse response = null;
-        Class returnType = null;
+        Class<?> returnType = null;
         FindAnswer answer = null;
-        List list = Collections.emptyList();
+        List<?> list = Collections.emptyList();
         //Object currentRow = null;
         try
         {
@@ -71,6 +71,8 @@ public class FindCommand extends AbstractCommand implements CouchCommand
 
             response = httpclient.execute(httpPost);
             json = EntityUtils.toString(response.getEntity());
+            printResponse(response, json);
+
             int statusCode = response.getStatusLine().getStatusCode();
             if (isOk(statusCode))
             {

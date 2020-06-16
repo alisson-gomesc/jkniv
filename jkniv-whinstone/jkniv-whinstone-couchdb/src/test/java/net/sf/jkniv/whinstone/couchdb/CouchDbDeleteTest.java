@@ -73,7 +73,6 @@ public class CouchDbDeleteTest extends BaseJdbc
         assertThat(rows, is(1));
         assertThat(author.getId(), notNullValue());
         assertThat(revision, not(is(author.getRev())));
-        System.out.println(author);
     }
 
     @Test

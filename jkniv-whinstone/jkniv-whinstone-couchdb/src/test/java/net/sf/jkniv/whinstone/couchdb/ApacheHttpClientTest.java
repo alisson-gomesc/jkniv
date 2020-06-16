@@ -32,7 +32,6 @@ public class ApacheHttpClientTest
         RequestParams header = new RequestParams("tecno3t-useraccess");
         String uri = "http://192.168.99.100:5984/tecno3t-useraccess/1";
         String answer = executeGet(uri, header);
-        System.out.println(answer);
         assertThat(answer, not(is("Unauthorized")));
     }
 
@@ -41,7 +40,6 @@ public class ApacheHttpClientTest
     {
         String uri = "http://admin:admin@192.168.99.100:5984/tecno3t-useraccess/_security";
         String answer = executeGet(uri, null);
-        System.out.println(answer);
         assertThat(answer, not(is("Unauthorized")));
     }
 
@@ -50,7 +48,6 @@ public class ApacheHttpClientTest
     {
         String uri = "http://192.168.99.100:5984/_session";
         String answer = authenticate(uri);
-        System.out.println(answer);
         assertThat(answer, not(is("Unauthorized")));
     }
 
@@ -59,7 +56,6 @@ public class ApacheHttpClientTest
     {
         String uri = "http://admin:admiin@192.168.99.100:5984/_all_dbs";
         String answer = executeGet(uri, null);
-        System.out.println(answer);
         assertThat(answer, not(is("Unauthorized")));
     }
     

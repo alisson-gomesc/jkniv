@@ -71,6 +71,8 @@ public class FullResponseFindCommand extends AbstractCommand implements CouchCom
 
             response = httpclient.execute(httpPost);
             json = EntityUtils.toString(response.getEntity());
+            printResponse(response, json);
+
             int statusCode = response.getStatusLine().getStatusCode();
             if (isOk(statusCode))
             {

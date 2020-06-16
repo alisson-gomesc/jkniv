@@ -54,7 +54,6 @@ public class CouchDbAllDocsTest extends BaseJdbc
         assertThat((long)list.size(), greaterThanOrEqualTo(getTotalDocs()));
         assertThat(q.getTotal(), greaterThanOrEqualTo(getTotalDocs()));
         assertThat(list.get(0), instanceOf(Map.class));
-        //System.out.println(list.get(0));
     }
 
     @Test
@@ -70,7 +69,6 @@ public class CouchDbAllDocsTest extends BaseJdbc
         assertThat(q.getTotal(), is(SUCCESS_NO_INFO));
         assertThat(list.get(0), instanceOf(Map.class));
         //assertThat(list.get(0).get("id").toString(), is("3"));
-        //System.out.println(list.get(0));
     }
     
     @Test
@@ -88,7 +86,6 @@ public class CouchDbAllDocsTest extends BaseJdbc
         assertThat(q.getTotal(), is(SUCCESS_NO_INFO));
         assertThat(list.get(0), instanceOf(Map.class));
         //assertThat(list.get(0).get("id").toString(), is("7"));
-        //System.out.println(list.get(0));
     }
     
     

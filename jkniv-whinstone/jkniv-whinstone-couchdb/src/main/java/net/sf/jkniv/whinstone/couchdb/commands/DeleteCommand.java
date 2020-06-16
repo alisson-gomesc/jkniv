@@ -145,6 +145,8 @@ public class DeleteCommand extends AbstractCommand implements CouchCommand
             http.addHeader("If-Match", getRevision(queryable));
             response = httpclient.execute(http);
             json = EntityUtils.toString(response.getEntity());
+            printResponse(response, json);
+
             int statusCode = response.getStatusLine().getStatusCode();
             if (isOk(statusCode))
             {

@@ -51,7 +51,6 @@ public class CouchDbViewTest extends BaseJdbc
         assertThat(list.get(0), instanceOf(Map.class));
         assertThat(list.get(0).get("id"), notNullValue());
         assertThat(list.get(0).get("key"), is(list.get(0).get("nationality")));
-        //System.out.println(list.get(0));
     }
 
     @Test

@@ -24,14 +24,17 @@ import java.util.Map;
 
 import org.apache.http.Consts;
 import org.apache.http.Header;
+import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.exception.HandlerException;
@@ -57,13 +60,14 @@ import net.sf.jkniv.whinstone.params.ParameterNotFoundException;
  */
 public abstract class AbstractCommand implements CouchCommand
 {
+    private static final Logger        LOGSQL = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
     //protected final static String COUCHDB_ID  = "id";
     //protected final static String COUCHDB_REV = "rev";
-    protected HandleableException handlerException;
-    protected CommandHandler      commandHandler;
-    protected String              url;
-    protected String              body;
-    protected HttpMethod          method;
+    protected HandleableException      handlerException;
+    protected CommandHandler           commandHandler;
+    protected String                   url;
+    protected String                   body;
+    protected HttpMethod               method;
     CouchDbStatementAdapter<?, String> stmt;
     
     public AbstractCommand()
@@ -86,7 +90,7 @@ public abstract class AbstractCommand implements CouchCommand
         this.commandHandler = NoCommandHandler.getInstance();
     }
     
-     @Override
+    @Override
     public <T> Command with(T stmt)
     {
         this.stmt = (CouchDbStatementAdapter) stmt;
@@ -94,6 +98,7 @@ public abstract class AbstractCommand implements CouchCommand
         this.body = this.stmt.getBody();
         return this;
     }
+    
     @Override
     public Command with(HandleableException handlerException)
     {
@@ -270,7 +275,8 @@ public abstract class AbstractCommand implements CouchCommand
     
     @SuppressWarnings(
     { "rawtypes", "unchecked" })
-    protected void injectIdentity(ObjectProxy<?> proxy, Object param, String id, String rev, PropertyAccess accessId, PropertyAccess accessRev)
+    protected void injectIdentity(ObjectProxy<?> proxy, Object param, String id, String rev, PropertyAccess accessId,
+            PropertyAccess accessRev)
     {
         if (param instanceof Map)
         {
@@ -290,7 +296,8 @@ public abstract class AbstractCommand implements CouchCommand
     
     @SuppressWarnings(
     { "rawtypes", "unchecked" })
-    protected void injectAutoIdentity(ObjectProxy<?> proxy, Object param, String id, String rev, String properName, PropertyAccess accessId, PropertyAccess accessRev)
+    protected void injectAutoIdentity(ObjectProxy<?> proxy, Object param, String id, String rev, String properName,
+            PropertyAccess accessId, PropertyAccess accessRev)
     {
         if (param instanceof Map)
         {
@@ -308,7 +315,8 @@ public abstract class AbstractCommand implements CouchCommand
     
     protected void setBookmark(String bookmark, Queryable queryable)
     {
-        if (bookmark != null && queryable.getDynamicSql().getSqlDialect().supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY))
+        if (bookmark != null
+                && queryable.getDynamicSql().getSqlDialect().supportsFeature(SqlFeatureSupport.BOOKMARK_QUERY))
             queryable.setBookmark(bookmark);
     }
     
@@ -319,8 +327,28 @@ public abstract class AbstractCommand implements CouchCommand
         {
             v = queryable.getProperty(name);
         }
-        catch (ParameterNotFoundException ignore) {/* parameter not exixts */}
+        catch (ParameterNotFoundException ignore)
+        {
+            /* parameter not exixts */}
         return (v != null ? v : new Param());
     }
     
+    protected void printResponse(CloseableHttpResponse resp, String json)
+    {
+        if (LOGSQL.isTraceEnabled())
+        {
+            StringBuilder sb = new StringBuilder("\n").append(resp.getStatusLine().toString());
+            HeaderIterator it = resp.headerIterator();
+            while (it.hasNext())
+            {
+                Header header = it.nextHeader();
+                sb.append("\n ")
+                .append(header.getName())
+                .append(": ")
+                .append(header.getValue());
+            }
+            sb.append("\n").append("Response").append("\n").append(json);
+            LOGSQL.trace(sb.toString());
+        }
+    }    
 }

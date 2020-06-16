@@ -98,7 +98,6 @@ public class CouchDbFindTest extends BaseJdbc
         assertThat(list.size(), greaterThan(0));
         assertThat(q.getTotal(), greaterThan(0L));
         assertThat(list.get(0), instanceOf(Author.class));
-        //System.out.println(list.get(0));
     }
     
     @Test @Ignore("doesn't work")
@@ -124,7 +123,6 @@ public class CouchDbFindTest extends BaseJdbc
         assertThat(list.size(), is(2));
         assertThat(q.getTotal(), is(2L));
         assertThat(list.get(0), instanceOf(Map.class));
-        System.out.println(list.get(0));
     }
 
     @Test
@@ -136,7 +134,6 @@ public class CouchDbFindTest extends BaseJdbc
         assertThat(list.size(), is(1));
         assertThat(q.getTotal(), is(1L));
         assertThat(list.get(0), instanceOf(Map.class));
-        System.out.println(list.get(0));
     }
 
     @Test
