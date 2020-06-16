@@ -136,7 +136,7 @@ public class AddCommand extends AbstractCommand implements CouchCommand
             String url = httpBuilder.getUrlForAddOrUpdateOrDelete(queryable);
             HttpRequestBase http = null;
             if(LOGSQL.isInfoEnabled())
-                LOGSQL.info("\nHTTP GET {}", url);
+                LOGSQL.info("\nHTTP PUT {}\n{}", url, body);
 
             if (url.equals(httpBuilder.getHostContext()))
             {
