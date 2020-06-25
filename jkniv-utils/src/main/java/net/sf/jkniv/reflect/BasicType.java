@@ -125,6 +125,7 @@ public class BasicType
         return NUMBER_TYPES.containsKey(type.getCanonicalName());
     }
     
+    @SuppressWarnings("unchecked")
     public boolean isBasicType(Class<?> type)
     {
         notNull.verify(type);

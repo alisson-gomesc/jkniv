@@ -90,7 +90,7 @@ class DesignCommand extends AbstractCommand implements CouchCommand
             HttpPut httpPut = new HttpPut(httpBuilder.getHostContext() + docsName);
             httpBuilder.setHeader(httpPut);
             httpPut.setEntity(getEntity());
-            LOG.debug(httpPut.getURI().toString());
+            printRequest(httpPut);
             response = httpclient.execute(httpPut);
             json = EntityUtils.toString(response.getEntity());
             int statusCode = response.getStatusLine().getStatusCode();
@@ -147,9 +147,10 @@ class DesignCommand extends AbstractCommand implements CouchCommand
             
             HttpGet httpGet = new HttpGet(httpBuilder.getHostContext() + docsName);
             httpBuilder.setHeader(httpGet);
-            LOG.debug(httpGet.getURI().toString());
+            printRequest(httpGet);
             response = httpclient.execute(httpGet);
             json = EntityUtils.toString(response.getEntity());
+            printResponse(response, json);
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HTTP_OK)
             {

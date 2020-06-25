@@ -25,7 +25,7 @@ import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.whinstone.types.ColumnType;
 
 /**
- * Represents a column of database.
+ * Represents a column (field) of database.
  * 
  * @param <R> The result of a query (ResultSet).
  * 
@@ -47,17 +47,6 @@ public interface JdbcColumn<R>
     ColumnType getType();
     
     boolean isBinary();
-    /*
-    boolean isClob();
-
-    boolean isBlob();
-
-    boolean isDate();
-    
-    boolean isTimestamp();
-
-    boolean isTime();
-    */
 
     boolean isNestedAttribute();
     

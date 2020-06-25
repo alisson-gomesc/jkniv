@@ -20,6 +20,7 @@
 package net.sf.jkniv.whinstone.couchdb.commands;
 
 import java.io.IOException;
+import java.sql.Statement;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,8 +34,9 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.couchdb.CouchResult;
+import net.sf.jkniv.whinstone.couchdb.CouchResultImpl;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
-import net.sf.jkniv.whinstone.couchdb.statement.FindAnswer;
 
 public class FindCommand extends AbstractCommand implements CouchCommand
 {
@@ -58,17 +60,16 @@ public class FindCommand extends AbstractCommand implements CouchCommand
     {
         String json = null;
         CloseableHttpResponse response = null;
-        Class<?> returnType = null;
-        FindAnswer answer = null;
+        //Class<?> returnType = null;
+        CouchResult answer = null;
+        //FindAnswer answer = null;
         List<?> list = Collections.emptyList();
         //Object currentRow = null;
         try
         {
             CloseableHttpClient httpclient = HttpClients.createDefault();
             HttpPost httpPost = httpBuilder.newFind(body);
-            if(LOGSQL.isInfoEnabled())
-                LOGSQL.info("\nHTTP POST [{}] \n {}", httpPost.getURI(), body);
-
+            printRequest(httpPost);
             response = httpclient.execute(httpPost);
             json = EntityUtils.toString(response.getEntity());
             printResponse(response, json);
@@ -76,26 +77,32 @@ public class FindCommand extends AbstractCommand implements CouchCommand
             int statusCode = response.getStatusLine().getStatusCode();
             if (isOk(statusCode))
             {
+                JsonMapper.setCurrentQuery(queryable);
+                answer = JsonMapper.MAPPER.readerFor(CouchResultImpl.class).readValue(json);
+                list = answer.getRows();
+                /*
                 returnType = queryable.getReturnType();
-                answer = JsonMapper.mapper(json, FindAnswer.class);
+                JsonMapper.setCurrentQuery(queryable);
+                answer = JsonMapper.MAPPER.readerFor(CouchResultImpl.class).readValue(json);
+                //answer = JsonMapper.mapper(json, FindAnswer.class);
                 if (answer.getWarning() != null)
                     LOG.warn("Query [{}] warnning message: {}", queryable.getName(), answer.getWarning());
                 
-                if (returnType != null)
+                if (Map.class.isAssignableFrom(returnType))
                 {
-                    // FIXME overload performance, writer better deserialization using jackson
-                    list = answer.getDocs(returnType);
+                    list =  answer.getRows();
                 }
                 else
-                    list =  answer.getDocs();
-                
+                {
+                    // FIXME overload performance, writer better deserialization using jackson
+                    //list = answer.getRows(returnType);                    
+                    list = transformRows(answer.getRows(), returnType);
+                }
+                */
                 setBookmark(answer.getBookmark(), queryable);
-                //if (queryable.isPaging())
-                //{
-                    //if (answer.getBookmark() == null)
-                //    queryable.setTotal(Statement.SUCCESS_NO_INFO);
-                //}
-                //else
+                if(queryable.isPaging())
+                    queryable.setTotal(Statement.SUCCESS_NO_INFO);
+                else
                     queryable.setTotal(list.size());
             }
             else if (isNotFound(statusCode))
@@ -113,7 +120,7 @@ public class FindCommand extends AbstractCommand implements CouchCommand
         }
         catch (Exception e) // ClientProtocolException | JsonParseException | JsonMappingException | IOException
         {
-            //queryable.setTotal(Statement.EXECUTE_FAILED);
+            queryable.setTotal(Statement.EXECUTE_FAILED);
             //commandHandler.postException();
             handlerException.handle(e);
         }
@@ -133,6 +140,19 @@ public class FindCommand extends AbstractCommand implements CouchCommand
         }
         return (T)list;
     }
+    
+    /*
+    public <T> List<T> transformRows(List<?> listOfMap, Class<T> clazz)
+    {
+        List<Object> docs = new ArrayList();
+        if (listOfMap != null)
+        {
+            for (Object row : listOfMap)
+                docs.add(JsonMapper.mapper((Map) row, clazz));
+        }
+        return (List<T>) docs;
+    }
+    */
 
     @Override
     public String getBody()

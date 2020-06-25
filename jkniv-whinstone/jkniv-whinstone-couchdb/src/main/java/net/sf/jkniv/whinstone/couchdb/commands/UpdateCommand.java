@@ -137,9 +137,7 @@ public class UpdateCommand extends AbstractCommand implements CouchCommand
             
             // FIXME supports header request for PUT commands -> Headers: "If-Match", "X-Couch-Full-Commit"
             httpBuilder.setHeader(http);
-            if(LOGSQL.isInfoEnabled())
-                LOGSQL.info("\nHTTP PUT {}\n{}", url, body);
-            
+            printRequest(http);            
             response = httpclient.execute(http);
             json = EntityUtils.toString(response.getEntity());
             printResponse(response, json);

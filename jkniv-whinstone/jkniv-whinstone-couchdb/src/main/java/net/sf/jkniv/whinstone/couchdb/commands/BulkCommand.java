@@ -165,10 +165,7 @@ public class BulkCommand extends AbstractCommand implements CouchCommand
             
             // TODO supports header request X-Couch-Full-Commit – Overrides server’s commit policy. Possible values are: false and true. Optional
             httpBuilder.setHeader(http);
-            if (LOGSQL.isInfoEnabled())
-            {
-                LOGSQL.info("\nHTTP POST {}\n{}", url, body);
-            }
+            printRequest(http);
             response = httpclient.execute(http);
             json = EntityUtils.toString(response.getEntity());
             printResponse(response, json);

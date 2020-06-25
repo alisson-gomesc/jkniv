@@ -57,7 +57,6 @@ public class BaseJdbc extends BaseSpringJUnit4
     private static boolean         SETUP_DATABASE_DONE = false;
     static int                     TOTAL_AUTHORS       = 7;
     static int                     TOTAL_VIEWS         = 1;
-    
     static
     {
         config = new Properties();

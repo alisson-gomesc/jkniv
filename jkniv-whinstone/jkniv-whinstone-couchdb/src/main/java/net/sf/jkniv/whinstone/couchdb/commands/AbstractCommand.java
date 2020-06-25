@@ -32,6 +32,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -331,6 +332,25 @@ public abstract class AbstractCommand implements CouchCommand
         {
             /* parameter not exixts */}
         return (v != null ? v : new Param());
+    }
+    
+    protected void printRequest(HttpRequestBase req)
+    {
+        if (LOGSQL.isTraceEnabled())
+        {
+            StringBuilder sb = new StringBuilder("\n ")
+                    .append(req.getProtocolVersion().toString())
+                    .append(" ").append(req.getMethod())
+                    .append(" ").append(req.getURI());
+
+            for (Header h : req.getAllHeaders())
+                sb.append("\n ").append(h.getName()+": "+h.getValue());
+            
+            if (!"GET".equalsIgnoreCase(req.getMethod()))
+                sb.append("\n").append(body);
+            
+            LOGSQL.info(sb.toString());
+        }
     }
     
     protected void printResponse(CloseableHttpResponse resp, String json)

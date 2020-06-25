@@ -39,7 +39,6 @@ import net.sf.jkniv.whinstone.Queryable;
  */
 public class DefaultJdbcQuery extends AbstractJdbcCommand
 {
-    @SuppressWarnings("rawtypes")
     public DefaultJdbcQuery(Queryable queryable, Connection conn)
     {
         super(queryable, conn);

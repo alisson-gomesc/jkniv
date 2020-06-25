@@ -74,13 +74,7 @@ public class GetCommand extends AbstractCommand implements CouchCommand
                 throw new RepositoryException("Get Command just support GET HTTP method!");
             
             httpBuilder.setHeader(http);
-            if(LOGSQL.isInfoEnabled())
-            {
-                StringBuilder sb = new StringBuilder("\nHTTP GET " + url);
-                for (Header h : http.getAllHeaders())
-                    sb.append("\n ").append(h.getName()+": "+h.getValue());
-                LOGSQL.info(sb.toString());
-            }
+            printRequest(http);
             response = httpclient.execute(http);
             json = EntityUtils.toString(response.getEntity());
             printResponse(response, json);

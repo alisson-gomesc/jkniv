@@ -34,18 +34,24 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.RepositoryException;
+import net.sf.jkniv.whinstone.QueryFactory;
+import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.couchdb.CouchResultImpl;
 
 public class JsonMapper
 {
     private static final Logger LOG = LoggerFactory.getLogger(JsonMapper.class);
     private static HandlerException handlerException;
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    static final ObjectMapper MAPPER = new ObjectMapper();
     private static final Map<String, String> JACKSON_MODULES = new HashMap<String, String>();
+    private static final ThreadLocal<Queryable> CURRENT_QUERY = new ThreadLocal<Queryable>();
+    
     static
     {
         handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
@@ -59,11 +65,35 @@ public class JsonMapper
         JACKSON_MODULES.put("JavaTimeModule",       "com.fasterxml.jackson.datatype.jsr310.JavaTimeModule"); 
         JACKSON_MODULES.put("Jdk8Module",           "com.fasterxml.jackson.datatype.jdk8.Jdk8Module"); 
         JACKSON_MODULES.put("JSR310TimeModule",     "com.fasterxml.jackson.datatype.jsr310.JSR310TimeModule"); 
-        JACKSON_MODULES.put("ThreeTenModule",       "com.fasterxml.jackson.datatype.threetenbp.ThreeTenModule"); 
+        JACKSON_MODULES.put("ThreeTenModule",       "com.fasterxml.jackson.datatype.threetenbp.ThreeTenModule");
+        
+        SimpleModule simpleModule = new SimpleModule();
+        simpleModule.addDeserializer(CouchResultImpl.class, new CouchDbJsonDeserialization());
+        MAPPER.registerModule(simpleModule);
+        // pretty print
+        //String prettyStaff1 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(staff2);
+        //MAPPER.writerWithDefaultPrettyPrinter();
+
     }
     
     private JsonMapper()
     {
+    }
+    
+    static void setCurrentQuery(Queryable queryable)
+    {
+        CURRENT_QUERY.set(queryable);
+    }
+
+    static Queryable getCurrentQuery()
+    {
+        Queryable queryable = CURRENT_QUERY.get();
+        CURRENT_QUERY.remove();
+        if(queryable == null)
+        {
+            queryable = QueryFactory.of("dummy", Map.class);
+        }
+        return queryable;
     }
     
     public static void config(SerializationFeature feature, boolean state)

@@ -1,0 +1,33 @@
+{
+	"total_rows": 7,
+	"offset": 3,
+	"rows": [
+		{
+			"id": "4",
+			"key": "Franz Kafka",
+			"value": 1,
+			"doc": {
+				"_id": "4",
+				"_rev": "1-d17f9f015bcc8f0b566a6204202ed7d5",
+				"name": "Franz Kafka",
+				"nationality": "CZ",
+				"books": [
+					{
+						"isbn": "978-1557427663",
+						"name": "The Metamorphosis",
+						"published": 1915,
+						"lastView": "2018-03-20T08:10:00.000-0300",
+						"visualization": 0
+					},
+					{
+						"isbn": "978-1612931036",
+						"name": "The Trial",
+						"published": 1925,
+						"lastView": "2018-03-20T09:10:00.000-0300",
+						"visualization": 0
+					}
+				]
+			}
+		}
+	]
+}

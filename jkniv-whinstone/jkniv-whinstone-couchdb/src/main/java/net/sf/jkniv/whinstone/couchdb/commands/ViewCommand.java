@@ -35,12 +35,15 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.jkniv.reflect.BasicType;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.Param;
 import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.couchdb.CouchResult;
+import net.sf.jkniv.whinstone.couchdb.CouchResultImpl;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 import net.sf.jkniv.whinstone.couchdb.statement.AllDocsAnswer;
 
@@ -51,7 +54,7 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
     private static final Logger LOGSQL = net.sf.jkniv.whinstone.couchdb.LoggerFactory.getLogger();
     private final Queryable           queryable;
     private final HttpBuilder         httpBuilder;
-    
+    private final static BasicType BASIC_TYPE = BasicType.getInstance();
     public ViewCommand(HttpBuilder httpBuilder, Queryable queryable)
     {
         super();
@@ -64,19 +67,18 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
     {
         String json = null;
         CloseableHttpResponse response = null;
-        Class returnType = null;
-        AllDocsAnswer answer = null;
+        //Class returnType = null;
+        //AllDocsAnswer answer = null;
+        CouchResult answer = null;
         List list = Collections.emptyList();
         PropertyAccess accessId = queryable.getDynamicSql().getSqlDialect().getAccessId();
         try
         {
             CloseableHttpClient httpclient = HttpClients.createDefault();
             String url = httpBuilder.getUrlForView(queryable);
-            if(LOGSQL.isInfoEnabled())
-                LOGSQL.info("\nHTTP POST {}\n{}", url, body);
-
             HttpGet http = (HttpGet) asGet().newHttp(url);
             httpBuilder.setHeader(http);
+            printRequest(http);
             response = httpclient.execute(http);
             json = EntityUtils.toString(response.getEntity());
             printResponse(response, json);
@@ -84,9 +86,16 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
             int statusCode = response.getStatusLine().getStatusCode();
             if (isOk(statusCode))
             {
-                returnType = queryable.getReturnType();
-                answer = JsonMapper.mapper(json, AllDocsAnswer.class);
-                if (returnType != null)
+                //returnType = queryable.getReturnType();
+                JsonMapper.setCurrentQuery(queryable);
+                answer = JsonMapper.MAPPER.readerFor(CouchResultImpl.class).readValue(json);
+                list = answer.getRows();
+                //answer = JsonMapper.mapper(json, AllDocsAnswer.class);
+//                if (Map.class.isAssignableFrom(returnType))
+//                {
+//                }
+                /*
+                if(returnType != null)
                 {
                     list = new ArrayList();
                     String keyToReturnType = "value";
@@ -94,30 +103,43 @@ public class ViewCommand extends AbstractCommand implements CouchCommand
                     if (includeDocs != null && "true".equals(includeDocs.getValue()))
                         keyToReturnType = "doc";
                     // FIXME overload performance, writer better deserialization using jackson
-                    for (Map map : answer.getRows())
+                    for (Object map : answer.getRows())
                     {
-                        Map content = (Map) map.get(keyToReturnType);
-                        //Map content = (Map) map.get("value");
-                        Object o = JsonMapper.mapper(content, returnType);
-                        list.add(o);
-                        if (o instanceof Map)
+                        Object rawValue = ((Map)map).get(keyToReturnType);
+                        Object row =  null;
+                        if (rawValue != null)
                         {
-                            ((Map) o).put("id", map.get("id"));
-                            ((Map) o).put("key", map.get("key"));
+                            if(BASIC_TYPE.isBasicType(rawValue.getClass()))
+                            {
+                                
+                            }
+                            else
+                            {
+                                Map content = (Map) rawValue;
+                                row = JsonMapper.mapper(content, returnType);                                
+                            }
+                        }
+                        list.add(row);
+                        if (row instanceof Map)
+                        {
+                            ((Map) row).put("id", ((Map)map).get("id"));
+                            ((Map) row).put("key", ((Map)map).get("key"));
                         }
                         else
                         {
-                            ObjectProxy<?> proxy = ObjectProxyFactory.of(o);
+                            ObjectProxy<?> proxy = ObjectProxyFactory.of(row);
                             if (proxy.hasMethod(accessId.getWriterMethodName()))
-                                proxy.invoke(accessId.getWriterMethodName(), map.get("id"));
+                                proxy.invoke(accessId.getWriterMethodName(), ((Map)map).get("id"));
                             if (proxy.hasMethod("setKey"))
-                                proxy.invoke("setKey", map.get("key"));
+                                proxy.invoke("setKey", ((Map)map).get("key"));
                         }
                     }
                 }
                 else
+                {
                     list = answer.getRows();
-                
+                }
+                */
                 if (queryable.isPaging())
                     queryable.setTotal(answer.getTotalRows());
                 else

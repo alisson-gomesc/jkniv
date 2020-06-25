@@ -134,15 +134,13 @@ public class DeleteCommand extends AbstractCommand implements CouchCommand
             CloseableHttpClient httpclient = HttpClients.createDefault();
             String url = httpBuilder.getUrlForAddOrUpdateOrDelete(queryable);
             HttpDelete http = null;
-            if(LOGSQL.isInfoEnabled())
-                LOGSQL.info("\nHTTP DELETE {}\n{}", url, body);
-
             http = (HttpDelete)asDelete().newHttp(url);
             //http.setEntity( getEntity() );
             
             // FIXME supports header request for PUT commands -> Headers: "If-Match", "X-Couch-Full-Commit"
             httpBuilder.setHeader(http);
             http.addHeader("If-Match", getRevision(queryable));
+            printRequest(http);
             response = httpclient.execute(http);
             json = EntityUtils.toString(response.getEntity());
             printResponse(response, json);
