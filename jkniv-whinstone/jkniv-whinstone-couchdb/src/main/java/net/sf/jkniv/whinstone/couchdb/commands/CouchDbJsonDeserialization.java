@@ -64,10 +64,10 @@ public class CouchDbJsonDeserialization extends JsonDeserializer<CouchResultImpl
         final Long offset = 0L;
         String bookmark = null;
         String warning = null;
-        if (field.has("bookmark"))
+        if (field.hasNonNull("bookmark"))
             bookmark = field.get("bookmark").asText();
         
-        if (field.has("warning")) {
+        if (field.hasNonNull("warning")) {
             warning = field.get("warning").asText();
             LOG.warn("Query [{}] warnning message: {}", queryable.getName(), warning);
         }
@@ -103,7 +103,7 @@ public class CouchDbJsonDeserialization extends JsonDeserializer<CouchResultImpl
                 {
                     object = row.isDouble() ? row.asDouble() : row.asLong();                
                 }
-                else if(row.isTextual())                        
+                else if(row.isTextual() && !row.isNull())                        
                     object = row.asText();
                 else
                     object = parserRow(returnType, accessId, element, row);
@@ -150,8 +150,12 @@ public class CouchDbJsonDeserialization extends JsonDeserializer<CouchResultImpl
     
     private void setIdentity(JsonNode element, Object row, PropertyAccess accessId)
     {
-        String id = element.get("id").asText();
-        String key = element.get("key").asText();
+        String id = null;
+        String key = null;
+        if(element.hasNonNull("id"))
+            id = element.get("id").asText();
+        if(element.hasNonNull("key"))
+            key = element.get("key").asText();
         
         if (row instanceof Map)
         {

@@ -7,16 +7,20 @@
   <package name="_design/docs">
     <select id="map#natio">
       function(doc) {
-        emit( doc.nationality, {
-          name: doc.name,
-          nationality: doc.nationality,
-          books: doc.books
-        });
+        if(doc.nationality) {
+          emit( doc.nationality, {
+            name: doc.name,
+            nationality: doc.nationality,
+            books: doc.books
+          });
+        }
       }
     </select>
     <select id="map#natio2">
       function(doc) {
-        emit(doc.nationality, doc);
+        if(doc.nationality) {
+          emit(doc.nationality, doc);
+        }
       }
     </select>
     <select id="map#author">
