@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -35,8 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.couchdb.CouchDbResult;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
-import net.sf.jkniv.whinstone.couchdb.statement.AllDocsAnswer;
 
 public class AllDocsCommand extends AbstractCommand implements CouchCommand 
 {
@@ -60,11 +59,9 @@ public class AllDocsCommand extends AbstractCommand implements CouchCommand
     @Override
     public <T> T execute()
     {
-        //http = new HttpGet(uri.toString()+uriParams.toString());
-        //requestParams.setHeader(http);
         String json = null;
         CloseableHttpResponse response = null;
-        AllDocsAnswer answer = null;
+        CouchDbResult answer = null;
         List<?> list = Collections.emptyList();
         HttpRequestBase http = null;
         try
@@ -83,10 +80,9 @@ public class AllDocsCommand extends AbstractCommand implements CouchCommand
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HTTP_OK)
             {
-                answer = JsonMapper.mapper(json, AllDocsAnswer.class);
-                //if (answer.getWarning() != null)
-                //    LOG.warn(answer.getWarning());
-                list =  answer.getRows();
+                JsonMapper.setCurrentQuery(queryable);
+                answer = JsonMapper.MAPPER.readerFor(CouchDbResultImpl.class).readValue(json);
+                list = answer.getRows();
                 queryable.setTotal(answer.getTotalRows());
             }
             else if (isNotFound(statusCode))

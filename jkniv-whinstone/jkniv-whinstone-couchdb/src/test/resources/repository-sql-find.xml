@@ -19,7 +19,7 @@
     }
   </select>
 
-  <select id="authorsDE" returnType="net.sf.jkniv.whinstone.couchdb.statement.FindAnswer">
+  <select id="authorsDE" returnType="net.sf.jkniv.whinstone.couchdb.CouchDbResult">
     {
      "selector": {"nationality": "DE" }
     }

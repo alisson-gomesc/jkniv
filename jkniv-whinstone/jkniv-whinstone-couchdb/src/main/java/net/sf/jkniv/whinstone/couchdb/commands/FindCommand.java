@@ -21,6 +21,7 @@ package net.sf.jkniv.whinstone.couchdb.commands;
 
 import java.io.IOException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,10 +35,10 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.couchdb.CouchResult;
-import net.sf.jkniv.whinstone.couchdb.CouchResultImpl;
+import net.sf.jkniv.whinstone.couchdb.CouchDbResult;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class FindCommand extends AbstractCommand implements CouchCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger(FindCommand.class);
@@ -50,21 +51,16 @@ public class FindCommand extends AbstractCommand implements CouchCommand
         super();
         this.queryable = queryable;
         this.httpBuilder = httpBuilder;
-        //stmt.rows();
-        //this.body = stmt.getBody();
     }
     
-    @SuppressWarnings("unchecked")
+    
     @Override
     public <T> T execute()
     {
         String json = null;
         CloseableHttpResponse response = null;
-        //Class<?> returnType = null;
-        CouchResult answer = null;
-        //FindAnswer answer = null;
-        List<?> list = Collections.emptyList();
-        //Object currentRow = null;
+        CouchDbResult answer = null;
+        List list = Collections.emptyList();
         try
         {
             CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -78,32 +74,19 @@ public class FindCommand extends AbstractCommand implements CouchCommand
             if (isOk(statusCode))
             {
                 JsonMapper.setCurrentQuery(queryable);
-                answer = JsonMapper.MAPPER.readerFor(CouchResultImpl.class).readValue(json);
-                list = answer.getRows();
-                /*
-                returnType = queryable.getReturnType();
-                JsonMapper.setCurrentQuery(queryable);
-                answer = JsonMapper.MAPPER.readerFor(CouchResultImpl.class).readValue(json);
-                //answer = JsonMapper.mapper(json, FindAnswer.class);
-                if (answer.getWarning() != null)
-                    LOG.warn("Query [{}] warnning message: {}", queryable.getName(), answer.getWarning());
-                
-                if (Map.class.isAssignableFrom(returnType))
+                answer = JsonMapper.MAPPER.readerFor(CouchDbResultImpl.class).readValue(json);
+                if(CouchDbResult.class.isAssignableFrom(queryable.getReturnType()))
                 {
-                    list =  answer.getRows();
+                    list = new ArrayList();
+                    list.add(answer);
                 }
                 else
-                {
-                    // FIXME overload performance, writer better deserialization using jackson
-                    //list = answer.getRows(returnType);                    
-                    list = transformRows(answer.getRows(), returnType);
-                }
-                */
+                    list = answer.getRows();
                 setBookmark(answer.getBookmark(), queryable);
                 if(queryable.isPaging())
                     queryable.setTotal(Statement.SUCCESS_NO_INFO);
                 else
-                    queryable.setTotal(list.size());
+                    queryable.setTotal(answer.getTotalRows());
             }
             else if (isNotFound(statusCode))
             {

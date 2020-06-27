@@ -19,30 +19,25 @@
  */
 package net.sf.jkniv.whinstone.couchdb.commands.find;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.instanceOf;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.BaseJdbc;
+import net.sf.jkniv.whinstone.couchdb.CouchDbResult;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
-import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
-import net.sf.jkniv.whinstone.couchdb.statement.FindAnswer;
 
 public class CouchDbFindTest extends BaseJdbc
 {
@@ -151,12 +146,12 @@ public class CouchDbFindTest extends BaseJdbc
     {
         Repository repositoryDb = getRepository();
         Queryable q = QueryFactory.of("authorsBR");
-        FindAnswer answer = repositoryDb.get(q, FindAnswer.class);
+        CouchDbResult answer = repositoryDb.get(q, CouchDbResult.class);
         assertThat(answer,  notNullValue());
         assertThat(q.getTotal(), greaterThan(0L));
-        assertThat(answer, instanceOf(FindAnswer.class));
-        assertThat(answer.getDocs().get(0), instanceOf(Map.class));
-        assertThat(answer.getDocs(Author.class).get(0), instanceOf(Author.class));
+        assertThat(answer, instanceOf(CouchDbResult.class));
+        assertThat(answer.getRows().get(0), instanceOf(Map.class));
+        //assertThat(answer.getRows(Author.class).get(0), instanceOf(Author.class));
     }
 
     @Test
@@ -164,14 +159,14 @@ public class CouchDbFindTest extends BaseJdbc
     {
         Repository repositoryDb = getRepository();
         Queryable q = QueryFactory.of("authorsDE");
-        FindAnswer answer = repositoryDb.get(q, FindAnswer.class);
+        CouchDbResult answer = repositoryDb.get(q, CouchDbResult.class);
         assertThat(answer,  notNullValue());
         assertThat(q.getTotal(), greaterThan(0L));
-        assertThat(answer, instanceOf(FindAnswer.class));
-        assertThat(answer.getDocs().get(0), instanceOf(Map.class));
+        assertThat(answer, instanceOf(CouchDbResult.class));
+        assertThat(answer.getRows().get(0), instanceOf(Map.class));
         assertThat(q.getTotal(), is(3L));
-        assertThat(answer.getDocs().size(), is(3));
-        assertThat(answer.getDocs(Author.class).get(0), instanceOf(Author.class));
+        assertThat(answer.getRows().size(), is(3));
+        //assertThat(answer.getDocs(Author.class).get(0), instanceOf(Author.class));
     }
 
     

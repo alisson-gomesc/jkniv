@@ -2,7 +2,7 @@ package net.sf.jkniv.whinstone.couchdb;
 
 import java.util.List;
 
-public interface CouchResult
+public interface CouchDbResult
 {
     Long getTotalRows();
     
@@ -14,4 +14,5 @@ public interface CouchResult
     
     String getWarning();
 
+    ExecutionStats getExecutionStats();
 }

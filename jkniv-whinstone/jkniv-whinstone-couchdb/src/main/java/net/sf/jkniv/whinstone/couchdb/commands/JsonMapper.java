@@ -42,7 +42,6 @@ import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.couchdb.CouchResultImpl;
 
 public class JsonMapper
 {
@@ -68,7 +67,7 @@ public class JsonMapper
         JACKSON_MODULES.put("ThreeTenModule",       "com.fasterxml.jackson.datatype.threetenbp.ThreeTenModule");
         
         SimpleModule simpleModule = new SimpleModule();
-        simpleModule.addDeserializer(CouchResultImpl.class, new CouchDbJsonDeserialization());
+        simpleModule.addDeserializer(CouchDbResultImpl.class, new CouchDbJsonDeserialization());
         MAPPER.registerModule(simpleModule);
         // pretty print
         //String prettyStaff1 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(staff2);

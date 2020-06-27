@@ -1,5 +1,5 @@
 
-package net.sf.jkniv.whinstone.couchdb.statement;
+package net.sf.jkniv.whinstone.couchdb;
 
 import java.util.HashMap;
 import java.util.Map;

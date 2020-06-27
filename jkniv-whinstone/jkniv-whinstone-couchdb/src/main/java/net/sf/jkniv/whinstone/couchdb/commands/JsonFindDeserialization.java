@@ -1,4 +1,4 @@
-package net.sf.jkniv.whinstone.couchdb;
+package net.sf.jkniv.whinstone.couchdb.commands;
 
 import java.io.IOException;
 
@@ -8,9 +8,12 @@ import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+
+import net.sf.jkniv.whinstone.couchdb.CouchDbResult;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class JsonFindDeserialization extends StdDeserializer<CouchResult>
+public class JsonFindDeserialization extends StdDeserializer<CouchDbResult>
 {
     public JsonFindDeserialization() {
         this(null);
@@ -21,7 +24,7 @@ public class JsonFindDeserialization extends StdDeserializer<CouchResult>
     }
     
     @Override
-    public CouchResult deserialize(JsonParser json, DeserializationContext ctxt)
+    public CouchDbResult deserialize(JsonParser json, DeserializationContext ctxt)
             throws IOException, JsonProcessingException
     {
         ObjectCodec codec = json.getCodec();

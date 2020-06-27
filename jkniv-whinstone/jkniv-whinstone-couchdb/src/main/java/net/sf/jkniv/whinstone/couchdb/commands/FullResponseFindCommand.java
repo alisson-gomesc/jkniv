@@ -20,7 +20,6 @@
 package net.sf.jkniv.whinstone.couchdb.commands;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,8 +33,8 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.Queryable;
+import net.sf.jkniv.whinstone.couchdb.CouchDbResult;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
-import net.sf.jkniv.whinstone.couchdb.statement.FindAnswer;
 
 public class FullResponseFindCommand extends AbstractCommand implements CouchCommand
 {
@@ -49,8 +48,6 @@ public class FullResponseFindCommand extends AbstractCommand implements CouchCom
         super();
         this.queryable = queryable;
         this.httpBuilder = httpBuilder;
-        //stmt.rows();
-        //this.body = stmt.getBody();
     }
     
     @Override
@@ -58,10 +55,8 @@ public class FullResponseFindCommand extends AbstractCommand implements CouchCom
     {
         String json = null;
         CloseableHttpResponse response = null;
-        //Class returnType = null;
-        FindAnswer answer = null;
+        CouchDbResult answer = null;
         List list = Collections.emptyList();
-        //Object currentRow = null;
         try
         {
             CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -76,21 +71,11 @@ public class FullResponseFindCommand extends AbstractCommand implements CouchCom
             int statusCode = response.getStatusLine().getStatusCode();
             if (isOk(statusCode))
             {
-                //returnType = queryable.getReturnType();
-                answer = JsonMapper.mapper(json, FindAnswer.class);
-                if (answer.getWarning() != null)
-                    LOG.warn("Query [{}] warnning message: {}", queryable.getName(), answer.getWarning());
-                                    
-                list = new ArrayList();
-                list.add(answer);
-                //if (queryable.isPaging())
-               // {
-                    //if (answer.getBookmark() == null)
-               //     queryable.setTotal(Statement.SUCCESS_NO_INFO);
-               // }
-               // else
+                JsonMapper.setCurrentQuery(queryable);
+                answer = JsonMapper.MAPPER.readerFor(CouchDbResultImpl.class).readValue(json);
+                list = answer.getRows();
                 setBookmark(answer.getBookmark(), queryable);
-                queryable.setTotal(answer.getDocs().size());
+                queryable.setTotal(answer.getRows().size());
             }
             else if (isNotFound(statusCode))
             {

@@ -36,7 +36,9 @@ import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.BaseJdbc;
+import net.sf.jkniv.whinstone.couchdb.CouchDbResult;
 import net.sf.jkniv.whinstone.couchdb.model.orm.AuthorView;
+import net.sf.jkniv.whinstone.couchdb.model.orm.Combo;
 
 public class CouchDbViewTest extends BaseJdbc
 {
@@ -86,7 +88,7 @@ public class CouchDbViewTest extends BaseJdbc
     public void whenUseViewWithParams()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = QueryFactory.of("docs/_view/natio", asParams("startkey","DE","endkey","DE"));
+        Queryable q = QueryFactory.of("docs/_view/natio", "startkey","DE","endkey","DE");
         List<AuthorView> list = repositoryDb.list(q);
         assertThat(q.getTotal(), is((long)list.size()));
         assertThat(list.size(), greaterThanOrEqualTo(3));
@@ -98,12 +100,66 @@ public class CouchDbViewTest extends BaseJdbc
     public void whenUseViewIncludeDoc()
     {
         Repository repositoryDb = getRepository();
-        Queryable q = QueryFactory.of("docs/_view/author", asParams("key","Franz Kafka","include_docs","true"));
+        Queryable q = QueryFactory.of("docs/_view/author", "key","Franz Kafka","include_docs","true");
         List<Author> list = repositoryDb.list(q);
         assertThat(q.getTotal(), is((long)list.size()));
         assertThat(list.size(), is(1));
         assertThat(list.get(0).getBooks().size(), is(2));
         assertThat(list.get(0), instanceOf(Author.class));
     }
+
+    @Test
+    public void whenViewUseValueAsMapAndGroupTrue()
+    {
+        Repository repositoryDb = getRepository();
+        Queryable q = QueryFactory.of("docs/_view/natio-combo", "group", "true");
+        List<Map> list = repositoryDb.list(q);
+        assertThat(q.getTotal(), is((long)list.size()));
+        assertThat(list.size(), greaterThanOrEqualTo(5));
+        assertThat(list.get(0), instanceOf(Map.class));
+    }
+
+    @Test
+    public void whenViewAsComboWithGroupTrue()
+    {
+        Repository repositoryDb = getRepository();
+        Queryable q = QueryFactory.of("docs/_view/natio-combo", Combo.class, "group", "true");
+        List<Combo> list = repositoryDb.list(q);
+        assertThat(q.getTotal(), is((long)list.size()));
+        assertThat(list.size(), greaterThanOrEqualTo(5));
+        assertThat(list.get(0), instanceOf(Combo.class));
+    }
     
+    @Test
+    public void whenViewReturnDefaultCouchDbReturn()
+    {
+        Repository repositoryDb = getRepository();
+        Queryable q = QueryFactory.of("docs/_view/natio-combo", CouchDbResult.class, "group", "true");
+        CouchDbResult result = repositoryDb.get(q);
+        assertThat(result, instanceOf(CouchDbResult.class));
+        assertThat(result.getRows().size(), greaterThanOrEqualTo(5));
+    }
+
+    @Test
+    public void whenViewUseValueAsIntegerAndGroupTrue()
+    {
+        Repository repositoryDb = getRepository();
+        Queryable q = QueryFactory.of("docs/_view/natio-combo", Integer.class, "group", "true");
+        List<Integer> list = repositoryDb.list(q);
+        assertThat(q.getTotal(), is((long)list.size()));
+        assertThat(list.size(), greaterThanOrEqualTo(5));
+        assertThat(list.get(0), instanceOf(Integer.class));        
+    }
+
+    @Test
+    public void whenViewUseValueAsInteger()
+    {
+        Repository repositoryDb = getRepository();
+        Queryable q = QueryFactory.of("docs/_view/natio-combo", Integer.class);
+        List<Integer> list = repositoryDb.list(q);
+        assertThat(q.getTotal(), is((long)list.size()));
+        assertThat(list.size(), is(1));
+        assertThat(list.get(0), instanceOf(Integer.class));
+    }
+
 }

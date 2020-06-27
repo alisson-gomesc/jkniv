@@ -36,20 +36,22 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import net.sf.jkniv.reflect.BasicType;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.reflect.beans.PropertyAccess;
 import net.sf.jkniv.whinstone.Queryable;
-import net.sf.jkniv.whinstone.couchdb.CouchResultImpl;
+import net.sf.jkniv.whinstone.couchdb.CouchDbResult;
+import net.sf.jkniv.whinstone.couchdb.ExecutionStats;
 
-@SuppressWarnings(
-{ "unchecked", "rawtypes" })
-public class CouchDbJsonDeserialization extends JsonDeserializer<CouchResultImpl>
+@SuppressWarnings({"unchecked", "rawtypes" })
+public class CouchDbJsonDeserialization extends JsonDeserializer<CouchDbResultImpl>
 {
-    private final static Logger LOG = LoggerFactory.getLogger(CouchDbJsonDeserialization.class);
+    private final static Logger         LOG               = LoggerFactory.getLogger(CouchDbJsonDeserialization.class);
     private final static PropertyAccess DEFAULT_ACCESS_ID = new PropertyAccess("id");
+    
     @Override
-    public CouchResultImpl deserialize(JsonParser json, DeserializationContext ctxt)
+    public CouchDbResultImpl deserialize(JsonParser json, DeserializationContext ctxt)
             throws IOException, JsonProcessingException
     {
         ObjectCodec codec = json.getCodec();
@@ -57,32 +59,44 @@ public class CouchDbJsonDeserialization extends JsonDeserializer<CouchResultImpl
         Queryable queryable = JsonMapper.getCurrentQuery();
         Class<?> returnType = queryable.getReturnType();
         PropertyAccess accessId = DEFAULT_ACCESS_ID;
-        if(queryable.getDynamicSql() != null)
+        if (queryable.getDynamicSql() != null)
             accessId = queryable.getDynamicSql().getSqlDialect().getAccessId();
         
         final Long totalRows = 0L;
         final Long offset = 0L;
         String bookmark = null;
         String warning = null;
+        List rows = Collections.emptyList();
+        ExecutionStats stats = null;
         if (field.hasNonNull("bookmark"))
             bookmark = field.get("bookmark").asText();
+
+        if (field.hasNonNull("execution_stats"))
+            stats = JsonMapper.mapper(field.get("execution_stats").asText(), ExecutionStats.class);
         
-        if (field.hasNonNull("warning")) {
+        if (field.hasNonNull("warning"))
+        {
             warning = field.get("warning").asText();
             LOG.warn("Query [{}] warnning message: {}", queryable.getName(), warning);
         }
-        List rows = Collections.emptyList();
+        
         if (field.has("rows"))
         {
             final JsonNode nodeRows = field.get("rows");
-            rows = parserViewResult(nodeRows, returnType, accessId);
+            if (CouchDbResult.class.isAssignableFrom(returnType))
+                rows = nodeToMap(nodeRows);
+            else
+                rows = parserViewResult(nodeRows, returnType, accessId);
         }
         else if (field.has("docs"))
         {
             final JsonNode nodeDocs = field.get("docs");
-            rows = parserFindResult(nodeDocs, returnType, accessId);
+            if (CouchDbResult.class.isAssignableFrom(returnType))
+                rows = nodeToMap(nodeDocs);
+            else
+                rows = parserFindResult(nodeDocs, returnType, accessId);
         }
-        return CouchResultImpl.of(totalRows, offset, bookmark, warning, rows);
+        return CouchDbResultImpl.of(totalRows, offset, bookmark, warning, rows, stats);
     }
     
     private List parserViewResult(final JsonNode nodeRows, Class<?> returnType, PropertyAccess accessId)
@@ -95,24 +109,36 @@ public class CouchDbJsonDeserialization extends JsonDeserializer<CouchResultImpl
             {
                 JsonNode element = it.next();
                 JsonNode row = element.get("value");
-                if(element.has("doc"))
+                if (element.has("doc"))
                     row = element.get("doc");
                 
                 Object object = null;
-                if (row.isNumber()) 
+                if (BasicType.getInstance().isBasicType(returnType))
                 {
-                    object = row.isDouble() ? row.asDouble() : row.asLong();                
+                    if (!row.isNull())
+                    {
+                        if(row.isInt())
+                            object = row.asInt();
+                        else if(row.isLong())
+                            object = row.asLong();
+                        else if(row.isDouble())
+                            object = row.asDouble();
+                        else if (row.isBoolean())
+                            object = row.asBoolean();
+                        else if (row.isTextual())
+                            object = row.asText();
+                    }
                 }
-                else if(row.isTextual() && !row.isNull())                        
-                    object = row.asText();
-                else
+                else if (row.isObject())
                     object = parserRow(returnType, accessId, element, row);
+                else
+                    object = JsonMapper.mapper(element.toString(), returnType);
                 rows.add(object);
             }
         }
         return rows;
     }
-
+    
     private List parserFindResult(final JsonNode nodeRows, Class<?> returnType, PropertyAccess accessId)
     {
         final List rows = new ArrayList();
@@ -129,16 +155,13 @@ public class CouchDbJsonDeserialization extends JsonDeserializer<CouchResultImpl
         return rows;
     }
     
-    private Object parserRow(Class<?> returnType, 
-            PropertyAccess accessId,  
-            JsonNode element, 
-            JsonNode row)
+    private Object parserRow(Class<?> returnType, PropertyAccess accessId, JsonNode element, JsonNode row)
     {
         Object object = null;
         if (row.isObject())
         {
             object = JsonMapper.mapper(row.toString(), returnType);
-            if(element != null)
+            if (element != null)
                 setIdentity(element, object, accessId);
         }
         else
@@ -152,9 +175,9 @@ public class CouchDbJsonDeserialization extends JsonDeserializer<CouchResultImpl
     {
         String id = null;
         String key = null;
-        if(element.hasNonNull("id"))
+        if (element.hasNonNull("id"))
             id = element.get("id").asText();
-        if(element.hasNonNull("key"))
+        if (element.hasNonNull("key"))
             key = element.get("key").asText();
         
         if (row instanceof Map)
@@ -172,5 +195,17 @@ public class CouchDbJsonDeserialization extends JsonDeserializer<CouchResultImpl
         }
         
     }
-    
+
+    private List nodeToMap(final JsonNode nodeRows)
+    {
+        final List rows = new ArrayList();
+        Iterator<JsonNode> it = nodeRows.elements();
+        while (it.hasNext())
+        {
+            JsonNode row = it.next();
+            Map map = JsonMapper.mapper(row.toString(), Map.class);
+            rows.add(map);
+        }
+        return rows;
+    }
 }

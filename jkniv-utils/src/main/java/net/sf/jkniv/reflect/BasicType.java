@@ -37,7 +37,7 @@ import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import sun.util.calendar.JulianCalendar;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes","unchecked"})
 public class BasicType
 {
     private static final Assertable         notNull      = AssertsFactory.getNotNull();
@@ -125,7 +125,42 @@ public class BasicType
         return NUMBER_TYPES.containsKey(type.getCanonicalName());
     }
     
-    @SuppressWarnings("unchecked")
+    /**
+     * <ul>
+     * <li>{@code String}</li>
+     * <li>{@code Integer}/{@code int}</li>
+     * <li>{@code Long}/{@code long}</li>
+     * <li>{@code Double}/{@code double}</li>
+     * <li>{@code Float}/{@code float}</li>
+     * <li>{@code Boolean}/{@code boolean}</li>
+     * <li>{@code Short}/{@code short}</li>
+     * <li>{@code Byte}/{@code byte}</li>
+     * <li>{@code Character}/{@code char}</li>
+     * <li>{@code Date}</li>
+     * <li>{@code Calendar}</li>
+     * <li>{@code GregorianCalendar}</li>
+     * <li>{@code JulianCalendar}</li>
+     * <li>{@code BigDecimal}</li>
+     * <li>{@code BigInteger}</li>
+     * <li>{@code AtomicInteger}</li>
+     * <li>{@code AtomicLong}</li>
+     * <li>{@code URL}</li>
+     * <li>{@code Currency}</li>
+     * <li>{@code DoubleAccumulator}</li>
+     * <li>{@code DoubleAdder}</li>
+     * <li>{@code LongAccumulator}</li>
+     * <li>{@code LongAdder}</li>
+     * <li>{@code Duration}</li>
+     * <li>{@code Instant}</li>
+     * <li>{@code LocalDate}</li>
+     * <li>{@code LocalDateTime}</li>
+     * <li>{@code LocalTime}</li>
+     * <li>{@code ZonedDateTime}</li>
+     * <li>{@code ZonaId}</li>
+     * <li>{@code OffsetDateTime}</li>
+     * <li>{@code OffsetTime}</li>
+     * </ul>
+     */
     public boolean isBasicType(Class<?> type)
     {
         notNull.verify(type);

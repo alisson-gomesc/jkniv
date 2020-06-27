@@ -1,30 +1,41 @@
-package net.sf.jkniv.whinstone.couchdb;
+package net.sf.jkniv.whinstone.couchdb.commands;
 
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class CouchResultImpl implements CouchResult
+import net.sf.jkniv.whinstone.couchdb.CouchDbResult;
+import net.sf.jkniv.whinstone.couchdb.ExecutionStats;
+
+class CouchDbResultImpl implements CouchDbResult
 {
     private Long totalRows;
     private Long offset;
     private List<?> rows;
     private String bookmark;
     private String warning;
-    
-    public CouchResultImpl()
+    private ExecutionStats executionStats;
+
+    public CouchDbResultImpl()
     {
     }
     
-    public static CouchResultImpl of(Long totalRows, Long offset, String bookmark, String warning, List<?> rows)
+    public static CouchDbResultImpl of(
+            Long totalRows, 
+            Long offset, 
+            String bookmark, 
+            String warning, 
+            List<?> rows,
+            ExecutionStats executionStats)
     {
-        CouchResultImpl answer = new CouchResultImpl();
-        answer.totalRows = totalRows;
+        CouchDbResultImpl answer = new CouchDbResultImpl();
+        answer.totalRows = (totalRows != null && totalRows > 0) ? totalRows : rows.size();
         answer.offset = offset;
         answer.bookmark = bookmark;
         answer.warning = warning;
         answer.rows = rows;
+        answer.executionStats = executionStats;
         return answer;
     }
     
@@ -48,6 +59,12 @@ public class CouchResultImpl implements CouchResult
     public String getBookmark()
     {
         return this.bookmark;
+    }
+
+    @Override
+    public ExecutionStats getExecutionStats()
+    {
+        return this.executionStats;
     }
     
     @Override
@@ -87,4 +104,10 @@ public class CouchResultImpl implements CouchResult
     private void deserializeWarning(String warning) {
         this.warning = warning;
     }
+    
+    @JsonProperty("execution_stats")
+    private void deserializeExecutionStats(ExecutionStats executionStats) {
+        this.executionStats = executionStats;
+    }
+
 }

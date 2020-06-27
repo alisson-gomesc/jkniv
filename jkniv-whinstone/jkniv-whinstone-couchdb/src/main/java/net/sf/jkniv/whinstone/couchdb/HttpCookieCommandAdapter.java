@@ -19,15 +19,12 @@
  */
 package net.sf.jkniv.whinstone.couchdb;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.sqlegance.LanguageType;
-import net.sf.jkniv.sqlegance.Sql;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.commands.Command;
@@ -38,12 +35,10 @@ import net.sf.jkniv.whinstone.couchdb.commands.BulkCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.CouchCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.DeleteCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.FindCommand;
-import net.sf.jkniv.whinstone.couchdb.commands.FullResponseFindCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.GetCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.UpdateCommand;
 import net.sf.jkniv.whinstone.couchdb.commands.ViewCommand;
 import net.sf.jkniv.whinstone.couchdb.statement.CouchDbStatementAdapter;
-import net.sf.jkniv.whinstone.couchdb.statement.FindAnswer;
 import net.sf.jkniv.whinstone.statement.StatementAdapter;
 
 class HttpCookieCommandAdapter implements CommandAdapter
@@ -94,8 +89,8 @@ class HttpCookieCommandAdapter implements CommandAdapter
             command = new AllDocsCommand(this.httpBuilder, queryable).with(stmt);
         else if (queryable.getDynamicSql().getLanguageType() == LanguageType.STORED)
             command = new ViewCommand(this.httpBuilder, queryable).with(stmt);
-        else if (queryable.getReturnType() != null && FindAnswer.class.getName().equals(queryable.getReturnType().getName()))
-            command = new FullResponseFindCommand(this.httpBuilder, queryable).with(stmt);
+        //else if (queryable.getReturnType() != null && FindAnswer.class.getName().equals(queryable.getReturnType().getName()))
+        //    command = new FullResponseFindCommand(this.httpBuilder, queryable).with(stmt);
         else
             command = new FindCommand(this.httpBuilder, queryable).with(stmt);
         return command;

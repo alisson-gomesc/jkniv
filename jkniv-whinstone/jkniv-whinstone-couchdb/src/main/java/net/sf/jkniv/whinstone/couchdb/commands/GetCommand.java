@@ -22,9 +22,7 @@ package net.sf.jkniv.whinstone.couchdb.commands;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -36,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
-import net.sf.jkniv.whinstone.couchdb.statement.FindAnswer;
 
 public class GetCommand extends AbstractCommand implements CouchCommand
 {
