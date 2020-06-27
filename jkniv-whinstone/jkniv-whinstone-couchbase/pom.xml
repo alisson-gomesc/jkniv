@@ -57,7 +57,7 @@
         <version>3.6</version>
         <configuration>
           <siteDirectory>src/site/content</siteDirectory>
-          <outputDirectory>../../target/generated-site/${project.artifactId}</outputDirectory>
+          <outputDirectory>../../target/generated-site/jkniv-whinstone/${project.artifactId}</outputDirectory>
         </configuration>
       </plugin>
     </plugins>
