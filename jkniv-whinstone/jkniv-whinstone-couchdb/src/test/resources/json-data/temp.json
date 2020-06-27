@@ -1,0 +1,24 @@
+{
+	"rows": [
+		{
+			"key": "BR",
+			"value": 1
+		},
+		{
+			"key": "CZ",
+			"value": 1
+		},
+		{
+			"key": "DE",
+			"value": 3
+		},
+		{
+			"key": "DZ",
+			"value": 1
+		},
+		{
+			"key": "GB",
+			"value": 1
+		}
+	]
+}
