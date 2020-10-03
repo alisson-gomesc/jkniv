@@ -42,13 +42,13 @@
       <item name="Cache" href="cache.html" />
       <item name="Release Notes" href="release-notes.html" />
       <item name="Whinstone for JDBC"
-            href="http://jkniv.sourceforge.net/jkniv-whinstone-jdbc/index.html" />
+            href="http://jkniv.sourceforge.net/jkniv-whinstone/jkniv-whinstone-jdbc/index.html" />
       <item name="Whinstone for JPA2"
-            href="http://jkniv.sourceforge.net/jkniv-whinstone-jpa2/index.html" />
+            href="http://jkniv.sourceforge.net/jkniv-whinstone/jkniv-whinstone-jpa2/index.html" />
       <item name="Whinstone for CouchDB"
-            href="http://jkniv.sourceforge.net/jkniv-whinstone-couchdb/index.html" />
+            href="http://jkniv.sourceforge.net/jkniv-whinstone/jkniv-whinstone-couchdb/index.html" />
       <item name="Whinstone for Cassandra"
-            href="http://jkniv.sourceforge.net/jkniv-whinstone-cassandra/index.html" />
+            href="http://jkniv.sourceforge.net/jkniv-whinstone/jkniv-whinstone-cassandra/index.html" />
       <item name="Download" href="download.html" />
     </menu>
   </body>
