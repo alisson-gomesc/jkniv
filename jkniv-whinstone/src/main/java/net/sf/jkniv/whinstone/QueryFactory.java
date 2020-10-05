@@ -19,6 +19,7 @@
  */
 package net.sf.jkniv.whinstone;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -298,8 +299,6 @@ public class QueryFactory
     private static Queryable buildQueryable(String name, int offset, int max, RegisterType registerType, Object... args)
     {
         NOT_NULL.verify(args);
-        Map<String, Object> params = new HashMap<String, Object>();
-        Object value = null;
         Queryable queryable = null;
         if (args.length == 1)
         {
@@ -307,28 +306,152 @@ public class QueryFactory
         }
         else
         {
-            int i = 0;
-            String key = null;
-            for (Object o : args)
-            {
-                if (i % 2 == 0)
-                {
-                    key = o.toString();
-                }
-                else
-                {
-                    value = o;
-                    params.put(key, value);
-                    key = null;
-                    value = null;
-                }
-                i++;
-            }
-            if (i > 1 )
+            Map<String, Object> params = buildParams(args);
+            if (params.size() > 0 )
                 queryable = new QueryName(name, params, offset, max, registerType);
             else
                 queryable = new QueryName(name, null, offset, max, registerType);
         }
         return queryable;
+    }
+    
+    static Map<String, Object> buildParams(Object... args)
+    {
+        Map<String, Object> params = new HashMap<String, Object>();
+        int i = 0;
+        Object value = null;
+        String key = null;
+        for (Object o : args)
+        {
+            if (i % 2 == 0)
+            {
+                key = o.toString();
+            }
+            else
+            {
+                value = o;
+                params.put(key, value);
+                key = null;
+                value = null;
+            }
+            i++;
+        }
+        return params;
+    }
+    
+    /* *********************************************************************************************************************
+     *                   ==============>    B    U    I    L    D    E    R     <============                              *
+     * *********************************************************************************************************************/
+
+    public static Builder builder()
+    {
+        return new Builder();
+    }
+    
+    public static class Builder
+    {
+        private Map<String, Object> mapParams = new HashMap<String, Object>();
+        private Object[] arrayOfParams;
+        private Object params;
+        private int offset;
+        private int max = Integer.MAX_VALUE;
+        private boolean scalar = false;
+        private RegisterType registerType;
+        private Class<?>     returnType;
+        private Comparator<?> sorter;
+        private Comparator<?> filter;
+        
+        public Queryable build(String name) {
+            QueryName q = null;
+            if (arrayOfParams != null)
+                q = new QueryName(name, arrayOfParams, offset, max, registerType);
+            else if (params != null)
+                q = new QueryName(name, params, offset, max, registerType);
+            else if (!mapParams.isEmpty())
+                q = new QueryName(name, mapParams, offset, max, registerType);
+            else
+                q = new QueryName(name, null, offset, max, registerType);
+                
+            q.setReturnType(returnType);
+            q.setSorter(sorter);
+            q.setFilter(filter);
+            if(this.scalar)
+                q.scalar();
+            return q;
+        }
+        /**
+         * Build the query parameters as Map
+         * <br/> <b>note:</b> don't mix the set {@code param} values and {@code ofArray}
+         * @param params dynamically created
+         * <p>
+         * 1o first param it's key name and 2o your value
+         * <p>
+         * 3o it's key 4o your value and so on.
+         * @return this builder instance
+         */
+        public Builder params(Object... params) {
+            this.mapParams = QueryFactory.buildParams(params);
+            return this;
+        }
+        /**
+         * Build the query parameters as Map.
+         * <br/> <b>note:</b> don't mix the set {@code param} values and {@code ofArray}
+         * @param name
+         * @param value
+         * @return this builder instance
+         */
+        public Builder params(String name, Object value) {
+            this.mapParams.put(name, value);
+            return this;
+        }
+        /**
+         * Build the query parameters as POJO
+         * <br/> <b>note:</b> don't mix the set {@code param} values and {@code ofArray}
+         * @param <T> Type of class that represents the parameters
+         * @param param instance of class the represents the parameters
+         * @return this builder instance
+         */
+        public <T> Builder params(T param) {
+            this.params = param;
+            return this;
+        }
+        /**
+         * Build the query parameters as array of values.
+         * <br/> <b>note:</b> don't mix the set {@code param} values and {@code ofArray}
+         * @param params array of parameters
+         * @return this builder instance
+         */
+        public Builder ofArray(Object... params) {
+            this.arrayOfParams = params;
+            return this;
+        }
+        public Builder offset(int offset) {
+            this.offset = offset;
+            return this;
+        }
+        public Builder max(int max) {
+            this.max = max;
+            return this;
+        }
+        public Builder registerType(RegisterType registerType) {
+            this.registerType = registerType;
+            return this;
+        }
+        public Builder returnType(Class<?> returnType) {
+            this.returnType = returnType;
+            return this;
+        }
+        public Builder sorter(Comparator<?> sorter) {
+            this.sorter = sorter;
+            return this;
+        }
+        public Builder filter(Comparator<?> filter) {
+            this.filter = filter;
+            return this;
+        }
+        public Builder scalar() {
+            this.scalar = true;
+            return this;
+        }
     }
 }

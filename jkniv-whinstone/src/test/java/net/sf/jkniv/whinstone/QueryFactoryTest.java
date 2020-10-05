@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import net.sf.jkniv.domain.flat.AuthorFlat;
@@ -296,5 +295,30 @@ public class QueryFactoryTest
         Queryable cloneCacheIgnore = QueryFactory.clone(q, Map.class);
         assertThat(cloneCacheIgnore.isCacheIgnore(), is(true));
     }
+    
+    @Test
+    public void whenInstanceByBuilder()
+    {
+        Queryable q1 = QueryFactory.of("dummy", String.class);
+        Queryable q2 = QueryFactory.builder().returnType(String.class).build("dummy");
+        
+        assertThat(q1.getName(), is(q2.getName()));
+        assertThat(q1.getOffset(), is(q2.getOffset()));
+        assertThat(q1.getMax(), is(q2.getMax()));
+        assertThat(q1.getReturnType().getName(), is(q2.getReturnType().getName()));
+        assertThat(q1.isScalar(), is(q2.isScalar()));
+        assertThat(q1.isPaging(), is(q2.isPaging()));
+        assertThat(q1.isTypeOfNull(), is(q2.isTypeOfNull()));
+    }
 
+    @Test
+    public void whenBuilderQueryWithPojo()
+    {
+        AuthorFlat author = new AuthorFlat(1L, "Jose");
+        Queryable q1 = QueryFactory.builder().params(author).build("dummy");
+        
+        assertThat(q1.getName(), is("dummy"));
+        assertThat(q1.getParams(), instanceOf(AuthorFlat.class));
+    }
+    
 }

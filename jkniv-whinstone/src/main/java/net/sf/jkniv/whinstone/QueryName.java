@@ -22,6 +22,7 @@ package net.sf.jkniv.whinstone;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -58,8 +59,7 @@ import net.sf.jkniv.whinstone.types.RegisterType;
  * @author Alisson Gomes
  * @since 0.6.0
  */
-@SuppressWarnings(
-{ "unchecked", "rawtypes" })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 class QueryName implements Queryable
 {
     private static final Logger LOG = LoggerFactory.getLogger(QueryName.class);
@@ -98,6 +98,8 @@ class QueryName implements Queryable
     private boolean      cached;
     private boolean      cacheIgnore;
     private final RegisterType registerType;
+    private Comparator<?> sorter;
+    private Comparator<?> filter;
     
     /**
      * Creates a Query object parameterized starting at first row and retrieve all rows, isolation default, no timeout and online (no batch).
@@ -716,7 +718,17 @@ class QueryName implements Queryable
         IS_NULL.verify(this.returnType);
         this.returnType = clazz;
     }
-    
+
+    void setSorter(Comparator<?> sorter)
+    {
+        this.sorter = sorter;
+    }
+
+    void setFilter(Comparator<?> filter)
+    {
+        this.filter = filter;
+    }
+
 //    void setRegisterType(RegisterType registerType)
 //    {
 //        this.registerType = registerType;
@@ -762,6 +774,30 @@ class QueryName implements Queryable
     public String getBookmark()
     {
         return this.bookmark;
+    }
+    
+    @Override
+    public <T> Comparator<T> getSorter()
+    {
+        return (Comparator<T>) this.sorter;
+    }
+
+    @Override
+    public <T> Comparator<T> getFilter()
+    {
+        return (Comparator<T>) this.filter;
+    }
+
+    @Override
+    public boolean hasSorter()
+    {
+        return (this.sorter != null);
+    }
+
+    @Override
+    public boolean hasFilter()
+    {
+        return (this.filter != null);
     }
     
     private Param getParamsFromIndex(int i)

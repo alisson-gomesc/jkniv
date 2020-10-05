@@ -37,6 +37,7 @@
     </breadcrumbs>
     <menu name="Whinstone Cassandra" inherit="top">
       <item name="Introduction" href="index.html" />
+      <item name="Connection" href="connection.html" />
       <item name="Transaction" href="transaction.html" />
       <item name="Auto Generated keys" href="auto-generate-keys.html" />
       <item name="Paging" href="paging.html" />

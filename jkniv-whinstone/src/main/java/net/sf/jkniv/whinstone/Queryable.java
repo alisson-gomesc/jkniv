@@ -19,6 +19,7 @@
  */
 package net.sf.jkniv.whinstone;
 
+import java.util.Comparator;
 import java.util.Iterator;
 
 import net.sf.jkniv.sqlegance.Sql;
@@ -331,4 +332,26 @@ public interface Queryable
     //void setRegisterType(RegisterType registerType);
     
     RegisterType getRegisterType();
+    
+    /**
+     * A comparison function, which imposes a total ordering on some collection of objects
+     * @return comparator instance
+     */
+    <T> Comparator<T> getSorter();
+    
+    <T> Comparator<T> getFilter();
+    
+    /**
+     * Has an ordering imposed by a comparator.
+     * @return {@code true} when the results must be sorted, {@code false} otherwise.
+     */
+    boolean hasSorter();
+    
+    /**
+     * Has an filter to include/exclude rows from result.
+     * @return {@code true} when the results must be filtered, {@code false} otherwise.
+     */
+    boolean hasFilter();
+    
+    
 }

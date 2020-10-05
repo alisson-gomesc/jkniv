@@ -19,6 +19,9 @@
  */
 package net.sf.jkniv.whinstone.cassandra;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -32,6 +35,8 @@ import com.datastax.driver.core.ProtocolVersion;
 import com.datastax.driver.core.Session;
 
 import net.sf.jkniv.exception.HandleableException;
+import net.sf.jkniv.sqlegance.DefaultClassLoader;
+import net.sf.jkniv.sqlegance.RepositoryConfigException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.commands.CommandAdapter;
@@ -63,9 +68,19 @@ public class CassandraSessionFactory //implements ConnectionFactory
         ProtocolVersion version = getProtocolVersion(protocol);
         this.registerCodec = new RegisterCodec();
         this.contextName = contextName;
-        
-        if (username != null)
-            cluster = Cluster.builder().addContactPoints(urls).withCredentials(username, password)
+        URL cloudSecureConnect = getCloudSecureConnect(props);
+        if (cloudSecureConnect != null)
+        {
+            cluster = Cluster.builder()
+                    .withCloudSecureConnectBundle(cloudSecureConnect)
+                    .withCredentials(username, password)
+                    .withProtocolVersion(version)
+                    .build();
+        }
+        else if (username != null)
+            cluster = Cluster.builder()
+                    .addContactPoints(urls)
+                    .withCredentials(username, password)
                     .withProtocolVersion(version).build();
         else
             cluster = Cluster.builder().withProtocolVersion(version).addContactPoints(urls).build();
@@ -183,5 +198,30 @@ public class CassandraSessionFactory //implements ConnectionFactory
     //        // TODO Auto-generated method stub
     //        
     //    }
+
+    private URL getCloudSecureConnect(Properties props)
+    {
+        String keyFile = props.getProperty(RepositoryProperty.KEY_FILE.key());
+        URL cloudSecureConnect = null;
+        if(keyFile != null)
+        {
+            if (keyFile.startsWith("file:"))
+            {
+                try
+                {
+                    cloudSecureConnect = new URL(keyFile);
+                }
+                catch (MalformedURLException e)
+                {
+                    throw new RepositoryConfigException("Key file ["+keyFile+"]for Cassandra CloudSecureConnect is MalformedURLException [" + e.getMessage() + "]");
+                }
+                if (! new File(cloudSecureConnect.getFile()).exists())
+                    throw new RepositoryConfigException("Key file ["+keyFile+"]for Cassandra CloudSecureConnect not exists");
+            }
+            else
+                cloudSecureConnect = DefaultClassLoader.getResource(keyFile);
+        }
+        return cloudSecureConnect;
+    }
     
 }
