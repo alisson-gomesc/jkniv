@@ -22,7 +22,7 @@
     <jaxb-version>2.0.3</jaxb-version>
     <version.jackson>2.6.7</version.jackson>
     <spring.version>4.3.17.RELEASE</spring.version>
-    <current-version>0.6.3</current-version>
+    <current-version>0.6.6</current-version>
     <dependency.locations.enabled>false</dependency.locations.enabled>
   </properties>
 
@@ -238,6 +238,12 @@
         <version>2.2</version>
         <scope>test</scope>
       </dependency>
+    <dependency>
+      <groupId>com.datastax.oss</groupId>
+      <artifactId>java-driver-core</artifactId>
+      <version>4.9.0</version>
+    </dependency>
+      <!-- 
       <dependency>
         <groupId>com.datastax.cassandra</groupId>
         <artifactId>cassandra-driver-core</artifactId>
@@ -253,6 +259,7 @@
         <artifactId>cassandra-driver-extras</artifactId>
         <version>3.8.0</version>
       </dependency>
+       -->
     </dependencies>
   </dependencyManagement>
 
@@ -426,7 +433,7 @@
   <repositories>
     <repository>
       <id>JBoss repository</id>
-      <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
     </repository>
     <repository>
       <id>mvnrepository</id>
@@ -434,7 +441,7 @@
     </repository>
     <repository>
       <id>maven repository</id>
-      <url>http://search.maven.org/</url>
+      <url>https://search.maven.org/</url>
     </repository>
   </repositories>
   <profiles>

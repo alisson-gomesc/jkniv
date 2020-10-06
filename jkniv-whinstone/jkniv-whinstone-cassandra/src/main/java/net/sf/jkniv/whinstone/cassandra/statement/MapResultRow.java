@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 
-import com.datastax.driver.core.Row;
+import com.datastax.oss.driver.api.core.cql.Row;
 
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.sqlegance.logger.DataMasking;

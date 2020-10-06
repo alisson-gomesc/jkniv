@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.whinstone.cassandra.statement;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
@@ -27,12 +29,14 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 
-import com.datastax.driver.core.ColumnDefinitions;
-import com.datastax.driver.core.PagingState;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.Statement;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ColumnDefinition;
+import com.datastax.oss.driver.api.core.cql.ColumnDefinitions;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.Statement;
+
+import com.datastax.oss.driver.api.core.session.Session;
 
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.experimental.TimerKeeper;
@@ -77,16 +81,16 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     private static final DataMasking MASKING = LoggerFactory.getDataMasking();
     
     private final HandlerException   handlerException;
-    private final Statement          stmt;
+    private Statement          stmt;
     private int                      index, indexIN;
     private Class<T>                 returnType;
     private ResultRow<T, Row>        resultRow;
     private boolean                  scalar;
-    private Session                  session;
+    private CqlSession                  session;
     private Queryable                queryable;
     private final RegisterType       registerType;
     
-    public CassandraStatementAdapter(Session session, Statement stmt, Queryable queryable, RegisterType registerType)
+    public CassandraStatementAdapter(CqlSession session, Statement stmt, Queryable queryable, RegisterType registerType)
     {
         this.stmt = stmt;
         this.session = session;
@@ -186,8 +190,9 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         {
             if (queryable.getBookmark() != null)
             {
-                PagingState pagingState = PagingState.fromString(queryable.getBookmark());
-                stmt.setPagingState(pagingState);
+                ByteBuffer pagingState = ByteBuffer.wrap(queryable.getBookmark().getBytes(StandardCharsets.UTF_8));
+                //PagingState pagingState = PagingState.fromString(queryable.getBookmark());
+                stmt = stmt.setPagingState(pagingState);
             }
             TimerKeeper.start();
             rs = session.execute(stmt);
@@ -203,10 +208,11 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
             }
             rsParser = new ObjectResultSetParser(resultRow, grouping);
             list = rsParser.parser(rs);//rs.getExecutionInfo().getPagingStateUnsafe();
-            PagingState pagingState = rs.getExecutionInfo().getPagingState();
+            ByteBuffer pagingState = rs.getExecutionInfo().getPagingState();
             //LOG.info("AvailableWithoutFetching={}, FullyFetched={}, Exhausted={}", rs.getAvailableWithoutFetching(), rs.isFullyFetched(), rs.isExhausted());
-            if (pagingState != null)
-                queryable.setBookmark(pagingState.toString());
+            if (pagingState != null) {
+                queryable.setBookmark(StandardCharsets.UTF_8.decode(pagingState).toString());
+            }
         }
         catch (SQLException e)
         {
@@ -282,8 +288,9 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
         
         for (int i = 0; i < columns.length; i++)
         {
-            String columnName = metadata.getName(i);
-            columns[i] = new CassandraColumn(i, columnName, metadata.getType(i).getName(), registerType, queryable.getReturnType());
+            ColumnDefinition columnDefinition = metadata.get(i); 
+            //String columnName = metadata.getName(i);
+            columns[i] = new CassandraColumn(i, columnDefinition.getName().asInternal(), columnDefinition.getType(), registerType, queryable.getReturnType());
         }
         return columns;
     }
@@ -297,7 +304,7 @@ public class CassandraStatementAdapter<T, R> implements StatementAdapter<T, Row>
     @Override
     public void setFetchSize(int rows)
     {
-        stmt.setFetchSize(rows);
+        stmt.setPageSize(rows);
     }
 
     private boolean hasOneToMany()

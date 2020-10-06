@@ -21,12 +21,12 @@ package net.sf.jkniv.whinstone.cassandra;
 
 import org.slf4j.Logger;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.SimpleStatement;
-import com.datastax.driver.core.Statement;
+//import com.datastax.driver.core.SimpleStatement;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.core.cql.Statement;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
@@ -58,18 +58,18 @@ class CassandraCommandAdapter implements CommandAdapter
     private static final Logger  LOG = LoggerFactory.getLogger();
     private static final Logger SQLLOG = net.sf.jkniv.whinstone.cassandra.LoggerFactory.getLogger();
     private static final Assertable NOT_NULL = AssertsFactory.getNotNull();
-    private Session session;
-    private Cluster cluster;
+    private CqlSession session;
+    //private Cluster cluster;
     private StatementCache stmtCache;
     private final String contextName;
     private final RegisterType registerType;
     private final RegisterCodec registerCodec;
     private final HandleableException handlerException;
     
-    public CassandraCommandAdapter(String contextName, Cluster cluster, Session session, RegisterType registerType, RegisterCodec registerCodec, HandleableException handlerException)
+    public CassandraCommandAdapter(String contextName, /*Cluster cluster,*/ CqlSession session, RegisterType registerType, RegisterCodec registerCodec, HandleableException handlerException)
     {
-        NOT_NULL.verify(cluster, session, contextName);
-        this.cluster = cluster;
+        NOT_NULL.verify(/*cluster, */session, contextName);
+        /*this.cluster = cluster;*/
         this.session = session;
         this.registerType = registerType;
         this.registerCodec = registerCodec;
@@ -110,78 +110,24 @@ class CassandraCommandAdapter implements CommandAdapter
         {
             LOG.info("Closing Cassandra Session");
             session.close();
-        }   
+        }
+        /*
         if (cluster != null && !cluster.isClosed())
         {
             LOG.info("Closing Cassandra Cluster connection");
             cluster.close();
         }
+        */
         if(stmtCache != null)
         {
             LOG.info("Clean-up [{}] PreparedStatements cached", stmtCache.size());
             stmtCache.clear();
         }
-        cluster = null;
+        /*cluster = null;*/
         session = null;
         stmtCache = null;
     }
 
-//    @Override
-//    public boolean isClosed() throws SQLException
-//    {
-//        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
-//    }
-    
-//    @Override
-//    public boolean isAutoCommit() throws SQLException
-//    {
-//        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
-//    }
-    
-//    @Override
-//    public void autoCommitOn() throws SQLException
-//    {
-//        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
-//    }
-    
-//    @Override
-//    public void autoCommitOff() throws SQLException
-//    {
-//        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
-//    }
-    
-//    @Override
-//    public Object getMetaData()
-//    {
-//        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
-//    }
-    
-    /*
-    @Override
-    public <T, R> StatementAdapter<T, R> newStatement(Queryable queryable)
-    {
-        String sql = queryable.getDynamicSql().getSql(queryable.getParams());
-        String positionalSql = queryable.getDynamicSql().getParamParser().replaceForQuestionMark(sql,
-                queryable.getParams());
-        PreparedStatement stmt = session.prepare(positionalSql);
-        StatementAdapter<T, R> adapter = new CassandraPreparedStatementAdapter(session, stmt, queryable);
-        return adapter;
-    }
-     */
-    
-//    @Override
-//    public <T, R> StatementAdapter<T, R> newStatement(String sql, LanguageType languageType)
-//    {
-//        // FIXME UnsupportedOperationException
-//        throw new UnsupportedOperationException("Cassandra repository Not implemented yet!");
-//    }
-    
-//    @Override
-//    public Object unwrap()
-//    {
-//        return session;
-//    }
-    
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public <T, R> Command asSelectCommand(Queryable queryable, ResultRow<T, R> overloadResultRow)
@@ -195,7 +141,7 @@ class CassandraCommandAdapter implements CommandAdapter
         if (queryable.isPaging())
         {
             Param[] params = queryable.values();
-            Statement statement = new SimpleStatement(sql, extracValues(params));
+            Statement statement = SimpleStatement.newInstance(sql, extracValues(params));
             stmt = new CassandraStatementAdapter(this.session, statement, queryable, registerType);
             stmt.setFetchSize(queryable.getMax());
         }
@@ -260,7 +206,7 @@ class CassandraCommandAdapter implements CommandAdapter
     @Override
     public String toString()
     {
-        return "CassandraCommandAdapter [session=" + session + ", cluster=" + cluster + "]";
+        return "CassandraCommandAdapter [session=" + session + "]";
     }
     
     private Object[] extracValues(Param[] params)

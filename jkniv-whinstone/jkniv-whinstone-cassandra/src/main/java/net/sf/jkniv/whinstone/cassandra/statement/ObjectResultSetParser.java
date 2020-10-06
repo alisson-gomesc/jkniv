@@ -22,8 +22,8 @@ package net.sf.jkniv.whinstone.cassandra.statement;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
 
 import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.ResultSetParser;
@@ -57,10 +57,10 @@ class ObjectResultSetParser<T> implements ResultSetParser<T, ResultSet>
         try
         {
             int rownum = 0;
-            while (!rs.isExhausted())
+            for (Row row : rs.all()) 
             {
-                T row = resultRow.row(rs.one(), rownum++);
-                groupable.classifier(row);
+                T record = resultRow.row(row, rownum++);
+                groupable.classifier(record);
             }
         }
         finally

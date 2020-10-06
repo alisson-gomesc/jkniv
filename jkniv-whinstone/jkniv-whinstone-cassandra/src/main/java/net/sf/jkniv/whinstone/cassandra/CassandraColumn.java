@@ -21,8 +21,8 @@ package net.sf.jkniv.whinstone.cassandra;
 
 import java.sql.SQLException;
 
-import com.datastax.driver.core.DataType;
-import com.datastax.driver.core.Row;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.type.DataType;
 
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
@@ -51,13 +51,14 @@ public class CassandraColumn implements JdbcColumn<Row>
     private final PropertyAccess          propertyAccess;
     private final RegisterType            registerType;
     
-    public CassandraColumn(int columnIndex, String columnName, DataType.Name columnType, RegisterType registerType, Class<?> classTarget)
+    public CassandraColumn(int columnIndex, String columnName, DataType columnType, RegisterType registerType, Class<?> classTarget)
     {
         super();
         this.columnIndex = columnIndex;
         this.columnName = columnName;
         this.propertyAccess = new PropertyAccess(JDBC_COLUMN_MAPPER.map(columnName), classTarget);
-        this.columnType = CassandraType.valueOf(columnType.name());
+        //this.columnType = CassandraType.valueOf(columnType.name());
+        this.columnType = CassandraType.valueOf(columnType.toString());
         this.registerType = registerType;
         if(columnName.indexOf(".") > 0)
         {
@@ -127,7 +128,8 @@ public class CassandraColumn implements JdbcColumn<Row>
     @Override
     public Object getBytes(Row row) throws SQLException
     {
-        return row.getBytes(columnIndex);
+        return row.getByteBuffer(columnIndex).array();
+        //return row.getBytes(columnIndex);
     }
 
     @Override

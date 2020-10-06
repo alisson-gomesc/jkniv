@@ -20,19 +20,27 @@
 package net.sf.jkniv.whinstone.cassandra;
 
 import java.io.File;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/*
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.ProtocolVersion;
 import com.datastax.driver.core.Session;
+*/
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.CqlSessionBuilder;
+import com.datastax.oss.driver.api.core.ProtocolVersion;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.DefaultClassLoader;
@@ -52,7 +60,7 @@ public class CassandraSessionFactory //implements ConnectionFactory
 {
     private static final Logger       LOG = LoggerFactory.getLogger(CassandraSessionFactory.class);
     private final String              contextName;
-    private Cluster                   cluster;
+    //private Cluster                   cluster;
     private CassandraCommandAdapter   conn;
     private final HandleableException handlerException;
     private final RegisterCodec      registerCodec;
@@ -68,41 +76,51 @@ public class CassandraSessionFactory //implements ConnectionFactory
         ProtocolVersion version = getProtocolVersion(protocol);
         this.registerCodec = new RegisterCodec();
         this.contextName = contextName;
+        CqlSession session = null;
         URL cloudSecureConnect = getCloudSecureConnect(props);
+        //File f = new File("C:/dev/wks/wks-jkniv-git/jkniv-whinstone/jkniv-whinstone-cassandra/target/test-classes/database/astra-secure-connect-jkniv.zip");
+        
+        CqlSessionBuilder builder = CqlSession.builder();
+        settingProperties(builder, props);
         if (cloudSecureConnect != null)
         {
-            cluster = Cluster.builder()
-                    .withCloudSecureConnectBundle(cloudSecureConnect)
-                    .withCredentials(username, password)
-                    .withProtocolVersion(version)
-                    .build();
+            session = builder
+                        .withCloudSecureConnectBundle(cloudSecureConnect)
+                        .withAuthCredentials(username, password)
+                        .build();
         }
         else if (username != null)
-            cluster = Cluster.builder()
-                    .addContactPoints(urls)
-                    .withCredentials(username, password)
-                    .withProtocolVersion(version).build();
+            session = builder
+                        .addContactPoints(getContactPoints(urls))
+                        .withAuthCredentials(username, password)
+                        .withKeyspace(keyspace)
+                        .build();
         else
-            cluster = Cluster.builder().withProtocolVersion(version).addContactPoints(urls).build();
+            session = builder
+                        .addContactPoints(getContactPoints(urls))
+                        .withAuthCredentials(username, password)
+                        .withKeyspace(keyspace)
+                        .build();
         
-        settingProperties(props);
-        
-        final Metadata metadata = cluster.getMetadata();
-        if (LOG.isInfoEnabled())
-        {
-            LOG.info("Connected to cluster: {}", metadata.getClusterName());
-            LOG.info("List of hosts");
-            for (final Host host : metadata.getAllHosts())
-                LOG.info("Datacenter: {}; Host: {}; Rack: {}", host.getDatacenter(), host.getAddress(), host.getRack());
-        }
-        Session session = cluster.connect(keyspace);
-        this.conn = new CassandraCommandAdapter(contextName, cluster, session, registerType, registerCodec, handlerException);
+
+//        if (LOG.isInfoEnabled())
+//        {
+//            final Metadata metadata = session.getMetadata();
+//            LOG.info("Connected to cluster: {}", metadata.getClusterName());
+//            LOG.info("List of hosts");
+//            for (final HostAndPort host : metadata.getAllHosts())
+//                LOG.info("Datacenter: {}; Host: {}; Rack: {}", host.getDatacenter(), host.getAddress(), host.getRack());
+//        }
+//        
+        //Session session = cluster.connect(keyspace);
+        this.conn = new CassandraCommandAdapter(contextName, session, registerType, registerCodec, handlerException);
     }
     
     private ProtocolVersion getProtocolVersion(String protocol)
     {
+        ProtocolVersion[] values = {ProtocolVersion.DEFAULT, ProtocolVersion.DSE_V1, ProtocolVersion.DSE_V2, ProtocolVersion.V3, ProtocolVersion.V4, ProtocolVersion.V5};
         ProtocolVersion version = null;
-        for (ProtocolVersion v : ProtocolVersion.values())
+        for (ProtocolVersion v : values)
         {
             if (v.name().equals(protocol))
                 version = v;
@@ -111,13 +129,14 @@ public class CassandraSessionFactory //implements ConnectionFactory
         {
             if (protocol != null)
                 LOG.warn("Property {} has invalid value [{}] using protocol {}",
-                        RepositoryProperty.PROTOCOL_VERSION.key(), protocol, ProtocolVersion.NEWEST_SUPPORTED);
-            version = ProtocolVersion.NEWEST_SUPPORTED;
+                        RepositoryProperty.PROTOCOL_VERSION.key(), protocol, ProtocolVersion.DEFAULT);
+            version = ProtocolVersion.DEFAULT;
         }
         return version;
     }
     
-    private void settingProperties(Properties props)
+    
+    private void settingProperties(CqlSessionBuilder builder, Properties props)
     {
         Enumeration<Object> keys = props.keys();
         while (keys.hasMoreElements())
@@ -127,10 +146,11 @@ public class CassandraSessionFactory //implements ConnectionFactory
             {
                 boolean enable = Boolean.valueOf(props.getProperty(k));
                 String codecName = k.substring(6);// (6) -> "codec."
-                registerCodec.register(this.cluster, codecName, enable);
+                registerCodec.register(builder, codecName, enable);
             }
         }
     }
+    
     
     //@Override
     public CommandAdapter open()
@@ -223,5 +243,15 @@ public class CassandraSessionFactory //implements ConnectionFactory
         }
         return cloudSecureConnect;
     }
-    
+
+    private Collection<InetSocketAddress> getContactPoints(String[] urls)
+    {
+        Collection<InetSocketAddress> endpoints = new ArrayList<>();
+        for(String url : urls)
+        {
+            SocketAddressResolve resolver = SocketAddressResolve.of(url); 
+            endpoints.add(new InetSocketAddress(resolver.getHost(), resolver.getPort()));
+        }
+        return endpoints;
+    }
 }

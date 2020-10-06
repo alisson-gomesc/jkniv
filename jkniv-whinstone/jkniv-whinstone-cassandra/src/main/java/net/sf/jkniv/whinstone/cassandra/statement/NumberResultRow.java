@@ -23,7 +23,7 @@ import java.sql.SQLException;
 
 import org.slf4j.Logger;
 
-import com.datastax.driver.core.Row;
+import com.datastax.oss.driver.api.core.cql.Row;
 
 import net.sf.jkniv.reflect.NumberFactory;
 import net.sf.jkniv.reflect.Numerical;

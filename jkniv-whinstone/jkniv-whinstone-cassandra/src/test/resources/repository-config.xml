@@ -6,7 +6,7 @@
   <repository name="whin-cassandra" type="CASSANDRA">
     <properties>
       <property name="url" value="192.168.99.100" />
-      <property name="schema" value="dev_whin" />
+      <property name="schema" value="whinstone" />
       <property name="user" value="cassandra" />
       <property name="password" value="cassandra" />
     </properties>

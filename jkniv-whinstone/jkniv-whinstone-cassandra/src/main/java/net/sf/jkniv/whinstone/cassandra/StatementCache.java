@@ -2,8 +2,9 @@ package net.sf.jkniv.whinstone.cassandra;
 
 import java.util.concurrent.TimeUnit;
 
-import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.Session;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.session.Session;
 
 import net.sf.jkniv.cache.CacheManager;
 import net.sf.jkniv.cache.CachePolicy;
@@ -14,10 +15,10 @@ class StatementCache
 {
     private final CacheManager<String, PreparedStatement> manager;
     
-    private final Session session;
+    private final CqlSession session;
     private final Cacheable<String, PreparedStatement> cache;
     
-    public StatementCache(Session session)
+    public StatementCache(CqlSession session)
     {
         this.session = session;
         CachePolicy policy = new TTLCachePolicy(120, 5, TimeUnit.MINUTES);

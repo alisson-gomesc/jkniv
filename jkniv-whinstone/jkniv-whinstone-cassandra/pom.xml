@@ -12,6 +12,12 @@
   <name>jkniv-whinstone-cassandra</name>
   <artifactId>jkniv-whinstone-cassandra</artifactId>
   <url>http://jkniv.sourceforge.net/jkniv-whinstone/</url>
+<!-- 
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+ -->
 
   <dependencies>
     <dependency>
@@ -27,6 +33,11 @@
       <artifactId>spring-test</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.datastax.oss</groupId>
+      <artifactId>java-driver-core</artifactId>
+    </dependency>
+    <!-- 
+    <dependency>
       <groupId>com.datastax.cassandra</groupId>
       <artifactId>cassandra-driver-core</artifactId>
     </dependency>
@@ -34,6 +45,7 @@
         <groupId>com.datastax.cassandra</groupId>
         <artifactId>cassandra-driver-mapping</artifactId>
     </dependency>    
+    -->
     <!-- 
     <dependency>
       <groupId>com.datastax.cassandra</groupId>

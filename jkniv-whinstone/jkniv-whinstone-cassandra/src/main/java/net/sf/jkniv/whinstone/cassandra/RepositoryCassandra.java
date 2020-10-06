@@ -99,7 +99,10 @@ class RepositoryCassandra implements Repository
     RepositoryCassandra(Properties props, SqlContext sqlContext)
     {
         NOT_NULL.verify(props, sqlContext);
-        if (props.isEmpty() || !props.containsKey(RepositoryProperty.JDBC_URL.key()))
+        if (props.isEmpty() || 
+                (!props.containsKey(RepositoryProperty.JDBC_URL.key()) &&
+                !props.containsKey(RepositoryProperty.KEY_FILE.key()))
+                )
         {
             String jndiName = sqlContext.getRepositoryConfig().getJndiDataSource();
             if (jndiName != null && !"".equals(jndiName))
@@ -191,7 +194,7 @@ class RepositoryCassandra implements Repository
         Object o = get(queryable);
         if (o != null)
         {
-            ObjectProxy<?> proxy = ObjectProxyFactory.of(queryable.getParams());
+            ObjectProxy<?> proxy = ObjectProxyFactory.of((Object)queryable.getParams());
             proxy.merge(o);
             enriched = true;
         }

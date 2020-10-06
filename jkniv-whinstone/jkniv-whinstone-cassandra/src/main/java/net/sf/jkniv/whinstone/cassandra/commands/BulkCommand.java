@@ -19,7 +19,7 @@
  */
 package net.sf.jkniv.whinstone.cassandra.commands;
 
-import com.datastax.driver.core.Row;
+import com.datastax.oss.driver.api.core.cql.Row;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.whinstone.Queryable;

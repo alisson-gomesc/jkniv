@@ -26,8 +26,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.TypeCodec;
+import com.datastax.oss.driver.api.core.CqlSessionBuilder;
+import com.datastax.oss.driver.api.core.type.codec.TypeCodec;
 
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
@@ -83,7 +83,7 @@ public class RegisterCodec
         codecs.put("OptinalCodec", new CodecMap("com.datastax.driver.extras.codecs.jdk8.OptionalCodec"));
     }
     
-    public void register(Cluster cluster, String codecName, boolean enable)
+    public void register(CqlSessionBuilder builder, String codecName, boolean enable)
     {
         if (enable)
         {
@@ -99,7 +99,9 @@ public class RegisterCodec
                     try
                     {
                         instance = (TypeCodec<?>) field.get(null);
-                        cluster.getConfiguration().getCodecRegistry().register(instance);
+                        
+                        //cluster.getConfiguration().getCodecRegistry().register(instance);
+                        builder.addTypeCodecs(instance);
                         codecMap.instance = instance;
                         if (codecName.endsWith("InstantCodec"))
                             codecs.get("InstantCodec").instance = instance;
