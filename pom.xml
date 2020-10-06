@@ -423,6 +423,7 @@
       </extension>
     </extensions>
   </build>
+  <!--
   <repositories>
     <repository>
       <id>JBoss repository</id>
@@ -437,6 +438,7 @@
       <url>http://search.maven.org/</url>
     </repository>
   </repositories>
+  -->
   <profiles>
     <profile>
       <id>release-ossrh</id>
