@@ -235,6 +235,8 @@ public class QueryFactory
         if(queryable.isScalar())
             q.scalar();
         
+        q.setSorter(queryable.getSorter());
+        q.setFilter(queryable.getFilter());
         q.setBookmark(queryable.getBookmark());
         return q;
     }
@@ -359,7 +361,7 @@ public class QueryFactory
         private RegisterType registerType;
         private Class<?>     returnType;
         private Comparator<?> sorter;
-        private Comparator<?> filter;
+        private Filter<?> filter;
         
         public Queryable build(String name) {
             QueryName q = null;
@@ -381,7 +383,7 @@ public class QueryFactory
         }
         /**
          * Build the query parameters as Map
-         * <br/> <b>note:</b> don't mix the set {@code param} values and {@code ofArray}
+         * <p> <b>note:</b> don't mix the set {@code param} values and {@code ofArray} </p>
          * @param params dynamically created
          * <p>
          * 1o first param it's key name and 2o your value
@@ -395,9 +397,9 @@ public class QueryFactory
         }
         /**
          * Build the query parameters as Map.
-         * <br/> <b>note:</b> don't mix the set {@code param} values and {@code ofArray}
-         * @param name
-         * @param value
+         * <p> <b>note:</b> don't mix the set {@code param} values and {@code ofArray} </p>
+         * @param name parameter
+         * @param value parameter
          * @return this builder instance
          */
         public Builder params(String name, Object value) {
@@ -406,7 +408,7 @@ public class QueryFactory
         }
         /**
          * Build the query parameters as POJO
-         * <br/> <b>note:</b> don't mix the set {@code param} values and {@code ofArray}
+         * <p> <b>note:</b> don't mix the set {@code param} values and {@code ofArray} </p>
          * @param <T> Type of class that represents the parameters
          * @param param instance of class the represents the parameters
          * @return this builder instance
@@ -417,7 +419,7 @@ public class QueryFactory
         }
         /**
          * Build the query parameters as array of values.
-         * <br/> <b>note:</b> don't mix the set {@code param} values and {@code ofArray}
+         * <p> <b>note:</b> don't mix the set {@code param} values and {@code ofArray} </p>
          * @param params array of parameters
          * @return this builder instance
          */
@@ -445,7 +447,7 @@ public class QueryFactory
             this.sorter = sorter;
             return this;
         }
-        public Builder filter(Comparator<?> filter) {
+        public Builder filter(Filter<?> filter) {
             this.filter = filter;
             return this;
         }

@@ -335,11 +335,17 @@ public interface Queryable
     
     /**
      * A comparison function, which imposes a total ordering on some collection of objects
+     * @param <T> type to be comparable
      * @return comparator instance
      */
     <T> Comparator<T> getSorter();
     
-    <T> Comparator<T> getFilter();
+    /**
+     * A filter function, to keep the result which imposes a total ordering on some collection of objects
+     * @param <T> the type of the items to be filtered
+     * @return comparator instance
+     */
+    <T> Filter<T> getFilter();
     
     /**
      * Has an ordering imposed by a comparator.

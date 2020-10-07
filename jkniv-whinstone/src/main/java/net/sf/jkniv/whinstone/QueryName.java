@@ -99,7 +99,7 @@ class QueryName implements Queryable
     private boolean      cacheIgnore;
     private final RegisterType registerType;
     private Comparator<?> sorter;
-    private Comparator<?> filter;
+    private Filter<?> filter;
     
     /**
      * Creates a Query object parameterized starting at first row and retrieve all rows, isolation default, no timeout and online (no batch).
@@ -608,7 +608,7 @@ class QueryName implements Queryable
     public <T, R> AutoBindParams bind(StatementAdapter<T, R> adapter)
     {
         AutoBindParams prepareParams = null;
-        if (isTypeOfNull())
+        if (isTypeOfNull() || this.paramsNames.length == 0)
             prepareParams = PrepareParamsFactory.newNoParams(adapter);
         else if (isTypeOfBasic() || params instanceof Date || params instanceof Calendar)
             prepareParams = PrepareParamsFactory.newBasicParam(adapter, this);
@@ -719,12 +719,12 @@ class QueryName implements Queryable
         this.returnType = clazz;
     }
 
-    void setSorter(Comparator<?> sorter)
+    <T> void setSorter(Comparator<T> sorter)
     {
         this.sorter = sorter;
     }
 
-    void setFilter(Comparator<?> filter)
+    <T> void setFilter(Filter<T> filter)
     {
         this.filter = filter;
     }
@@ -783,9 +783,9 @@ class QueryName implements Queryable
     }
 
     @Override
-    public <T> Comparator<T> getFilter()
+    public <T> Filter<T> getFilter()
     {
-        return (Comparator<T>) this.filter;
+        return (Filter<T>) this.filter;
     }
 
     @Override

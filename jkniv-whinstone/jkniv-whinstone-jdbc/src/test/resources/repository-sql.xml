@@ -57,7 +57,7 @@
      BOOK b
     inner join AUTHOR a on a.ID = b.AUTHOR_ID
   </select>
-      
+
   <insert type="NATIVE" id="FlatBook#add">
   INSERT INTO BOOK(ID, ISBN, NAME, AUTHOR_ID) VALUES (:id, :isbn, :name, :authorId)
   </insert>

@@ -31,7 +31,6 @@
     BOOK b
   </select>
 
-
   <select id="getBookByISBN" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.acme.FlatBook">
     select b.ID as id, b.ISBN as isbn, b.NAME as name, a.name as author, a.ID as author_id, b.IN_STOCK
     from
@@ -100,6 +99,10 @@
     MY_FLOAT,
     MY_DECIMAL, MY_VARCHAR, MY_CHAR, MY_BLOB, MY_CLOB, MY_DATE,
     MY_TIME, MY_TIMESTAMP from MY_TYPES where MY_DATE = :date
+  </select>
+  
+  <select id="getAllItems" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.flat.Item">
+    select ID, NAME, CODE, PRICE from ITEMS
   </select>
 
   <insert type="NATIVE" id="FlatBook#add">

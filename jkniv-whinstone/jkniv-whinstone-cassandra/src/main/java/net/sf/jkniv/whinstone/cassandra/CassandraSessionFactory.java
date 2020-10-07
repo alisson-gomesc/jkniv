@@ -79,7 +79,6 @@ public class CassandraSessionFactory //implements ConnectionFactory
         this.contextName = contextName;
         CqlSession session = null;
         URL cloudSecureConnect = getCloudSecureConnect(props);
-        //File f = new File("C:/dev/wks/wks-jkniv-git/jkniv-whinstone/jkniv-whinstone-cassandra/target/test-classes/database/astra-secure-connect-jkniv.zip");
         
         CqlSessionBuilder builder = CqlSession.builder();
         settingProperties(builder, props);
@@ -227,6 +226,7 @@ public class CassandraSessionFactory //implements ConnectionFactory
     private URL getCloudSecureConnect(Properties props)
     {
         String keyFile = props.getProperty(RepositoryProperty.KEY_FILE.key());
+        //keyFile = "file:///C:/dev/wks/wks-jkniv-git/jkniv-whinstone/jkniv-whinstone-cassandra/target/test-classes/database/astra-secure-connect-jkniv.zip";
         URL cloudSecureConnect = null;
         if(keyFile != null)
         {
