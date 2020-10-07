@@ -58,7 +58,7 @@ public class CassandraColumn implements JdbcColumn<Row>
         this.columnName = columnName;
         this.propertyAccess = new PropertyAccess(JDBC_COLUMN_MAPPER.map(columnName), classTarget);
         //this.columnType = CassandraType.valueOf(columnType.name());
-        this.columnType = CassandraType.valueOf(columnType.toString());
+        this.columnType = CassandraType.valueStartWith(columnType.toString());
         this.registerType = registerType;
         if(columnName.indexOf(".") > 0)
         {

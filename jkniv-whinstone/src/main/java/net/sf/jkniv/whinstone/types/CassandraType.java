@@ -110,5 +110,19 @@ public enum CassandraType implements ColumnType
         }
         return answer;
     }
+
+    public static ColumnType valueStartWith(String typeValue)
+    {
+        ColumnType answer = null;
+        for (ColumnType jdbcType : CassandraType.values())
+        {
+            if (typeValue.toUpperCase().startsWith(jdbcType.name()))
+            {
+                answer = jdbcType;
+                break;
+            }
+        }
+        return answer;
+    }
     
 }

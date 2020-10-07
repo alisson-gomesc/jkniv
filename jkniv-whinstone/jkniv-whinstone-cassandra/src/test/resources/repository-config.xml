@@ -9,6 +9,7 @@
       <property name="schema" value="whinstone" />
       <property name="user" value="cassandra" />
       <property name="password" value="cassandra" />
+      <property name="jkniv.cassandra.local_datacenter" value="datacenter1" />
     </properties>
   </repository>
 

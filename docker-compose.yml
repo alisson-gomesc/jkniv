@@ -23,6 +23,7 @@ services:
      - COUCHDB_USER=admin 
      - COUCHDB_PASSWORD=admin
     volumes:
+     #- ./couchdb/etc/local.d:/opt/couchdb/etc/local.d
      - couchdb-data:/opt/couchdb/data
   oracle-db:
     image: oracleinanutshell/oracle-xe-11g:latest
@@ -45,6 +46,7 @@ services:
       - postgresql-data:/var/lib/postgresql/data
     ports:
       - 5432:5432
+## [ volumes definition ]
 # creates Docker volumes which can be mounted by other containers too e.g. for backup
 volumes:
   cassandra-data:
@@ -53,7 +55,9 @@ volumes:
     driver: local
   postgresql-data:
     driver: local
+  postgis-data:
+    driver: local
 #networks:
 #  host:
     # use the bridge driver, but enable IPv6
-#    driver: host
+#    driver: hosts

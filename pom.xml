@@ -430,20 +430,6 @@
       </extension>
     </extensions>
   </build>
-  <repositories>
-    <repository>
-      <id>JBoss repository</id>
-      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
-    </repository>
-    <repository>
-      <id>mvnrepository</id>
-      <url>https://mvnrepository.com</url>
-    </repository>
-    <repository>
-      <id>maven repository</id>
-      <url>https://search.maven.org/</url>
-    </repository>
-  </repositories>
   <profiles>
     <profile>
       <id>release-ossrh</id>

@@ -181,6 +181,13 @@ public enum RepositoryProperty
         
         public String defaultValue() { return null; }
     },
+
+    /** property: <code>jkniv.cassandra.local_datacenter</code> , default value is: <code>null</code> */
+    LOCAL_DATACENTER {
+        public String key() { return "jkniv.cassandra.local_datacenter"; }
+        
+        public String defaultValue() { return null; }
+    },
 //    /** <code>jkniv.repository.ttl_sql</code> */
 //    TTL_SQL {
 //        public String key() { return "jkniv.repository.ttl_sql"; }

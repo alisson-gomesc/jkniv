@@ -24,6 +24,7 @@ import com.datastax.oss.driver.api.core.cql.ColumnDefinitions;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.type.reflect.GenericType;
 
 import net.sf.jkniv.exception.HandlerException;
 import net.sf.jkniv.experimental.TimerKeeper;
@@ -95,7 +96,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
         this.registerType = registerType;
         this.registerCodec = registerCodec;
         this.bound = stmt.bind();
-        this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s] value [%s]");
+        this.handlerException = new HandlerException(RepositoryException.class, "Cannot set parameter [%s]");
         this.queryable = queryable;
         this.returnType = (Class<T>)queryable.getReturnType();
         this.reset();
@@ -291,6 +292,8 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
                 setValue((LocalDate) value);
             else if (value instanceof LocalTime)
                 setValue((LocalTime) value);
+            else if (value instanceof Date)
+                setValue((Date) value);
             
             
             else if (classNameValue.equals("java.time.Instant"))
@@ -372,7 +375,7 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
             }
             */
         }
-        catch (SQLException e)
+        catch (Exception e)
         {
             this.handlerException.handle(e);// FIXME handler default message with custom params
         }
@@ -396,6 +399,10 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
     private void setValue(LocalTime value)
     {
         bound = bound.setLocalTime(currentIndex(), value);
+    }
+    private void setValue(Date value)
+    {
+        bound = bound.setInstant(currentIndex(), value.toInstant());
     }
 //    private void setValue(com.datastax.driver.core.Duration value)
 //    {
@@ -485,17 +492,17 @@ public class CassandraPreparedStatementAdapter<T, R> implements StatementAdapter
 
     private void setInternalValue(List<?> value) throws SQLException
     {
-        bound = bound.setList(currentIndex(), value, null);
+        bound = bound.set(currentIndex(), value, List.class);
     }
 
     private void setInternalValue(Map<?,?> value) throws SQLException
     {
-        bound = bound.setMap(currentIndex(), value, null, null);
+        bound = bound.set(currentIndex(), value, Map.class);
     }
 
-    private <T> void setInternalValue(Set<T> value) throws SQLException
+    private void setInternalValue(Set<T> value) throws SQLException
     {
-        bound = bound.setSet(currentIndex(), value, null);
+        bound = bound.set(currentIndex(), value, Set.class);
     }
 
     private int currentIndex()

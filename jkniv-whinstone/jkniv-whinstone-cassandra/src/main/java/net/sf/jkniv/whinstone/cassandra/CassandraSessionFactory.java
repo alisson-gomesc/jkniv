@@ -73,6 +73,7 @@ public class CassandraSessionFactory //implements ConnectionFactory
         String username = props.getProperty(RepositoryProperty.JDBC_USER.key());
         String password = props.getProperty(RepositoryProperty.JDBC_PASSWORD.key());
         String protocol = props.getProperty(RepositoryProperty.PROTOCOL_VERSION.key());
+        String datacenter= props.getProperty(RepositoryProperty.LOCAL_DATACENTER.key());
         ProtocolVersion version = getProtocolVersion(protocol);
         this.registerCodec = new RegisterCodec();
         this.contextName = contextName;
@@ -87,18 +88,22 @@ public class CassandraSessionFactory //implements ConnectionFactory
             session = builder
                         .withCloudSecureConnectBundle(cloudSecureConnect)
                         .withAuthCredentials(username, password)
+                        .withLocalDatacenter(datacenter)
+                        .withKeyspace(keyspace)
                         .build();
         }
         else if (username != null)
             session = builder
                         .addContactPoints(getContactPoints(urls))
                         .withAuthCredentials(username, password)
+                        .withLocalDatacenter(datacenter)
                         .withKeyspace(keyspace)
                         .build();
         else
             session = builder
                         .addContactPoints(getContactPoints(urls))
                         .withAuthCredentials(username, password)
+                        .withLocalDatacenter(datacenter)
                         .withKeyspace(keyspace)
                         .build();
         
@@ -249,7 +254,7 @@ public class CassandraSessionFactory //implements ConnectionFactory
         Collection<InetSocketAddress> endpoints = new ArrayList<>();
         for(String url : urls)
         {
-            SocketAddressResolve resolver = SocketAddressResolve.of(url); 
+            SocketAddressResolve resolver = SocketAddressResolve.of(url, 9042); 
             endpoints.add(new InetSocketAddress(resolver.getHost(), resolver.getPort()));
         }
         return endpoints;

@@ -13,7 +13,7 @@ public class SocketAddressResolveTest
     public void whenResolveAddress()
     {
         String url = "127.0.0.1:8080";
-        SocketAddressResolve resolve = SocketAddressResolve.of(url);
+        SocketAddressResolve resolve = SocketAddressResolve.of(url, 8080);
         assertThat(resolve.getHost(), is("127.0.0.1"));
         assertThat(resolve.getPort(), is(8080));
         

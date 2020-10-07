@@ -16,6 +16,7 @@ When connect to cloud DataStax Astra is mandatory provide a zip file to establis
           <property name="user" value="admin" />
           <property name="password" value="d0nut" />
           <property name="schema" value="my_keyspace" />
+          <property name="jkniv.cassandra.local_datacenter" value="datacenter1" />
         </properties>
       </repository>
     </repository-config>
@@ -34,6 +35,7 @@ To connect a Cassandra Cluster a set of IPs can be provide separated by commas i
         <property name="user" value="admin" />
         <property name="password" value="d0nut" />
         <property name="schema" value="my_keyspace" />
+        <property name="jkniv.cassandra.local_datacenter" value="datacenter1" />
       </properties>
     </repository>
     

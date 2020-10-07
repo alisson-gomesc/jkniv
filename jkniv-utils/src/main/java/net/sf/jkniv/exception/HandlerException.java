@@ -161,9 +161,11 @@ public class HandlerException implements HandleableException
             }
             catch (Exception e)
             {
-                theException = new RuntimeException(customMessage, caught);
                 if (caught != null)//  TODO alternative method when caught is null
+                {
+                    theException = new RuntimeException(caught);
                     theException.setStackTrace(caught.getStackTrace());
+                }
             }
         }
         else if (enableLogInfo){
@@ -278,7 +280,7 @@ public class HandlerException implements HandleableException
      */
     private String buildMessage(String message, String customMessage, Exception caught)
     {
-        String newMessage = "";
+        String newMessage = "";// FIXME nullpointer when message has more one parameter. Cannot set parameter [%s] value [%s]
         if (hasParameterAtMessage(message))
             newMessage = String.format(message,
                     (customMessage != null ? customMessage + " " : "") + caught.getMessage()); //newMessage = String.format(message, customMessage);
