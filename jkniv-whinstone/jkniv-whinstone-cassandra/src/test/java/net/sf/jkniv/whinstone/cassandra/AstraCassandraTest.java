@@ -80,7 +80,7 @@ Caused by: sun.security.validator.ValidatorException: KeyUsage does not allow ke
     at com.sun.net.ssl.internal.ssl.ClientHandshaker.serverCertificate(ClientHandshaker.java:1188)
     ... 42 more
      */
-    @Test @Ignore("JDK 6 throws ValidatorException: KeyUsage does not allow key encipherment")
+    @Test //@Ignore("JDK 6 throws ValidatorException: KeyUsage does not allow key encipherment")
     public void whenConnectToAstraCassandra()
     {
         Properties props = new Properties();

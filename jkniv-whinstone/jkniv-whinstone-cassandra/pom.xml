@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -13,6 +15,10 @@
   <artifactId>jkniv-whinstone-cassandra</artifactId>
   <url>http://jkniv.sourceforge.net/jkniv-whinstone/</url>
 
+  <properties>
+    <maven.compiler.testSource>1.8</maven.compiler.testSource>
+    <maven.compiler.testTarget>1.8</maven.compiler.testTarget>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>net.sf.jkniv</groupId>
@@ -30,44 +36,34 @@
       <groupId>com.datastax.cassandra</groupId>
       <artifactId>cassandra-driver-core</artifactId>
     </dependency>
-      <dependency>
-        <groupId>com.datastax.cassandra</groupId>
-        <artifactId>cassandra-driver-mapping</artifactId>
-    </dependency>    
-    <!-- 
     <dependency>
       <groupId>com.datastax.cassandra</groupId>
-      <artifactId>cassandra-driver-extras</artifactId>
+      <artifactId>cassandra-driver-mapping</artifactId>
     </dependency>
-     -->    
-<!-- 
-    <dependency>
-      <groupId>javax.transaction</groupId>
-      <artifactId>jta</artifactId>
-      <version>1.1</version>
-      <scope>test</scope>
-    </dependency>
--->    
-<!-- 
-    <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
-      <version>1.1.0.Final</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>5.2.4.Final</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.el</groupId>
-      <artifactId>javax.el-api</artifactId>
-      <version>2.2.4</version>
-    </dependency>    
- -->    
+    <!-- <dependency> <groupId>com.datastax.cassandra</groupId> <artifactId>cassandra-driver-extras</artifactId> 
+      </dependency> -->
+    <!-- <dependency> <groupId>javax.transaction</groupId> <artifactId>jta</artifactId> <version>1.1</version> 
+      <scope>test</scope> </dependency> -->
+    <!-- <dependency> <groupId>javax.validation</groupId> <artifactId>validation-api</artifactId> <version>1.1.0.Final</version> 
+      </dependency> <dependency> <groupId>org.hibernate</groupId> <artifactId>hibernate-validator</artifactId> <version>5.2.4.Final</version> 
+      </dependency> <dependency> <groupId>javax.el</groupId> <artifactId>javax.el-api</artifactId> <version>2.2.4</version> 
+      </dependency> -->
   </dependencies>
   <build>
     <plugins>
+<!-- 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.0</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+          <testSource>1.8</testSource>
+          <testTarget>1.8</testTarget>
+        </configuration>
+      </plugin>
+-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
@@ -79,7 +75,7 @@
       </plugin>
     </plugins>
   </build>
-  
+
   <licenses>
     <license>
       <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1</name>
