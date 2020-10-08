@@ -21,6 +21,7 @@ package net.sf.jkniv.whinstone.commands;
 
 import java.sql.Statement;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import net.sf.jkniv.cache.Cacheable;
@@ -73,6 +74,10 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
                     preCallback();
                     Command command = asCommand();
                     list = command.execute();
+                    if(queryable.hasFilter())
+                        filtering(list);
+                    if(queryable.hasSorter())
+                        Collections.sort(list, queryable.getSorter());                    
                     postCallback();
                     if (selectable.hasCache() && !list.isEmpty())
                         selectable.getCache().put(queryable, list);
@@ -107,6 +112,18 @@ public abstract class DefaultQueryHandler extends DefaultCommandHandler
                     list.size());
         
         return (T) list;
+    }
+    
+    private void filtering(List<?> list)
+    {
+        Iterator<?> it = list.iterator();
+        while(it.hasNext())
+        {
+            if(!queryable.getFilter().isEqual(it.next()))
+            {
+                it.remove();
+            }
+        }
     }
     
     private void paging(List<?> list)

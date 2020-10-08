@@ -102,6 +102,10 @@
     MY_TIME, MY_TIMESTAMP from MY_TYPES where MY_DATE = :date
   </select>
 
+  <select id="getAllItems" type="NATIVE" returnType="net.sf.jkniv.whinstone.jdbc.domain.flat.Item">
+    select ID, NAME, CODE, PRICE from ITEMS
+  </select>
+  
   <insert type="NATIVE" id="FlatBook#add">
     INSERT INTO BOOK(ID, ISBN, NAME, AUTHOR_ID, IN_STOCK) 
     VALUES (:id, :isbn, :name, :authorId, :inStock)

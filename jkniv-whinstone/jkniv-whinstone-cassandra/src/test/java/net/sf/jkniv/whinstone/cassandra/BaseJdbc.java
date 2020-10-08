@@ -32,7 +32,7 @@ import net.sf.jkniv.whinstone.Repository;
 public class BaseJdbc// extends BaseSpringJUnit4
 {
     protected static final String url = "192.168.99.100";
-    protected static final String schema = "dev_whin";
+    protected static final String schema = "whinstone";
     protected static final String user = "cassandra";
     protected static final String pass = "cassandra";
     protected static final Properties config;

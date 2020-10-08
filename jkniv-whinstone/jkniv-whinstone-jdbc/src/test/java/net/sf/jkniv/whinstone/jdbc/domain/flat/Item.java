@@ -19,25 +19,21 @@
  */
 package net.sf.jkniv.whinstone.jdbc.domain.flat;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class Color
+public class Item
 {
-    private String       name;
-    private Long          code;
-    private List<String> priorities;
+    private Long    id;
+    private String  name;
+    private Integer code;
+    private Float   price;
     
-    public Color()
+    public Long getId()
     {
-        this(null, 0);
+        return id;
     }
     
-    public Color(String name, long code)
+    public void setId(Long id)
     {
-        this.name = name;
-        this.code = code;
-        this.priorities = new ArrayList<String>();
+        this.id = id;
     }
     
     public String getName()
@@ -50,35 +46,30 @@ public class Color
         this.name = name;
     }
     
-    public Long getCode()
+    public Integer getCode()
     {
         return code;
     }
     
-    public void setCode(Long code)
+    public void setCode(Integer code)
     {
         this.code = code;
     }
     
-    public List<String> getPriorities()
+    public Float getPrice()
     {
-        return priorities;
-    }
-        
-    public boolean setPriority(String priority)
-    {
-        return priorities.add(priority);
+        return price;
     }
     
-    public void setPriorities(List<String> priorities)
+    public void setPrice(Float price)
     {
-        this.priorities = priorities;
+        this.price = price;
     }
     
     @Override
     public String toString()
     {
-        return "Color [name=" + name + ", code=" + code + ", priorities=" + priorities + "]";
+        return "Item [id=" + id + ", name=" + name + ", code=" + code + ", price=" + price + "]";
     }
     
 }

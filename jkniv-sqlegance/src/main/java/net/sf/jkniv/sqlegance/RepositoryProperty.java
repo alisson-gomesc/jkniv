@@ -174,7 +174,24 @@ public enum RepositoryProperty
         public String defaultValue() { return "id,getId,setId"; }
     },
     
-    
+    /** property: <code>jkniv.repository.key_file</code> , default value is: <code>null</code> */
+    KEY_FILE {
+        public String key() { return PREFIX+".key_file"; }
+        
+        public String defaultValue() { return null; }
+    },
+
+    /** property: <code>jkniv.cassandra.local_datacenter</code> , default value is: <code>null</code> */
+    LOCAL_DATACENTER {
+        public String key() { return "jkniv.cassandra.local_datacenter"; }
+        
+        public String defaultValue() { return null; }
+    },
+//    /** <code>jkniv.repository.ttl_sql</code> */
+//    TTL_SQL {
+//        public String key() { return "jkniv.repository.ttl_sql"; }
+//    }
+    ;
 //    /** <code>jkniv.repository.ttl_sql</code> */
 //    TTL_SQL {
 //        public String key() { return "jkniv.repository.ttl_sql"; }
