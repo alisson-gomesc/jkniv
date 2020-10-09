@@ -35,5 +35,4 @@ public class ItemFilter implements Filter<Item>
     {
         return item.getPrice() >= 150;
     }
-    
 }

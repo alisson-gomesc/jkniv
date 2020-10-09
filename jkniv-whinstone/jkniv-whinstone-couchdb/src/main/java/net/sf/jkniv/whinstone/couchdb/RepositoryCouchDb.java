@@ -21,7 +21,6 @@ package net.sf.jkniv.whinstone.couchdb;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +58,7 @@ import net.sf.jkniv.whinstone.ResultRow;
 import net.sf.jkniv.whinstone.UnsupportedDslOperationException;
 import net.sf.jkniv.whinstone.commands.CommandHandler;
 import net.sf.jkniv.whinstone.commands.CommandHandlerFactory;
+import net.sf.jkniv.whinstone.couchdb.commands.CouchDbSynchIndexDesign;
 import net.sf.jkniv.whinstone.couchdb.commands.CouchDbSynchViewDesign;
 import net.sf.jkniv.whinstone.couchdb.commands.JsonMapper;
 import net.sf.jkniv.whinstone.couchdb.dialect.CouchDbDialect2o1;
@@ -134,17 +134,34 @@ class RepositoryCouchDb implements Repository
         this.configHanlerException();
         this.configJacksonObjectMapper();
         this.updateCouchDbViews();
+        this.updateCouchDbIndexes();
     }
     
     private void updateCouchDbViews()
     {
-        String updateViews = this.sqlContext.getRepositoryConfig().getProperty("jkniv.repository.couchdb.update_views");
-        String hostContext = cmdAdapter.getHttpBuilder().getHostContext();
+        String updateViews = this.sqlContext.getRepositoryConfig().getProperty("jkniv.couchdb.update_views");
+        String hostContext = cmdAdapter.getHttpBuilder().getHostContext() + "-views";
         if (!DOC_SCHEMA_UPDATED.containsKey(hostContext))
         {
             if (Boolean.valueOf(updateViews))
             {
                 CouchDbSynchViewDesign _design = new CouchDbSynchViewDesign(this.cmdAdapter.getHttpBuilder(),
+                        sqlContext);
+                _design.update();
+                DOC_SCHEMA_UPDATED.put(hostContext, Boolean.TRUE);
+            }
+        }
+    }
+
+    private void updateCouchDbIndexes()
+    {
+        String updateIndexes = this.sqlContext.getRepositoryConfig().getProperty("jkniv.couchdb.update_indexes");
+        String hostContext = cmdAdapter.getHttpBuilder().getHostContext() + "-indexes";
+        if (!DOC_SCHEMA_UPDATED.containsKey(hostContext))
+        {
+            if (Boolean.valueOf(updateIndexes))
+            {
+                CouchDbSynchIndexDesign _design = new CouchDbSynchIndexDesign(this.cmdAdapter.getHttpBuilder(),
                         sqlContext);
                 _design.update();
                 DOC_SCHEMA_UPDATED.put(hostContext, Boolean.TRUE);

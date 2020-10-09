@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<statements xmlns="http://jkniv.sf.net/schema/sqlegance/statements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude"
+  xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
+       http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
+
+  <package name="_design/indexes">
+    <select id="index#auto-create-foo-index">
+      {
+         "index": {
+            "fields": [
+               "foo"
+            ]
+         },
+         "type": "json",
+         "name": "auto-create-foo-index",
+         "ddoc": "auto-create-foo-index"
+      }
+    </select>
+  </package>
+
+</statements>

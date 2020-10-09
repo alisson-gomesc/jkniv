@@ -1,3 +1,20 @@
+
+## Release notes - jkniv-whinstone - Version 0.6.6
+    
+### New Feature
+
+<ul>
+<li>[<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-121'>JKNIVWHIN-121</a>] - [whinstone] Sort records using Comparator object
+</li>
+<li>[<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-122'>JKNIVWHIN-122</a>] - [couchdb] create index
+</li>
+<li>[<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-123'>JKNIVWHIN-123</a>] - [cassandra] Connecting to a cloud DataStax Astra
+</li>
+<li>[<a href='https://jkniv-io.atlassian.net/browse/JKNIVWHIN-124'>JKNIVWHIN-124</a>] - [whinstone] filtering rows result by queryable
+</li>
+</ul>
+
+
 ## Release notes - jkniv-whinstone - Version 0.6.4
    
 ### Bug

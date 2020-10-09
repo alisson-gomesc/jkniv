@@ -22,7 +22,7 @@ package net.sf.jkniv.whinstone;
 /**
  * Represents a filter to select the items.
  *
- * @param <R> the type of the items to be filtered
+ * @param <T> the type of the items to be filtered
  *
  * @since 0.6.6
  */
@@ -31,8 +31,8 @@ public interface Filter<T>
 
     /**
      * Search the items that attend the filter
-     * @param result items from database query
-     * @return {@code true} when the 
+     * @param item items from database query
+     * @return {@code true} when the item match with filter, {@code false} othewise
      */
     boolean isEqual(T item);
 }

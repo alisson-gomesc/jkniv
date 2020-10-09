@@ -13,7 +13,8 @@
     <jndi-data-source>java:comp/env/props/couchdb</jndi-data-source>
     <properties>
       <property name="jackson.WRITE_DATES_AS_TIMESTAMPS"   value="true"/>
-      <property name="jkniv.repository.couchdb.update_views" value="true"/>
+      <property name="jkniv.couchdb.update_views" value="true"/>
+      <property name="jkniv.couchdb.update_indexes" value="true"/>
     </properties>
   </repository>
 

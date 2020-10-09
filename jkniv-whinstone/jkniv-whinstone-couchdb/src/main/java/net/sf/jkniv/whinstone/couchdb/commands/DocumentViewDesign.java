@@ -47,7 +47,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class DocumentDesign
+class DocumentViewDesign
 {
     @JsonProperty("_id")
     private String              id;
@@ -58,7 +58,7 @@ class DocumentDesign
     @JsonProperty("views")
     private Map<String, ViewFunction> views = new HashMap<String, ViewFunction>();
 
-    public DocumentDesign()
+    public DocumentViewDesign()
     {
         this.language = "javascript";
     }

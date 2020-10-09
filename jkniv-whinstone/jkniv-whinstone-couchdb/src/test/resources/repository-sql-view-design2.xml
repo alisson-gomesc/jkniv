@@ -22,13 +22,13 @@
 
   <package name="_design/docs2">
    <select id="my-views-docs2">
-{
-  "views" : {
-    "foo2" : {
-      "map" : "function(doc) {if (doc.type === 'DrinkRecipe') {doc.ingredients.forEach(function(i) {emit([i.name.toLowerCase(), doc.name.toLowerCase(), doc._id], null);});}}"
+    {
+      "views" : {
+        "foo2" : {
+          "map" : "function(doc) {if (doc.type === 'DrinkRecipe') {doc.ingredients.forEach(function(i) {emit([i.name.toLowerCase(), doc.name.toLowerCase(), doc._id], null);});}}"
+        }
+      }
     }
-  }
-}
    </select>
    
   </package>

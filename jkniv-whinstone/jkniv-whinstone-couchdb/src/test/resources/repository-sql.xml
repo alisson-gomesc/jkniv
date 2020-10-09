@@ -4,7 +4,8 @@
   xsi:schemaLocation="http://jkniv.sf.net/schema/sqlegance/statements
        http://jkniv.sf.net/schema/sqlegance/sqlegance-stmt.xsd">
 
-  <include href="/repository-sql-design.xml" />
+  <include href="/repository-sql-view-design.xml" />
+  <include href="/repository-sql-index-design.xml" />
   <include href="/repository-sql-find.xml" />
   <include href="/repository-sql-find-page.xml" />
   <include href="/repository-sql-views.xml" />

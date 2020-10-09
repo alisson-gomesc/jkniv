@@ -209,5 +209,81 @@ Java code:
 
 OK, java looks like more readable. Of course `Collection<Map>` could be replace to `Collection<Sale>` for a better design.
 
+
+### Extending queries `ordering`
+
+The class `ItemOrderByNameDesc` order the items descending implementing the [Comparator][3] interface.
+
+    public class ItemOrderByNameDesc implements Comparator<Item> {
+      @Override
+      public int compare(Item o1, Item o2) {
+        return o2.getName().compareTo(o1.getName());
+      }
+    }
+
+To use `ItemOrderByNameDesc` to order the result set after the database
+
+    Queryable queryable = QueryFactory.builder()
+        .sorter(new ItemOrderByNameDesc())
+        .build("getAllItems");
+        
+    List<Item> items = repositoryDerby.list(queryable);
+     
+    assertThat(items.get(9).getName(), is("A"));
+    assertThat(items.get(8).getName(), is("B"));
+    assertThat(items.get(7).getName(), is("C"));
+    assertThat(items.get(6).getName(), is("D"));
+    assertThat(items.get(5).getName(), is("E"));
+    assertThat(items.get(4).getName(), is("F"));
+    assertThat(items.get(3).getName(), is("G"));
+    assertThat(items.get(2).getName(), is("H"));
+    assertThat(items.get(1).getName(), is("I"));
+    assertThat(items.get(0).getName(), is("J"));
+
+
+This feature is most useful when we are using NoSQL database where some queries is hard.
+
+### Extending queries `filtering`
+
+The interface class `Filter` allow to remove data elements from result set. When the data doesn't match with `isEqual` method it will be removed.
+
+
+    public interface Filter<T> {
+      boolean isEqual(T item);
+    }
+
+    public class ItemFilter implements Filter<Item> {
+      Float price;
+      public ItemFilter(Float price) {
+        this.price = price;
+      }
+    
+      @Override
+      public boolean isEqual(Item item) {
+        return item.getPrice() >= 150;
+      }
+    }
+
+To use `Filter` to remove the data element from result set:
+
+    @Test 
+    public void whenSelectItemsWithJavaOrderBy() {
+      Queryable queryable = QueryFactory.builder()
+                .filter(new ItemFilter(150F))
+                .build("getAllItems");
+        
+      List<Item> items = repositoryDerby.list(queryable);
+      Float MIN_PRICE = 150F;
+      assertThat(items.get(0).getPrice(), greaterThanOrEqualTo(MIN_PRICE));
+      assertThat(items.get(1).getPrice(), greaterThanOrEqualTo(MIN_PRICE));
+      assertThat(items.get(2).getPrice(), greaterThanOrEqualTo(MIN_PRICE));
+      assertThat(items.get(3).getPrice(), greaterThanOrEqualTo(MIN_PRICE));
+      assertThat(items.get(4).getPrice(), greaterThanOrEqualTo(MIN_PRICE));
+    }
+    
+This feature is most useful when we are using NoSQL database where some queries is hard.
+    
+
 [1]: http://jkniv.sourceforge.net/jkniv-sqlegance/index.html "SQL is handler by XML files"
 [2]: https://docs.oracle.com/javase/tutorial/jdbc/basics/prepared.html "Overview of Prepared Statements"
+[3]: https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html

@@ -19,30 +19,21 @@
  */
 package net.sf.jkniv.whinstone.couchdb.commands.find;
 
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
-import java.util.Date;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.internal.matchers.LessThan;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jkniv.experimental.Chronometer;
 import net.sf.jkniv.whinstone.QueryFactory;
 import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.BaseJdbc;
-import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Session;
-import net.sf.jkniv.whinstone.couchdb.result.CustomResultRow;
 
 public class FindStressTest extends BaseJdbc
 {
@@ -51,7 +42,7 @@ public class FindStressTest extends BaseJdbc
     @Test @Ignore("Needs pre load data")
     public void whenCouchDbListWithFixedFind()
     {
-        Repository repositoryDb = getRepositoryDb3t();
+        Repository repositoryDb = getRepositoryDbStressTest();
         Chronometer.timer("Without Cache");
         for(int i=0;  i <LOOP; i++)
         {

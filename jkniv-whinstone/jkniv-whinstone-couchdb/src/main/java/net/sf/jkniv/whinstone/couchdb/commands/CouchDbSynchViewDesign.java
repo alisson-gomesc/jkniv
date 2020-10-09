@@ -19,6 +19,7 @@
  */
 package net.sf.jkniv.whinstone.couchdb.commands;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,22 +78,24 @@ public class CouchDbSynchViewDesign
         for (String packet : queries.keySet())
         {
             List<Sql> sqls = queries.get(packet);
-            DesignCommand command = new DesignCommand(httpBuilder, packet);
+            DesignViewCommand command = new DesignViewCommand(httpBuilder, packet);
             Map<String, ViewFunction> views = new HashMap<String, ViewFunction>();
             for (Sql sql : sqls)
             {
                 String name = null;
                 boolean map = true;
-                if (sql.getName().startsWith("map#"))
+                if(sql.getName().startsWith("index#"))
+                    continue;
+                else if (sql.getName().startsWith("map#"))
                     name = sql.getName().substring(4);
                 else if (sql.getName().startsWith("reduce#"))
                 {
                     name = sql.getName().substring(7);
                     map = false;
                 }
-                else
+                else 
                     throw new RepositoryException("Cannot build " + packet
-                            + " view from docs. The queries must be start with 'map#' or 'reduce#' name");
+                            + " view from docs. The queries must be start with 'map#' | 'reduce#' | 'index#' name");
                 
                 ViewFunction view = views.get(name);
                 if (view == null)

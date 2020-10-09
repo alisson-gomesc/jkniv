@@ -39,38 +39,37 @@ import net.sf.jkniv.asserts.AssertsFactory;
 import net.sf.jkniv.sqlegance.RepositoryException;
 import net.sf.jkniv.whinstone.couchdb.HttpBuilder;
 
-class DesignCommand extends AbstractCommand implements CouchCommand
+class DesignViewCommand extends AbstractCommand implements CouchCommand
 {
-    private static final Logger     LOG     = LoggerFactory.getLogger(DesignCommand.class);
+    private static final Logger     LOG     = LoggerFactory.getLogger(DesignViewCommand.class);
     private static final Assertable notNull = AssertsFactory.getNotNull();
     private final HttpBuilder       httpBuilder;
     private final String            docsName;
     private StringBuilder           body;
-    private DocumentDesign          documentDesign;
+    private DocumentViewDesign      documentDesign;
     
-    public DesignCommand(HttpBuilder httpBuilder, String docs)
+    public DesignViewCommand(HttpBuilder httpBuilder, String docs)
     {
         super();
         this.docsName = docs;
         this.httpBuilder = httpBuilder;
         this.body = new StringBuilder("{ \"views\": {");
         this.method = HttpMethod.PUT;
-        this.documentDesign = new DocumentDesign();
+        this.documentDesign = new DocumentViewDesign();
     }
     
     public void add(Collection<ViewFunction> views)
     {
         for (ViewFunction view : views)
            this.documentDesign.add(view);
-        /* \/\/ JSON SAMPLE \/\/ */
-        /*
+        /* \/\/ JSON SAMPLE \/\/ */ /*
+         
             "all": {
               "map": "function(doc) { emit(doc.title, doc) }",
               "reduce": "function(key, values){ return sum(values); }"
             }
-        */
-        /* /\/\ JSON SAMPLE /\/\ */
-        //String name = view.getMapfun().getName().substring(4);
+
+        *//* /\/\ JSON SAMPLE /\/\ */
     }
     
     @Override
@@ -78,7 +77,7 @@ class DesignCommand extends AbstractCommand implements CouchCommand
     {
         String json = null;
         CloseableHttpResponse response = null;
-        DocumentDesign docDesign = getViewer();
+        DocumentViewDesign docDesign = getViewer();
         try
         {
             if (docDesign != null)
@@ -136,11 +135,11 @@ class DesignCommand extends AbstractCommand implements CouchCommand
         return null;
     }
     
-    private DocumentDesign getViewer()
+    private DocumentViewDesign getViewer()
     {
         String json = null;
         CloseableHttpResponse response = null;
-        DocumentDesign docDesign = null;
+        DocumentViewDesign docDesign = null;
         try
         {
             CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -154,8 +153,8 @@ class DesignCommand extends AbstractCommand implements CouchCommand
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HTTP_OK)
             {
-                docDesign = JsonMapper.mapper(json, DocumentDesign.class);
-                LOG.info("Views from design {} are replaced", docsName);
+                docDesign = JsonMapper.mapper(json, DocumentViewDesign.class);
+                LOG.info("Views from design {} will be replaced", docsName);
             }
         }
         catch (Exception e) // ClientProtocolException | JsonParseException | JsonMappingException | IOException

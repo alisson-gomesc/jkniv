@@ -28,5 +28,4 @@ public class ItemOrderByNameDesc implements Comparator<Item>
     {
         return o2.getName().compareTo(o1.getName());
     }
-    
 }

@@ -49,7 +49,7 @@ import net.sf.jkniv.whinstone.couchdb.jndi.JndiCreator;
 public class BaseJdbc extends BaseSpringJUnit4
 {
     private static final Logger    LOG                 = LoggerFactory.getLogger(BaseJdbc.class);
-    public static final Properties config, configDb3t;
+    public static final Properties config, configDbStressTest;
     private static final String    URL                 = "http://192.168.99.100:5984";
     private static final String    SCHEMA              = "whinstone-author";
     private static final String    USER                = "admin";
@@ -60,16 +60,16 @@ public class BaseJdbc extends BaseSpringJUnit4
     static
     {
         config = new Properties();
-        configDb3t = new Properties();
+        configDbStressTest = new Properties();
         config.setProperty(RepositoryProperty.JDBC_URL.key(), URL);
         config.setProperty(RepositoryProperty.JDBC_SCHEMA.key(), "whinstone-author");
         config.setProperty(RepositoryProperty.JDBC_USER.key(), USER);
         config.setProperty(RepositoryProperty.JDBC_PASSWORD.key(), PASSWD);
         
-        configDb3t.setProperty(RepositoryProperty.JDBC_URL.key(), URL);
-        configDb3t.setProperty(RepositoryProperty.JDBC_SCHEMA.key(), "db3t-user-origin");
-        configDb3t.setProperty(RepositoryProperty.JDBC_USER.key(), USER);
-        configDb3t.setProperty(RepositoryProperty.JDBC_PASSWORD.key(), PASSWD);
+        configDbStressTest.setProperty(RepositoryProperty.JDBC_URL.key(), URL);
+        configDbStressTest.setProperty(RepositoryProperty.JDBC_SCHEMA.key(), "db3t-user-origin");
+        configDbStressTest.setProperty(RepositoryProperty.JDBC_USER.key(), USER);
+        configDbStressTest.setProperty(RepositoryProperty.JDBC_PASSWORD.key(), PASSWD);
     }
     
     // Serialize Date to ISO-8601
@@ -139,10 +139,10 @@ public class BaseJdbc extends BaseSpringJUnit4
         return RepositoryService.getInstance().lookup(RepositoryType.COUCHDB).newInstance(config);
     }
     
-    protected static Repository getRepositoryDb3t()
+    protected static Repository getRepositoryDbStressTest()
     {
-        return RepositoryService.getInstance().lookup(RepositoryType.COUCHDB).newInstance(configDb3t,
-                SqlContextFactory.newInstance("/repository-sql-db3t.xml"));
+        return RepositoryService.getInstance().lookup(RepositoryType.COUCHDB).newInstance(configDbStressTest,
+                SqlContextFactory.newInstance("/repository-sql-db-stresstest.xml"));
     }
     
     private static String streamToString(InputStream is)
