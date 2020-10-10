@@ -37,7 +37,14 @@
     <menu name="jkniv">
       <item name="Introduction" href="index.html" />
     </menu>
-    <menu ref="modules"/>
+    <menu name="Modules">
+      <item name="jkniv-sqlegance" href="jkniv-sqlegance/index.html" />
+      <item name="jkniv-whinstone" href="jkniv-whinstone/index.html" />
+      <item name="jkniv-whinstone-jdbc" href="jkniv-whinstone-jdbc/index.html" />
+      <item name="jkniv-whinstone-jpa2" href="jkniv-whinstone-jpa2/index.html" />
+      <item name="jkniv-whinstone-cassandra" href="jkniv-whinstone-cassandra/index.html" />
+      <item name="jkniv-whinstone-couchdb" href="jkniv-whinstone-couchdb/index.html" />
+    </menu>
     <!-- 
     <menu ref="parent"/>
     <menu ref="reports" />

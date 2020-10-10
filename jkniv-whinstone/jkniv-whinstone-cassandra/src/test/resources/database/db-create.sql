@@ -23,7 +23,7 @@ CREATE TABLE VEHICLE
  ,PRIMARY KEY( plate )
 );
 
-CREATE TABLE dev_whin.test_data 
+CREATE TABLE test_data 
 (
    my_key text,
    evt_date timestamp,

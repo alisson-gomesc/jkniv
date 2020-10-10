@@ -31,8 +31,15 @@ public interface Validatory
      * @param validateType type of validation
      * @throws ConstraintException when some constraint is violated
      */
-
     void assertValidate(Object params, ValidateType  validateType);
+
+    /**
+     * Use validator (JSR 303) to perform validation against domain model
+     * @param params the domain model to validate
+     * @param validateGroup type of validation
+     * @throws ConstraintException when some constraint is violated
+     */
+    <T> void assertValidate(Object params, Class<T> validateGroup);
     
     /**
      * Use validator (JSR 303) to perform validation against domain model
@@ -42,5 +49,12 @@ public interface Validatory
      */
     Map<String, String> validate(Object params, ValidateType  validateType);
     
+    /**
+     * Use validator (JSR 303) to perform validation against domain model
+     * @param params the domain model to validate
+     * @param validateGroup type of validation
+     * @return the pairs field and constraints violated, an empty Map is return when any constraint is violated
+     */
+    <T> Map<String, String> validate(Object params, Class<T> validateGroup);
     
 }

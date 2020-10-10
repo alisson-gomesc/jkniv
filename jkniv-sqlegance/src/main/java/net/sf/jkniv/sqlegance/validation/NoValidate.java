@@ -29,9 +29,20 @@ class NoValidate implements Validatory
     public void assertValidate(Object params, ValidateType validateType)
     {
     }
+
+    @Override
+    public <T> void assertValidate(Object params, Class<T> validateGroup)
+    {
+    }
     
     @Override
     public Map<String, String> validate(Object params, ValidateType validateType)
+    {
+        return Collections.emptyMap();
+    }
+    
+    @Override
+    public <T> Map<String, String> validate(Object params, Class<T> validateGroup)
     {
         return Collections.emptyMap();
     }

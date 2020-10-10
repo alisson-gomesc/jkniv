@@ -3,7 +3,7 @@ version: '3.4'
 services:
   cassandra:
     image: cassandra
-    container_name: cassandra-dev
+    container_name: cassandra-jkdev
     ports: 
      - '9042:9042'
     environment:
@@ -16,7 +16,7 @@ services:
      - cassandra-data:/var/lib/cassandra
   couchdb:
     image: couchdb:2.3.1
-    container_name: couchdb-dev
+    container_name: couchdb-jkdev
     ports:
      - '5984:5984'
     environment:
@@ -26,7 +26,7 @@ services:
      - couchdb-data:/opt/couchdb/data
   oracle-db:
     image: oracleinanutshell/oracle-xe-11g:latest
-    container_name: oracle-dev
+    container_name: oracle-jkdev
     environment:
       - ORACLE_ALLOW_REMOTE=true
       - WEB_CONSOLE=false
@@ -36,7 +36,7 @@ services:
       - 1521:1521
   postgres:
     image: postgres:9.6
-    container_name: postgres-dev
+    container_name: postgres-jkdev
     environment:
       - POSTGRES_DB=WHINSTONE
       - POSTGRES_USER=pgwhinstone

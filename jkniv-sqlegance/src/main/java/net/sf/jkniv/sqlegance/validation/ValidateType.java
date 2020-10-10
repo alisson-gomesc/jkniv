@@ -126,4 +126,48 @@ public enum ValidateType
         return getValidatory().validate(params, this);
     }
 
+////
+    
+    /**
+     * Use validator (JSR 303) to perform validation against domain model
+     * @param params the domain model to validate
+     * @param validateType type of validation
+     * @throws ConstraintException when some constraint is violated
+     */
+    public static void assertValidate(Object params, ValidateType  validateType)
+    {
+        validator.assertValidate(params, validateType);
+    }
+
+    /**
+     * Use validator (JSR 303) to perform validation against domain model
+     * @param params the domain model to validate
+     * @param validateGroup type of validation
+     * @throws ConstraintException when some constraint is violated
+     */
+    public static <T> void assertValidate(Object params, Class<T> validateGroup)
+    {
+        validator.assertValidate(params, validateGroup);
+    }
+    /**
+     * Use validator (JSR 303) to perform validation against domain model
+     * @param params the domain model to validate
+     * @param validateType type of validation
+     * @return the pairs field and constraints violated, an empty Map is return when any constraint is violated
+     */
+    public static Map<String, String> validate(Object params, ValidateType  validateType)
+    {
+        return validator.validate(params, validateType);
+    }
+    
+    /**
+     * Use validator (JSR 303) to perform validation against domain model
+     * @param params the domain model to validate
+     * @param validateGroup type of validation
+     * @return the pairs field and constraints violated, an empty Map is return when any constraint is violated
+     */
+    public static <T> Map<String, String> validate(Object params, Class<T> validateGroup)
+    {
+        return validator.validate(params, validateGroup);
+    }
 }

@@ -47,7 +47,6 @@ class ValidateImpl implements Validatory
         {
             LOG.warn("Implementation for JSR Bean Validation not found! Add validator jar at classpah like hibernate-validator to works.");
         }
-        
     }
     
     @Override
@@ -56,7 +55,15 @@ class ValidateImpl implements Validatory
         if (validator == null)
             return ;
         
-        Map<String, String> constraints = validate(params, validateType);
+        Map<String, String> constraints = validate(params, validateType.getValidateGroup());
+        if(!constraints.isEmpty())
+            throw new ConstraintException(constraints);
+    }
+    
+    @Override
+    public <T> void assertValidate(Object params, Class<T> validateGroup)
+    {
+        Map<String, String> constraints = validate(params, validateGroup);
         if(!constraints.isEmpty())
             throw new ConstraintException(constraints);
     }
@@ -64,10 +71,16 @@ class ValidateImpl implements Validatory
     @Override
     public Map<String, String> validate(Object params, ValidateType validateType)
     {
+        return validate(params, validateType.getValidateGroup());//ValidateType validateType)
+    }
+    
+    @Override
+    public <T> Map<String, String> validate(Object params, Class<T> validateGroup)//ValidateType validateType)
+    {
         if (validator == null)
             return Collections.emptyMap();
 
-        Set<ConstraintViolation<Object>> violations = validator.validate(params, validateType.getValidateGroup());
+        Set<ConstraintViolation<Object>> violations = validator.validate(params, validateGroup);
         Map<String, String> constraints = new HashMap<String, String>(violations.size());
         for(ConstraintViolation<Object> violation : violations)
         {
