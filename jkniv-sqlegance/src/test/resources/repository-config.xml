@@ -11,6 +11,7 @@
       <property name="jkniv.repository.query_namestrategy" value="net.sf.jkniv.sqlegance.QueryNameStrategy" />
       <property name="jkniv.repository.short_name_enable"   value="true"/>
       <property name="user" value="admin" />
+      <property name="java.home" value="${JAVA_HOME}" />
     </properties>
   </repository>
 

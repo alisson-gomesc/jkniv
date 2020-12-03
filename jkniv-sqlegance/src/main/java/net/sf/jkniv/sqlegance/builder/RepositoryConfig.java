@@ -27,6 +27,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import org.omg.CORBA.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -35,6 +36,7 @@ import org.w3c.dom.NodeList;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
+import net.sf.jkniv.env.EnvPropertyResolver;
 import net.sf.jkniv.reflect.beans.ObjectProxy;
 import net.sf.jkniv.reflect.beans.ObjectProxyFactory;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
@@ -83,7 +85,7 @@ public class RepositoryConfig
     private DataMasking                         masking;
     private RepositoryType                      repositoryType;
     private SqlDialect                          sqlDialect;
-    
+    private EnvPropertyResolver                 propertyResolver;
     public RepositoryConfig()
     {
         this(null, true);
@@ -107,6 +109,7 @@ public class RepositoryConfig
         
         this.name = name;
         this.properties = new Properties();
+        this.propertyResolver = new EnvPropertyResolver();
         this.load();
         setDataMasking();
         //setSqlLogger();
@@ -341,12 +344,19 @@ public class RepositoryConfig
     
     public String getProperty(RepositoryProperty proper)
     {
-        return properties.getProperty(proper.key(), proper.defaultValue());
+        String value = properties.getProperty(proper.key(), proper.defaultValue());
+        if (value != null)
+            value = propertyResolver.getValue(value);
+        return value;
     }
     
     public String getProperty(String proper)
     {
-        return properties.getProperty(proper);
+        String value = properties.getProperty(proper);
+        if (value != null)
+            value = propertyResolver.getValue(value);
+        
+        return value;
     }
     
     public DataSource lookup()

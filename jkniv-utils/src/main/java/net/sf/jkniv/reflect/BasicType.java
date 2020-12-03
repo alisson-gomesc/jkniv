@@ -126,6 +126,7 @@ public class BasicType
     }
     
     /**
+     * @param type class to be checked
      * <ul>
      * <li>{@code String}</li>
      * <li>{@code Integer}/{@code int}</li>
@@ -160,6 +161,7 @@ public class BasicType
      * <li>{@code OffsetDateTime}</li>
      * <li>{@code OffsetTime}</li>
      * </ul>
+     * @return {@code true} when is a basic type, {@code false} otherwise.
      */
     public boolean isBasicType(Class<?> type)
     {
