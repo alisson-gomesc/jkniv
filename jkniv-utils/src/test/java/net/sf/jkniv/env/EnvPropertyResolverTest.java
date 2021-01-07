@@ -36,11 +36,13 @@ public class EnvPropertyResolverTest
         EnvPropertyResolver resolver = new EnvPropertyResolver();
         
         assertThat(resolver.getValue("CONSUL_HOST"), is("CONSUL_HOST"));
-        assertThat(resolver.getValue("${CONSUL_HOST:test.catchfy.me}:${CONSUL_PORT:8500}"), is("test.catchfy.me:8500"));
-        assertThat(resolver.getValue("${consul_host:test.catchfy.me}:${consul_port:8500}"), is("consul_host:consul_port"));
+        assertThat(resolver.getValue("${CONSUL_HOST=test.catchfy.me}:${CONSUL_PORT=8500}"), is("test.catchfy.me:8500"));
+        assertThat(resolver.getValue("${consul_host=test.catchfy.me}:${consul_port=8500}"), is("consul_host:consul_port"));
         assertThat(resolver.getValue("${PATH}"), is(not("PATH")));
         assertThat(resolver.getValue("${PATH}"), is(notNullValue()));
         
+        assertThat(resolver.getValue("${URL_PREFIX=http}:${DB_URL=//test.catchfy.me}:${DB_PORT=5984}"), is("http://test.catchfy.me:5984"));
+        assertThat(resolver.getValue("${URL=http://test.catchfy.me:5984}"), is("http://test.catchfy.me:5984"));
 
     }
 

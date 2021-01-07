@@ -26,13 +26,14 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
+import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.commands.CommandAdapter;
 
 public class HttpConnectionFactory //implements ConnectionFactory
 {
     private static final Logger LOG         = LoggerFactory.getLogger(HttpConnectionFactory.class);
-    private static final String AUTH_COOKIE = "Set-Cookie";
+    //private static final String AUTH_COOKIE = "Set-Cookie";
     private final String        contextName;
     private String              url;
     private String              schema;
@@ -41,12 +42,12 @@ public class HttpConnectionFactory //implements ConnectionFactory
     private CouchDbAuthenticate auth;
     private HandleableException handlerException;
     
-    public HttpConnectionFactory(Properties props, String contextName)
+    public HttpConnectionFactory(RepositoryConfig config, String contextName)
     {
-        this.url = props.getProperty(RepositoryProperty.JDBC_URL.key(), "http://127.0.0.1:5984");
-        this.schema = props.getProperty(RepositoryProperty.JDBC_SCHEMA.key());
-        this.username = props.getProperty(RepositoryProperty.JDBC_USER.key());
-        this.password = props.getProperty(RepositoryProperty.JDBC_PASSWORD.key());
+        this.url = config.getProperty(RepositoryProperty.JDBC_URL.key(), "http://127.0.0.1:5984"); //config.getProperty(RepositoryProperty.JDBC_URL.key(), "http://127.0.0.1:5984");
+        this.schema = config.getProperty(RepositoryProperty.JDBC_SCHEMA.key());
+        this.username = config.getProperty(RepositoryProperty.JDBC_USER.key());
+        this.password = config.getProperty(RepositoryProperty.JDBC_PASSWORD.key());
         this.auth = new CouchDbAuthenticate(this.url, this.username, this.password);
         this.contextName = contextName;
     }

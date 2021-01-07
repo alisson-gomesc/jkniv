@@ -350,13 +350,19 @@ public class RepositoryConfig
         return value;
     }
     
-    public String getProperty(String proper)
+    public String getProperty(String proper, String defaultValue)
     {
-        String value = properties.getProperty(proper);
+        String value = properties.getProperty(proper, defaultValue);
         if (value != null)
             value = propertyResolver.getValue(value);
         
         return value;
+        
+    }
+    
+    public String getProperty(String proper)
+    {
+        return getProperty(proper, null);
     }
     
     public DataSource lookup()

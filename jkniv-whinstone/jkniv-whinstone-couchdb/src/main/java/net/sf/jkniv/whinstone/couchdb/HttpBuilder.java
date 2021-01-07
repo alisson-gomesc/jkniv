@@ -135,7 +135,7 @@ public class HttpBuilder
             StringEntity body = new StringEntity(bodyStr, Consts.UTF_8); // TODO config charset for HTTP body
             String fullUrl = this.hostContext + "_find";
             httpPost = new HttpPost(fullUrl);
-            requestParams.setHeader(httpPost);
+            setHeader(httpPost);
             httpPost.setEntity(body);
         }
         catch (Exception ex)
@@ -156,18 +156,18 @@ public class HttpBuilder
      */
     public HttpPost newFind()
     {
-        HttpPost http = null;
+        HttpPost httpPost = null;
         try
         {
             String fullUrl = this.hostContext + "_find";
-            http = new HttpPost(fullUrl);
-            requestParams.setHeader(http);
+            httpPost = new HttpPost(fullUrl);
+            setHeader(httpPost);
         }
         catch (Exception ex)
         {
             throw new RepositoryException("Cannot build new URI [" + this.hostContext + "_find]");
         }
-        return http;
+        return httpPost;
     }
     
     public String getUrlForView(Queryable queryable)

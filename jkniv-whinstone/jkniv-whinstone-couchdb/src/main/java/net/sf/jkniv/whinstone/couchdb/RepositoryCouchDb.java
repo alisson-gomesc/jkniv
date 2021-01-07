@@ -129,7 +129,7 @@ class RepositoryCouchDb implements Repository
         this.sqlContext.setSqlDialect(this.sqlContext.getRepositoryConfig().getSqlDialect());
         this.sqlContext.buildInQueries();
         this.cmdAdapter = (HttpCookieCommandAdapter) new HttpConnectionFactory(
-                sqlContext.getRepositoryConfig().getProperties(), sqlContext.getName()).open();
+                sqlContext.getRepositoryConfig(), sqlContext.getName()).open();
         this.settingProperties();
         this.configHanlerException();
         this.configJacksonObjectMapper();

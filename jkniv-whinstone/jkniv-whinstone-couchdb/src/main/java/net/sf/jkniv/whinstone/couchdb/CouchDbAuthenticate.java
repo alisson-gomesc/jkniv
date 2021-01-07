@@ -55,6 +55,17 @@ public class CouchDbAuthenticate
     private String password;
     private String cookieSession;
 
+    /* Header Response from CouchDB authentication http://localhost:5984/_session
+
+Cache-Control: must-revalidate
+Content-Length: 41
+Content-Type: application/json
+Date: Wed, 06 Jan 2021 22:25:53 GMT
+Server: CouchDB/3.1.1 (Erlang OTP/20)
+Set-Cookie: AuthSession=ZGV2YWRtaW46NUZGNjM4RjE6IAmuiZI0H6cFmMDcuax-2_afG6Q; Version=1; Expires=Wed, 06-Jan-2021 22:35:53 GMT; Max-Age=600; Path=/; HttpOnly
+
+ 
+     */
     /**
      * Build a new Authentication with 10 minutes to expire after authenticate.
      * @param url Uniform Resource Locator pointing to CouchDb instance

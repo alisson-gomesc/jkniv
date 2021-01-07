@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  * Resolve environment variables:
  * 
  * <pre>
- * ${CONSUL_HOST:test.catchfy.me}:${CONSUL_PORT:8500} resolve to:  "test.catchfy.me:8500"
+ * ${CONSUL_HOST=test.catchfy.me}:${CONSUL_PORT=8500} resolve to:  "test.catchfy.me:8500"
  * </pre>
  * 
  *  <ul>
@@ -53,9 +53,9 @@ public class EnvPropertyResolver
      */
     public static final String   SUFFIX                   = "}";
     
-    private static final char    COLON                    = ':';
+    private static final char    COLON                    = '=';
     
-    private static final Pattern ESCAPE_SEQUENCE          = Pattern.compile("(.+)?:`([^`]+?)`");
+    private static final Pattern ESCAPE_SEQUENCE          = Pattern.compile("(.+)?=`([^`]+?)`");
     
     private static final Pattern ENVIRONMENT_VAR_SEQUENCE = Pattern.compile("^[\\p{Lu}_{0-9}]+");
     
