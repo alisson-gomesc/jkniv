@@ -38,6 +38,7 @@ import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.DefaultClassLoader;
 import net.sf.jkniv.sqlegance.RepositoryConfigException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
+import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.commands.CommandAdapter;
 import net.sf.jkniv.whinstone.types.RegisterType;
@@ -57,18 +58,18 @@ public class CassandraSessionFactory //implements ConnectionFactory
     private final HandleableException handlerException;
     private final RegisterCodec      registerCodec;
     
-    public CassandraSessionFactory(Properties props, String contextName, RegisterType registerType, HandleableException handlerException)
+    public CassandraSessionFactory(RepositoryConfig config, String contextName, RegisterType registerType, HandleableException handlerException)
     {
         this.handlerException = handlerException;
-        String[] urls = props.getProperty(RepositoryProperty.JDBC_URL.key(), "127.0.0.1").split(",");
-        String keyspace = props.getProperty(RepositoryProperty.JDBC_SCHEMA.key());
-        String username = props.getProperty(RepositoryProperty.JDBC_USER.key());
-        String password = props.getProperty(RepositoryProperty.JDBC_PASSWORD.key());
-        String protocol = props.getProperty(RepositoryProperty.PROTOCOL_VERSION.key());
+        String[] urls = config.getProperty(RepositoryProperty.JDBC_URL.key(), "127.0.0.1").split(",");
+        String keyspace = config.getProperty(RepositoryProperty.JDBC_SCHEMA.key());
+        String username = config.getProperty(RepositoryProperty.JDBC_USER.key());
+        String password = config.getProperty(RepositoryProperty.JDBC_PASSWORD.key());
+        String protocol = config.getProperty(RepositoryProperty.PROTOCOL_VERSION.key());
         ProtocolVersion version = getProtocolVersion(protocol);
         this.registerCodec = new RegisterCodec();
         this.contextName = contextName;
-        URL cloudSecureConnect = getCloudSecureConnect(props);
+        URL cloudSecureConnect = getCloudSecureConnect(config.getProperties());
         
         if (cloudSecureConnect != null)
         {
@@ -85,7 +86,7 @@ public class CassandraSessionFactory //implements ConnectionFactory
         else
             cluster = Cluster.builder().withProtocolVersion(version).addContactPoints(urls).build();
         
-        settingProperties(props);
+        settingProperties(config.getProperties());
         
         final Metadata metadata = cluster.getMetadata();
         if (LOG.isInfoEnabled())

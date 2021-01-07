@@ -34,6 +34,7 @@ import com.couchbase.client.java.cluster.ClusterManager;
 
 import net.sf.jkniv.exception.HandleableException;
 import net.sf.jkniv.sqlegance.RepositoryProperty;
+import net.sf.jkniv.sqlegance.builder.RepositoryConfig;
 import net.sf.jkniv.sqlegance.transaction.Isolation;
 import net.sf.jkniv.whinstone.commands.CommandAdapter;
 
@@ -42,12 +43,12 @@ class CouchbaseSessionFactory
     private static final Logger       LOG = LoggerFactory.getLogger(CouchbaseSessionFactory.class);
     private CouchbaseCommandAdapter   conn;
     
-    public CouchbaseSessionFactory(Properties props, String contextName, HandleableException handlerException)
+    public CouchbaseSessionFactory(RepositoryConfig config, String contextName, HandleableException handlerException)
     {
-        String[] urls = props.getProperty(RepositoryProperty.JDBC_URL.key(), "127.0.0.1").split(",");
-        String bucketName = props.getProperty(RepositoryProperty.JDBC_SCHEMA.key());
-        String username = props.getProperty(RepositoryProperty.JDBC_USER.key());
-        String password = props.getProperty(RepositoryProperty.JDBC_PASSWORD.key());
+        String[] urls = config.getProperty(RepositoryProperty.JDBC_URL.key(), "127.0.0.1").split(",");
+        String bucketName = config.getProperty(RepositoryProperty.JDBC_SCHEMA.key());
+        String username = config.getProperty(RepositoryProperty.JDBC_USER.key());
+        String password = config.getProperty(RepositoryProperty.JDBC_PASSWORD.key());
         
         Cluster cluster = CouchbaseCluster.create(Arrays.asList(urls));
         cluster.authenticate(username, password);
