@@ -1,0 +1,60 @@
+version: '3.4'
+
+services:
+  cassandra:
+    image: cassandra:latest
+    container_name: cassandra-jkdev
+    ports: 
+     - '9042:9042'
+    environment:
+     - CASSANDRA_CLUSTER_NAME=MyCluster
+     - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+     - CASSANDRA_DC=datacenter1
+#     - CASSANDRA_BROADCAST_ADDRESS=192.168.99.100
+    entrypoint: /docker-entrypoint-initdb.d/entrypoint-wrap.sh
+    volumes:
+     - ./etc/docker/cassandra-init:/docker-entrypoint-initdb.d/
+     - cassandra-data:/var/lib/cassandra
+  couchdb:
+    image: couchdb:2.3.1
+    container_name: couchdb-jkdev
+    ports:
+     - '5984:5984'
+    environment:
+     - COUCHDB_USER=admin 
+     - COUCHDB_PASSWORD=admin
+    volumes:
+     - couchdb-data:/opt/couchdb/data
+  oracle-db:
+    image: oracleinanutshell/oracle-xe-11g:latest
+    container_name: oracle-jkdev
+    environment:
+      - ORACLE_ALLOW_REMOTE=true
+      - WEB_CONSOLE=false
+      - ORACLE_SID=XE
+#      - ORACLE_PWD=orawhinstone
+    ports:
+      - 1521:1521
+  postgres:
+    image: postgres:9.6
+    container_name: postgres-jkdev
+    environment:
+      - POSTGRES_DB=WHINSTONE
+      - POSTGRES_USER=pgwhinstone
+      - POSTGRES_PASSWORD=pgwhinstone
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+# creates Docker volumes which can be mounted by other containers too e.g. for backup
+volumes:
+  cassandra-data:
+    driver: local
+  couchdb-data:
+    driver: local
+  postgresql-data:
+    driver: local
+#networks:
+#  host:
+    # use the bridge driver, but enable IPv6
+#    driver: host
