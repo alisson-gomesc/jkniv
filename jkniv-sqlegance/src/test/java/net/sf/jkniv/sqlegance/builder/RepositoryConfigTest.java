@@ -58,7 +58,9 @@ public class RepositoryConfigTest
         //assertThat("net.sf.jkniv.whinstone.jdbc.DefaultPreparedStatementStrategy", is(config.getProperty(RepositoryProperty.PREPARED_STATEMENT_STRATEGY)));
         assertThat("net.sf.jkniv.sqlegance.QueryNameStrategy", is(config.getProperty(RepositoryProperty.QUERY_NAME_STRATEGY)));
         
-        assertThat(config.getProperty("java.home"), startsWith("C:\\dev\\sdk"));
+
+        // assert depends on environment
+        //assertThat(config.getProperty("java.home"), startsWith("C:\\dev\\sdk"));
     }
     
     @Test
