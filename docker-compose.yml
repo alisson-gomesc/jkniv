@@ -11,7 +11,7 @@ services:
      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
      - CASSANDRA_DC=datacenter1
 #     - CASSANDRA_BROADCAST_ADDRESS=192.168.99.100
-    entrypoint: /docker-entrypoint-initdb.d/entrypoint-wrap.sh
+    entrypoint: ["sh", "/docker-entrypoint-initdb.d/entrypoint-wrap.sh"]
     volumes:
      - ./etc/docker/cassandra-init:/docker-entrypoint-initdb.d/
      - cassandra-data:/var/lib/cassandra
