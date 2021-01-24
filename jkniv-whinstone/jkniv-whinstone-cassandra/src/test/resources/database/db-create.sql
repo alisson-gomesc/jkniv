@@ -1,4 +1,4 @@
-CREATE KEYSPACE dev_whin WITH REPLICATION = {'class':'SimpleStrategy','replication_factor':1};
+CREATE KEYSPACE whinstone WITH REPLICATION = {'class':'SimpleStrategy','replication_factor':1};
 
 DROP TABLE COLOR;
 DROP TABLE VEHICLE;

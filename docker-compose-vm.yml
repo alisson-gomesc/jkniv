@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   cassandra:
-    image: cassandra
+    image: cassandra:latest
     container_name: cassandra-jkdev
     ports: 
      - '9042:9042'
@@ -10,9 +10,10 @@ services:
      - CASSANDRA_CLUSTER_NAME=MyCluster
      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
      - CASSANDRA_DC=datacenter1
-#    command: /bin/bash -c "echo loading cassandra keyspace && cqlsh cassandra -f /docker-entrypoint-initdb.d/cassandra-init.cql"
+#     - CASSANDRA_BROADCAST_ADDRESS=192.168.99.100
+    entrypoint: /docker-entrypoint-initdb.d/entrypoint-wrap.sh
     volumes:
-#     - ./cassandra:/docker-entrypoint-initdb.d/
+     - /wks/wks-jkniv-git/etc/docker/cassandra-init:/docker-entrypoint-initdb.d/
      - cassandra-data:/var/lib/cassandra
   couchdb:
     image: couchdb:2.3.1
