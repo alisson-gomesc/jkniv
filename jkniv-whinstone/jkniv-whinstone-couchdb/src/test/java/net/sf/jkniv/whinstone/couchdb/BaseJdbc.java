@@ -62,7 +62,7 @@ public class BaseJdbc extends BaseSpringJUnit4
         config = new Properties();
         configDbStressTest = new Properties();
         config.setProperty(RepositoryProperty.JDBC_URL.key(), URL);
-        config.setProperty(RepositoryProperty.JDBC_SCHEMA.key(), "whinstone-author");
+        config.setProperty(RepositoryProperty.JDBC_SCHEMA.key(), SCHEMA);
         config.setProperty(RepositoryProperty.JDBC_USER.key(), USER);
         config.setProperty(RepositoryProperty.JDBC_PASSWORD.key(), PASSWD);
         

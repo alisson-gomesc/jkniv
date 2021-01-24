@@ -118,7 +118,7 @@ class RepositoryCouchbase implements Repository
         configHanlerException();
         this.settingProperties();
         this.cmdAdapter = (CouchbaseCommandAdapter) new CouchbaseSessionFactory(
-                sqlContext.getRepositoryConfig().getProperties(), sqlContext.getName(), this.handlerException).open();
+                sqlContext.getRepositoryConfig(), sqlContext.getName(), this.handlerException).open();
     }
     
     private void configHanlerException()
