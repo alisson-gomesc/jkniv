@@ -19,6 +19,8 @@
  */
 package net.sf.jkniv.sqlegance.parser;
 
+import java.io.File;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -30,14 +32,17 @@ public class XmlParserWithXsdTest
 {
     @Rule
     public ExpectedException    catcher  = ExpectedException.none();
-    private static final String XSD_PATH = "file:/C:/dev/wks/wks-jkniv-git/jkniv-sqlegance/target/classes/net/sf/jkniv/sqlegance/builder/xml/";
-    
+    private static final String XSD_PATH_WIN = "file:/C:/dev/wks/wks-jkniv-git/jkniv-sqlegance/target/classes/net/sf/jkniv/sqlegance/builder/xml/";
+    private static final String XSD_PATH_GITHUB = "file:/home/runner/work/jkniv/jkniv/jkniv-sqlegance/target/classes/net/sf/jkniv/sqlegance/builder/xml/";    
     @Test
     public void whenLoadFileWithXsdError()
     {
+        String path = XSD_PATH_WIN;
+        if(new File("").getAbsolutePath().startsWith("/home/"))
+            path = XSD_PATH_GITHUB;
         catcher.expect(RepositoryException.class);
-        catcher.expectMessage("Fail validate [/customxml/sql-stmt-wrong.xml] against XSD=[[" + XSD_PATH
-                + "sqlegance-stmt.xsd, " + XSD_PATH
+        catcher.expectMessage("Fail validate [/customxml/sql-stmt-wrong.xml] against XSD=[[" + path
+                + "sqlegance-stmt.xsd, " + path
                 + "sqlegance-cache.xsd]]. cvc-complex-type.3.2.2: Attribute 'name' is not allowed to appear in element 'statements'");
         SqlContextFactory.newInstance("/customxml/sql-stmt-wrong.xml");
     }
