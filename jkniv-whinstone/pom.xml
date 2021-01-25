@@ -11,6 +11,12 @@
   <packaging>jar</packaging>
   <url>http://jkniv.sourceforge.net/jkniv-whinstone/</url>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <spring.version>4.2.5.RELEASE</spring.version>
+    <main.basedir>${project.parent.basedir}</main.basedir>
+  </properties>
+
   <dependencies>
     <!-- begin essential -->
     <dependency>
@@ -46,7 +52,7 @@
       <artifactId>commons-dbcp</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.oracle</groupId>
+      <groupId>com.oracle.database.jdbc</groupId>
       <artifactId>ojdbc6</artifactId>
     </dependency>
     <dependency>
@@ -83,10 +89,6 @@
       </plugin>
     </plugins>
   </build>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <spring.version>4.2.5.RELEASE</spring.version>
-  </properties>
   <issueManagement>
     <system>JIRA</system>
     <url>https://jkniv-io.atlassian.net/projects/JKNIVWHIN/</url>

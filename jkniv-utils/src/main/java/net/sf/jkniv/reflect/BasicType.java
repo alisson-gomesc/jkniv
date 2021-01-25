@@ -31,11 +31,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import javax.swing.JApplet;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
-import sun.util.calendar.JulianCalendar;
 
 @SuppressWarnings({"rawtypes","unchecked"})
 public class BasicType
@@ -61,7 +59,7 @@ public class BasicType
         BASIC_TYPES.put(Date.class.getCanonicalName(), Date.class);
         BASIC_TYPES.put(Calendar.class.getCanonicalName(), Calendar.class);
         BASIC_TYPES.put(GregorianCalendar.class.getCanonicalName(), GregorianCalendar.class);
-        BASIC_TYPES.put(JulianCalendar.class.getCanonicalName(), JulianCalendar.class);
+        //BASIC_TYPES.put(JulianCalendar.class.getCanonicalName(), JulianCalendar.class);
         BASIC_TYPES.put(BigDecimal.class.getCanonicalName(), BigDecimal.class);
         BASIC_TYPES.put(Short.class.getCanonicalName(), Short.class);
         BASIC_TYPES.put(short.class.getCanonicalName(), short.class);
