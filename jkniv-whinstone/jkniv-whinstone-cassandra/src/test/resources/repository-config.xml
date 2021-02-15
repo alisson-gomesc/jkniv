@@ -4,7 +4,7 @@
 
   <repository name="whin-cassandra" type="CASSANDRA">
    <properties>
-     <property name="url" value="192.168.99.100" />
+     <property name="url" value="127.0.0.1" />
      <property name="schema" value="whinstone"/>
      <property name="user" value="cassandra"/>
      <property name="password" value="cassandra"/>

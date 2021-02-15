@@ -137,10 +137,10 @@
       </dependency>
       <dependency>
         <groupId>com.microsoft.sqlserver</groupId>
-        <artifactId>sqljdbc4</artifactId>
-        <version>4.0</version>
-        <scope>test</scope>
+        <artifactId>mssql-jdbc</artifactId>
+        <version>6.4.0.jre7</version>
       </dependency>
+      
       <!-- whinstone dependencies -->
       <dependency>
         <groupId>org.springframework</groupId>
