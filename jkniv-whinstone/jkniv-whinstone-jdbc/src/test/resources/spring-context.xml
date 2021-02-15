@@ -35,14 +35,14 @@
   <bean id="dataSourceOra" class="org.apache.commons.dbcp.BasicDataSource"
     destroy-method="close">
     <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
-    <property name="url" value="jdbc:oracle:thin:@192.168.99.100:1521/XE" />
+    <property name="url" value="jdbc:oracle:thin:@localhost:1521/XE" />
     <property name="username" value="system" />
     <property name="password" value="oracle" />
   </bean>
   <bean id="dataSourcePostgres" class="org.apache.commons.dbcp.BasicDataSource"
     destroy-method="close">
     <property name="driverClassName" value="org.postgresql.Driver" />
-    <property name="url" value="jdbc:postgresql://192.168.99.100:5432/WHINSTONE" />
+    <property name="url" value="jdbc:postgresql://localhost:5432/WHINSTONE" />
     <property name="username" value="pgwhinstone" />
     <property name="password" value="pgwhinstone" />
   </bean>
