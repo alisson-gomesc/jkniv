@@ -107,4 +107,9 @@
     SELECT NAME, PRIORITY, CODE from COLOR where name = :name
   </select>
   
+    <select id="all-colors" returnType="java.util.HashMap">
+    select NAME, PRIORITY, CODE from COLOR
+  </select>
+  
+  
 </statements>

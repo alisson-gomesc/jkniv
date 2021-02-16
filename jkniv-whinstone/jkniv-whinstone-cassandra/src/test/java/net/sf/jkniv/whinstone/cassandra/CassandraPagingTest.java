@@ -70,7 +70,7 @@ public class CassandraPagingTest extends BaseJdbc
     public void whenSimplePagingQueryWorks()
     {
         Repository repositoryCas = getRepository();
-        Queryable q = QueryFactory.of("all-vehicles", 0, SIZE_PAGE);
+        Queryable q = QueryFactory.of("all-colors", 0, SIZE_PAGE);
         List<Vehicle> list = repositoryCas.list(q);
         assertThat(list.size(), is(SIZE_PAGE));
         assertThat(q.getTotal(), is(SUCCESS_NO_INFO));
