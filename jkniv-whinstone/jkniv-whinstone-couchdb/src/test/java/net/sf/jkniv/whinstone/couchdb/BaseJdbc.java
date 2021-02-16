@@ -50,7 +50,7 @@ public class BaseJdbc extends BaseSpringJUnit4
 {
     private static final Logger    LOG                 = LoggerFactory.getLogger(BaseJdbc.class);
     public static final Properties config, configDbStressTest;
-    private static final String    URL                 = "http://192.168.99.100:5984";
+    private static final String    URL                 = "http://127.0.0.1:5984";
     private static final String    SCHEMA              = "whinstone-author";
     private static final String    USER                = "admin";
     private static final String    PASSWD              = "admin";

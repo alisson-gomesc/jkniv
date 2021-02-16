@@ -29,7 +29,7 @@ public class HttpConnectionFactoryTest
     public void setUp()
     {
         Properties props = new Properties();
-        props.setProperty(RepositoryProperty.JDBC_URL.key(), "http://192.168.99.100:5984");
+        props.setProperty(RepositoryProperty.JDBC_URL.key(), "http://127.0.0.1:5984");
         props.setProperty(RepositoryProperty.JDBC_SCHEMA.key(), "db3t-useraccess");
         props.setProperty(RepositoryProperty.JDBC_USER.key(), "admin");
         props.setProperty(RepositoryProperty.JDBC_PASSWORD.key(), "admin");
@@ -50,7 +50,7 @@ public class HttpConnectionFactoryTest
     {
         //config.setProperty(RepositoryProperty.JDBC_PASSWORD.key(), "wrong");
         ////catcher.expect(RepositoryException.class);
-        ////catcher.expectMessage("Access denied, unauthorized for user [admin] and url [http://192.168.99.100:5984]");
+        ////catcher.expectMessage("Access denied, unauthorized for user [admin] and url [http://127.0.0.1:5984]");
         HttpConnectionFactory factory = new HttpConnectionFactory(config, "default");
         factory.with(handlerException);
         factory.open();

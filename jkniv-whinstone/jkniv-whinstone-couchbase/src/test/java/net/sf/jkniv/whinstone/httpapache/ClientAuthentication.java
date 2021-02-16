@@ -16,14 +16,14 @@ public class ClientAuthentication
     public static void main(String[] args) throws Exception
     {
         CredentialsProvider credsProvider = new BasicCredentialsProvider();
-        credsProvider.setCredentials(new AuthScope("192.168.99.100", 5984),
-                new UsernamePasswordCredentials("tecno3t", "tecno"));
+        credsProvider.setCredentials(new AuthScope("127.0.0.1", 5984),
+                new UsernamePasswordCredentials("admin", "admin"));
         CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider).build();
         try
         {
-            //HttpGet httpget = new HttpGet("http://10.1.194.161:5984/estados");
-            //HttpGet httpget = new HttpGet("http://192.168.99.100:5984/albums/_all_docs");
-            String uri = "http://tecno3t:tecno@192.168.99.100:5984/tecno3t-useraccess/1";
+            //HttpGet httpget = new HttpGet("http://127.0.0.1:5984/estados");
+            //HttpGet httpget = new HttpGet("http://127.0.0.1:5984/albums/_all_docs");
+            String uri = "http://admin:admin@127.0.0.1:5984/useraccess/1";
             HttpGet httpget = new HttpGet(uri);
             
             System.out.println("Executing request " + httpget.getRequestLine());
