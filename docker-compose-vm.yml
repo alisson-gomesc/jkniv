@@ -18,7 +18,7 @@ services:
      - /wks/wks-jkniv-git/etc/docker/cassandra-init:/docker-entrypoint-initdb.d/
      - cassandra-data:/var/lib/cassandra
   couchdb:
-    image: couchdb:2.3.1
+    image: couchdb:latest
     container_name: couchdb-jkdev
     ports:
      - '5984:5984'

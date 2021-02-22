@@ -54,9 +54,9 @@ public class ApacheHttpClientTest
     @Test
     public void whenAuthRequestAllDbs()
     {
-        String uri = "http://admin:admiin@127.0.0.1:5984/_all_dbs";
+        String uri = "http://admin:wrongpasswd@127.0.0.1:5984/_all_dbs";
         String answer = executeGet(uri, null);
-        assertThat(answer, not(is("Unauthorized")));
+        assertThat(answer, (is("Unauthorized")));
     }
     
     private String executeGet(String uri, RequestParams header)
