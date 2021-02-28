@@ -875,11 +875,11 @@ class QueryName implements Queryable
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((max == null) ? 0 : max.hashCode());
+        result = prime * result + ((offset == null) ? 0 : offset.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((params == null) ? 0 : params.hashCode());
         result = prime * result + ((returnType == null) ? 0 : returnType.getName().hashCode());
-        result = prime * result + size;
+        //result = prime * result + size;
         result = prime * result + ((sql == null) ? 0 : sql.hashCode());
         return result;
     }
@@ -894,12 +894,12 @@ class QueryName implements Queryable
         if (getClass() != obj.getClass())
             return false;
         QueryName other = (QueryName) obj;
-        if (max == null)
+        if (offset == null)
         {
-            if (other.max != null)
+            if (other.offset != null)
                 return false;
         }
-        else if (!max.equals(other.max))
+        else if (!offset.equals(other.offset))
             return false;
         if (name == null)
         {
