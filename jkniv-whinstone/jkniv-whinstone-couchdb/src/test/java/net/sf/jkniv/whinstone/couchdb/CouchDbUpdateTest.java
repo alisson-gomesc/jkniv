@@ -79,7 +79,7 @@ public class CouchDbUpdateTest extends BaseJdbc
     public void whenUpdateDocumentWithQueryable()
     {
         Repository repositoryDb = getRepository();
-        Author author = repositoryDb.get(Author.class, "2");
+        Author author = repositoryDb.get(Author.class, "5");
         String revision = author.getRev();
         
         assertThat(revision, notNullValue());
@@ -102,7 +102,7 @@ public class CouchDbUpdateTest extends BaseJdbc
     public void whenUpdateDocumentWithEntity()
     {
         Repository repositoryDb = getRepository();
-        Author author = repositoryDb.get(Author.class, "2");
+        Author author = repositoryDb.get(Author.class, "5");
         String revision = author.getRev();
         
         assertThat(revision, notNullValue());
