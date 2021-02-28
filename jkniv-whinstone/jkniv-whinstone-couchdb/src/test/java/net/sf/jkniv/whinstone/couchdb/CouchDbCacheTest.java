@@ -47,9 +47,9 @@ public class CouchDbCacheTest extends BaseJdbc
         Queryable q = QueryFactory.of("authorBRInCache","natio","BR");
         
         List<Map> list1 = repositoryDb.list(q);
-        assertThat(list1.size(), greaterThan(0));
-        assertThat(list1.get(0), instanceOf(Map.class));
         assertThat(q.isCached(), is(false));
+        assertThat(list1.get(0), instanceOf(Map.class));
+        assertThat(list1.size(), greaterThan(0));
         
         List<Map> list2 = repositoryDb.list(q);
         assertThat(q.isCached(), is(true));
@@ -60,12 +60,12 @@ public class CouchDbCacheTest extends BaseJdbc
     public void whenCouchDbGetUsingCache()
     {
         Repository repositoryDb = getRepository();
-        getRepository().list(QueryFactory.of("_all_docs"));
         Queryable q = QueryFactory.of("authorBRInCache","natio","GB");
+        getRepository().list(QueryFactory.of("authorsNat", "nat", "GB"));
         
         Map map1 = repositoryDb.get(q);
-        assertThat(map1, instanceOf(Map.class));
         assertThat(q.isCached(), is(false));
+        assertThat(map1, instanceOf(Map.class));
         assertThat(map1.get("name").toString(), is("Martin Fowler"));
         
         Map map2 = repositoryDb.get(q);
