@@ -326,6 +326,10 @@ public class QueryNameTest
 
         q1 = QueryFactory.of("dummy", 5, 11);
         q2 = QueryFactory.of("dummy", 5, 10);
+        assertThat(q1, is(q2));
+
+        q1 = QueryFactory.of("dummy", 5, 10);
+        q2 = QueryFactory.of("dummy", 6, 10);
         assertThat(q1, not(is(q2)));
     }
 
