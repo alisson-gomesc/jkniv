@@ -19,13 +19,12 @@
  */
 package net.sf.jkniv.whinstone.couchdb;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
 
-import java.util.Map;
-
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -36,7 +35,6 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 
-@Ignore
 public class CouchDbUpdateTest extends BaseJdbc
 {
     @Rule
@@ -87,7 +85,6 @@ public class CouchDbUpdateTest extends BaseJdbc
         assertThat(revision, notNullValue());
         
         author.setName("Alisson Gomes");
-        author.setNationality("BR");
         Queryable q = QueryFactory.of("update", author);
         int rows = repositoryDb.update(q);
         
@@ -111,7 +108,6 @@ public class CouchDbUpdateTest extends BaseJdbc
         assertThat(revision, notNullValue());
         
         author.setName("Alisson Gomes");
-        author.setNationality("US");
         repositoryDb.update(author);
         
         assertThat(author.getId(), notNullValue());
