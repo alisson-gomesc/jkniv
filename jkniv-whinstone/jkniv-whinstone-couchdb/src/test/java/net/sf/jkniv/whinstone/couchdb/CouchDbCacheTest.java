@@ -60,8 +60,8 @@ public class CouchDbCacheTest extends BaseJdbc
     public void whenCouchDbGetUsingCache()
     {
         Repository repositoryDb = getRepository();
-        getRepository().list(QueryFactory.of("_all_docs"));
         Queryable q = QueryFactory.of("authorBRInCache","natio","GB");
+        getRepository().list(q);
         
         Map map1 = repositoryDb.get(q);
         assertThat(map1, instanceOf(Map.class));
