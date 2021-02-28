@@ -36,13 +36,13 @@ import net.sf.jkniv.whinstone.Queryable;
 import net.sf.jkniv.whinstone.Repository;
 import net.sf.jkniv.whinstone.couchdb.model.orm.Author;
 
-@Ignore
 public class CouchDbUpdateTest extends BaseJdbc
 {
     @Rule
     public ExpectedException catcher = ExpectedException.none();  
 
     @Test
+    @Ignore("drawback for tests after this into GIT ACTIONS")
     public void whenUpdateDocumentWithoutIdAndRevision()
     {
         catcher.expect(RepositoryException.class);
@@ -60,6 +60,7 @@ public class CouchDbUpdateTest extends BaseJdbc
     }
 
     @Test
+    @Ignore("drawback for tests after this into GIT ACTIONS")
     public void whenUpdateDocumentWithoutRevision()
     {
         catcher.expect(RepositoryException.class);
