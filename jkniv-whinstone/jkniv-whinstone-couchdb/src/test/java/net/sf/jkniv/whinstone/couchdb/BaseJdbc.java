@@ -64,12 +64,7 @@ public class BaseJdbc extends BaseSpringJUnit4
         config.setProperty(RepositoryProperty.JDBC_URL.key(), URL);
         config.setProperty(RepositoryProperty.JDBC_SCHEMA.key(), SCHEMA);
         config.setProperty(RepositoryProperty.JDBC_USER.key(), USER);
-        config.setProperty(RepositoryProperty.JDBC_PASSWORD.key(), PASSWD);
-        
-        configDbStressTest.setProperty(RepositoryProperty.JDBC_URL.key(), URL);
-        configDbStressTest.setProperty(RepositoryProperty.JDBC_SCHEMA.key(), "db3t-user-origin");
-        configDbStressTest.setProperty(RepositoryProperty.JDBC_USER.key(), USER);
-        configDbStressTest.setProperty(RepositoryProperty.JDBC_PASSWORD.key(), PASSWD);
+        config.setProperty(RepositoryProperty.JDBC_PASSWORD.key(), PASSWD);        
     }
     
     // Serialize Date to ISO-8601
