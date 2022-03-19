@@ -27,6 +27,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -95,14 +96,21 @@ public class JsonMapper
         return queryable;
     }
     
+    public static void config(JsonInclude.Include include)
+    {
+        MAPPER.setSerializationInclusion(include);
+    }
+
     public static void config(SerializationFeature feature, boolean state)
     {
         MAPPER.configure(feature, state);
+        LOG.info("Jackson serialization feature {} was {}", feature, (state ? "ENABLED" : "DISABLED"));
     }
 
     public static void config(DeserializationFeature feature, boolean state)
     {
         MAPPER.configure(feature, state);
+        LOG.info("Jackson deserialization feature {} was {}", feature, (state ? "ENABLED" : "DISABLED"));
     }
 
     public static void register(String moduleName, boolean state)

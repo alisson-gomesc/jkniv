@@ -59,9 +59,9 @@ public interface Cacheable<K, V>
      * is replaced by the specified value.
      * @param key with which the specified value is to be associated
      * @param value to be associated with the specified key
-     * @return the previous value associated with <tt>key</tt>, or
-     *         <tt>null</tt> if there isn't mapping for <tt>key</tt>.
-     * @throws IllegalArgumentException if some the <tt>key</tt> or <tt>value</tt> are {@code null}.
+     * @return the previous value associated with <code>key</code>, or
+     *         <code>null</code> if there isn't mapping for <code>key</code>.
+     * @throws IllegalArgumentException if some the <code>key</code> or <code>value</code> are {@code null}.
      */
     V put(K key, V value);
 
@@ -101,7 +101,7 @@ public interface Cacheable<K, V>
     long size();
     
     /**
-     * A cache entry (key-value pair).  The <tt>Cacheable.getEntry</tt> method returns
+     * A cache entry (key-value pair).  The <code>Cacheable.getEntry</code> method returns
      * a cache value view.
      *
      * @see Cacheable#getEntry(Object)

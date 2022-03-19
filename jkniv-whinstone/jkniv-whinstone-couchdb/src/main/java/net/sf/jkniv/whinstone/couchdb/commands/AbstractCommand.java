@@ -271,7 +271,7 @@ public abstract class AbstractCommand implements CouchCommand
     {
         PropertyAccess accessRev = queryable.getDynamicSql().getSqlDialect().getAccessRevision();
         Param rev = getProperty(queryable, accessRev.getFieldName());
-        return rev.getValue().toString();
+        return rev.getValue() != null ? rev.getValue().toString() : null;
     }
     
     @SuppressWarnings(

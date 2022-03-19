@@ -24,7 +24,7 @@ package net.sf.jkniv.whinstone;
  * to <code>camel case</code> java attribute style,
  * underscores or dashes which is skipped.
  * 
- * <p>For example <tt>CUSTOMER_ID</tt> is mapped as <tt>customerId</tt>.</p>
+ * <p>For example <code>CUSTOMER_ID</code> is mapped as <code>customerId</code>.</p>
  * 
  * @author Alisson Gomes
  */

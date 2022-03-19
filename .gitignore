@@ -4,3 +4,4 @@
 **/.classpath
 **/*.class
 **/.sts4-cache
+/pom.xml.versionsBackup

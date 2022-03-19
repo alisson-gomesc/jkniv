@@ -4,3 +4,4 @@
 /.project
 /CASSANDRA_LOG.log
 /stacktrace-stop-war-cassandra.log
+/pom.xml.versionsBackup

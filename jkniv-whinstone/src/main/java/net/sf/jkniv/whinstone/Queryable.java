@@ -219,7 +219,7 @@ public interface Queryable
      * Returns an iterator over the collection of {@code params} or array of {@code params}. 
      * There are no guarantees concerning the order in which the elements are returned
      * 
-     * @return an <tt>Iterator</tt> over the elements in {@code params}
+     * @return an <code>Iterator</code> over the elements in {@code params}
      * @throws UnsupportedOperationException when {@code params} isn't collection or array.
      * @throws NullPointerException when {@code params} is {@code null}.
      */

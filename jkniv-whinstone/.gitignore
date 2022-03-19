@@ -3,3 +3,4 @@
 /.classpath
 /.project
 /stacktrace-stop-war-cassandra.log
+/pom.xml.versionsBackup

@@ -31,6 +31,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -195,7 +196,21 @@ class RepositoryCouchDb implements Repository
                 String moduleName = k.substring(15);
                 JsonMapper.register(moduleName, enable);
             }
-            else if (k.startsWith("jackson."))
+            else if (k.startsWith("jackson.JsonInclude."))
+            {
+                if (enable)
+                {
+                    int length = "jackson.JsonInclude.Include".length() + 1;
+                    String includeEnum = k.substring(length, k.length());
+                    JsonInclude.Include include = JsonInclude.Include.valueOf(includeEnum);
+                    if (include != null)
+                        JsonMapper.config(include);
+                    else {
+                        LOG.error("Cannot serialization inclusion for {}", k);
+                    }
+                }
+            }
+            else if (k.startsWith("jackson."))  
             {
                 // jackson. length -> (8)
                 String featureName = k.substring(8).toUpperCase();
@@ -204,14 +219,12 @@ class RepositoryCouchDb implements Repository
                 if (feature != null)
                 {
                     JsonMapper.config(feature, enable);
-                    LOG.info("Jackson serialization feature {} was {}", featureName, (enable ? "ENABLED" : "DISABLED"));
                 }
                 else
                 {
                     desfeature = DeserializationFeature.valueOf(k.substring(8).toUpperCase());
                     if (desfeature != null) {
                         JsonMapper.config(desfeature, enable);
-                        LOG.info("Jackson deserialization feature {} was {}", featureName, (enable ? "ENABLED" : "DISABLED"));
                     }
                 }
                 if (feature == null && desfeature == null)
