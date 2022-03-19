@@ -19,6 +19,30 @@ Sample of `src/main/resources/repository-config.xml` file:
   
 All properties started with `jackson.*` will be configured to work with singleton instance of `ObjectMapper`. 
 
+
+### Jackson set Serialization Inclusion
+
+| Jackson Serialization                    |
+--------------------------------------------
+|`jackson.JsonInclude.Include.ALWAYS`       |
+|`jackson.JsonInclude.Include.NON_NULL`     |
+|`jackson.JsonInclude.Include.NON_ABSENT`   |
+|`jackson.JsonInclude.Include.NON_EMPTY`    |
+|`jackson.JsonInclude.Include.NON_DEFAULT`  |
+|`jackson.JsonInclude.Include.USE_DEFAULTS` |
+
+Sample of `src/main/resources/repository-config.xml` file:
+
+    <repository name="users">
+      <description>My couchdb database</description>
+      <jndi-data-source>jdbc/dsUsers</jndi-data-source>
+      <properties>
+        <property name="jackson.JsonInclude.Include.NON_NULL" value="true"/>
+      </properties>
+    </repository>
+
+Note: the value different `true` not set up the serialization.
+
 ### Jackson register module
 
 Sometimes jackson needs register a module to work properly. All property named start with `jackson.module` have intentions to do that. 
