@@ -27,7 +27,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -111,6 +113,12 @@ public class JsonMapper
     {
         MAPPER.configure(feature, state);
         LOG.info("Jackson deserialization feature {} was {}", feature, (state ? "ENABLED" : "DISABLED"));
+    }
+
+    public static void config(PropertyAccessor property, Visibility visibility)
+    {
+        MAPPER.setVisibility(property, visibility);
+        LOG.info("Jackson setting visibility {} was {}", property, visibility);
     }
 
     public static void register(String moduleName, boolean state)

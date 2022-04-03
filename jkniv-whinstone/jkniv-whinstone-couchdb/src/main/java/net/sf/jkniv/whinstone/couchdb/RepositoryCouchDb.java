@@ -31,7 +31,9 @@ import org.apache.http.client.ClientProtocolException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -209,6 +211,15 @@ class RepositoryCouchDb implements Repository
                         LOG.error("Cannot serialization inclusion for {}", k);
                     }
                 }
+            }
+            // <property name="jackson.Visibility.GETTER"   value="NONE"/>
+            else if (k.startsWith("jackson.Visibility."))
+            {
+                // jackson.Visibility. length -> (8)
+                String name = k.substring(19).toUpperCase();
+                PropertyAccessor accessor = PropertyAccessor.valueOf(name);
+                Visibility visibility = Visibility.valueOf(props.getProperty(k));
+                JsonMapper.config(accessor, visibility);
             }
             else if (k.startsWith("jackson."))  
             {

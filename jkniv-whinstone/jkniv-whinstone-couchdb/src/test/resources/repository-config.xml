@@ -14,6 +14,7 @@
     <properties>
       <property name="jackson.WRITE_DATES_AS_TIMESTAMPS"   value="true"/>
       <property name="jackson.JsonInclude.Include.NON_NULL"   value="true"/>
+      <property name="jackson.Visibility.GETTER"   value="NONE"/>      
       <property name="jkniv.couchdb.update_views" value="true"/>
       <property name="jkniv.couchdb.update_indexes" value="true"/>
     </properties>
