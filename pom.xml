@@ -23,7 +23,7 @@
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <jaxb-version>2.0.3</jaxb-version>
     <version.jackson>2.7.9</version.jackson>
-    <spring.version>4.3.30.RELEASE</spring.version>
+    <spring.version>5.3.19</spring.version>
     <current-version>0.6.8</current-version>
     <dependency.locations.enabled>false</dependency.locations.enabled>
     <main.basedir>${project.basedir}</main.basedir>
