@@ -39,8 +39,8 @@
     <module>jkniv-whinstone/jkniv-whinstone-cassandra</module>
     <module>jkniv-whinstone/jkniv-whinstone-couchdb</module>
     <module>jkniv-whinstone/jkniv-whinstone-jdk8</module>
-    <module>jkniv-whinstone/jkniv-whinstone-tck</module>
     <!-- 
+    <module>jkniv-whinstone/jkniv-whinstone-tck</module>
     <module>jkniv-whinstone/jkniv-whinstone-fluent</module> 
     <module>jkniv-whinstone/jkniv-whinstone-couchbase</module> 
     <module>jkniv-test-jdk8</module> 
