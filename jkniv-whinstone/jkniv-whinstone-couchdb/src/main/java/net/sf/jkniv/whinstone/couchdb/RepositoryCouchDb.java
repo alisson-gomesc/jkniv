@@ -38,6 +38,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.cfg.ConfigFeature;
 
 import net.sf.jkniv.asserts.Assertable;
 import net.sf.jkniv.asserts.AssertsFactory;
@@ -225,7 +226,7 @@ class RepositoryCouchDb implements Repository
             {
                 // jackson. length -> (8)
                 String featureName = k.substring(8).toUpperCase();
-                SerializationFeature feature = SerializationFeature.valueOf(featureName);
+                SerializationFeature feature = JacksonFeature.serializationOf(featureName);
                 DeserializationFeature desfeature = null;
                 if (feature != null)
                 {
@@ -233,7 +234,7 @@ class RepositoryCouchDb implements Repository
                 }
                 else
                 {
-                    desfeature = DeserializationFeature.valueOf(k.substring(8).toUpperCase());
+                    desfeature = JacksonFeature.deserializationOf(featureName);
                     if (desfeature != null) {
                         JsonMapper.config(desfeature, enable);
                     }
@@ -243,9 +244,8 @@ class RepositoryCouchDb implements Repository
                 
             }
         }
-    }
+    } 
 
-    
     @Override
     public <T> T get(Queryable queryable)
     {
