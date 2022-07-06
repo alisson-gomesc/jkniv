@@ -101,6 +101,7 @@ public class JsonMapper
     public static void config(JsonInclude.Include include)
     {
         MAPPER.setSerializationInclusion(include);
+        LOG.info("Jackson JsonInclude {}", include);
     }
 
     public static void config(SerializationFeature feature, boolean state)
