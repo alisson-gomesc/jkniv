@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
+import javax.validation.Path.Node;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
@@ -36,16 +37,18 @@ import net.sf.jkniv.sqlegance.ConstraintException;
 class ValidateImpl implements Validatory
 {
     private final static Logger LOG = LoggerFactory.getLogger(ValidateImpl.class);
-    private static Validator validator;
+    private static Validator    validator;
     static
     {
-        try 
+        
+        try
         {
             validator = Validation.buildDefaultValidatorFactory().getValidator();
         }
-        catch(Exception e)
+        catch (Exception e)
         {
-            LOG.warn("Implementation for JSR Bean Validation not found! Add validator jar at classpah like hibernate-validator to works.");
+            LOG.warn(
+                    "Implementation for JSR Bean Validation not found! Add validator jar at classpah like hibernate-validator to works.");
         }
     }
     
@@ -53,10 +56,9 @@ class ValidateImpl implements Validatory
     public void assertValidate(Object params, ValidateType validateType)
     {
         if (validator == null)
-            return ;
-        
+            return;
         Map<String, String> constraints = validate(params, validateType.getValidateGroup());
-        if(!constraints.isEmpty())
+        if (!constraints.isEmpty())
             throw new ConstraintException(constraints);
     }
     
@@ -64,7 +66,7 @@ class ValidateImpl implements Validatory
     public <T> void assertValidate(Object params, Class<T> validateGroup)
     {
         Map<String, String> constraints = validate(params, validateGroup);
-        if(!constraints.isEmpty())
+        if (!constraints.isEmpty())
             throw new ConstraintException(constraints);
     }
     
@@ -79,10 +81,10 @@ class ValidateImpl implements Validatory
     {
         if (validator == null)
             return Collections.emptyMap();
-
         Set<ConstraintViolation<Object>> violations = validator.validate(params, validateGroup);
         Map<String, String> constraints = new HashMap<String, String>(violations.size());
-        for(ConstraintViolation<Object> violation : violations)
+        
+        for (ConstraintViolation<Object> violation : violations)
         {
             /*
             LOG.info("ConstraintDescriptor={}", violation.getConstraintDescriptor());
@@ -90,10 +92,27 @@ class ValidateImpl implements Validatory
             LOG.info("PropertyPath={}", violation.getPropertyPath());
             LOG.info("PropertyPath={}", violation.getPropertyPath());
             LOG.info("PropertyPath.Node={}", violation.getPropertyPath().iterator().next().getName());
+            
+            [ConstraintViolationImpl{interpolatedMessage='Invalid address', propertyPath=, rootBeanClass=class me.catchfy.customer.model.Customer, 
+                messageTemplate='{test.AddressValidate.message}'}, 
+                ConstraintViolationImpl{interpolatedMessage='must not be null', propertyPath=nationalId, rootBeanClass=class me.catchfy.customer.model.Customer, 
+                messageTemplate='{javax.validation.constraints.NotNull.message}'}, 
+                ConstraintViolationImpl{interpolatedMessage='must not be null', propertyPath=acctId, rootBeanClass=class me.catchfy.customer.model.Customer, 
+                messageTemplate='{javax.validation.constraints.NotNull.message}'}, 
+                ConstraintViolationImpl{interpolatedMessage='must not be null', propertyPath=name, rootBeanClass=class me.catchfy.customer.model.Customer, 
+                messageTemplate='{javax.validation.constraints.NotNull.message}'}, 
+                ConstraintViolationImpl{interpolatedMessage='must not be null', propertyPath=legalName, rootBeanClass=class me.catchfy.customer.model.Customer, 
+                messageTemplate='{javax.validation.constraints.NotNull.message}'}, 
+                ConstraintViolationImpl{interpolatedMessage='must not be null', propertyPath=id, rootBeanClass=class me.catchfy.customer.model.Customer, 
+                messageTemplate='{javax.validation.constraints.NotNull.message}'}, 
+                ConstraintViolationImpl{interpolatedMessage='must not be null', propertyPath=createdBy, rootBeanClass=class me.catchfy.customer.model.Customer, 
+                messageTemplate='{javax.validation.constraints.NotNull.message}'}]
             */
-            constraints.put(violation.getPropertyPath().iterator().next().getName(), violation.getMessage());
+            String name = violation.getPropertyPath().iterator().next().getName();
+            if (name == null && violation.getRootBeanClass() != null)
+                name = violation.getRootBeanClass().getSimpleName();
+            constraints.put(name, violation.getMessage());
         }
         return constraints;
     }
-    
 }
