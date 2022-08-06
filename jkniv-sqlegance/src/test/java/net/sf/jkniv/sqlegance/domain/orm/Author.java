@@ -20,12 +20,19 @@
  */
 package net.sf.jkniv.sqlegance.domain.orm;
 
+import javax.validation.constraints.NotNull;
+
+import net.sf.jkniv.sqlegance.validation.AddValidate;
+import net.sf.jkniv.sqlegance.validation.UpdateValidate;
+
 public class Author
 {
     private String  name;
+    @NotNull(groups = { UpdateValidate.class })
     private String  username;
     private String  password;
     private String  email;
+
     private String  bio;
     private Address address;
     

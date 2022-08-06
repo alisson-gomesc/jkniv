@@ -19,9 +19,13 @@
  */
 package net.sf.jkniv.sqlegance;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import net.sf.jkniv.sqlegance.validation.ValidationMessage;
 
 /**
  * Thrown when model data violate the rules with JSR Bean Validation  
@@ -34,6 +38,7 @@ public class ConstraintException extends RepositoryException
     private static final long serialVersionUID = -1607171467309827392L;
 
     private final Map<String, String> violations;
+    private final List<ValidationMessage> violationsList;
 
     /**
      * Constructor for ConstraintException without message detail
@@ -44,6 +49,7 @@ public class ConstraintException extends RepositoryException
     {
         super(message);
         this.violations = new TreeMap<String, String>();
+        this.violationsList = new ArrayList<ValidationMessage>();
         this.violations.put(param, message);
     }
 
@@ -54,7 +60,21 @@ public class ConstraintException extends RepositoryException
     public ConstraintException(Map<String, String> violations)
     {
         super();
+        this.violationsList = new ArrayList<ValidationMessage>();
         this.violations = violations;
+    }
+
+    /**
+     * Constructor for ConstraintException with a set of messages
+     * @param violationsList violated constraints from model, with list of values field, message and key message
+     */
+    public ConstraintException(List<ValidationMessage> violationsList)
+    {
+        super();
+        this.violationsList = violationsList;
+        this.violations = new TreeMap<String, String>();
+        for(ValidationMessage message : violationsList)
+            this.violations.put(message.getField(), message.getValue());
     }
     
     /**
@@ -65,6 +85,16 @@ public class ConstraintException extends RepositoryException
     public Map<String, String> getViolations()
     {
         return Collections.unmodifiableMap(violations);
+    }
+    
+    /**
+     * Map with violations where key is {@code javax.validation.ConstraintViolation.getPropertyPath()} name with 
+     * violation message and the key for internationalization
+     * @return set of violation messages from Bean Validation
+     */
+    public List<ValidationMessage> getViolationsI18n()
+    {
+        return Collections.unmodifiableList(violationsList);
     }
     
     @Override

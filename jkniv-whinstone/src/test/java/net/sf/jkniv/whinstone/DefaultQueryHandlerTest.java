@@ -359,7 +359,7 @@ public class DefaultQueryHandlerTest
         catch (RepositoryException e)
         {
         }
-        assertThat(queryable.getTotal(), is(new Long(Statement.EXECUTE_FAILED)));
+        assertThat(queryable.getTotal(), is(Long.valueOf(Statement.EXECUTE_FAILED)));
     }
     
     @Test

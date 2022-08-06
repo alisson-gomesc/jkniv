@@ -20,6 +20,7 @@
 package net.sf.jkniv.sqlegance.validation;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 class NoValidate implements Validatory
@@ -45,6 +46,18 @@ class NoValidate implements Validatory
     public <T> Map<String, String> validate(Object params, Class<T> validateGroup)
     {
         return Collections.emptyMap();
+    }
+
+    @Override
+    public List<ValidationMessage> validateI18n(Object params, ValidateType validateType)
+    {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public <T> List<ValidationMessage> validateI18n(Object params, Class<T> validateGroup)
+    {
+        return Collections.emptyList();
     }
     
 }

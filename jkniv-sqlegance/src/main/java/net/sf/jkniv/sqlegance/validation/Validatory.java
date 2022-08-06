@@ -19,6 +19,7 @@
  */
 package net.sf.jkniv.sqlegance.validation;
 
+import java.util.List;
 import java.util.Map;
 
 import net.sf.jkniv.sqlegance.ConstraintException;
@@ -56,5 +57,21 @@ public interface Validatory
      * @return the pairs field and constraints violated, an empty Map is return when any constraint is violated
      */
     <T> Map<String, String> validate(Object params, Class<T> validateGroup);
-    
+
+    /**
+     * Use validator (JSR 303) to perform validation against domain model
+     * @param params the domain model to validate
+     * @param validateType type of validation
+     * @return the list of messages with constraints violated, an empty List is return when any constraint is violated
+     */
+    List<ValidationMessage> validateI18n(Object params, ValidateType  validateType);
+
+    /**
+     * Use validator (JSR 303) to perform validation against domain model
+     * @param params the domain model to validate
+     * @param validateGroup type of validation
+     * @return the list of messages with constraints violated, an empty List is return when any constraint is violated
+     */
+    <T> List<ValidationMessage> validateI18n(Object params, Class<T> validateGroup);
+
 }

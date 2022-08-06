@@ -145,7 +145,7 @@ class CouchDbSqlContext implements SqlContext
     {
         return ALL_DOCS_QUERY.equals(name);
     }
-
+    
     public static boolean isGet(String name)
     {
         return GET_QUERY.equals(name);
