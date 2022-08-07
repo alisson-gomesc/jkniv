@@ -4,13 +4,15 @@ class ValidationMessageImpl implements ValidationMessage
 {
     private String value;
     private String field;
+    private String qualifiedField;
     private String key;
     
     
-    static ValidationMessage of(String field, String message, String key)
+    static ValidationMessage of(String field, String qualifiedField, String message, String key)
     {
         ValidationMessageImpl validMessage = new ValidationMessageImpl();
         validMessage.field = field;
+        validMessage.qualifiedField = qualifiedField;
         validMessage.value = message;
         validMessage.key = key;
         return validMessage;
@@ -26,6 +28,12 @@ class ValidationMessageImpl implements ValidationMessage
     public String getField()
     {
         return field;
+    }
+
+    @Override
+    public String getQualifiedField()
+    {
+        return qualifiedField;
     }
     
     @Override

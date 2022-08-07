@@ -120,13 +120,17 @@ class ValidateImpl implements Validatory
         for (ConstraintViolation<Object> violation : violations)
         {
             String field = violation.getPropertyPath().iterator().next().getName();
-            if (field == null && violation.getRootBeanClass() != null)
-                field = violation.getRootBeanClass().getSimpleName();
-            
+            String classSimpleName = violation.getRootBeanClass().getSimpleName();
+            String qualifiedField = classSimpleName + "." + field;
+            if (field == null && violation.getRootBeanClass() != null) 
+            {
+                field = classSimpleName;
+                qualifiedField = classSimpleName;
+            }
             
             //{javax.validation.constraints.NotNull.message} -> javax.validation.constraints.NotNull.message
             String key = violation.getMessageTemplate().substring(1, violation.getMessageTemplate().length()-1);
-            constraints.add(ValidationMessageImpl.of(field, violation.getMessage(), key));
+            constraints.add(ValidationMessageImpl.of(field, qualifiedField, violation.getMessage(), key));
         }
         return constraints;
     }

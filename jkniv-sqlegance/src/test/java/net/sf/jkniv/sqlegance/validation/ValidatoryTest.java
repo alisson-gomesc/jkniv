@@ -45,6 +45,8 @@ public class ValidatoryTest
         assertThat(thrown).isInstanceOf(ConstraintException.class);
         assertThat(thrown.getViolationsI18n()).extracting(ValidationMessage::getField)
             .contains("username");
+        assertThat(thrown.getViolationsI18n()).extracting(ValidationMessage::getQualifiedField)
+        .contains("Author.username");
         assertThat(thrown.getViolationsI18n()).extracting(ValidationMessage::getValue)
         .contains("may not be null");
         assertThat(thrown.getViolationsI18n()).extracting(ValidationMessage::getKey)
